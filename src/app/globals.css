@@ -1,6 +1,13 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary-yellow: #ffbf00;
+  --primary-purple: #6a4c93;
+  --secondary-purple: #8662b0;
+  --white: #ffffff;
+  --black: #333333;
+  --transition: all 0.3s ease-in-out;
+  --text-gray: #666666;
+  --text-purple: #4b2e83;
+  --primary-font: Verdana;
 }
 
 @media (prefers-color-scheme: dark) {

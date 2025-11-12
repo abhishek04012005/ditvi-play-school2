@@ -1,0 +1,240 @@
+.testimonials {
+    padding: 8rem 2rem;
+    position: relative;
+    background: var(--white);
+    overflow: hidden;
+    min-height: 100vh;
+}
+
+.decorativeElements {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.bubble {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 50%;
+    animation: float 10s infinite ease-in-out;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.sliderContainer {
+    position: relative;
+    padding: 3rem 0;
+    margin-top: 2rem;
+}
+
+.navigationButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: var(--white);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-purple);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.prevButton {
+    left: -1rem;
+}
+
+.nextButton {
+    right: -1rem;
+}
+
+.navigationButton:hover {
+    background: var(--primary-yellow);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.swiper {
+    padding: 1rem;
+}
+
+.testimonialCard {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 2rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--primary-purple);
+    transition: all 0.3s ease;
+}
+
+.testimonialCard:hover {
+    transform: translateY(-10px);
+}
+
+@keyframes zoomInOut {
+
+    0%,
+    100% {
+        transform: scale(0.8) rotate(0deg);
+    }
+
+    50% {
+        transform: scale(1.2) rotate(15deg);
+    }
+
+
+}
+
+.quoteIcon {
+    color: var(--primary-purple);
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    opacity: 1;
+    animation: zoomInOut 3s infinite ease-in-out;
+    transform-origin: center;
+    will-change: transform;
+}
+
+
+.quote {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-gray);
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+    font-style: italic;
+}
+
+.rating {
+    display: flex;
+    gap: 0.3rem;
+    margin-bottom: 1.5rem;
+}
+
+@keyframes zoomInOutandRotate {
+    0% {
+        transform: scale(0.8) rotate(0deg);
+    }
+    50% {
+        transform: scale(1.2) rotate(180deg);
+    }
+    100% {
+        transform: scale(0.8) rotate(360deg);
+    }
+}
+
+.star {
+    color: var(--primary-yellow);
+    font-size: 1.7rem;
+    animation: zoomInOutandRotate 5s infinite linear;
+    transform-origin: center;
+    will-change: transform;
+}
+
+.clientInfo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(106, 76, 147, 0.1);
+}
+
+.clientImage {
+    flex-shrink: 0;
+}
+
+.image {
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-yellow);
+}
+
+.clientDetails {
+    flex: 1;
+}
+
+.clientName {
+    font-size: 1.1rem;
+    color: var(--primary-purple);
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.clientRole {
+    font-size: 0.9rem;
+    color: var(--text-gray);
+    opacity: 0.9;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-20px) rotate(5deg);
+    }
+}
+
+@media (max-width: 1024px) {
+    .navigationButton {
+        width: 3rem;
+        height: 3rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .testimonials {
+        padding: 6rem 1.5rem;
+    }
+
+    .navigationButton {
+        display: none;
+    }
+
+    .testimonialCard {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .testimonials {
+        padding: 4rem 1rem;
+    }
+
+    .testimonialCard {
+        padding: 1.25rem;
+    }
+
+    .quote {
+        font-size: 0.95rem;
+    }
+
+    .clientInfo {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.8rem;
+    }
+
+    .bubble {
+        display: none;
+    }
+}

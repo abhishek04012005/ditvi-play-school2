@@ -1,0 +1,248 @@
+.dashboard {
+    padding: 2rem;
+    min-height: 100vh;
+    background: var(--white);
+}
+
+.header {
+    margin-bottom: 2rem;
+}
+
+.header h1 {
+    color: var(--primary-purple);
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* Search Styles */
+.searchBar {
+    flex: 1;
+    position: relative;
+    max-width: 400px;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-purple);
+    opacity: 0.7;
+    font-size: 1.1rem;
+    pointer-events: none;
+}
+
+.searchBar input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.8rem;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: rgba(106, 76, 147, 0.05);
+    font-size: 1rem;
+    color: var(--text-gray);
+    transition: all 0.3s ease;
+}
+
+.searchBar input:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
+}
+
+/* Filter Select Styles */
+.filterSelect {
+    padding: 0.75rem 2.5rem 0.75rem 1.5rem;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: var(--primary-purple);
+    color: var(--white);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 8.825L1.175 4 2.238 2.938 6 6.7l3.763-3.762L10.825 4z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    min-width: 160px;
+}
+
+.filterSelect:hover {
+    background-color: var(--primary-yellow);
+    color: var(--primary-purple);
+}
+
+/* Table Styles */
+.tableWrapper {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 1rem;
+    box-shadow: 0 10px 25px rgba(106, 76, 147, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(106, 76, 147, 0.1);
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+.table th {
+    background: rgba(106, 76, 147, 0.05);
+    padding: 1rem;
+    text-align: left;
+    color: var(--primary-purple);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(106, 76, 147, 0.1);
+    color: var(--text-gray);
+}
+
+.table tbody tr:hover {
+    background: rgba(106, 76, 147, 0.02);
+}
+
+/* Contact Info Styles */
+.contactInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.phoneLink, .emailLink {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-purple);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.phoneLink:hover, .emailLink:hover {
+    color: var(--primary-yellow);
+}
+
+/* Message Styles */
+.message {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Status Styles */
+.status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.status.new {
+    background: #3b82f6;
+    color: white;
+}
+
+.status.replied {
+    background: #f59e0b;
+    color: white;
+}
+
+.status.resolved {
+    background: #10b981;
+    color: white;
+}
+
+.status.archived {
+    background: #6b7280;
+    color: white;
+}
+
+.statusSelect {
+    padding: 0.5rem;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background: rgba(106, 76, 147, 0.05);
+    color: var(--text-gray);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 150px;
+}
+
+.statusSelect:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    background: var(--white);
+}
+
+.loading, .noResults {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-gray);
+    font-size: 1.1rem;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+    .dashboard {
+        padding: 1.5rem;
+    }
+
+    .message {
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .controls {
+        flex-direction: column;
+    }
+
+    .searchBar {
+        max-width: 100%;
+    }
+
+    .filterSelect {
+        width: 100%;
+    }
+
+    .message {
+        max-width: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard {
+        padding: 1rem;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .message {
+        max-width: 120px;
+    }
+
+    .statusSelect {
+        max-width: 120px;
+    }
+}

@@ -1,0 +1,203 @@
+.loginPage {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--white);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.decorativeElements {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.circle {
+    position: absolute;
+    top: 10%;
+    right: 5%;
+    width: 200px;
+    height: 200px;
+    border: 3px dashed var(--primary-yellow);
+    border-radius: 50%;
+    opacity: 0.5;
+    animation: rotate 30s linear infinite;
+}
+
+.dots {
+    position: absolute;
+    bottom: 15%;
+    left: 7%;
+    width: 150px;
+    height: 150px;
+    background-image: radial-gradient(circle, var(--primary-purple) 1px, transparent 2px);
+    background-size: 20px 20px;
+    opacity: 0.1;
+}
+
+.squiggly {
+    position: absolute;
+    top: 30%;
+    left: 2%;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(45deg, transparent 48%, var(--primary-purple) 49%, var(--primary-purple) 51%, transparent 52%) 0 0 / 1em 1em;
+    opacity: 0.1;
+    animation: float 6s ease-in-out infinite;
+}
+
+.loginContainer {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(106, 76, 147, 0.1);
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    z-index: 2;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(106, 76, 147, 0.1);
+}
+
+.logoSection {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 1rem;
+    object-fit: contain;
+}
+
+.title {
+    font-size: 2rem;
+    color: var(--primary-purple);
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+.loginForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.inputGroup {
+    position: relative;
+}
+
+.inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.inputIcon {
+    position: absolute;
+    left: 1rem;
+    color: var(--primary-purple);
+    font-size: 1.2rem;
+    opacity: 0.7;
+}
+
+.inputWrapper input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: rgba(106, 76, 147, 0.05);
+    font-size: 1rem;
+    color: var(--text-gray);
+    transition: all 0.3s ease;
+}
+
+.inputWrapper input:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    background: var(--white);
+}
+
+.passwordToggle {
+    position: absolute;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--primary-purple);
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.passwordToggle:hover {
+    opacity: 1;
+}
+
+.loginButton {
+    background: var(--primary-purple);
+    color: var(--white);
+    border: none;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.loginButton:not(:disabled):hover {
+    background: var(--primary-yellow);
+    color: var(--primary-purple);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(106, 76, 147, 0.15);
+}
+
+.loginButton:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+@media (max-width: 768px) {
+    .loginContainer {
+        padding: 2rem;
+    }
+
+    .title {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .loginPage {
+        padding: 1rem;
+    }
+
+    .loginContainer {
+        padding: 1.5rem;
+    }
+
+    .title {
+        font-size: 1.6rem;
+    }
+
+    .circle, 
+    .squiggly,
+    .dots {
+        display: none;
+    }
+}

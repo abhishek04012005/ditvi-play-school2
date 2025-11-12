@@ -1,0 +1,290 @@
+.admission {
+  padding: 6rem 2rem;
+  background: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+.decorativeCircle {
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, var(--primary-yellow), rgba(106, 76, 147, 0.1));
+  opacity: 0.3;
+  z-index: 1;
+}
+
+.decorativeDots {
+  position: absolute;
+  bottom: 50px;
+  left: 50px;
+  width: 200px;
+  height: 200px;
+  background-image: radial-gradient(var(--primary-purple) 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.1;
+  z-index: 1;
+}
+
+.title {
+  text-align: center;
+  font-size: 2.5rem;
+  color: var(--primary-purple);
+  margin-bottom: 3rem;
+  font-weight: 700;
+  position: relative;
+  z-index: 2;
+}
+
+.stepsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 4rem;
+  position: relative;
+  z-index: 2;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+
+.stepNumber {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: var(--text-gray);
+  border: 2px solid var(--primary-yellow);
+  transition: all 0.3s ease;
+}
+
+.stepTitle {
+  font-size: 1rem;
+  color: var(--text-gray);
+  text-align: center;
+}
+
+.connector {
+  position: absolute;
+  top: 20px;
+  right: -30px;
+  width: 60px;
+  height: 2px;
+  background: var(--primary-yellow);
+}
+
+.step.active .stepNumber {
+  background: var(--primary-purple);
+  color: var(--white);
+  border-color: var(--primary-purple);
+}
+
+.contentWrapper {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 4rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.formSection {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(106, 76, 147, 0.1);
+}
+
+.formSection h3 {
+  font-size: 1.8rem;
+  color: var(--primary-purple);
+  margin-bottom: 2rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.fullWidth {
+  grid-column: span 2;
+}
+
+.inputGroup label {
+  font-size: 0.9rem;
+  color: var(--text-gray);
+  font-weight: 500;
+}
+
+.inputGroup input,
+.inputGroup select,
+.inputGroup textarea {
+  padding: 0.8rem;
+  border: 2px solid var(--primary-yellow);
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.inputGroup textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.inputGroup input:focus,
+.inputGroup select:focus,
+.inputGroup textarea:focus {
+  outline: none;
+  border-color: var(--primary-purple);
+  box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 1rem;
+  margin-top: 2rem;
+  background: var(--primary-purple);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submitBtn:hover {
+  background: var(--primary-yellow);
+  color: var(--primary-purple);
+  transform: translateY(-2px);
+}
+
+.infoSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.requirementsList,
+.contactInfo {
+  background: var(--white);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(106, 76, 147, 0.1);
+}
+
+.requirementsList h3,
+.contactInfo h3 {
+  font-size: 1.5rem;
+  color: var(--primary-purple);
+  margin-bottom: 1.5rem;
+}
+
+.requirementsList ul {
+  list-style: none;
+  padding: 0;
+}
+
+.requirementsList li {
+  padding: 0.8rem 0;
+  color: var(--text-gray);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.requirementsList li::before {
+  content: '•';
+  color: var(--primary-purple);
+  font-size: 1.5rem;
+}
+
+.contactInfo p {
+  color: var(--text-gray);
+  margin-bottom: 1rem;
+}
+
+.contactDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  color: var(--primary-purple);
+  font-size: 1.1rem;
+}
+
+@media (max-width: 1024px) {
+  .contentWrapper {
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .stepsContainer {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 2rem;
+    gap: 1.5rem;
+  }
+
+  .connector {
+    top: auto;
+    bottom: -25px;
+    right: auto;
+    left: 20px;
+    width: 2px;
+    height: 50px;
+  }
+
+  .contentWrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .fullWidth {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .admission {
+    padding: 4rem 1rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .formSection,
+  .requirementsList,
+  .contactInfo {
+    padding: 1.5rem;
+  }
+
+  .decorativeCircle,
+  .decorativeDots {
+    display: none;
+  }
+}
