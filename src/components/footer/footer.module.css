@@ -197,3 +197,117 @@
     gap: 1rem;
   }
 }
+
+
+
+
+.contactSection ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+/* Contact Item with Icon */
+.contactItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.contactItem:hover {
+    transform: translateX(5px);
+}
+
+/* Contact Icon */
+.contactIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+    background: linear-gradient(135deg, var(--primary-purple) 0%, #5a3b7d 100%);
+    border-radius: 50%;
+    color: var(--white);
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.25);
+}
+
+.contactItem:hover .contactIcon {
+    background: linear-gradient(135deg, var(--primary-yellow) 0%, #f0c656 100%);
+    color: var(--primary-purple);
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(255, 209, 102, 0.35);
+}
+
+/* Contact Link */
+.contactLink {
+    display: flex;
+    flex-direction: column;
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    transition: all 0.3s ease;
+    word-break: break-word;
+}
+
+.contactLink:hover {
+    color: var(--primary-yellow);
+    text-decoration: underline;
+}
+
+/* Contact Text (for address) */
+.contactText {
+    display: flex;
+    flex-direction: column;
+    color: var(--text-light);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .contactIcon {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+    }
+
+    .contactItem {
+        gap: 0.8rem;
+    }
+
+    .contactLink,
+    .contactText {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .contactIcon {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        font-size: 0.85rem;
+    }
+
+    .contactItem {
+        gap: 0.7rem;
+    }
+
+    .contactLink,
+    .contactText {
+        font-size: 0.85rem;
+    }
+
+    .contactSection ul {
+        gap: 1rem;
+    }
+}

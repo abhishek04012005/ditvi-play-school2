@@ -15,6 +15,9 @@ import Image3 from '../../../public/assets/testimonial/3.png'
 import Image4 from '../../../public/assets/testimonial/4.png'
 import Image5 from '../../../public/assets/testimonial/5.png'
 import schoolDetails from '@/json/schooldetails';
+import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined';
+import LineArt from '@/custom/lineart/lineart';
+
 
 
 interface TestimonialItem {
@@ -76,13 +79,43 @@ const Testimonials = () => {
 
   return (
     <section className={styles.testimonials}>
-      <div className={styles.decorativeElements}>
-        <div className={styles.bubble} style={{ top: '10%', left: '5%' }}></div>
-        <div className={styles.bubble} style={{ top: '20%', right: '10%' }}></div>
-        <div className={styles.bubble} style={{ bottom: '15%', left: '15%' }}></div>
-        <div className={styles.bubble} style={{ bottom: '25%', right: '5%' }}></div>
-      </div>
 
+      <LineArt
+        circle={{
+          size: 200,
+          borderColor: 'var(--primary-yellow)',
+          borderWidth: 3,
+          borderStyle: 'dashed',
+          opacity: 1,
+          animationSpeed: 30,
+          bottom: '7%',
+          left: '2%',
+          icon: <BusinessCenterOutlinedIcon sx={{ fontSize: 40, transform: 'scale(-1, 1)' }} />,
+          iconColor: 'var(--primary-purple)',
+          showIcon: true
+        }}
+        dot={{
+          size: 150,
+          color: 'var(--primary-yellow)',
+          opacity: 0.3,
+          animationSpeed: 6,
+          top: '10%',
+          right: '5%',
+          blur: 60,
+          show: true
+        }}
+        squiggly={{
+          size: 100,
+          color: 'var(--primary-purple)',
+          opacity: 0.1,
+          animationSpeed: 8,
+          top: '30%',
+          left: '2%',
+          show: true,
+          reverse: true
+        }}
+        zIndex={1}
+      />
       <div className={styles.container}>
         <HeadingTitle text="What Parents Say" />
 

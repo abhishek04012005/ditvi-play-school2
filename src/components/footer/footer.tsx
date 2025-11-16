@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaFacebookF, FaInstagram, FaYoutube, FaLinkedinIn } from 'react-icons/fa';
+import { FaFacebookF, FaInstagram, FaYoutube, FaLinkedinIn, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
 import { FaXTwitter } from "react-icons/fa6";
 import styles from './footer.module.css';
 import schoolDetails from '@/json/schooldetails';
@@ -15,7 +15,6 @@ const Footer = () => {
     { icon: <FaInstagram />, url: `${schoolDetails.socialMedia.instagram}`, label: 'Instagram' },
     { icon: <FaYoutube />, url: `${schoolDetails.socialMedia.youtube}`, label: 'YouTube' },
     { icon: <FaLinkedinIn />, url: `${schoolDetails.socialMedia.linkedin}`, label: 'LinkedIn' }
-
   ];
 
   const quickLinks = [
@@ -25,13 +24,26 @@ const Footer = () => {
     { text: 'Gallery', href: '/gallery' },
     { text: 'Contact', href: '/contact' },
     { text: 'Admin', href: '/admin/login' },
-
   ];
 
-  const contactInfo = [
-    { text: `${schoolDetails.address.street}, ${schoolDetails.address.city}, ${schoolDetails.address.state} - ${schoolDetails.address.pincode}` },
-    { text: `${schoolDetails.contact.phone}` },
-    { text: `${schoolDetails.contact.email}` },
+  const contactDetails = [
+    { 
+      icon: <FaMapMarkerAlt />, 
+      text: `${schoolDetails.address.street}, ${schoolDetails.address.city}, ${schoolDetails.address.state} - ${schoolDetails.address.pincode}`,
+      type: 'address'
+    },
+    { 
+      icon: <FaPhoneAlt />, 
+      text: `${schoolDetails.contact.phone}`,
+      type: 'phone',
+      href: `tel:${schoolDetails.contact.phone}`
+    },
+    { 
+      icon: <FaEnvelope />, 
+      text: `${schoolDetails.contact.email}`,
+      type: 'email',
+      href: `mailto:${schoolDetails.contact.email}`
+    },
   ];
 
   return (
@@ -72,6 +84,8 @@ const Footer = () => {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                   title={social.label}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   {social.icon}
                 </motion.a>
@@ -103,10 +117,26 @@ const Footer = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
             viewport={{ once: true }}
           >
-            <h3>Contact Info</h3>
+            <h3>Contact Details</h3>
             <ul>
-              {contactInfo.map((info, index) => (
-                <li key={index}>{info.text}</li>
+              {contactDetails.map((info, index) => (
+                <li key={index} className={styles.contactItem}>
+                  <span className={styles.contactIcon}>
+                    {info.icon}
+                  </span>
+                  {info.href ? (
+                    <motion.a 
+                      href={info.href}
+                      className={styles.contactLink}
+                      whileHover={{ x: 5 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      {info.text}
+                    </motion.a>
+                  ) : (
+                    <span className={styles.contactText}>{info.text}</span>
+                  )}
+                </li>
               ))}
             </ul>
           </motion.div>
@@ -120,6 +150,7 @@ const Footer = () => {
           viewport={{ once: true }}
         >
           <p>&copy; {new Date().getFullYear()} {schoolDetails.name}. All rights reserved.</p>
+          <p>Powered by <a href="https://technologies.ditvi.org/" target='_blank'> <strong>Ditvi Technologies</strong></a></p>
           <div className={styles.bottomLinks}>
             <Link href="/privacy">Privacy Policy</Link>
             <Link href="/terms">Terms of Service</Link>

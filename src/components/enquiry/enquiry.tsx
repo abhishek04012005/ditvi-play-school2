@@ -9,6 +9,8 @@ import SubmitModal from '../../custom/popup/popup';
 import AdmissionInfo from '../../components/admissioninfo/admissioninfo';
 import styles from './enquiry.module.css';
 import HeadingTitle from '../heading/headingtitle';
+import LineArt from '@/custom/lineart/lineart';
+import AirplanemodeActiveOutlinedIcon from '@mui/icons-material/AirplanemodeActiveOutlined';
 
 const programs = [
     "Play Group (1.5 - 2.5 years)",
@@ -227,19 +229,42 @@ const Enquiry = () => {
                 autoCloseDuration={4000}
             />
 
-            <div className={styles.decorativeElements}>
-                <motion.div 
-                    className={styles.circle}
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-                />
-                <motion.div className={styles.dots} />
-                <motion.div 
-                    className={styles.squiggly}
-                    animate={{ y: [0, -20, 0] }}
-                    transition={{ duration: 6, repeat: Infinity }}
-                />
-            </div>
+            <LineArt
+                circle={{
+                    size: 200,
+                    borderColor: 'var(--primary-yellow)',
+                    borderWidth: 3,
+                    borderStyle: 'dashed',
+                    opacity: 1,
+                    animationSpeed: 30,
+                    bottom: '70%',
+                    left: '0%',
+                    icon: <AirplanemodeActiveOutlinedIcon sx={{ fontSize: 40, transform: 'scale(-1, 1)' }} />,
+                    iconColor: 'var(--primary-purple)',
+                    showIcon: true
+                }}
+                dot={{
+                    size: 150,
+                    color: 'var(--primary-yellow)',
+                    opacity: 0.3,
+                    animationSpeed: 6,
+                    top: '10%',
+                    right: '5%',
+                    blur: 60,
+                    show: true
+                }}
+                squiggly={{
+                    size: 100,
+                    color: 'var(--primary-purple)',
+                    opacity: 0.1,
+                    animationSpeed: 8,
+                    top: '90%',
+                    left: '2%',
+                    show: true,
+                    reverse: true
+                }}
+                zIndex={1}
+            />
 
             <div className={styles.container}>
                 <motion.div
@@ -250,7 +275,7 @@ const Enquiry = () => {
                     className={styles.headerSection}
                 >
                     <HeadingTitle text="Admission Enquiry" />
-                    <motion.p 
+                    <motion.p
                         className={styles.subtitle}
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
@@ -268,7 +293,7 @@ const Enquiry = () => {
                     transition={{ duration: 0.6, delay: 0.2 }}
                     viewport={{ once: true }}
                 >
-                    <motion.div 
+                    <motion.div
                         className={styles.formSection}
                         initial={{ opacity: 0, x: -50 }}
                         whileInView={{ opacity: 1, x: 0 }}
@@ -281,7 +306,7 @@ const Enquiry = () => {
                         </div>
 
                         <form onSubmit={handleSubmit} className={styles.form}>
-                            <motion.div 
+                            <motion.div
                                 className={styles.formGroup}
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
@@ -302,7 +327,7 @@ const Enquiry = () => {
                                     />
                                 </div>
                                 {errors.parentName && (
-                                    <motion.span 
+                                    <motion.span
                                         className={styles.errorMessage}
                                         initial={{ opacity: 0, y: -5 }}
                                         animate={{ opacity: 1, y: 0 }}
@@ -312,7 +337,7 @@ const Enquiry = () => {
                                 )}
                             </motion.div>
 
-                            <motion.div 
+                            <motion.div
                                 className={styles.formGroup}
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
@@ -333,7 +358,7 @@ const Enquiry = () => {
                                     />
                                 </div>
                                 {errors.childName && (
-                                    <motion.span 
+                                    <motion.span
                                         className={styles.errorMessage}
                                         initial={{ opacity: 0, y: -5 }}
                                         animate={{ opacity: 1, y: 0 }}
@@ -343,7 +368,7 @@ const Enquiry = () => {
                                 )}
                             </motion.div>
 
-                            <motion.div 
+                            <motion.div
                                 className={styles.formGroup}
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
@@ -370,7 +395,7 @@ const Enquiry = () => {
                                     )}
                                 </div>
                                 {errors.phone && (
-                                    <motion.span 
+                                    <motion.span
                                         className={styles.errorMessage}
                                         initial={{ opacity: 0, y: -5 }}
                                         animate={{ opacity: 1, y: 0 }}
@@ -380,7 +405,7 @@ const Enquiry = () => {
                                 )}
                             </motion.div>
 
-                            <motion.div 
+                            <motion.div
                                 className={styles.formGroup}
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
@@ -406,7 +431,7 @@ const Enquiry = () => {
                                     </select>
                                 </div>
                                 {errors.program && (
-                                    <motion.span 
+                                    <motion.span
                                         className={styles.errorMessage}
                                         initial={{ opacity: 0, y: -5 }}
                                         animate={{ opacity: 1, y: 0 }}

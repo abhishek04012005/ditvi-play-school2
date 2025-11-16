@@ -9,6 +9,9 @@ import FunActivitiesIcon from '@mui/icons-material/Celebration';
 import FounderImage from '../../../public/assets/about/director.jpg'
 import HeadingTitle from '../heading/headingtitle';
 import schoolDetails from '@/json/schooldetails';
+import LineArt from '@/custom/lineart/lineart';
+import LocalFloristOutlinedIcon from '@mui/icons-material/LocalFloristOutlined';
+
 
 const About = () => {
   const features = [
@@ -46,6 +49,42 @@ const About = () => {
   return (
     <>
       <section className={styles.about}>
+        <LineArt
+          circle={{
+            size: 200,
+            borderColor: 'var(--primary-yellow)',
+            borderWidth: 3,
+            borderStyle: 'dashed',
+            opacity: 1,
+            animationSpeed: 30,
+            bottom: '0%',
+            left: '2%',
+            icon: <LocalFloristOutlinedIcon sx={{ fontSize: 40, transform: 'scale(-1, 1)' }} />,
+            iconColor: 'var(--primary-purple)',
+            showIcon: true
+          }}
+          dot={{
+            size: 150,
+            color: 'var(--primary-yellow)',
+            opacity: 0.3,
+            animationSpeed: 6,
+            top: '10%',
+            right: '5%',
+            blur: 60,
+            show: true
+          }}
+          squiggly={{
+            size: 100,
+            color: 'var(--primary-purple)',
+            opacity: 0.1,
+            animationSpeed: 8,
+            top: '30%',
+            left: '2%',
+            show: true,
+            reverse: true
+          }}
+          zIndex={1}
+        />
         <motion.div
           className={styles.aboutContent}
           initial={{ opacity: 0, y: 20 }}

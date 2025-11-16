@@ -15,6 +15,9 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
+  const isAdminPage = pathname?.startsWith('/admin');
+
+
   const handleWhatsAppClick = () => {
     window.open(`https://wa.me/${schoolDetails.contact.whatsapp}`, '_blank'); // Replace with your WhatsApp number
   };
@@ -23,14 +26,20 @@ const Navbar = () => {
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About Us' },
     { href: '/programs', label: 'Programs' },
+    { href: '/spotlight', label: 'Spotlight' },
     { href: '/gallery', label: 'Gallery' },
     { href: '/contact', label: 'Contact' },
-  
+
   ];
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  if (isAdminPage) {
+    return null;
+  }
+
 
   return (
     <>

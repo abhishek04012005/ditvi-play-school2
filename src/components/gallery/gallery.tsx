@@ -14,6 +14,8 @@ import 'swiper/css/pagination';
 import styles from './gallery.module.css';
 import { GalleryItem, YouTubeVideo, InstagramVideo, NormalVideo } from '../../json/gallery';
 import HeadingTitle from '../heading/headingtitle';
+import LineArt from '@/custom/lineart/lineart';
+import CrueltyFreeOutlinedIcon from '@mui/icons-material/CrueltyFreeOutlined';
 
 interface GalleryProps {
     items: GalleryItem[];
@@ -70,6 +72,42 @@ const Gallery = ({ items, youtubeVideos = [], instagramVideos = [], normalVideos
     if (isHomePage) {
         return (
             <section className={styles.galleryHome}>
+                <LineArt
+                    circle={{
+                        size: 200,
+                        borderColor: 'var(--primary-yellow)',
+                        borderWidth: 3,
+                        borderStyle: 'dashed',
+                        opacity: 1,
+                        animationSpeed: 30,
+                        bottom: '7%',
+                        left: '88%',
+                        icon: <CrueltyFreeOutlinedIcon sx={{ fontSize: 40, transform: 'scale(-1, 1)' }} />,
+                        iconColor: 'var(--primary-purple)',
+                        showIcon: true
+                    }}
+                    dot={{
+                        size: 150,
+                        color: 'var(--primary-yellow)',
+                        opacity: 0.3,
+                        animationSpeed: 6,
+                        top: '10%',
+                        right: '5%',
+                        blur: 60,
+                        show: true
+                    }}
+                    squiggly={{
+                        size: 100,
+                        color: 'var(--primary-purple)',
+                        opacity: 0.1,
+                        animationSpeed: 8,
+                        top: '30%',
+                        left: '2%',
+                        show: true,
+                        reverse: true
+                    }}
+                    zIndex={1}
+                />
                 <div className={styles.container}>
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -82,7 +120,6 @@ const Gallery = ({ items, youtubeVideos = [], instagramVideos = [], normalVideos
 
                     {/* Photos Slider */}
                     <div className={styles.sliderSection}>
-                        <h3 className={styles.sliderTitle}>📸 Photo Gallery</h3>
                         <div className={styles.sliderContainer}>
                             <Swiper
                                 modules={[Navigation, Autoplay, Pagination]}
@@ -262,6 +299,42 @@ const Gallery = ({ items, youtubeVideos = [], instagramVideos = [], normalVideos
     // Full Gallery Page View
     return (
         <section className={styles.galleryPage}>
+            <LineArt
+                    circle={{
+                        size: 200,
+                        borderColor: 'var(--primary-yellow)',
+                        borderWidth: 3,
+                        borderStyle: 'dashed',
+                        opacity: 1,
+                        animationSpeed: 30,
+                        bottom: '7%',
+                        left: '88%',
+                        icon: <CrueltyFreeOutlinedIcon sx={{ fontSize: 40, transform: 'scale(-1, 1)' }} />,
+                        iconColor: 'var(--primary-purple)',
+                        showIcon: true
+                    }}
+                    dot={{
+                        size: 150,
+                        color: 'var(--primary-yellow)',
+                        opacity: 0.3,
+                        animationSpeed: 6,
+                        top: '10%',
+                        right: '5%',
+                        blur: 60,
+                        show: true
+                    }}
+                    squiggly={{
+                        size: 100,
+                        color: 'var(--primary-purple)',
+                        opacity: 0.1,
+                        animationSpeed: 8,
+                        top: '30%',
+                        left: '2%',
+                        show: true,
+                        reverse: true
+                    }}
+                    zIndex={1}
+                />
             <div className={styles.container}>
                 <HeadingTitle text="Gallery" />
 

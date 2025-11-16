@@ -1,14 +1,16 @@
 'use client';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import { IoLocationOutline, IoCallOutline, IoMailOutline } from 'react-icons/io5';
+import { FaUser, FaPhone, FaEnvelope, FaPen } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
 import styles from './contact.module.css';
 import HeadingTitle from '../heading/headingtitle';
 import Toast from '../../custom/toast/toast';
 import SubmitModal from '../../custom/popup/popup';
 import schoolDetails from '@/json/schooldetails';
+import AirplanemodeActiveOutlinedIcon from '@mui/icons-material/AirplanemodeActiveOutlined';
+
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -23,7 +25,7 @@ const Contact = () => {
     });
 
     const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-    
+
     // Toast state
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
@@ -77,7 +79,7 @@ const Contact = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!validatePhone(formData.phone)) {
             setErrors(prev => ({
                 ...prev,
@@ -107,7 +109,7 @@ const Contact = () => {
             }
 
             setSubmitStatus('success');
-            
+
             // Show success modal with confetti
             showSuccessModal(
                 'We will get back to you soon.',
@@ -193,6 +195,20 @@ const Contact = () => {
 
     return (
         <section className={styles.contact}>
+            <div className={styles.lineArt}>
+                <div className={styles.circle}>
+                    <div className={styles.circleInner}>
+                        <AirplanemodeActiveOutlinedIcon sx={{
+                            fontSize: 40,
+                            transform: 'scale(-1, 1)'
+                        }} />
+                    </div>
+                </div>
+                <div className={styles.dot}></div>
+                <div className={styles.squiggly}></div>
+            </div>
+
+
             <HeadingTitle text="Contact Us" />
 
             {/* Toast Notification */}
@@ -248,15 +264,6 @@ const Contact = () => {
                             </motion.div>
                         ))}
                     </div>
-
-                    <motion.div
-                        className={styles.mapContainer}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.3 }}
-                        viewport={{ once: true }}
-                    >
-                    </motion.div>
                 </motion.div>
 
                 <motion.div
@@ -268,67 +275,132 @@ const Contact = () => {
                 >
                     <form onSubmit={handleSubmit} className={styles.form}>
                         <div className={styles.formGrid}>
-                            <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
+                            {/* Name Field */}
+                            <motion.div
+                                className={`${styles.inputGroup} ${styles.fullWidth}`}
+                                initial={{ opacity: 0, y: 10 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2 }}
+                                viewport={{ once: true }}
+                            >
                                 <label htmlFor="name">Your Name</label>
-                                <input
-                                    id="name"
-                                    type="text"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-                            <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
+                                <div className={styles.inputWrapper}>
+                                    <FaUser className={styles.icon} />
+                                    <input
+                                        id="name"
+                                        type="text"
+                                        name="name"
+                                        placeholder="Enter your full name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            </motion.div>
+
+                            {/* Email Field */}
+                            <motion.div
+                                className={`${styles.inputGroup} ${styles.fullWidth}`}
+                                initial={{ opacity: 0, y: 10 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.25 }}
+                                viewport={{ once: true }}
+                            >
                                 <label htmlFor="email">Your Email</label>
-                                <input
-                                    id="email"
-                                    type="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-                            <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
+                                <div className={styles.inputWrapper}>
+                                    <FaEnvelope className={styles.icon} />
+                                    <input
+                                        id="email"
+                                        type="email"
+                                        name="email"
+                                        placeholder="Enter your email address"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            </motion.div>
+
+                            {/* Phone Field */}
+                            <motion.div
+                                className={`${styles.inputGroup} ${styles.fullWidth}`}
+                                initial={{ opacity: 0, y: 10 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.3 }}
+                                viewport={{ once: true }}
+                            >
                                 <label htmlFor="phone">Your Phone</label>
-                                <input
-                                    id="phone"
-                                    type="tel"
-                                    name="phone"
-                                    value={formData.phone}
-                                    onChange={handleChange}
-                                    placeholder="Enter 10 digit mobile number"
-                                    required
-                                />
+                                <div className={styles.inputWrapper}>
+                                    <FaPhone className={styles.icon} />
+                                    <input
+                                        id="phone"
+                                        type="tel"
+                                        name="phone"
+                                        placeholder="10-digit mobile number"
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                        maxLength={10}
+                                        className={errors.phone ? styles.inputError : ''}
+                                    />
+                                    {formData.phone && (
+                                        <span className={styles.phoneCounter}>
+                                            {formData.phone.length}/10
+                                        </span>
+                                    )}
+                                </div>
                                 {errors.phone && (
-                                    <span className={styles.errorMessage}>
+                                    <motion.span
+                                        className={styles.errorMessage}
+                                        initial={{ opacity: 0, y: -5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                    >
                                         {errors.phone}
-                                    </span>
+                                    </motion.span>
                                 )}
-                            </div>
-                            <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
+                            </motion.div>
+
+                            {/* Message Field */}
+                            <motion.div
+                                className={`${styles.inputGroup} ${styles.fullWidth}`}
+                                initial={{ opacity: 0, y: 10 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.35 }}
+                                viewport={{ once: true }}
+                            >
                                 <label htmlFor="message">Your Message</label>
-                                <textarea
-                                    id="message"
-                                    name="message"
-                                    value={formData.message}
-                                    onChange={handleChange}
-                                    required
-                                ></textarea>
-                            </div>
+                                <div className={styles.inputWrapper}>
+                                    <FaPen className={styles.icon} />
+                                    <textarea
+                                        id="message"
+                                        name="message"
+                                        placeholder="Write your message here..."
+                                        value={formData.message}
+                                        onChange={handleChange}
+                                        required
+                                    ></textarea>
+                                </div>
+                            </motion.div>
                         </div>
 
-                        <button
+                        {/* Submit Button */}
+                        <motion.button
                             type="submit"
                             className={`${styles.submitBtn} ${submitStatus !== 'idle' ? styles.loading : ''}`}
                             disabled={submitStatus !== 'idle'}
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 }}
+                            viewport={{ once: true }}
+                            whileHover={{ scale: submitStatus === 'idle' ? 1.02 : 1 }}
+                            whileTap={{ scale: submitStatus === 'idle' ? 0.98 : 1 }}
                         >
-                            {submitStatus === 'submitting' ? 'Sending...' :
-                                submitStatus === 'success' ? 'Message Sent!' :
-                                    submitStatus === 'error' ? 'Error! Try Again' :
-                                        'Send Message'}
-                        </button>
+                            <span className={styles.buttonText}>
+                                {submitStatus === 'submitting' ? 'Sending...' :
+                                    submitStatus === 'success' ? 'Message Sent!' :
+                                        submitStatus === 'error' ? 'Error! Try Again' :
+                                            'Send Message'}
+                            </span>
+                        </motion.button>
                     </form>
                 </motion.div>
             </div>

@@ -1,0 +1,1069 @@
+/* ==================== Main Section ==================== */
+.staroftheweek {
+    background: linear-gradient(135deg, #fbf7ff 0%, #fff 100%);
+    padding: 2rem 1rem;
+    min-height: 100vh;
+}
+
+/* ==================== Container ==================== */
+.adminContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+/* ==================== Header ==================== */
+.adminHeader {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    animation: slideDown 0.6s ease-out;
+}
+
+.adminHeader h1 {
+    margin: 0;
+    color: var(--primary-purple);
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-yellow) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.adminHeader p {
+    margin: 8px 0 0 0;
+    color: var(--text-gray);
+    font-size: 1.05rem;
+    font-weight: 500;
+}
+
+/* ==================== Form Section ==================== */
+.formSection {
+    background: linear-gradient(135deg, #fff, #f8f9ff);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 10px 40px rgba(106, 76, 147, 0.08);
+    border: 2px solid rgba(106, 76, 147, 0.08);
+    animation: fadeIn 0.6s ease-out 0.1s both;
+}
+
+.formSection h2 {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    color: var(--primary-purple);
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+/* ==================== Form ==================== */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.formRow {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.formRow .fullWidth {
+    grid-column: 1 / -1;
+}
+
+/* ==================== Form Group ==================== */
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.formGroup label {
+    color: var(--primary-purple);
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.formGroup input[type="text"],
+.formGroup textarea,
+.selectInput {
+    padding: 14px 16px;
+    border: 2px solid rgba(106, 76, 147, 0.15);
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--text-gray);
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.formGroup input[type="text"]:hover,
+.formGroup textarea:hover,
+.selectInput:hover {
+    border-color: rgba(106, 76, 147, 0.25);
+}
+
+.formGroup input[type="text"]:focus,
+.formGroup textarea:focus,
+.selectInput:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(249, 247, 255, 1));
+    transform: translateY(-2px);
+}
+
+.formGroup textarea {
+    resize: vertical;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 120px;
+}
+
+.selectInput {
+    cursor: pointer;
+}
+
+/* ==================== Image Upload ==================== */
+.imageUploadWrapper {
+    position: relative;
+}
+
+.fileInput {
+    display: none;
+}
+
+.fileLabel {
+    display: block;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.uploadPlaceholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 2.5rem;
+    border: 3px dashed rgba(106, 76, 147, 0.25);
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(106, 76, 147, 0.03), rgba(255, 209, 102, 0.03));
+    transition: all 0.3s ease;
+    color: var(--primary-purple);
+    font-weight: 700;
+}
+
+.fileLabel:hover .uploadPlaceholder {
+    border-color: var(--primary-purple);
+    background: linear-gradient(135deg, rgba(106, 76, 147, 0.08), rgba(255, 209, 102, 0.08));
+    transform: translateY(-2px);
+}
+
+.uploadPlaceholder span {
+    font-size: 2rem;
+}
+
+.uploadPlaceholder small {
+    font-size: 0.85rem;
+    color: var(--text-gray);
+    font-weight: 600;
+}
+
+.imagePreviewContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 1.5rem;
+    border: 2px solid var(--primary-purple);
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(106, 76, 147, 0.08), rgba(255, 209, 102, 0.08));
+}
+
+.previewImage {
+    width: 160px;
+    height: 160px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 8px 20px rgba(106, 76, 147, 0.15);
+}
+
+.imagePreviewContainer span {
+    font-size: 0.9rem;
+    color: var(--primary-purple);
+    font-weight: 700;
+}
+
+/* ==================== Checkbox ==================== */
+.checkboxLabel {
+    display: flex !important;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    font-size: 0.95rem !important;
+}
+
+.formGroup input[type="checkbox"] {
+    cursor: pointer;
+    width: 22px;
+    height: 22px;
+    accent-color: var(--primary-purple);
+    transition: all 0.2s ease;
+}
+
+.formGroup input[type="checkbox"]:hover {
+    transform: scale(1.1);
+}
+
+/* ==================== Submit Button ==================== */
+.submitButton {
+    padding: 14px 32px;
+    background: linear-gradient(135deg, var(--primary-purple) 0%, #8b6ba8 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    align-self: flex-start;
+    box-shadow: 0 10px 30px rgba(106, 76, 147, 0.25);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.submitButton:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(106, 76, 147, 0.35);
+}
+
+.submitButton:active:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.submitButton:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+}
+
+.spinnerIcon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==================== Spotlights Section ==================== */
+.spotlightsSection {
+    background: linear-gradient(135deg, #fff, #f8f9ff);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 40px rgba(106, 76, 147, 0.08);
+    border: 2px solid rgba(106, 76, 147, 0.08);
+    animation: fadeIn 0.6s ease-out 0.2s both;
+}
+
+.sectionHeader {
+    margin-bottom: 1.5rem;
+}
+
+.spotlightsSection h2 {
+    margin: 0;
+    color: var(--primary-purple);
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+/* ==================== Filter Buttons ==================== */
+.filterButtons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.filterButton {
+    padding: 10px 18px;
+    background: white;
+    border: 2px solid rgba(106, 76, 147, 0.15);
+    border-radius: 25px;
+    color: var(--primary-purple);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+}
+
+.filterButton:hover {
+    border-color: var(--primary-purple);
+    background: rgba(106, 76, 147, 0.06);
+    transform: translateY(-2px);
+}
+
+.filterButton.active {
+    background: linear-gradient(135deg, var(--primary-purple) 0%, #8b6ba8 100%);
+    color: white;
+    border-color: var(--primary-purple);
+    box-shadow: 0 8px 20px rgba(106, 76, 147, 0.2);
+}
+
+.count {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+/* ==================== Spotlights Grid ==================== */
+.spotlightsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+/* ==================== Spotlight Card ==================== */
+.spotlightCard {
+    background: linear-gradient(135deg, #fff, #f9f7ff);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(106, 76, 147, 0.08);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+    border: 2px solid rgba(106, 76, 147, 0.08);
+    position: relative;
+}
+
+.spotlightCard:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 45px rgba(106, 76, 147, 0.15);
+    border-color: rgba(106, 76, 147, 0.15);
+}
+
+/* ==================== Homepage Badge ==================== */
+.homePageBadge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, var(--primary-purple) 0%, #8b6ba8 100%);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-weight: 800;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 2;
+    box-shadow: 0 6px 20px rgba(106, 76, 147, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ==================== Card Image ==================== */
+.cardImage {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #fffaf2, #fff);
+    position: relative;
+}
+
+.image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.spotlightCard:hover .image {
+    transform: scale(1.08) rotate(0.5deg);
+}
+
+/* ==================== Card Content ==================== */
+.cardContent {
+    padding: 1.2rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.cardContent h3 {
+    margin: 0;
+    color: var(--primary-purple);
+    font-size: 1.15rem;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.spotlightMeta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.type {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: rgba(106, 76, 147, 0.1);
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--primary-purple);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.likes {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: rgba(255, 107, 107, 0.1);
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #ff6b6b;
+}
+
+.message {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.date {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* ==================== Card Actions ==================== */
+.cardActions {
+    display: flex;
+    gap: 8px;
+    padding: 0.8rem;
+    border-top: 2px solid rgba(106, 76, 147, 0.08);
+    margin-top: auto;
+}
+
+.actionBtn {
+    flex: 1;
+    padding: 10px 12px;
+    border: 2px solid currentColor;
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    min-height: 40px;
+}
+
+.actionBtn:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.actionBtn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.printBtn {
+    color: var(--primary-purple);
+    border-color: var(--primary-purple);
+}
+
+.printBtn:hover {
+    background: rgba(106, 76, 147, 0.1);
+}
+
+.homepageBtn {
+    color: var(--primary-purple);
+    border-color: var(--primary-purple);
+}
+
+.homepageBtn:hover:not(.active) {
+    background: rgba(106, 76, 147, 0.08);
+}
+
+.homepageBtn.active {
+    background: linear-gradient(135deg, var(--primary-purple) 0%, #8b6ba8 100%);
+    color: white;
+    border-color: var(--primary-purple);
+    box-shadow: 0 6px 20px rgba(106, 76, 147, 0.2);
+}
+
+.deleteBtn {
+    color: #ff6b6b;
+    border-color: #ff6b6b;
+}
+
+.deleteBtn:hover {
+    background: rgba(255, 107, 107, 0.1);
+}
+
+/* ==================== Loading & Empty State ==================== */
+.loadingContainer,
+.emptyState {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--text-gray);
+}
+
+.spinnerLarge {
+    font-size: 3rem;
+    animation: spin 1s linear infinite;
+    color: var(--primary-purple);
+    margin-bottom: 1rem;
+}
+
+.loadingContainer p,
+.emptyState p {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* ==================== Modal Overlay ==================== */
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    backdrop-filter: blur(6px);
+    padding: 1rem;
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* ==================== Modal ==================== */
+.modal {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 450px;
+    width: 100%;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    animation: slideUp 0.3s ease-out;
+}
+
+.modalHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.2rem;
+}
+
+.warningIcon {
+    font-size: 1.8rem;
+    color: #ff6b6b;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.infoIcon {
+    font-size: 1.8rem;
+    color: var(--primary-purple);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.modalHeader h3 {
+    margin: 0;
+    color: var(--primary-purple);
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.modalBody {
+    margin: 0 0 1.5rem 0;
+    color: var(--text-gray);
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.modalBody strong {
+    color: var(--primary-purple);
+    font-weight: 700;
+}
+
+/* ==================== Modal Actions ==================== */
+.modalActions {
+    display: flex;
+    gap: 12px;
+}
+
+.modalBtn {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cancelBtn {
+    background: rgba(106, 76, 147, 0.1);
+    color: var(--primary-purple);
+    border: 2px solid rgba(106, 76, 147, 0.2);
+}
+
+.cancelBtn:hover:not(:disabled) {
+    background: rgba(106, 76, 147, 0.15);
+    border-color: var(--primary-purple);
+    transform: translateY(-2px);
+}
+
+.confirmBtn {
+    background: linear-gradient(135deg, var(--primary-purple) 0%, #8b6ba8 100%);
+    color: white;
+    box-shadow: 0 10px 30px rgba(106, 76, 147, 0.25);
+}
+
+.confirmBtn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(106, 76, 147, 0.35);
+}
+
+.modalBtn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.modalBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* ==================== Animations ==================== */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* ==================== Responsive - Tablet ==================== */
+@media (max-width: 1024px) {
+    .spotlightsGrid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .formRow {
+        grid-template-columns: 1fr;
+    }
+
+    .formSection {
+        padding: 2rem;
+    }
+
+    .spotlightsSection {
+        padding: 2rem;
+    }
+}
+
+/* ==================== Responsive - Tablet Medium ==================== */
+@media (max-width: 768px) {
+    .staroftheweek {
+        padding: 1.5rem 1rem;
+    }
+
+    .adminHeader h1 {
+        font-size: 2rem;
+    }
+
+    .adminHeader p {
+        font-size: 1rem;
+    }
+
+    .formSection,
+    .spotlightsSection {
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border-radius: 16px;
+    }
+
+    .formSection h2,
+    .spotlightsSection h2 {
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form {
+        gap: 1.2rem;
+    }
+
+    .formRow {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+    }
+
+    .spotlightsGrid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 1.2rem;
+    }
+
+    .spotlightCard {
+        border-radius: 14px;
+    }
+
+    .cardImage {
+        height: 200px;
+    }
+
+    .cardContent {
+        padding: 1rem;
+    }
+
+    .cardContent h3 {
+        font-size: 1.05rem;
+    }
+
+    .message {
+        font-size: 0.9rem;
+        -webkit-line-clamp: 2;
+    }
+
+    .cardActions {
+        padding: 0.8rem;
+        gap: 6px;
+    }
+
+    .actionBtn {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+
+    .filterButtons {
+        gap: 10px;
+    }
+
+    .filterButton {
+        padding: 8px 14px;
+        font-size: 0.9rem;
+    }
+
+    .modal {
+        padding: 1.5rem;
+        max-width: 85vw;
+    }
+
+    .uploadPlaceholder {
+        padding: 2rem;
+    }
+
+    .previewImage {
+        width: 140px;
+        height: 140px;
+    }
+}
+
+/* ==================== Responsive - Mobile ==================== */
+@media (max-width: 480px) {
+    .staroftheweek {
+        padding: 1rem;
+    }
+
+    .adminContainer {
+        padding: 0;
+    }
+
+    .adminHeader {
+        margin-bottom: 1.5rem;
+    }
+
+    .adminHeader h1 {
+        font-size: 1.6rem;
+    }
+
+    .adminHeader p {
+        font-size: 0.9rem;
+    }
+
+    .formSection,
+    .spotlightsSection {
+        padding: 1.2rem;
+        margin-bottom: 1.5rem;
+        border-radius: 14px;
+    }
+
+    .formSection h2,
+    .spotlightsSection h2 {
+        font-size: 1.15rem;
+        margin-bottom: 1rem;
+    }
+
+    .form {
+        gap: 1rem;
+    }
+
+    .formGroup label {
+        font-size: 0.9rem;
+    }
+
+    .formGroup input[type="text"],
+    .formGroup textarea,
+    .selectInput {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+    }
+
+    .formGroup textarea {
+        min-height: 100px;
+    }
+
+    .uploadPlaceholder {
+        padding: 1.5rem;
+        gap: 10px;
+    }
+
+    .uploadPlaceholder span {
+        font-size: 1.8rem;
+    }
+
+    .uploadPlaceholder small {
+        font-size: 0.8rem;
+    }
+
+    .previewImage {
+        width: 120px;
+        height: 120px;
+    }
+
+    .submitButton {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 1rem;
+    }
+
+    .spotlightsGrid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 0.8rem;
+    }
+
+    .spotlightCard {
+        border-radius: 12px;
+    }
+
+    .cardImage {
+        height: 160px;
+    }
+
+    .cardContent {
+        padding: 0.8rem;
+        gap: 0.6rem;
+    }
+
+    .cardContent h3 {
+        font-size: 0.95rem;
+        margin-bottom: 0;
+    }
+
+    .spotlightMeta {
+        gap: 6px;
+        margin-bottom: 0;
+    }
+
+    .type,
+    .likes {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+
+    .message {
+        font-size: 0.8rem;
+        -webkit-line-clamp: 1;
+    }
+
+    .date {
+        font-size: 0.75rem;
+    }
+
+    .cardActions {
+        padding: 0.6rem;
+        gap: 4px;
+    }
+
+    .actionBtn {
+        padding: 8px;
+        font-size: 0.8rem;
+        min-height: 36px;
+    }
+
+    .homePageBadge {
+        padding: 6px 10px;
+        font-size: 0.7rem;
+        top: 8px;
+        right: 8px;
+    }
+
+    .filterButtons {
+        gap: 8px;
+        margin-bottom: 1.5rem;
+    }
+
+    .filterButton {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+
+    .count {
+        font-size: 0.75rem;
+    }
+
+    .modal {
+        padding: 1.2rem;
+        max-width: 90vw;
+        border-radius: 16px;
+    }
+
+    .modalHeader {
+        gap: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .warningIcon,
+    .infoIcon {
+        font-size: 1.5rem;
+    }
+
+    .modalHeader h3 {
+        font-size: 1.1rem;
+    }
+
+    .modalBody {
+        font-size: 0.9rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .modalBtn {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+
+    .spinnerLarge {
+        font-size: 2.5rem;
+    }
+}
+
+/* ==================== Ultra Mobile ==================== */
+@media (max-width: 360px) {
+    .adminHeader h1 {
+        font-size: 1.4rem;
+    }
+
+    .formSection,
+    .spotlightsSection {
+        padding: 1rem;
+    }
+
+    .spotlightsGrid {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+    }
+
+    .cardContent h3 {
+        font-size: 0.9rem;
+    }
+
+    .message {
+        font-size: 0.75rem;
+    }
+
+    .modal {
+        padding: 1rem;
+    }
+}
+
+/* ==================== Print Styles ==================== */
+@media print {
+    .staroftheweek {
+        background: white;
+        padding: 0;
+    }
+
+    .adminHeader,
+    .formSection,
+    .filterButtons,
+    .cardActions,
+    .submitButton {
+        display: none;
+    }
+
+    .spotlightsGrid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}

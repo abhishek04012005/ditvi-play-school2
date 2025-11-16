@@ -1,0 +1,747 @@
+:root {
+  --primary-purple: #6a4c93;
+  --primary-yellow: #ffd166;
+  --text-gray: #333;
+}
+
+/* ==================== Overlay ==================== */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+  backdrop-filter: blur(10px);
+  padding: 1rem;
+  animation: overlayFadeIn 0.3s ease-out;
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(10px);
+  }
+}
+
+/* ==================== Container ==================== */
+.container {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+  max-width: 900px;
+  width: 100%;
+  max-height: 95vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+/* ==================== Header ==================== */
+.header {
+  padding: 2rem;
+  border-bottom: 3px solid rgba(106, 76, 147, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, rgba(106, 76, 147, 0.08) 0%, rgba(255, 209, 102, 0.08) 100%);
+  position: relative;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  pointer-events: none;
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.header h2 {
+  margin: 0;
+  color: var(--primary-purple);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.header p {
+  margin: 0;
+  color: var(--text-gray);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.closeBtn {
+  background: rgba(106, 76, 147, 0.12);
+  border: 2px solid rgba(106, 76, 147, 0.2);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-purple);
+  font-size: 1.2rem;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  padding: 0;
+}
+
+.closeBtn:hover {
+  background: rgba(106, 76, 147, 0.2);
+  border-color: var(--primary-purple);
+  transform: scale(1.1) rotate(90deg);
+}
+
+.closeBtn:active {
+  transform: scale(0.95);
+}
+
+/* ==================== Preview Container ==================== */
+.previewContainer {
+  flex: 1;
+  padding: 2.5rem;
+  background: linear-gradient(135deg, #f8f5fc 0%, #fffaf5 100%);
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.previewContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.previewContainer::-webkit-scrollbar-track {
+  background: rgba(106, 76, 147, 0.05);
+}
+
+.previewContainer::-webkit-scrollbar-thumb {
+  background: rgba(106, 76, 147, 0.2);
+  border-radius: 4px;
+}
+
+.previewContainer::-webkit-scrollbar-thumb:hover {
+  background: rgba(106, 76, 147, 0.3);
+}
+
+/* ==================== Printable Area ==================== */
+.printableArea {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(106, 76, 147, 0.1);
+  overflow: hidden;
+  width: 100%;
+  max-width: 500px;
+  aspect-ratio: 210 / 297;
+}
+
+/* ==================== Certificate ==================== */
+.certificate {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, #fafaf8 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  overflow: hidden;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.certificate::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  border: 3px solid var(--primary-purple);
+  border-radius: 8px;
+  opacity: 0.2;
+  z-index: 1;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.certificate::after {
+  content: '';
+  position: absolute;
+  top: 17px;
+  left: 17px;
+  right: 17px;
+  bottom: 17px;
+  border: 1px solid var(--primary-yellow);
+  border-radius: 6px;
+  opacity: 0.35;
+  z-index: 1;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.headerSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+  width: 100%;
+}
+
+.schoolLogoBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, var(--primary-yellow) 0%, rgba(255, 209, 102, 0.8) 100%);
+  border-radius: 50%;
+  box-shadow: 0 3px 12px rgba(255, 209, 102, 0.3);
+  border: 2px solid rgba(255, 209, 102, 0.6);
+  flex-shrink: 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.logoImg {
+  width: 65px;
+  height: 65px;
+  object-fit: contain;
+  border-radius: 50%;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.logoPlaceholder {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.schoolDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5px;
+  align-items: center;
+}
+
+.schoolTitle {
+  color: var(--primary-purple);
+  font-size: 14pt;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  margin: 0;
+  line-height: 1.1;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.schoolAddress {
+  color: var(--text-gray);
+  font-size: 7.5pt;
+  margin: 0;
+  font-weight: 600;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.certificateTitleSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  margin: 6px 0;
+}
+
+.decorLine {
+  width: 70px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--primary-yellow) 50%, transparent 100%);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.certificateText {
+  color: var(--primary-purple);
+  font-size: 22pt;
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin: 0;
+  text-transform: uppercase;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.awardTypeBox {
+  display: inline-block;
+  padding: 5px 10px;
+  border: 2px solid;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255, 209, 102, 0.15) 0%, rgba(255, 209, 102, 0.08) 100%);
+  margin: 3px 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.awardTypeText {
+  color: var(--primary-purple);
+  font-weight: 800;
+  font-size: 8.5pt;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin: 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.mainContent {
+  text-align: center;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  padding: 3px 0;
+  margin: 0;
+}
+
+.presentedToText {
+  color: var(--text-gray);
+  font-size: 9pt;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.3px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.studentNameBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2px 0;
+}
+
+.studentNameText {
+  color: var(--primary-purple);
+  font-size: 18pt;
+  font-weight: 900;
+  border-bottom: 3px solid var(--primary-yellow);
+  padding: 3px 6px;
+  margin: 0;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.forAchievingText {
+  color: var(--text-gray);
+  font-size: 8pt;
+  font-weight: 700;
+  margin: 2px 0 1px 0;
+  letter-spacing: 0.2px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.achievementTextBox {
+  background: linear-gradient(135deg, rgba(106, 76, 147, 0.08) 0%, rgba(255, 209, 102, 0.06) 100%);
+  border: 1.5px solid rgba(106, 76, 147, 0.15);
+  border-radius: 6px;
+  padding: 6px 8px;
+  margin: 2px 0;
+  min-height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.achievementText {
+  color: var(--primary-purple);
+  font-size: 8.5pt;
+  font-weight: 800;
+  line-height: 1.5;
+  font-style: italic;
+  margin: 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.congratsText {
+  color: var(--text-gray);
+  font-size: 7.5pt;
+  line-height: 1.4;
+  font-weight: 600;
+  margin: 1px 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.photoAndDateContainer {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(106, 76, 147, 0.1);
+}
+
+.photoSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-top: 1rem;
+}
+
+.photoFrame {
+  width: auto;
+  height: 8rem;
+  border: 2px solid var(--primary-purple);
+  border-radius: 6px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 3px 10px rgba(106, 76, 147, 0.2);
+  position: relative;
+  flex-shrink: 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.photoFrame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 1;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.photoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.photoLabel {
+  color: var(--text-gray);
+  font-size: 6pt;
+  font-weight: 700;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.dateAndSignatureBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.dateBox {
+  text-align: center;
+}
+
+.dateLabel {
+  color: var(--text-gray);
+  font-size: 7pt;
+  font-weight: 700;
+  margin: 0 0 1px 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.dateValue {
+  color: var(--primary-purple);
+  font-size: 8pt;
+  font-weight: 800;
+  margin: 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.signatureBox {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-width: 60px;
+}
+
+.signatureLine {
+  width: 100%;
+  min-width: 60px;
+  border-top: 2px solid var(--primary-purple);
+  margin-bottom: 2px;
+  height: 18px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.signatureLabel {
+  color: var(--text-gray);
+  font-size: 6.5pt;
+  font-weight: 700;
+  margin: 0;
+  text-transform: uppercase;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.footerText {
+  text-align: center;
+  font-size: 6.5pt;
+  color: var(--text-gray);
+  font-style: italic;
+  margin: 0;
+  font-weight: 600;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* img {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+} */
+
+/* ==================== Actions ==================== */
+.actions {
+  padding: 2rem;
+  border-top: 3px solid rgba(106, 76, 147, 0.1);
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  background: linear-gradient(135deg, rgba(106, 76, 147, 0.03) 0%, rgba(255, 209, 102, 0.03) 100%);
+  flex-wrap: wrap;
+}
+
+/* ==================== Action Buttons ==================== */
+.cancelBtn,
+.downloadBtn,
+.printBtn {
+  padding: 12px 24px;
+  border: 2px solid;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cancelBtn {
+  background: white;
+  color: var(--primary-purple);
+  border-color: var(--primary-purple);
+}
+
+.cancelBtn:hover:not(:disabled) {
+  background: rgba(106, 76, 147, 0.08);
+  border-color: var(--primary-purple);
+  box-shadow: 0 8px 20px rgba(106, 76, 147, 0.15);
+}
+
+.downloadBtn {
+  background: white;
+  color: var(--primary-yellow);
+  border-color: var(--primary-yellow);
+}
+
+.downloadBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(255, 209, 102, 0.1) 0%, rgba(255, 209, 102, 0.05) 100%);
+  border-color: var(--primary-yellow);
+  box-shadow: 0 8px 20px rgba(255, 209, 102, 0.2);
+}
+
+.printBtn {
+  background: linear-gradient(135deg, var(--primary-purple) 0%, #8b6ba8 100%);
+  color: white;
+  border-color: var(--primary-purple);
+  box-shadow: 0 12px 35px rgba(106, 76, 147, 0.3);
+}
+
+.printBtn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 45px rgba(106, 76, 147, 0.4);
+}
+
+.cancelBtn:active:not(:disabled),
+.downloadBtn:active:not(:disabled),
+.printBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.cancelBtn:disabled,
+.downloadBtn:disabled,
+.printBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==================== Spinner ==================== */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.printBtn .spinner {
+  border-top-color: white;
+}
+
+.downloadBtn .spinner {
+  border-top-color: var(--primary-yellow);
+  border-color: rgba(255, 209, 102, 0.3);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==================== Print Styles ==================== */
+@media print {
+  .overlay,
+  .header,
+  .actions,
+  .closeBtn {
+    display: none !important;
+  }
+
+  .previewContainer {
+    padding: 0 !important;
+    background: white !important;
+    overflow: visible !important;
+    margin: 0 !important;
+  }
+
+  .printableArea {
+    box-shadow: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    max-width: 100% !important;
+    aspect-ratio: auto !important;
+  }
+
+  .container {
+    max-width: 100% !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+}
+
+/* ==================== Responsive - Tablet ==================== */
+@media (max-width: 768px) {
+  .container {
+    max-width: 95vw;
+    max-height: 90vh;
+    border-radius: 20px;
+  }
+
+  .previewContainer {
+    padding: 1.5rem;
+  }
+
+  .actions {
+    padding: 1.5rem;
+    flex-direction: column;
+  }
+
+  .cancelBtn,
+  .downloadBtn,
+  .printBtn {
+    width: 100%;
+  }
+}
+
+/* ==================== Responsive - Mobile ==================== */
+@media (max-width: 480px) {
+  .container {
+    max-width: 98vw;
+    max-height: 85vh;
+    border-radius: 16px;
+  }
+
+  .previewContainer {
+    padding: 1rem;
+  }
+
+  .actions {
+    padding: 1rem;
+    gap: 0.8rem;
+    flex-direction: column;
+  }
+
+  .cancelBtn,
+  .downloadBtn,
+  .printBtn {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+}

@@ -1,6 +1,7 @@
 .about {
   padding: 6rem 2rem;
   background-color: var(--white);
+  position: relative;
 }
 
 .aboutContent {

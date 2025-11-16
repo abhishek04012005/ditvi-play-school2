@@ -10,6 +10,7 @@ import PreKGProgramImage from '../../../public/assets/programs/prekg.jpg'
 import KGProgramImage from '../../../public/assets/programs/kg.jpg'
 import HeadingTitle from '../heading/headingtitle';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
+import LineArt from '@/custom/lineart/lineart';
 
 const Program = () => {
     const [activeProgram, setActiveProgram] = useState(0);
@@ -75,28 +76,45 @@ const Program = () => {
 
     return (
         <section className={styles.programs}>
-            {/* <div className={styles.decorativeWave}>
-                <svg viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        fill="var(--primary-yellow)"
-                        fillOpacity="1"
-                        d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-                    ></path>
-                </svg>
-            </div> */}
+            
+                <LineArt
+                    circle={{
+                        size: 200,
+                        borderColor: 'var(--primary-yellow)',
+                        borderWidth: 3,
+                        borderStyle: 'dashed',
+                        opacity: 1,
+                        animationSpeed: 30,
+                        top: '7%',
+                        left: '80%',
+                        icon: <LocalShippingOutlinedIcon sx={{ fontSize: 40, transform: 'scale(-1, 1)' }} />,
+                        iconColor: 'var(--primary-purple)',
+                        showIcon: true
+                    }}
+                    dot={{
+                        size: 150,
+                        color: 'var(--primary-yellow)',
+                        opacity: 0.3,
+                        animationSpeed: 6,
+                        top: '80%',
+                        left: '5%',
+                        blur: 60,
+                        show: true
+                    }}
+                    squiggly={{
+                        size: 100,
+                        color: 'var(--primary-purple)',
+                        opacity: 0.1,
+                        animationSpeed: 8,
+                        top: '30%',
+                        left: '2%',
+                        show: true,
+                        reverse: true
+                    }}
+                    zIndex={1}
+                />
+        
 
-            <div className={styles.lineArt}>
-                <div className={styles.circle}>
-                    <div className={styles.circleInner}>
-                        <LocalShippingOutlinedIcon sx={{
-                            fontSize: 40,
-                            transform: 'scale(-1, 1)' // This creates horizontal mirror effect
-                        }} />
-                    </div>
-                </div>
-                <div className={styles.dot}></div>
-                <div className={styles.squiggly}></div>
-            </div>
 
             <HeadingTitle text="Our Programs" />
 
