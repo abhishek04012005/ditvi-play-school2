@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     const aadharCardFile = formData.get('aadhar_card') as File;
     const parentIdProofFile = formData.get('parent_id_proof') as File;
 
-    // Validate required fields
+    // Validate required fields (documents are optional)
     const errors: string[] = [];
     if (!child_name?.trim()) errors.push('Child name is required');
     if (!child_dob) errors.push('Child DOB is required');
@@ -57,12 +57,7 @@ export async function POST(request: NextRequest) {
     if (!parent_name?.trim()) errors.push('Parent name is required');
     if (!parent_mobile_number?.trim()) errors.push('Parent mobile number is required');
     if (!program_name) errors.push('Program name is required');
-
-    // Validate files
-    if (!photoFile) errors.push('Photo is required');
-    if (!birthCertificateFile) errors.push('Birth certificate is required');
-    if (!aadharCardFile) errors.push('Aadhar card is required');
-    if (!parentIdProofFile) errors.push('Parent ID proof is required');
+    // Note: All document files are now optional
 
     if (errors.length > 0) {
       return NextResponse.json({ error: errors.join(', ') }, { status: 400 });
@@ -79,46 +74,84 @@ export async function POST(request: NextRequest) {
       console.log('Step 2: Creating Google Drive folder...');
       const folderId = await createAdmissionFolder(admissionNumber);
 
-      // Step 3: Upload all documents
+      // Step 3: Upload all documents (optional)
       console.log('Step 3: Uploading documents...');
       
-      const [photoBuffer, birthCertBuffer, aadharBuffer, idProofBuffer] = await Promise.all([
-        photoFile.arrayBuffer(),
-        birthCertificateFile.arrayBuffer(),
-        aadharCardFile.arrayBuffer(),
-        parentIdProofFile.arrayBuffer(),
-      ]);
+      let photoUrl: string | null = null;
+      let birthCertUrl: string | null = null;
+      let aadharUrl: string | null = null;
+      let idProofUrl: string | null = null;
 
-      const [photoUrl, birthCertUrl, aadharUrl, idProofUrl] = await Promise.all([
-        uploadAdmissionDocument(
-          Buffer.from(photoBuffer),
-          photoFile.name,
-          admissionNumber,
-          'photo',
-          folderId
-        ),
-        uploadAdmissionDocument(
-          Buffer.from(birthCertBuffer),
-          birthCertificateFile.name,
-          admissionNumber,
-          'birth_certificate',
-          folderId
-        ),
-        uploadAdmissionDocument(
-          Buffer.from(aadharBuffer),
-          aadharCardFile.name,
-          admissionNumber,
-          'aadhar_card',
-          folderId
-        ),
-        uploadAdmissionDocument(
-          Buffer.from(idProofBuffer),
-          parentIdProofFile.name,
-          admissionNumber,
-          'parent_id_proof',
-          folderId
-        ),
-      ]);
+      const uploadPromises = [];
+
+      if (photoFile) {
+        uploadPromises.push(
+          photoFile.arrayBuffer().then((buffer) =>
+            uploadAdmissionDocument(
+              Buffer.from(buffer),
+              photoFile.name,
+              admissionNumber,
+              'photo',
+              folderId
+            )
+          ).then((url) => {
+            photoUrl = url;
+          })
+        );
+      }
+
+      if (birthCertificateFile) {
+        uploadPromises.push(
+          birthCertificateFile.arrayBuffer().then((buffer) =>
+            uploadAdmissionDocument(
+              Buffer.from(buffer),
+              birthCertificateFile.name,
+              admissionNumber,
+              'birth_certificate',
+              folderId
+            )
+          ).then((url) => {
+            birthCertUrl = url;
+          })
+        );
+      }
+
+      if (aadharCardFile) {
+        uploadPromises.push(
+          aadharCardFile.arrayBuffer().then((buffer) =>
+            uploadAdmissionDocument(
+              Buffer.from(buffer),
+              aadharCardFile.name,
+              admissionNumber,
+              'aadhar_card',
+              folderId
+            )
+          ).then((url) => {
+            aadharUrl = url;
+          })
+        );
+      }
+
+      if (parentIdProofFile) {
+        uploadPromises.push(
+          parentIdProofFile.arrayBuffer().then((buffer) =>
+            uploadAdmissionDocument(
+              Buffer.from(buffer),
+              parentIdProofFile.name,
+              admissionNumber,
+              'parent_id_proof',
+              folderId
+            )
+          ).then((url) => {
+            idProofUrl = url;
+          })
+        );
+      }
+
+      // Wait for all available uploads
+      if (uploadPromises.length > 0) {
+        await Promise.all(uploadPromises);
+      }
 
       // Step 4: Save to database
       console.log('Step 4: Saving to database...');

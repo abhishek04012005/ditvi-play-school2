@@ -6,6 +6,8 @@ import { FaSpinner, FaCheckCircle, FaDownload } from 'react-icons/fa';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import styles from './admissionform.module.css';
+import HeadingTitle from '@/components/heading/headingtitle';
+import { EmojiPeople, FamilyRestroom, SchoolOutlined, DescriptionOutlined } from '@mui/icons-material';
 
 interface FormData {
   // Child Details
@@ -57,6 +59,7 @@ export default function AdmissionForm() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [formData, setFormData] = useState<FormData>({
     child_name: '',
@@ -124,32 +127,54 @@ export default function AdmissionForm() {
 
   const validateStep = (stepNum: number): boolean => {
     const errors: string[] = [];
+    const fieldErrors: { [key: string]: string } = {};
 
     if (stepNum === 1) {
-      if (!formData.child_name.trim()) errors.push('Child name is required');
-      if (!formData.child_dob) errors.push('Date of birth is required');
-      if (!formData.child_gender) errors.push('Gender is required');
-      if (!formData.child_place_of_birth.trim()) errors.push('Place of birth is required');
+      if (!formData.child_name.trim()) {
+        errors.push('Child name is required');
+        fieldErrors.child_name = 'Child name is required';
+      }
+      if (!formData.child_dob) {
+        errors.push('Date of birth is required');
+        fieldErrors.child_dob = 'Date of birth is required';
+      }
+      if (!formData.child_gender) {
+        errors.push('Gender is required');
+        fieldErrors.child_gender = 'Gender is required';
+      }
+      if (!formData.child_place_of_birth.trim()) {
+        errors.push('Place of birth is required');
+        fieldErrors.child_place_of_birth = 'Place of birth is required';
+      }
     } else if (stepNum === 2) {
-      if (!formData.parent_name.trim()) errors.push('Parent name is required');
-      if (!formData.parent_mobile_number.trim()) errors.push('Mobile number is required');
+      if (!formData.parent_name.trim()) {
+        errors.push('Parent name is required');
+        fieldErrors.parent_name = 'Parent name is required';
+      }
+      if (!formData.parent_mobile_number.trim()) {
+        errors.push('Mobile number is required');
+        fieldErrors.parent_mobile_number = 'Mobile number is required';
+      }
       if (!/^[0-9]{10}$/.test(formData.parent_mobile_number)) {
         errors.push('Mobile number must be 10 digits');
+        fieldErrors.parent_mobile_number = 'Mobile number must be 10 digits';
       }
     } else if (stepNum === 3) {
-      if (!formData.program_name) errors.push('Program is required');
+      if (!formData.program_name) {
+        errors.push('Program is required');
+        fieldErrors.program_name = 'Program is required';
+      }
     } else if (stepNum === 4) {
-      if (!files.photo) errors.push('Photo is required');
-      if (!files.birth_certificate) errors.push('Birth certificate is required');
-      if (!files.aadhar_card) errors.push('Aadhar card is required');
-      if (!files.parent_id_proof) errors.push('Parent ID proof is required');
+      // All documents are optional - no validation required
     }
 
     if (errors.length > 0) {
+      setErrors(fieldErrors);
       toast.error(errors[0]);
       return false;
     }
 
+    setErrors({});
     return true;
   };
 
@@ -260,56 +285,104 @@ export default function AdmissionForm() {
           <FaCheckCircle className={styles.successIcon} />
           <h1>Admission Submitted Successfully!</h1>
 
-          {/* PDF Content (Hidden) */}
-          <div ref={pdfRef} style={{ display: 'none' }} className={styles.pdfContent}>
-            <AdmissionConfirmationSlip data={submissionResult} formData={formData} />
-          </div>
+          {/* Step 1: Child Details */}
+          {step === 1 && (
+            <div className={styles.stepContent}>
 
-          {/* Visible Confirmation */}
-          <div className={styles.confirmationContent}>
-            <div className={styles.admissionDetails}>
-              <h2>Admission Confirmation Slip</h2>
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>Child's Full Name *</label>
+                  <input
+                    type="text"
+                    name="child_name"
+                    value={formData.child_name}
+                    onChange={handleInputChange}
+                    placeholder="Enter child's full name"
+                    required
+                  />
+                </div>
 
-              <div className={styles.detailsGrid}>
-                <div className={styles.detailRow}>
-                  <span className={styles.label}>Admission Number:</span>
-                  <span className={styles.value}>{submissionResult.admission_number}</span>
-                </div>
-                <div className={styles.detailRow}>
-                  <span className={styles.label}>Child Name:</span>
-                  <span className={styles.value}>{submissionResult.child_name}</span>
-                </div>
-                <div className={styles.detailRow}>
-                  <span className={styles.label}>Parent Mobile:</span>
-                  <span className={styles.value}>{submissionResult.parent_mobile_number}</span>
-                </div>
-                <div className={styles.detailRow}>
-                  <span className={styles.label}>Program:</span>
-                  <span className={styles.value}>{submissionResult.program_name}</span>
-                </div>
-                <div className={styles.detailRow}>
-                  <span className={styles.label}>Status:</span>
-                  <span className={`${styles.value} ${styles.pending}`}>pending</span>
+                <div className={styles.formGroup}>
+                  <label>Date of Birth *</label>
+                  <input
+                    type="date"
+                    name="child_dob"
+                    value={formData.child_dob}
+                    onChange={handleInputChange}
+                    required
+                  />
                 </div>
               </div>
 
-              <p className={styles.infoText}>
-                ℹ️ Your admission application has been submitted. We will review your documents and contact you within 2-3 business days.
-              </p>
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>Gender *</label>
+                  <div className={styles.radioGroup}>
+                    <div className={styles.radioItem}>
+                      <input
+                        type="radio"
+                        id="gender_male"
+                        name="child_gender"
+                        value="male"
+                        checked={formData.child_gender === 'male'}
+                        onChange={handleInputChange}
+                        className={styles.radioInput}
+                      />
+                      <label htmlFor="gender_male" className={styles.radioLabel}>Male</label>
+                    </div>
+
+                    <div className={styles.radioItem}>
+                      <input
+                        type="radio"
+                        id="gender_female"
+                        name="child_gender"
+                        value="female"
+                        checked={formData.child_gender === 'female'}
+                        onChange={handleInputChange}
+                        className={styles.radioInput}
+                      />
+                      <label htmlFor="gender_female" className={styles.radioLabel}>Female</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Place of Birth *</label>
+                  <input
+                    type="text"
+                    name="child_place_of_birth"
+                    value={formData.child_place_of_birth}
+                    onChange={handleInputChange}
+                    placeholder="Enter place of birth"
+                    required
+                  />
+                </div>
+              </div>
             </div>
+          )}
+
+          {/* Render confirmation slip (used for PDF) */}
+          <div ref={pdfRef}>
+            <AdmissionConfirmationSlip data={submissionResult} formData={formData} />
           </div>
 
-          {/* Action Buttons */}
-          <div className={styles.actionButtons}>
-            <button className={styles.downloadBtn} onClick={generatePDF}>
-              <FaDownload /> Download Confirmation Slip (PDF)
-            </button>
+          <div className={styles.buttonGroup}>
             <button
-              className={styles.newAdmissionBtn}
+              type="button"
+              className={styles.nextBtn}
+              onClick={generatePDF}
+            >
+              <FaDownload /> Download PDF
+            </button>
+
+            <button
+              type="button"
+              className={styles.nextBtn}
               onClick={() => {
-                setStep(1);
+                // Reset form to allow another submission
                 setSubmitted(false);
                 setSubmissionResult(null);
+                setStep(1);
                 setFormData({
                   child_name: '',
                   child_dob: '',
@@ -347,39 +420,60 @@ export default function AdmissionForm() {
   return (
     <div className={styles.container}>
       <div className={styles.formCard}>
-        <div className={styles.header}>
-          <h1>🎓 Admission Form</h1>
-          <p>Fill in the details below to apply for admission</p>
-        </div>
+          <div className={styles.formLayout}>
+            <main className={styles.main}>
+              <HeadingTitle text="Admission Form" />
+              <p className={styles.subtitle}>Fill in the details below to apply for admission</p>
 
-        {/* Step Indicator */}
-        <div className={styles.stepIndicator}>
-          {[1, 2, 3, 4].map((stepNum) => (
-            <div key={stepNum} className={`${styles.step} ${step >= stepNum ? styles.active : ''}`}>
-              {stepNum}
-            </div>
-          ))}
-        </div>
+              <div className={styles.topProgress} aria-hidden>
+                <div className={styles.progressWrap}>
+                  <div
+                    className={styles.progressBar}
+                    style={{ width: `${((step - 1) / 3) * 100}%` }}
+                  />
+                </div>
 
-        <form onSubmit={handleSubmit}>
+                <div className={styles.pills}>
+                  {[
+                    { n: 1, t: 'Child Details', icon: EmojiPeople },
+                    { n: 2, t: "Parent's Details", icon: FamilyRestroom },
+                    { n: 3, t: 'Academic Details', icon: SchoolOutlined },
+                    { n: 4, t: 'Documents', icon: DescriptionOutlined },
+                  ].map((s) => {
+                    const IconComponent = s.icon;
+                    return (
+                      <div
+                        key={s.n}
+                        className={`${styles.pill} ${step >= s.n ? styles.active : ''} ${step > s.n ? styles.completed : ''}`}>
+                        <span className={styles.pillNumber}>{s.n}</span>
+                        <IconComponent className={styles.pillIcon} />
+                        <h2 className={styles.pillText}>{s.t}</h2>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <form onSubmit={handleSubmit}>
           {/* Step 1: Child Details */}
           {step === 1 && (
             <div className={styles.stepContent}>
-              <h2>👶 Child Details</h2>
-
-              <div className={styles.formGroup}>
-                <label>Child's Full Name *</label>
-                <input
-                  type="text"
-                  name="child_name"
-                  value={formData.child_name}
-                  onChange={handleInputChange}
-                  placeholder="Enter child's full name"
-                  required
-                />
-              </div>
+              {/* heading removed: step label is shown in the top stepper */}
 
               <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>Child's Full Name *</label>
+                  <input
+                    type="text"
+                    name="child_name"
+                    value={formData.child_name}
+                    onChange={handleInputChange}
+                    placeholder="Enter child's full name"
+                    required
+                  />
+                  {errors.child_name && <p className={styles.errorMessage}>{errors.child_name}</p>}
+                </div>
+
                 <div className={styles.formGroup}>
                   <label>Date of Birth *</label>
                   <input
@@ -389,36 +483,55 @@ export default function AdmissionForm() {
                     onChange={handleInputChange}
                     required
                   />
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label>Gender *</label>
-                  <select
-                    name="child_gender"
-                    value={formData.child_gender}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    <option value="">Select Gender</option>
-                    {genders.map((g) => (
-                      <option key={g.value} value={g.value}>
-                        {g.label}
-                      </option>
-                    ))}
-                  </select>
+                  {errors.child_dob && <p className={styles.errorMessage}>{errors.child_dob}</p>}
                 </div>
               </div>
 
-              <div className={styles.formGroup}>
-                <label>Place of Birth *</label>
-                <input
-                  type="text"
-                  name="child_place_of_birth"
-                  value={formData.child_place_of_birth}
-                  onChange={handleInputChange}
-                  placeholder="Enter place of birth"
-                  required
-                />
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label>Gender *</label>
+                  <div className={styles.radioGroup}>
+                    <div className={styles.radioItem}>
+                      <input
+                        type="radio"
+                        id="gender_male"
+                        name="child_gender"
+                        value="male"
+                        checked={formData.child_gender === 'male'}
+                        onChange={handleInputChange}
+                        className={styles.radioInput}
+                      />
+                      <label htmlFor="gender_male" className={styles.radioLabel}>Male</label>
+                    </div>
+
+                    <div className={styles.radioItem}>
+                      <input
+                        type="radio"
+                        id="gender_female"
+                        name="child_gender"
+                        value="female"
+                        checked={formData.child_gender === 'female'}
+                        onChange={handleInputChange}
+                        className={styles.radioInput}
+                      />
+                      <label htmlFor="gender_female" className={styles.radioLabel}>Female</label>
+                    </div>
+                  </div>
+                  {errors.child_gender && <p className={styles.errorMessage}>{errors.child_gender}</p>}
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Place of Birth *</label>
+                  <input
+                    type="text"
+                    name="child_place_of_birth"
+                    value={formData.child_place_of_birth}
+                    onChange={handleInputChange}
+                    placeholder="Enter place of birth"
+                    required
+                  />
+                  {errors.child_place_of_birth && <p className={styles.errorMessage}>{errors.child_place_of_birth}</p>}
+                </div>
               </div>
             </div>
           )}
@@ -426,7 +539,7 @@ export default function AdmissionForm() {
           {/* Step 2: Parent Details */}
           {step === 2 && (
             <div className={styles.stepContent}>
-              <h2>👨‍👩‍👧 Parent Details</h2>
+              {/* heading removed: step label is shown in the top stepper */}
 
               <div className={styles.formGroup}>
                 <label>Parent's Full Name *</label>
@@ -438,6 +551,7 @@ export default function AdmissionForm() {
                   placeholder="Enter parent's full name"
                   required
                 />
+                {errors.parent_name && <p className={styles.errorMessage}>{errors.parent_name}</p>}
               </div>
 
               <div className={styles.formRow}>
@@ -453,17 +567,7 @@ export default function AdmissionForm() {
                     pattern="[0-9]{10}"
                     required
                   />
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label>Email Address</label>
-                  <input
-                    type="email"
-                    name="parent_email"
-                    value={formData.parent_email}
-                    onChange={handleInputChange}
-                    placeholder="parent@email.com"
-                  />
+                  {errors.parent_mobile_number && <p className={styles.errorMessage}>{errors.parent_mobile_number}</p>}
                 </div>
               </div>
             </div>
@@ -472,23 +576,27 @@ export default function AdmissionForm() {
           {/* Step 3: Academics */}
           {step === 3 && (
             <div className={styles.stepContent}>
-              <h2>📚 Academic Details</h2>
+              {/* heading removed: step label is shown in the top stepper */}
 
               <div className={styles.formGroup}>
                 <label>Program *</label>
-                <select
-                  name="program_name"
-                  value={formData.program_name}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="">Select Program</option>
+                <div className={styles.radioGroup}>
                   {programs.map((p) => (
-                    <option key={p.value} value={p.value}>
-                      {p.label}
-                    </option>
+                    <div className={styles.radioItem} key={p.value}>
+                      <input
+                        type="radio"
+                        id={`program_${p.value}`}
+                        name="program_name"
+                        value={p.value}
+                        checked={formData.program_name === p.value}
+                        onChange={handleInputChange}
+                        className={styles.radioInput}
+                      />
+                      <label htmlFor={`program_${p.value}`} className={styles.radioLabel}>{p.label}</label>
+                    </div>
                   ))}
-                </select>
+                </div>
+                {errors.program_name && <p className={styles.errorMessage}>{errors.program_name}</p>}
               </div>
 
               <div className={styles.formGroup}>
@@ -507,11 +615,11 @@ export default function AdmissionForm() {
           {/* Step 4: Documents */}
           {step === 4 && (
             <div className={styles.stepContent}>
-              <h2>📄 Documents</h2>
+              {/* heading removed: step label is shown in the top stepper */}
 
               {/* Photo */}
               <FileUploadField
-                label="Photo *"
+                label="Photo (Optional)"
                 fieldName="photo"
                 accept="image/*"
                 preview={filePreviews.photo}
@@ -520,7 +628,7 @@ export default function AdmissionForm() {
 
               {/* Birth Certificate */}
               <FileUploadField
-                label="Birth Certificate *"
+                label="Birth Certificate (Optional)"
                 fieldName="birth_certificate"
                 accept=".pdf,image/*"
                 preview={filePreviews.birth_certificate}
@@ -529,7 +637,7 @@ export default function AdmissionForm() {
 
               {/* Aadhar Card */}
               <FileUploadField
-                label="Aadhar Card *"
+                label="Aadhar Card (Optional)"
                 fieldName="aadhar_card"
                 accept=".pdf,image/*"
                 preview={filePreviews.aadhar_card}
@@ -538,7 +646,7 @@ export default function AdmissionForm() {
 
               {/* Parent ID Proof */}
               <FileUploadField
-                label="Parent's ID Proof *"
+                label="Parent's ID Proof (Optional)"
                 fieldName="parent_id_proof"
                 accept=".pdf,image/*"
                 preview={filePreviews.parent_id_proof}
@@ -587,9 +695,11 @@ export default function AdmissionForm() {
               </button>
             )}
           </div>
-        </form>
+              </form>
+            </main>
+          </div>
+        </div>
       </div>
-    </div>
   );
 }
 

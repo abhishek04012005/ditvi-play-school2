@@ -200,10 +200,10 @@ export const saveAdmissionToDatabase = async (admissionData: {
   parent_email?: string;
   program_name: string;
   previous_school?: string;
-  photo_url: string;
-  birth_certificate_url: string;
-  aadhar_card_url: string;
-  parent_id_proof_url: string;
+  photo_url?: string | null;
+  birth_certificate_url?: string | null;
+  aadhar_card_url?: string | null;
+  parent_id_proof_url?: string | null;
   google_drive_folder_id: string;
 }): Promise<any> => {
   try {
