@@ -60,6 +60,7 @@ export default function AdmissionForm() {
   const [submitted, setSubmitted] = useState(false);
   const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [uploadDocsNow, setUploadDocsNow] = useState(true);
 
   const [formData, setFormData] = useState<FormData>({
     child_name: '',
@@ -178,8 +179,8 @@ export default function AdmissionForm() {
     return true;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
 
     if (!validateStep(4)) return;
 
@@ -203,11 +204,13 @@ export default function AdmissionForm() {
         formDataToSend.append('previous_school', formData.previous_school);
       }
 
-      // Add files
-      if (files.photo) formDataToSend.append('photo', files.photo);
-      if (files.birth_certificate) formDataToSend.append('birth_certificate', files.birth_certificate);
-      if (files.aadhar_card) formDataToSend.append('aadhar_card', files.aadhar_card);
-      if (files.parent_id_proof) formDataToSend.append('parent_id_proof', files.parent_id_proof);
+      // Add files only if user chose to upload now
+      if (uploadDocsNow) {
+        if (files.photo) formDataToSend.append('photo', files.photo);
+        if (files.birth_certificate) formDataToSend.append('birth_certificate', files.birth_certificate);
+        if (files.aadhar_card) formDataToSend.append('aadhar_card', files.aadhar_card);
+        if (files.parent_id_proof) formDataToSend.append('parent_id_proof', files.parent_id_proof);
+      }
 
       // Submit
       const response = await fetch('/api/admission', {
@@ -454,7 +457,14 @@ export default function AdmissionForm() {
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit}>
+              <form
+                onSubmit={(e) => {
+                  // Prevent any native form submission (e.g. Enter key).
+                  // Actual posting is only performed when the user clicks the
+                  // explicit "✅ Submit Admission" button which calls handleSubmit.
+                  e.preventDefault();
+                }}
+              >
           {/* Step 1: Child Details */}
           {step === 1 && (
             <div className={styles.stepContent}>
@@ -617,41 +627,69 @@ export default function AdmissionForm() {
             <div className={styles.stepContent}>
               {/* heading removed: step label is shown in the top stepper */}
 
-              {/* Photo */}
-              <FileUploadField
-                label="Photo (Optional)"
-                fieldName="photo"
-                accept="image/*"
-                preview={filePreviews.photo}
-                onChange={(e) => handleFileChange(e, 'photo')}
-              />
+              <div className={styles.formGroup}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input
+                    type="checkbox"
+                    checked={uploadDocsNow}
+                    onChange={(e) => setUploadDocsNow(e.target.checked)}
+                  />
+                  <span style={{ fontWeight: 700 }}>Upload documents now</span>
+                </label>
+                <p style={{ marginTop: '6px', color: '#666', fontSize: '0.92rem' }}>
+                  If you don't want to upload documents now, uncheck this and submit — you can upload later from the admin portal.
+                </p>
+              </div>
 
-              {/* Birth Certificate */}
-              <FileUploadField
-                label="Birth Certificate (Optional)"
-                fieldName="birth_certificate"
-                accept=".pdf,image/*"
-                preview={filePreviews.birth_certificate}
-                onChange={(e) => handleFileChange(e, 'birth_certificate')}
-              />
+              <div className={styles.formGroup}>
+                <label>Selected files</label>
+                <div style={{ display: 'grid', gap: 6 }}>
+                  <small>Photo: {filePreviews.photo ? (filePreviews.photo.startsWith('data:image') ? 'Image selected' : filePreviews.photo) : 'Not uploaded'}</small>
+                  <small>Birth Certificate: {filePreviews.birth_certificate ?? 'Not uploaded'}</small>
+                  <small>Aadhar Card: {filePreviews.aadhar_card ?? 'Not uploaded'}</small>
+                  <small>Parent ID Proof: {filePreviews.parent_id_proof ?? 'Not uploaded'}</small>
+                </div>
+              </div>
 
-              {/* Aadhar Card */}
-              <FileUploadField
-                label="Aadhar Card (Optional)"
-                fieldName="aadhar_card"
-                accept=".pdf,image/*"
-                preview={filePreviews.aadhar_card}
-                onChange={(e) => handleFileChange(e, 'aadhar_card')}
-              />
+              {uploadDocsNow && (
+                <>
+                  {/* Photo */}
+                  <FileUploadField
+                    label="Photo (Optional)"
+                    fieldName="photo"
+                    accept="image/*"
+                    preview={filePreviews.photo}
+                    onChange={(e) => handleFileChange(e, 'photo')}
+                  />
 
-              {/* Parent ID Proof */}
-              <FileUploadField
-                label="Parent's ID Proof (Optional)"
-                fieldName="parent_id_proof"
-                accept=".pdf,image/*"
-                preview={filePreviews.parent_id_proof}
-                onChange={(e) => handleFileChange(e, 'parent_id_proof')}
-              />
+                  {/* Birth Certificate */}
+                  <FileUploadField
+                    label="Birth Certificate (Optional)"
+                    fieldName="birth_certificate"
+                    accept=".pdf,image/*"
+                    preview={filePreviews.birth_certificate}
+                    onChange={(e) => handleFileChange(e, 'birth_certificate')}
+                  />
+
+                  {/* Aadhar Card */}
+                  <FileUploadField
+                    label="Aadhar Card (Optional)"
+                    fieldName="aadhar_card"
+                    accept=".pdf,image/*"
+                    preview={filePreviews.aadhar_card}
+                    onChange={(e) => handleFileChange(e, 'aadhar_card')}
+                  />
+
+                  {/* Parent ID Proof */}
+                  <FileUploadField
+                    label="Parent's ID Proof (Optional)"
+                    fieldName="parent_id_proof"
+                    accept=".pdf,image/*"
+                    preview={filePreviews.parent_id_proof}
+                    onChange={(e) => handleFileChange(e, 'parent_id_proof')}
+                  />
+                </>
+              )}
             </div>
           )}
 
@@ -681,9 +719,10 @@ export default function AdmissionForm() {
               </button>
             ) : (
               <button
-                type="submit"
+                type="button"
                 className={styles.submitBtn}
                 disabled={loading}
+                onClick={() => handleSubmit()}
               >
                 {loading ? (
                   <>
