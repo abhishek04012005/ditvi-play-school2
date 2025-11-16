@@ -1,13 +1,19 @@
 'use client';
 import { useEffect, useState, useRef, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { FaTrash, FaHome, FaCheck, FaTimes, FaEye, FaEyeSlash, FaSpinner, FaPrint } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
 import styles from './spotlight.module.css';
-import PrintCard from './printcard/printcard';
 import HeadingTitle from '@/components/heading/headingtitle';
+
+// Dynamically import PrintCard to avoid SSR issues
+const PrintCard = dynamic(() => import('./printcard/printcard'), {
+    ssr: false,
+    loading: () => <div>Loading...</div>,
+});
 
 interface Spotlight {
     id: string;
@@ -44,6 +50,7 @@ const getStoragePathFromPublicUrl = (url?: string) => {
 };
 
 const Spotlight = () => {
+    const [isMounted, setIsMounted] = useState(false);
     const [loading, setLoading] = useState(false);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -70,6 +77,11 @@ const Spotlight = () => {
     const [selectedForPrint, setSelectedForPrint] = useState<Spotlight | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // Set mounted state
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     // Fetch all spotlights
     const fetchSpotlights = useCallback(async () => {
@@ -101,8 +113,10 @@ const Spotlight = () => {
     }, []);
 
     useEffect(() => {
-        fetchSpotlights();
-    }, [fetchSpotlights]);
+        if (isMounted) {
+            fetchSpotlights();
+        }
+    }, [isMounted, fetchSpotlights]);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -288,12 +302,25 @@ const Spotlight = () => {
             ? spotlights
             : spotlights.filter((a) => a.award_type === filterType);
 
+    // Don't render until mounted on client
+    if (!isMounted) {
+        return (
+            <div className={styles.staroftheweek}>
+                <HeadingTitle text='Spotlight Dashboard' />
+                <div className={styles.adminContainer}>
+                    <div className={styles.loadingContainer}>
+                        <FaSpinner className={styles.spinnerLarge} />
+                        <p>Loading...</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className={styles.staroftheweek}>
             <HeadingTitle text='Spotlight Dashboard' />
             <div className={styles.adminContainer}>
-                {/* Header */}
-
                 {/* Create Spotlight Form */}
                 <motion.div
                     className={styles.formSection}
