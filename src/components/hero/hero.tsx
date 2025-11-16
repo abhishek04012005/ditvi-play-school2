@@ -30,7 +30,7 @@ const Hero = () => {
       subtitle: 'Young Minds',
       description: 'Creating a Strong Foundation for Lifelong Learning',
       ctaText: 'Admission Now',
-      ctaLink: '/admission'
+      ctaLink: '/admission-form'
     },
     {
       image: HeroImage3,

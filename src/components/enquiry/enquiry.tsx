@@ -275,15 +275,7 @@ const Enquiry = () => {
                     className={styles.headerSection}
                 >
                     <HeadingTitle text="Admission Enquiry" />
-                    <motion.p
-                        className={styles.subtitle}
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        viewport={{ once: true }}
-                    >
-                        Take the first step towards your child's bright future. Fill out the form below and we'll get back to you shortly.
-                    </motion.p>
+               
                 </motion.div>
 
                 <motion.div

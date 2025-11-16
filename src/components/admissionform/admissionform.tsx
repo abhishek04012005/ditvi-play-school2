@@ -8,6 +8,8 @@ import html2canvas from 'html2canvas';
 import styles from './admissionform.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
 import { EmojiPeople, FamilyRestroom, SchoolOutlined, DescriptionOutlined } from '@mui/icons-material';
+import LineArt from '@/custom/lineart/lineart';
+import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 
 interface FormData {
   // Child Details
@@ -48,11 +50,6 @@ const programs = [
   { value: 'kg2', label: 'KG - 2' },
 ];
 
-const genders = [
-  { value: 'male', label: 'Male' },
-  { value: 'female', label: 'Female' },
-  { value: 'other', label: 'Other' },
-];
 
 export default function AdmissionForm() {
   const [step, setStep] = useState(1);
@@ -283,6 +280,7 @@ export default function AdmissionForm() {
   // Success Screen
   if (submitted && submissionResult) {
     return (
+
       <div className={styles.container}>
         <div className={styles.successCard}>
           <FaCheckCircle className={styles.successIcon} />
@@ -416,16 +414,54 @@ export default function AdmissionForm() {
           </div>
         </div>
       </div>
+
     );
   }
 
   // Form Screen
   return (
-    <div className={styles.container}>
-      <div className={styles.formCard}>
+    <section className={styles.admissionForm}>
+      <LineArt
+        circle={{
+          size: 200,
+          borderColor: 'var(--primary-yellow)',
+          borderWidth: 3,
+          borderStyle: 'dashed',
+          opacity: 1,
+          animationSpeed: 30,
+          bottom: '7%',
+          left: '7%',
+          icon: <SchoolOutlinedIcon sx={{ fontSize: 40, transform: 'scale(-1, 1)' }} />,
+          iconColor: 'var(--primary-purple)',
+          showIcon: true
+        }}
+        dot={{
+          size: 150,
+          color: 'var(--primary-yellow)',
+          opacity: 0.3,
+          animationSpeed: 6,
+          top: '10%',
+          right: '5%',
+          blur: 60,
+          show: true
+        }}
+        squiggly={{
+          size: 100,
+          color: 'var(--primary-purple)',
+          opacity: 0.1,
+          animationSpeed: 8,
+          top: '30%',
+          left: '2%',
+          show: true,
+          reverse: true
+        }}
+        zIndex={1}
+      />
+      <HeadingTitle text="Admission Form" />
+      <div className={styles.container}>
+        <div className={styles.formCard}>
           <div className={styles.formLayout}>
             <main className={styles.main}>
-              <HeadingTitle text="Admission Form" />
               <p className={styles.subtitle}>Fill in the details below to apply for admission</p>
 
               <div className={styles.topProgress} aria-hidden>
@@ -441,7 +477,7 @@ export default function AdmissionForm() {
                     { n: 1, t: 'Child Details', icon: EmojiPeople },
                     { n: 2, t: "Parent's Details", icon: FamilyRestroom },
                     { n: 3, t: 'Academic Details', icon: SchoolOutlined },
-                    { n: 4, t: 'Documents', icon: DescriptionOutlined },
+                    { n: 4, t: 'Upload Documents', icon: DescriptionOutlined },
                   ].map((s) => {
                     const IconComponent = s.icon;
                     return (
@@ -455,7 +491,13 @@ export default function AdmissionForm() {
                     );
                   })}
                 </div>
+                <div className={styles.progressWrap}>
+                  <div
+                    className={styles.progressBar}
+                  />
+                </div>
               </div>
+
 
               <form
                 onSubmit={(e) => {
@@ -465,287 +507,316 @@ export default function AdmissionForm() {
                   e.preventDefault();
                 }}
               >
-          {/* Step 1: Child Details */}
-          {step === 1 && (
-            <div className={styles.stepContent}>
-              {/* heading removed: step label is shown in the top stepper */}
+                {/* Step 1: Child Details */}
+                {step === 1 && (
+                  <div className={styles.stepContent}>
+                    {/* heading removed: step label is shown in the top stepper */}
 
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label>Child's Full Name *</label>
-                  <input
-                    type="text"
-                    name="child_name"
-                    value={formData.child_name}
-                    onChange={handleInputChange}
-                    placeholder="Enter child's full name"
-                    required
-                  />
-                  {errors.child_name && <p className={styles.errorMessage}>{errors.child_name}</p>}
-                </div>
+                    <div className={styles.formRow}>
+                      <div className={styles.formGroup}>
+                        <label>Child's Full Name *</label>
+                        <input
+                          type="text"
+                          name="child_name"
+                          value={formData.child_name}
+                          onChange={handleInputChange}
+                          placeholder="Enter child's full name"
+                          required
+                        />
+                        {errors.child_name && <p className={styles.errorMessage}>{errors.child_name}</p>}
+                      </div>
 
-                <div className={styles.formGroup}>
-                  <label>Date of Birth *</label>
-                  <input
-                    type="date"
-                    name="child_dob"
-                    value={formData.child_dob}
-                    onChange={handleInputChange}
-                    required
-                  />
-                  {errors.child_dob && <p className={styles.errorMessage}>{errors.child_dob}</p>}
-                </div>
-              </div>
-
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label>Gender *</label>
-                  <div className={styles.radioGroup}>
-                    <div className={styles.radioItem}>
-                      <input
-                        type="radio"
-                        id="gender_male"
-                        name="child_gender"
-                        value="male"
-                        checked={formData.child_gender === 'male'}
-                        onChange={handleInputChange}
-                        className={styles.radioInput}
-                      />
-                      <label htmlFor="gender_male" className={styles.radioLabel}>Male</label>
+                      <div className={styles.formGroup}>
+                        <label>Date of Birth *</label>
+                        <input
+                          type="date"
+                          name="child_dob"
+                          value={formData.child_dob}
+                          onChange={handleInputChange}
+                          required
+                        />
+                        {errors.child_dob && <p className={styles.errorMessage}>{errors.child_dob}</p>}
+                      </div>
                     </div>
 
-                    <div className={styles.radioItem}>
-                      <input
-                        type="radio"
-                        id="gender_female"
-                        name="child_gender"
-                        value="female"
-                        checked={formData.child_gender === 'female'}
-                        onChange={handleInputChange}
-                        className={styles.radioInput}
-                      />
-                      <label htmlFor="gender_female" className={styles.radioLabel}>Female</label>
+                    <div className={styles.formRow}>
+                      <div className={styles.formGroup}>
+                        <label>Gender *</label>
+                        <div className={styles.radioGroup}>
+                          <div className={styles.radioItem}>
+                            <input
+                              type="radio"
+                              id="gender_male"
+                              name="child_gender"
+                              value="male"
+                              checked={formData.child_gender === 'male'}
+                              onChange={handleInputChange}
+                              className={styles.radioInput}
+                            />
+                            <label htmlFor="gender_male" className={styles.radioLabel}>Male</label>
+                          </div>
+
+                          <div className={styles.radioItem}>
+                            <input
+                              type="radio"
+                              id="gender_female"
+                              name="child_gender"
+                              value="female"
+                              checked={formData.child_gender === 'female'}
+                              onChange={handleInputChange}
+                              className={styles.radioInput}
+                            />
+                            <label htmlFor="gender_female" className={styles.radioLabel}>Female</label>
+                          </div>
+                        </div>
+                        {errors.child_gender && <p className={styles.errorMessage}>{errors.child_gender}</p>}
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label>Place of Birth *</label>
+                        <input
+                          type="text"
+                          name="child_place_of_birth"
+                          value={formData.child_place_of_birth}
+                          onChange={handleInputChange}
+                          placeholder="Enter place of birth"
+                          required
+                        />
+                        {errors.child_place_of_birth && <p className={styles.errorMessage}>{errors.child_place_of_birth}</p>}
+                      </div>
                     </div>
                   </div>
-                  {errors.child_gender && <p className={styles.errorMessage}>{errors.child_gender}</p>}
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label>Place of Birth *</label>
-                  <input
-                    type="text"
-                    name="child_place_of_birth"
-                    value={formData.child_place_of_birth}
-                    onChange={handleInputChange}
-                    placeholder="Enter place of birth"
-                    required
-                  />
-                  {errors.child_place_of_birth && <p className={styles.errorMessage}>{errors.child_place_of_birth}</p>}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Step 2: Parent Details */}
-          {step === 2 && (
-            <div className={styles.stepContent}>
-              {/* heading removed: step label is shown in the top stepper */}
-
-              <div className={styles.formGroup}>
-                <label>Parent's Full Name *</label>
-                <input
-                  type="text"
-                  name="parent_name"
-                  value={formData.parent_name}
-                  onChange={handleInputChange}
-                  placeholder="Enter parent's full name"
-                  required
-                />
-                {errors.parent_name && <p className={styles.errorMessage}>{errors.parent_name}</p>}
-              </div>
-
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label>Mobile Number *</label>
-                  <input
-                    type="tel"
-                    name="parent_mobile_number"
-                    value={formData.parent_mobile_number}
-                    onChange={handleInputChange}
-                    placeholder="10-digit mobile number"
-                    maxLength={10}
-                    pattern="[0-9]{10}"
-                    required
-                  />
-                  {errors.parent_mobile_number && <p className={styles.errorMessage}>{errors.parent_mobile_number}</p>}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Step 3: Academics */}
-          {step === 3 && (
-            <div className={styles.stepContent}>
-              {/* heading removed: step label is shown in the top stepper */}
-
-              <div className={styles.formGroup}>
-                <label>Program *</label>
-                <div className={styles.radioGroup}>
-                  {programs.map((p) => (
-                    <div className={styles.radioItem} key={p.value}>
-                      <input
-                        type="radio"
-                        id={`program_${p.value}`}
-                        name="program_name"
-                        value={p.value}
-                        checked={formData.program_name === p.value}
-                        onChange={handleInputChange}
-                        className={styles.radioInput}
-                      />
-                      <label htmlFor={`program_${p.value}`} className={styles.radioLabel}>{p.label}</label>
-                    </div>
-                  ))}
-                </div>
-                {errors.program_name && <p className={styles.errorMessage}>{errors.program_name}</p>}
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Previous School (if any)</label>
-                <input
-                  type="text"
-                  name="previous_school"
-                  value={formData.previous_school}
-                  onChange={handleInputChange}
-                  placeholder="Enter previous school name"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Step 4: Documents */}
-          {step === 4 && (
-            <div className={styles.stepContent}>
-              {/* heading removed: step label is shown in the top stepper */}
-
-              <div className={styles.formGroup}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <input
-                    type="checkbox"
-                    checked={uploadDocsNow}
-                    onChange={(e) => setUploadDocsNow(e.target.checked)}
-                  />
-                  <span style={{ fontWeight: 700 }}>Upload documents now</span>
-                </label>
-                <p style={{ marginTop: '6px', color: '#666', fontSize: '0.92rem' }}>
-                  If you don't want to upload documents now, uncheck this and submit — you can upload later from the admin portal.
-                </p>
-              </div>
-
-              <div className={styles.formGroup}>
-                <label>Selected files</label>
-                <div style={{ display: 'grid', gap: 6 }}>
-                  <small>Photo: {filePreviews.photo ? (filePreviews.photo.startsWith('data:image') ? 'Image selected' : filePreviews.photo) : 'Not uploaded'}</small>
-                  <small>Birth Certificate: {filePreviews.birth_certificate ?? 'Not uploaded'}</small>
-                  <small>Aadhar Card: {filePreviews.aadhar_card ?? 'Not uploaded'}</small>
-                  <small>Parent ID Proof: {filePreviews.parent_id_proof ?? 'Not uploaded'}</small>
-                </div>
-              </div>
-
-              {uploadDocsNow && (
-                <>
-                  {/* Photo */}
-                  <FileUploadField
-                    label="Photo (Optional)"
-                    fieldName="photo"
-                    accept="image/*"
-                    preview={filePreviews.photo}
-                    onChange={(e) => handleFileChange(e, 'photo')}
-                  />
-
-                  {/* Birth Certificate */}
-                  <FileUploadField
-                    label="Birth Certificate (Optional)"
-                    fieldName="birth_certificate"
-                    accept=".pdf,image/*"
-                    preview={filePreviews.birth_certificate}
-                    onChange={(e) => handleFileChange(e, 'birth_certificate')}
-                  />
-
-                  {/* Aadhar Card */}
-                  <FileUploadField
-                    label="Aadhar Card (Optional)"
-                    fieldName="aadhar_card"
-                    accept=".pdf,image/*"
-                    preview={filePreviews.aadhar_card}
-                    onChange={(e) => handleFileChange(e, 'aadhar_card')}
-                  />
-
-                  {/* Parent ID Proof */}
-                  <FileUploadField
-                    label="Parent's ID Proof (Optional)"
-                    fieldName="parent_id_proof"
-                    accept=".pdf,image/*"
-                    preview={filePreviews.parent_id_proof}
-                    onChange={(e) => handleFileChange(e, 'parent_id_proof')}
-                  />
-                </>
-              )}
-            </div>
-          )}
-
-          {/* Navigation Buttons */}
-          <div className={styles.buttonGroup}>
-            {step > 1 && (
-              <button
-                type="button"
-                className={styles.prevBtn}
-                onClick={() => setStep(step - 1)}
-              >
-                ← Previous
-              </button>
-            )}
-
-            {step < 4 ? (
-              <button
-                type="button"
-                className={styles.nextBtn}
-                onClick={() => {
-                  if (validateStep(step)) {
-                    setStep(step + 1);
-                  }
-                }}
-              >
-                Next →
-              </button>
-            ) : (
-              <button
-                type="button"
-                className={styles.submitBtn}
-                disabled={loading}
-                onClick={() => handleSubmit()}
-              >
-                {loading ? (
-                  <>
-                    <FaSpinner className={styles.spinner} /> Submitting...
-                  </>
-                ) : (
-                  '✅ Submit Admission'
                 )}
-              </button>
-            )}
-          </div>
+
+                {/* Step 2: Parent Details */}
+                {step === 2 && (
+                  <div className={styles.stepContent}>
+                    {/* heading removed: step label is shown in the top stepper */}
+
+                    <div className={styles.formRow}>
+                      <div className={styles.formGroup}>
+                        <label>Parent's Full Name *</label>
+                        <input
+                          type="text"
+                          name="parent_name"
+                          value={formData.parent_name}
+                          onChange={handleInputChange}
+                          placeholder="Enter parent's full name"
+                          required
+                        />
+                        {errors.parent_name && <p className={styles.errorMessage}>{errors.parent_name}</p>}
+                      </div>
+
+
+
+                      <div className={styles.formGroup}>
+                        <label>Mobile Number *</label>
+                        <input
+                          type="tel"
+                          name="parent_mobile_number"
+                          value={formData.parent_mobile_number}
+                          onChange={handleInputChange}
+                          placeholder="10-digit mobile number"
+                          maxLength={10}
+                          pattern="[0-9]{10}"
+                          required
+                        />
+                        {errors.parent_mobile_number && <p className={styles.errorMessage}>{errors.parent_mobile_number}</p>}
+                      </div>
+
+                    </div>
+                  </div>
+                )}
+
+                {/* Step 3: Academics */}
+                {step === 3 && (
+                  <div className={styles.stepContent}>
+                    {/* heading removed: step label is shown in the top stepper */}
+                    <div className={styles.formRow}>
+                      <div className={styles.formGroup}>
+                        <label>Program *</label>
+                        <div className={styles.radioGroup}>
+                          {programs.map((p) => (
+                            <div className={styles.radioItem} key={p.value}>
+                              <input
+                                type="radio"
+                                id={`program_${p.value}`}
+                                name="program_name"
+                                value={p.value}
+                                checked={formData.program_name === p.value}
+                                onChange={handleInputChange}
+                                className={styles.radioInput}
+                              />
+                              <label htmlFor={`program_${p.value}`} className={styles.radioLabel}>{p.label}</label>
+                            </div>
+                          ))}
+                        </div>
+                        {errors.program_name && <p className={styles.errorMessage}>{errors.program_name}</p>}
+                      </div>
+
+
+                      <div className={styles.formGroup}>
+                        <label>Previous School (if any)</label>
+                        <input
+                          type="text"
+                          name="previous_school"
+                          value={formData.previous_school}
+                          onChange={handleInputChange}
+                          placeholder="Enter previous school name"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Step 4: Documents */}
+                {step === 4 && (
+                  <div className={styles.stepContent}>
+                    {/* heading removed: step label is shown in the top stepper */}
+
+
+
+                    <div className={styles.formGroup}>
+                      <label>Selected files</label>
+                      <div style={{ display: 'grid', gap: 8 }} className={styles.selectedFiles}>
+                        {/* Photo */}
+                        <div className={`${styles.fileStatusItem} ${filePreviews.photo ? styles.uploaded : styles.notUploaded}`}>
+                          <span className={styles.fileStatusIcon}>
+                            {filePreviews.photo ? '✓' : '!'}
+                          </span>
+                          <span className={styles.fileStatusText}>
+                            Photo: {filePreviews.photo ? (filePreviews.photo.startsWith('data:image') ? 'Image selected' : filePreviews.photo) : 'Not uploaded'}
+                          </span>
+                        </div>
+
+                        {/* Birth Certificate */}
+                        <div className={`${styles.fileStatusItem} ${filePreviews.birth_certificate ? styles.uploaded : styles.notUploaded}`}>
+                          <span className={styles.fileStatusIcon}>
+                            {filePreviews.birth_certificate ? '✓' : '!'}
+                          </span>
+                          <span className={styles.fileStatusText}>
+                            Birth Certificate: {filePreviews.birth_certificate ? (filePreviews.birth_certificate.startsWith('data:image') ? 'Image selected' : filePreviews.birth_certificate) : 'Not uploaded'}
+
+                          </span>
+                        </div>
+
+                        {/* Aadhar Card */}
+                        <div className={`${styles.fileStatusItem} ${filePreviews.aadhar_card ? styles.uploaded : styles.notUploaded}`}>
+                          <span className={styles.fileStatusIcon}>
+                            {filePreviews.aadhar_card ? '✓' : '!'}
+                          </span>
+                          <span className={styles.fileStatusText}>
+                            Aadhar Card:{filePreviews.aadhar_card ? (filePreviews.aadhar_card.startsWith('data:image') ? 'Image selected' : filePreviews.aadhar_card) : 'Not uploaded'}
+                          </span>
+                        </div>
+
+                        {/* Parent ID Proof */}
+                        <div className={`${styles.fileStatusItem} ${filePreviews.parent_id_proof ? styles.uploaded : styles.notUploaded}`}>
+                          <span className={styles.fileStatusIcon}>
+                            {filePreviews.parent_id_proof ? '✓' : '!'}
+                          </span>
+                          <span className={styles.fileStatusText}>
+                            Parent ID Proof:{filePreviews.parent_id_proof ? (filePreviews.parent_id_proof.startsWith('data:image') ? 'Image selected' : filePreviews.parent_id_proof) : 'Not uploaded'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {uploadDocsNow && (
+                      <>
+                        {/* Photo */}
+                        <FileUploadField
+                          label="Photo (Optional)"
+                          fieldName="photo"
+                          accept="image/*"
+                          preview={filePreviews.photo}
+                          onChange={(e) => handleFileChange(e, 'photo')}
+                        />
+
+                        {/* Birth Certificate */}
+                        <FileUploadField
+                          label="Birth Certificate (Optional)"
+                          fieldName="birth_certificate"
+                          accept=".pdf,image/*"
+                          preview={filePreviews.birth_certificate}
+                          onChange={(e) => handleFileChange(e, 'birth_certificate')}
+                        />
+
+                        {/* Aadhar Card */}
+                        <FileUploadField
+                          label="Aadhar Card (Optional)"
+                          fieldName="aadhar_card"
+                          accept=".pdf,image/*"
+                          preview={filePreviews.aadhar_card}
+                          onChange={(e) => handleFileChange(e, 'aadhar_card')}
+                        />
+
+                        {/* Parent ID Proof */}
+                        <FileUploadField
+                          label="Parent's ID Proof (Optional)"
+                          fieldName="parent_id_proof"
+                          accept=".pdf,image/*"
+                          preview={filePreviews.parent_id_proof}
+                          onChange={(e) => handleFileChange(e, 'parent_id_proof')}
+                        />
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {/* Navigation Buttons */}
+                <div className={styles.buttonGroup}>
+                  {step > 1 && (
+                    <button
+                      type="button"
+                      className={styles.prevBtn}
+                      onClick={() => setStep(step - 1)}
+                    >
+                      ← Previous
+                    </button>
+                  )}
+
+                  {step < 4 ? (
+                    <button
+                      type="button"
+                      className={styles.nextBtn}
+                      onClick={() => {
+                        if (validateStep(step)) {
+                          setStep(step + 1);
+                        }
+                      }}
+                    >
+                      Next →
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className={styles.submitBtn}
+                      disabled={loading}
+                      onClick={() => handleSubmit()}
+                    >
+                      {loading ? (
+                        <>
+                          <FaSpinner className={styles.spinner} /> Submitting...
+                        </>
+                      ) : (
+                        '✓ Submit Admission'
+                      )}
+                    </button>
+                  )}
+                </div>
               </form>
             </main>
           </div>
         </div>
       </div>
+    </section >
   );
 }
 
 // File Upload Field Component
 function FileUploadField({
   label,
-  fieldName,
   accept,
   preview,
   onChange,

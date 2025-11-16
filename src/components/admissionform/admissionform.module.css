@@ -1,21 +1,27 @@
+.admissionForm {
+  padding: 8rem 2rem;
+  position: relative;
+  background: var(--white);
+  overflow: hidden;
+  min-height: auto;
+}
+
 .container {
   max-width: 1100px;
   margin: 2rem auto;
   padding: 1rem;
-  min-height: 100vh;
   background: var(--white);
   display: flex;
-  align-items: center;
   justify-content: center;
 }
 
 .formCard {
   width: 100%;
-  background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(249,247,255,0.95) 100%);
+  background-color: var(--white);
   padding: 2.25rem;
   border-radius: 18px;
   box-shadow: 0 20px 50px rgba(106, 76, 147, 0.12);
-  border: 2px solid rgba(106,76,147,0.08);
+  border: 2px solid rgba(106, 76, 147, 0.08);
   position: relative;
   overflow: hidden;
 }
@@ -27,161 +33,749 @@
   right: -40%;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(106,76,147,0.05), transparent);
+  background: radial-gradient(circle, rgba(106, 76, 147, 0.05), transparent);
   border-radius: 50%;
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.header { text-align: left; margin-bottom: 1rem; }
-.header h1 { font-size: 1.5rem; color: var(--primary-purple); margin: 0 0 0.25rem 0; }
-.header p { color: #444; margin: 0; font-size: 0.95rem; }
+.header {
+  text-align: left;
+  margin-bottom: 1rem;
+}
 
-.formLayout { display:block }
+.header h1 {
+  font-size: 1.5rem;
+  color: var(--primary-purple);
+  margin: 0 0 0.25rem 0;
+}
 
-.topProgress { display:flex; flex-direction:column; gap:0.75rem; margin-bottom:1rem }
+.header p {
+  color: #444;
+  margin: 0;
+  font-size: 0.95rem;
+}
 
-.progressWrap { height: 8px; background: rgba(106,76,147,0.06); border-radius: 8px; overflow: hidden; }
-.progressBar { height: 100%; background: var(--primary-yellow); transition: width 350ms ease; }
+.subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  margin: 0 0 1.5rem 0;
+}
 
-.pills { display:flex; gap:1rem; align-items:center; margin-top: 0.5rem }
+.formLayout {
+  display: block
+}
+
+.topProgress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 5rem
+}
+
+
+.progressWrap {
+  height: 8px;
+  background: rgba(106, 76, 147, 0.06);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  background: var(--primary-yellow);
+  transition: width 350ms ease;
+}
+
+.pills {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 0.5rem
+}
 
 /* Traditional horizontal stepper: circle number + label next to it */
 .pill {
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 10px;
   background: transparent;
 }
 
 .pillNumber {
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:44px;
-  height:44px;
-  border-radius:50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   background: #fff;
-  border:2px solid rgba(106,76,147,0.08);
-  color:var(--primary-purple);
-  font-weight:700;
-  box-shadow: 0 6px 18px rgba(106,76,147,0.04);
+  border: 2px solid rgba(106, 76, 147, 0.08);
+  color: var(--primary-purple);
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(106, 76, 147, 0.04);
 }
 
-.pillIcon { font-size:1.15rem; color:var(--primary-purple); }
+.pillIcon {
+  font-size: 1.15rem;
+  color: var(--primary-purple);
+}
 
-.pillText { font-size:1.05rem; color: var(--primary-purple); margin:0; font-weight:700 }
+.pillText {
+  font-size: 1.05rem;
+  color: var(--primary-purple);
+  margin: 0;
+  font-weight: 700
+}
 
-.pill.active .pillNumber { background: var(--primary-purple); color: #fff; border-color: var(--primary-purple) }
-.pill.completed .pillNumber { background: var(--primary-yellow); color: #111; border-color: var(--primary-yellow) }
+.pill.active .pillNumber {
+  background: var(--primary-purple);
+  color: #fff;
+  border-color: var(--primary-purple)
+}
 
-.main { padding: 0.5rem 0.75rem; background: transparent }
-.stepContent { animation: fadeIn 0.2s ease-in; margin-bottom: 1.25rem; }
+.pill.completed .pillNumber {
+  background: var(--primary-yellow);
+  color: #111;
+  border-color: var(--primary-yellow)
+}
 
-@keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
-.stepContent h2 { font-size: 1.15rem; color: var(--primary-purple); margin: 0 0 1rem 0; }
+.main {
+  padding: 0.5rem 0.75rem;
+  background: transparent
+}
+
+.stepContent {
+  animation: fadeIn 0.2s ease-in;
+  margin-bottom: 3rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0
+  }
+
+  to {
+    opacity: 1
+  }
+}
+
+.stepContent h2 {
+  font-size: 1.15rem;
+  color: var(--primary-purple);
+  margin: 0 0 1rem 0;
+}
 
 /* Form Group */
-.formGroup { margin-bottom: 1.25rem; }
-.formGroup label { display:block; font-weight:700; color:var(--primary-purple); margin-bottom:0.5rem; font-size:0.95rem; text-transform:uppercase; letter-spacing:0.8px }
-.formGroup input, .formGroup select { width:100%; padding:14px 16px; border:2px solid rgba(106,76,147,0.12); border-radius:14px; font-size:1rem; transition: all 0.18s ease; background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(249,247,255,0.95) 100%); color:var(--primary-purple) }
-.formGroup input::placeholder, .formGroup select::placeholder { color:var(--text-gray); opacity:0.8 }
-.formGroup input:focus, .formGroup select:focus { outline:none; border-color: var(--primary-purple); background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(249,247,255,1) 100%); box-shadow: 0 0 0 4px rgba(106,76,147,0.12), inset 0 2px 4px rgba(0,0,0,0.02); transform: translateY(-2px); }
-
-.formGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem }
-.formGrid .fullWidth { grid-column: 1 / -1 }
-
-.inputWrapper { position: relative; display:flex; align-items:stretch }
-.inputWrapper .icon { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--primary-purple); font-size:1.2rem; pointer-events:none; z-index:2 }
-.inputWrapper input, .inputWrapper select { padding-left: 50px }
-
-/* Form Row */
-.formRow { display:grid; grid-template-columns: 1fr 1fr; gap:1rem; }
-@media (max-width: 640px) { .formRow { grid-template-columns: 1fr; } }
-
-/* File Upload Field */
-.fileUploadField { margin-bottom:1.25rem }
-.fileUploadField label { display:block; font-weight:700; color:var(--primary-purple); margin-bottom:0.5rem }
-.fileUploadBox { cursor:pointer; border:2px dashed rgba(106,76,147,0.18); border-radius:10px; padding:1.25rem; text-align:center; transition: all 0.18s ease; background:#fff }
-.fileUploadBox:hover { border-color: var(--primary-yellow); box-shadow: 0 6px 20px rgba(106,76,147,0.06); }
-
-.uploadPlaceholder { display:flex; flex-direction:column; align-items:center; gap:0.5rem }
-.uploadPlaceholder span { font-size:1.6rem; margin-bottom:0.25rem }
-.uploadPlaceholder small { color:#999; font-size:0.85rem }
-
-.filePreview { display:flex; flex-direction:column; align-items:center; gap:0.5rem }
-.filePreview img { max-width:150px; max-height:150px; border-radius:8px; object-fit:cover }
-.filePreview p { margin:0; word-break:break-all }
-
-.clickToChange { font-size:0.85rem; color:var(--primary-purple); font-weight:600 }
-
-.fileInput { display:none }
-
-/* Inline Error Message */
-.errorMessage { font-size:0.85rem; color:#e74c3c; margin-top:0.4rem; margin-bottom:0; font-weight:600 }
-
-/* Radio / Pill groups */
-.radioGroup { display:flex; gap:0.6rem; flex-wrap:wrap }
-.radioItem { position:relative }
-.radioInput { display:none }
-.radioLabel { display:inline-flex; align-items:center; justify-content:center; padding:10px 14px; border-radius:12px; border:2px solid rgba(106,76,147,0.08); background:#fff; color:var(--primary-purple); font-weight:700; cursor:pointer; transition: all 180ms ease; box-shadow: 0 6px 18px rgba(106,76,147,0.04) }
-.radioInput:checked + .radioLabel,
-.pill.active .radioLabel { background:var(--primary-purple); color:#fff; border-color:var(--primary-purple); box-shadow: 0 10px 30px rgba(106,76,147,0.12) }
-.radioInput:focus + .radioLabel { box-shadow: 0 8px 22px rgba(106,76,147,0.08); }
-
-@media (max-width: 640px) {
-  .radioGroup { gap:0.5rem }
-  .radioLabel { padding:9px 12px }
+.formGroup {
+  margin-bottom: 1.25rem;
 }
 
-.buttonGroup { display:flex; gap:0.75rem; margin-top:1.25rem }
-.prevBtn, .nextBtn, .submitBtn, .downloadBtn, .newAdmissionBtn { padding:0.75rem 1.1rem; border:none; border-radius:10px; font-size:1rem; font-weight:700; cursor:pointer; transition: transform 180ms ease, box-shadow 180ms ease; display:inline-flex; align-items:center; justify-content:center; gap:0.5rem }
-.prevBtn { background: var(--primary-yellow); color:#111 }
-.prevBtn:hover { transform: translateY(-3px) }
-.nextBtn { background: var(--primary-purple); color:#fff }
-.nextBtn:hover { transform: translateY(-3px); box-shadow: 0 8px 18px rgba(106,76,147,0.18) }
-.submitBtn { background: var(--primary-purple); color:#fff }
-.submitBtn:hover:not(:disabled) { transform: translateY(-3px) }
-.submitBtn:disabled { opacity:0.7; cursor:not-allowed }
+.formGroup label {
+  display: block;
+  font-weight: 700;
+  color: var(--primary-purple);
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px
+}
 
-.spinner { animation: spin 0.8s linear infinite }
-@keyframes spin { to { transform: rotate(360deg) } }
+.formGroup input,
+.formGroup select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid rgba(106, 76, 147, 0.12);
+  border-radius: 14px;
+  font-size: 1rem;
+  transition: all 0.18s ease;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 247, 255, 0.95) 100%);
+  color: var(--primary-purple)
+}
 
-.successCard { background:#fff; border-radius:12px; padding:1.25rem; box-shadow:0 12px 40px rgba(106,76,147,0.06); text-align:center; max-width:680px }
-.successIcon { font-size:3rem; color:var(--primary-purple); margin-bottom:1rem; animation:bounce 0.6s ease-in-out }
-@keyframes bounce { 0%,100% { transform:scale(1) } 50% { transform:scale(1.2) } }
-.successCard h1 { font-size:1.6rem; color:#333; margin:0 0 1rem 0 }
+.formGroup input::placeholder,
+.formGroup select::placeholder {
+  color: var(--text-gray);
+  opacity: 0.8
+}
 
-.confirmationContent { background:#fff; border-radius:10px; padding:1rem; margin:1rem 0; text-align:left; border:1px solid rgba(106,76,147,0.04) }
-.admissionDetails h2 { font-size:1.15rem; color:#333; margin:0 0 1rem 0 }
-.detailsGrid { display:grid; gap:1rem }
-.detailRow { display:flex; justify-content:space-between; padding:0.75rem; background:#fff; border-radius:8px; border-left:4px solid var(--primary-purple) }
-.label { font-weight:700; color:#666 }
-.value { color:#333; font-weight:500 }
-.value.pending { background:var(--primary-yellow); color:#111; padding:0.25rem 0.75rem; border-radius:4px; font-size:0.9rem }
+.formGroup input:focus,
+.formGroup select:focus {
+  outline: none;
+  border-color: var(--primary-purple);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(249, 247, 255, 1) 100%);
+  box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.12), inset 0 2px 4px rgba(0, 0, 0, 0.02);
+  transform: translateY(-2px);
+}
 
-.infoText { margin:1rem 0 0 0; color:#666; font-size:0.95rem; line-height:1.6 }
-.actionButtons { display:flex; flex-direction:column; gap:1rem; margin-top:1.25rem }
-.downloadBtn, .newAdmissionBtn { width:100%; flex:none }
-.downloadBtn { background: var(--primary-purple); color:#fff }
-.downloadBtn:hover { transform: translateY(-3px); box-shadow: 0 8px 18px rgba(106,76,147,0.12) }
-.newAdmissionBtn { background: var(--primary-yellow); color:#111 }
-.newAdmissionBtn:hover { transform: translateY(-2px) }
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem
+}
 
-.pdfContent { padding:20px; background:#fff }
+.formGrid .fullWidth {
+  grid-column: 1 / -1
+}
 
-@media (max-width: 900px) { .formLayout { grid-template-columns: 180px 1fr } }
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: stretch
+}
+
+.inputWrapper .icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary-purple);
+  font-size: 1.2rem;
+  pointer-events: none;
+  z-index: 2
+}
+
+.inputWrapper input,
+.inputWrapper select {
+  padding-left: 50px
+}
+
+/* Form Row */
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* File Upload Field */
+.fileUploadField {
+  margin-bottom: 1.25rem
+}
+
+.fileUploadField label {
+  display: block;
+  font-weight: 700;
+  color: var(--primary-purple);
+  margin-bottom: 0.5rem
+}
+
+.fileUploadBox {
+  cursor: pointer;
+  border: 2px dashed rgba(106, 76, 147, 0.18);
+  border-radius: 10px;
+  padding: 1.25rem;
+  text-align: center;
+  transition: all 0.18s ease;
+  background: #fff
+}
+
+.fileUploadBox:hover {
+  border-color: var(--primary-yellow);
+  box-shadow: 0 6px 20px rgba(106, 76, 147, 0.06);
+}
+
+.uploadPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem
+}
+
+.uploadPlaceholder span {
+  font-size: 1.6rem;
+  margin-bottom: 0.25rem
+}
+
+.uploadPlaceholder small {
+  color: #999;
+  font-size: 0.85rem
+}
+
+.filePreview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem
+}
+
+.filePreview img {
+  max-width: 150px;
+  max-height: 150px;
+  border-radius: 8px;
+  object-fit: cover
+}
+
+.filePreview p {
+  margin: 0;
+  word-break: break-all
+}
+
+.clickToChange {
+  font-size: 0.85rem;
+  color: var(--primary-purple);
+  font-weight: 600
+}
+
+.fileInput {
+  display: none
+}
+
+/* Inline Error Message */
+.errorMessage {
+  font-size: 0.85rem;
+  color: #e74c3c;
+  margin-top: 0.4rem;
+  margin-bottom: 0;
+  font-weight: 600
+}
+
+/* Radio / Pill groups */
+.radioGroup {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap
+}
+
+.radioItem {
+  position: relative
+}
+
+.radioInput {
+  display: none
+}
+
+.radioLabel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 2px solid rgba(106, 76, 147, 0.08);
+  background: #fff;
+  color: var(--primary-purple);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 180ms ease;
+  box-shadow: 0 6px 18px rgba(106, 76, 147, 0.04)
+}
+
+.radioInput:checked+.radioLabel,
+.pill.active .radioLabel {
+  background: var(--primary-purple);
+  color: #fff;
+  border-color: var(--primary-purple);
+  box-shadow: 0 10px 30px rgba(106, 76, 147, 0.12)
+}
+
+.radioInput:focus+.radioLabel {
+  box-shadow: 0 8px 22px rgba(106, 76, 147, 0.08);
+}
+
+@media (max-width: 640px) {
+  .radioGroup {
+    gap: 0.5rem
+  }
+
+  .radioLabel {
+    padding: 9px 12px
+  }
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem
+}
+
+.prevBtn,
+.nextBtn,
+.submitBtn,
+.downloadBtn,
+.newAdmissionBtn {
+  padding: 0.75rem 1.1rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem
+}
+
+.prevBtn {
+  background: var(--primary-yellow);
+  color: #111
+}
+
+.prevBtn:hover {
+  transform: translateY(-3px)
+}
+
+.nextBtn {
+  background: var(--primary-purple);
+  color: #fff;
+  margin-left: auto;
+}
+
+.selectedFiles {}
+
+.nextBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(106, 76, 147, 0.18)
+}
+
+.submitBtn {
+  background: var(--primary-purple);
+  color: #fff;
+  margin-left: auto;
+}
+
+.submitBtn:hover:not(:disabled) {
+  transform: translateY(-3px)
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed
+}
+
+.spinner {
+  animation: spin 0.8s linear infinite
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg)
+  }
+}
+
+.successCard {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 12px 40px rgba(106, 76, 147, 0.06);
+  text-align: center;
+  max-width: 680px
+}
+
+.successIcon {
+  font-size: 3rem;
+  color: var(--primary-purple);
+  margin-bottom: 1rem;
+  animation: bounce 0.6s ease-in-out
+}
+
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: scale(1)
+  }
+
+  50% {
+    transform: scale(1.2)
+  }
+}
+
+.successCard h1 {
+  font-size: 1.6rem;
+  color: #333;
+  margin: 0 0 1rem 0
+}
+
+.confirmationContent {
+  background: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 1rem 0;
+  text-align: left;
+  border: 1px solid rgba(106, 76, 147, 0.04)
+}
+
+.admissionDetails h2 {
+  font-size: 1.15rem;
+  color: #333;
+  margin: 0 0 1rem 0
+}
+
+.detailsGrid {
+  display: grid;
+  gap: 1rem
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background: #fff;
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-purple)
+}
+
+.label {
+  font-weight: 700;
+  color: #666
+}
+
+.value {
+  color: #333;
+  font-weight: 500
+}
+
+.value.pending {
+  background: var(--primary-yellow);
+  color: #111;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.9rem
+}
+
+.infoText {
+  margin: 1rem 0 0 0;
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.6
+}
+
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem
+}
+
+.downloadBtn,
+.newAdmissionBtn {
+  width: 100%;
+  flex: none
+}
+
+.downloadBtn {
+  background: var(--primary-purple);
+  color: #fff
+}
+
+.downloadBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(106, 76, 147, 0.12)
+}
+
+.newAdmissionBtn {
+  background: var(--primary-yellow);
+  color: #111
+}
+
+.newAdmissionBtn:hover {
+  transform: translateY(-2px)
+}
+
+.pdfContent {
+  padding: 20px;
+  background: #fff
+}
+
+@media (max-width: 900px) {
+  .formLayout {
+    grid-template-columns: 180px 1fr
+  }
+}
+
 @media (max-width: 720px) {
-  .formLayout { grid-template-columns: 1fr }
-  .side { flex-direction: row; align-items: center; justify-content: space-between }
-  .stepIndicator { flex-direction: row; gap: 0.5rem }
-  .step { padding:0.35rem }
-  .header { text-align:center }
-  .buttonGroup { flex-direction:column }
-  .detailRow { flex-direction:column; gap:0.5rem }
-  .actionButtons { flex-direction:column }
+  .formLayout {
+    grid-template-columns: 1fr
+  }
+
+  .side {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between
+  }
+
+  .stepIndicator {
+    flex-direction: row;
+    gap: 0.5rem
+  }
+
+  .step {
+    padding: 0.35rem
+  }
+
+  .header {
+    text-align: center
+  }
+
+  .buttonGroup {
+    flex-direction: column
+  }
+
+  .detailRow {
+    flex-direction: column;
+    gap: 0.5rem
+  }
+
+  .actionButtons {
+    flex-direction: column
+  }
+}
+
+.selectedFiles {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.fileStatusItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1.5px solid;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Uploaded - Green */
+.fileStatusItem.uploaded {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.04));
+  border-color: #10b981;
+  color: #047857;
+}
+
+.fileStatusItem.uploaded .fileStatusIcon {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.fileStatusItem.uploaded .fileStatusText {
+  color: #047857;
+  font-weight: 600;
+}
+
+/* Not Uploaded - Yellow/Orange */
+.fileStatusItem.notUploaded {
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.08), rgba(245, 158, 11, 0.04));
+  border-color: var(--primary-yellow);
+  color: var(--primary-yellow);
+}
+
+.fileStatusItem.notUploaded .fileStatusIcon {
+  background: var(--primary-yellow);
+  color: white;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+}
+
+.fileStatusItem.notUploaded .fileStatusText {
+  color: var(--primary-purple);
+  font-weight: 600;
+}
+
+.fileStatusIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-weight: 900;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.fileStatusText {
+  font-size: 13px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.fileStatusItem.uploaded:hover {
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+  transform: translateY(-2px);
+  border-color: #059669;
+}
+
+.fileStatusItem.notUploaded:hover {
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+  transform: translateY(-2px);
+  border-color: var(--primary-yellow);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .selectedFiles {
+    gap: 8px;
+  }
+
+  .fileStatusItem {
+    padding: 10px 12px;
+    font-size: 12px;
+    gap: 10px;
+  }
+
+  .fileStatusIcon {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+  }
+
+  .fileStatusText {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .selectedFiles {
+    gap: 6px;
+  }
+
+  .fileStatusItem {
+    padding: 9px 10px;
+    gap: 8px;
+    border-radius: 8px;
+  }
+
+  .fileStatusIcon {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  .fileStatusText {
+    font-size: 11px;
+  }
 }
