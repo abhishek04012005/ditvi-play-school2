@@ -1,0 +1,11 @@
+/* Admission admin dashboard styles */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+.subtitle {
+  color: #6a4c93;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}

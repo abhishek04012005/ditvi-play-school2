@@ -174,9 +174,27 @@ export const uploadAdmissionDocument = async (
       throw new Error('Failed to upload file to Google Drive');
     }
 
+    // Set file permissions to make it accessible
+    try {
+      await drive.permissions.create({
+        fileId: fileId,
+        requestBody: {
+          role: 'reader',
+          type: 'anyone',
+        },
+      });
+      console.log(`Set file permissions for: ${renamedFileName}`);
+    } catch (permError) {
+      console.warn(`Warning: Could not set file permissions:`, permError);
+    }
+
+    // Generate direct download URL (works for files shared with "anyone")
+    // Format: https://drive.google.com/uc?export=download&id=FILE_ID
+    const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+
     console.log(`Uploaded admission document: ${renamedFileName} (ID: ${fileId})`);
     
-    return webViewLink || '';
+    return downloadUrl;
   } catch (error) {
     console.error('Error uploading admission document:', error);
     throw error;
