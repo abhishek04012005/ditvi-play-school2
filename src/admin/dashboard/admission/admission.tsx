@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     FaSearch,
@@ -9,7 +9,6 @@ import {
     FaSpinner,
     FaCheckCircle,
     FaUser,
-    FaGraduationCap,
     FaStickyNote,
     FaTimes,
     FaCheck,
@@ -17,7 +16,8 @@ import {
     FaFileAlt,
     FaEye,
     FaDownload,
-    FaPhone,
+    FaPhoneAlt,
+    FaWhatsapp,
 } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
@@ -407,13 +407,13 @@ export default function AdminAdmission() {
                     <table className={styles.table}>
                         <thead>
                             <tr>
-                              <th>
-                                Application No.
-                              </th>
+                                <th>
+                                    Application No.
+                                </th>
                                 <th onClick={() => handleSort('created_at')}>
                                     Date {getSortIcon('created_at')}
                                 </th>
-        
+
                                 <th onClick={() => handleSort('child_name')}>
                                     Child Name {getSortIcon('child_name')}
                                 </th>
@@ -450,9 +450,9 @@ export default function AdminAdmission() {
                                         animate={{ opacity: 1 }}
                                         transition={{ duration: 0.3 }}
                                     >
-                                      <td>
-                                        {admission.admission_number}
-                                      </td>
+                                        <td>
+                                            {admission.admission_number}
+                                        </td>
                                         <td>
                                             {new Date(admission.created_at).toLocaleDateString('en-US', {
                                                 day: '2-digit',
@@ -470,7 +470,7 @@ export default function AdminAdmission() {
                                                     className={styles.phoneLink}
                                                     title="Call"
                                                 >
-                                                    <FaPhone />
+                                                    <FaPhoneAlt />
                                                 </a>
                                                 <a
                                                     href={`https://wa.me/${getParentMobile(admission).replace(/\D/g, '')}`}
@@ -479,9 +479,7 @@ export default function AdminAdmission() {
                                                     className={styles.whatsappLink}
                                                     title="WhatsApp"
                                                 >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style={{ width: '0.9rem', height: '0.9rem' }}>
-                                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-4.98 1.429 9.935 9.935 0 003.55 19.192 9.865 9.865 0 005.595-1.74l.573 9.265a.999.999 0 001.037.847 1 1 0 00.938-.857l.573-9.265a9.935 9.935 0 001.37-14.742 9.87 9.87 0 00-5.656-3.089z" />
-                                                    </svg>
+                                                    <FaWhatsapp />
                                                 </a>
                                             </div>
                                         </td>
@@ -497,9 +495,9 @@ export default function AdminAdmission() {
                                             </button>
                                         </td>
                                         <td>
-                                            {/* <span className={`${styles.status} ${styles[admission.status.toLowerCase().replace(/\s+/g, '-')]}`}>
+                                            <span className={`${styles.status}}`}>
                                                 {admission.status}
-                                            </span> */}
+                                            </span>
                                         </td>
                                         <td>
                                             <button

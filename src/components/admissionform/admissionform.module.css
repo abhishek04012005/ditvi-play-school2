@@ -1,9 +1,27 @@
+/* ==================== CSS VARIABLES ==================== */
+:root {
+  --primary-yellow: #ffbf00;
+  --primary-purple: #6a4c93;
+  --secondary-purple: #8662b0;
+  --white: #ffffff;
+  --black: #333333;
+  --text-gray: #333;
+  --text-light: #999999;
+  --bg-light: #f9f9f9;
+  --border-color: #e5e5e5;
+  --success: #10b981;
+  --error: #ef4444;
+  --warning: #ffbf00;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== ADMISSION FORM CONTAINER ==================== */
 .admissionForm {
   padding: 8rem 2rem;
   position: relative;
   background: var(--white);
   overflow: hidden;
-  min-height: auto;
+  min-height: 100vh;
 }
 
 .container {
@@ -15,6 +33,7 @@
   justify-content: center;
 }
 
+/* ==================== FORM CARD ==================== */
 .formCard {
   width: 100%;
   background-color: var(--white);
@@ -35,8 +54,10 @@
   height: 400px;
   background: radial-gradient(circle, rgba(106, 76, 147, 0.05), transparent);
   border-radius: 50%;
+  z-index: 0;
 }
 
+/* ==================== ANIMATIONS ==================== */
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -49,68 +70,144 @@
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ==================== HEADER ==================== */
 .header {
   text-align: left;
   margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
 }
 
 .header h1 {
   font-size: 1.5rem;
   color: var(--primary-purple);
   margin: 0 0 0.25rem 0;
+  font-weight: 700;
+  letter-spacing: -0.3px;
 }
 
 .header p {
-  color: #444;
+  color: var(--text-gray);
   margin: 0;
   font-size: 0.95rem;
+  font-weight: 500;
 }
 
 .subtitle {
   font-size: 1.2rem;
-  color: #666;
+  color: var(--text-gray);
   margin: 0 0 1.5rem 0;
+  font-weight: 600;
 }
 
+/* ==================== FORM LAYOUT ==================== */
 .formLayout {
-  display: block
+  display: block;
+  position: relative;
+  z-index: 1;
 }
 
+/* ==================== PROGRESS BAR ==================== */
 .topProgress {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  margin-bottom: 5rem
+  margin-bottom: 5rem;
 }
-
 
 .progressWrap {
   height: 8px;
   background: rgba(106, 76, 147, 0.06);
   border-radius: 8px;
   overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .progressBar {
   height: 100%;
-  background: var(--primary-yellow);
-  transition: width 350ms ease;
+  background: linear-gradient(90deg, var(--primary-yellow), var(--primary-purple));
+  transition: width 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(255, 191, 0, 0.3);
 }
 
+/* ==================== STEPPER PILLS ==================== */
 .pills {
   display: flex;
   gap: 1rem;
   align-items: center;
-  margin-top: 0.5rem
+  margin-top: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
 }
 
-/* Traditional horizontal stepper: circle number + label next to it */
+.pills::-webkit-scrollbar {
+  height: 4px;
+}
+
+.pills::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.pills::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 2px;
+}
+
+.pills::-webkit-scrollbar-thumb:hover {
+  background: var(--text-light);
+}
+
 .pill {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 6px 10px;
   background: transparent;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: var(--transition);
 }
 
 .pillNumber {
@@ -120,40 +217,59 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--white);
   border: 2px solid rgba(106, 76, 147, 0.08);
   color: var(--primary-purple);
   font-weight: 700;
   box-shadow: 0 6px 18px rgba(106, 76, 147, 0.04);
+  transition: var(--transition);
+  flex-shrink: 0;
+  font-size: 1rem;
 }
 
 .pillIcon {
   font-size: 1.15rem;
   color: var(--primary-purple);
+  transition: var(--transition);
 }
 
 .pillText {
   font-size: 1.05rem;
   color: var(--primary-purple);
   margin: 0;
-  font-weight: 700
+  font-weight: 700;
+  transition: var(--transition);
 }
 
 .pill.active .pillNumber {
   background: var(--primary-purple);
-  color: #fff;
-  border-color: var(--primary-purple)
+  color: var(--white);
+  border-color: var(--primary-purple);
+  box-shadow: 0 8px 24px rgba(106, 76, 147, 0.2);
+  transform: scale(1.05);
+}
+
+.pill.active .pillText {
+  color: var(--primary-purple);
 }
 
 .pill.completed .pillNumber {
   background: var(--primary-yellow);
-  color: #111;
-  border-color: var(--primary-yellow)
+  color: var(--black);
+  border-color: var(--primary-yellow);
+  box-shadow: 0 6px 18px rgba(255, 191, 0, 0.2);
 }
 
+.pill.completed .pillText {
+  color: var(--text-gray);
+}
+
+/* ==================== MAIN FORM CONTENT ==================== */
 .main {
   padding: 0.5rem 0.75rem;
-  background: transparent
+  background: transparent;
+  position: relative;
+  z-index: 1;
 }
 
 .stepContent {
@@ -161,23 +277,14 @@
   margin-bottom: 3rem;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0
-  }
-
-  to {
-    opacity: 1
-  }
-}
-
 .stepContent h2 {
   font-size: 1.15rem;
   color: var(--primary-purple);
   margin: 0 0 1rem 0;
+  font-weight: 700;
 }
 
-/* Form Group */
+/* ==================== FORM GROUP ==================== */
 .formGroup {
   margin-bottom: 1.25rem;
 }
@@ -189,29 +296,33 @@
   margin-bottom: 0.5rem;
   font-size: 0.95rem;
   text-transform: uppercase;
-  letter-spacing: 0.8px
+  letter-spacing: 0.8px;
 }
 
 .formGroup input,
-.formGroup select {
+.formGroup select,
+.formGroup textarea {
   width: 100%;
   padding: 14px 16px;
   border: 2px solid rgba(106, 76, 147, 0.12);
   border-radius: 14px;
   font-size: 1rem;
-  transition: all 0.18s ease;
+  transition: var(--transition);
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 247, 255, 0.95) 100%);
-  color: var(--primary-purple)
+  color: var(--primary-purple);
+  font-family: 'Verdana', sans-serif;
 }
 
 .formGroup input::placeholder,
-.formGroup select::placeholder {
+.formGroup select::placeholder,
+.formGroup textarea::placeholder {
   color: var(--text-gray);
-  opacity: 0.8
+  opacity: 0.8;
 }
 
 .formGroup input:focus,
-.formGroup select:focus {
+.formGroup select:focus,
+.formGroup textarea:focus {
   outline: none;
   border-color: var(--primary-purple);
   background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(249, 247, 255, 1) 100%);
@@ -219,21 +330,35 @@
   transform: translateY(-2px);
 }
 
+.formGroup textarea {
+  resize: vertical;
+  min-height: 120px;
+  font-family: 'Verdana', sans-serif;
+}
+
+/* ==================== FORM GRID ==================== */
 .formGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
-  margin-bottom: 1.5rem
+  margin-bottom: 1.5rem;
 }
 
 .formGrid .fullWidth {
-  grid-column: 1 / -1
+  grid-column: 1 / -1;
 }
 
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* ==================== INPUT WRAPPER ==================== */
 .inputWrapper {
   position: relative;
   display: flex;
-  align-items: stretch
+  align-items: stretch;
 }
 
 .inputWrapper .icon {
@@ -244,37 +369,28 @@
   color: var(--primary-purple);
   font-size: 1.2rem;
   pointer-events: none;
-  z-index: 2
+  z-index: 2;
+  opacity: 0.7;
 }
 
 .inputWrapper input,
 .inputWrapper select {
-  padding-left: 50px
+  padding-left: 50px;
 }
 
-/* Form Row */
-.formRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-@media (max-width: 640px) {
-  .formRow {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* File Upload Field */
+/* ==================== FILE UPLOAD FIELD ==================== */
 .fileUploadField {
-  margin-bottom: 1.25rem
+  margin-bottom: 1.25rem;
 }
 
 .fileUploadField label {
   display: block;
   font-weight: 700;
   color: var(--primary-purple);
-  margin-bottom: 0.5rem
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
 }
 
 .fileUploadBox {
@@ -283,8 +399,8 @@
   border-radius: 10px;
   padding: 1.25rem;
   text-align: center;
-  transition: all 0.18s ease;
-  background: #fff
+  transition: var(--transition);
+  background: var(--white);
 }
 
 .fileUploadBox:hover {
@@ -296,70 +412,73 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem
+  gap: 0.5rem;
 }
 
 .uploadPlaceholder span {
   font-size: 1.6rem;
-  margin-bottom: 0.25rem
+  margin-bottom: 0.25rem;
 }
 
 .uploadPlaceholder small {
-  color: #999;
-  font-size: 0.85rem
+  color: var(--text-light);
+  font-size: 0.85rem;
 }
 
 .filePreview {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem
+  gap: 0.5rem;
 }
 
 .filePreview img {
   max-width: 150px;
   max-height: 150px;
   border-radius: 8px;
-  object-fit: cover
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .filePreview p {
   margin: 0;
-  word-break: break-all
+  word-break: break-all;
+  color: var(--black);
+  font-weight: 600;
 }
 
 .clickToChange {
   font-size: 0.85rem;
   color: var(--primary-purple);
-  font-weight: 600
+  font-weight: 600;
 }
 
 .fileInput {
-  display: none
+  display: none;
 }
 
-/* Inline Error Message */
+/* ==================== ERROR MESSAGE ==================== */
 .errorMessage {
   font-size: 0.85rem;
-  color: #e74c3c;
+  color: var(--error);
   margin-top: 0.4rem;
   margin-bottom: 0;
-  font-weight: 600
+  font-weight: 600;
 }
 
-/* Radio / Pill groups */
+/* ==================== RADIO / CHECKBOX GROUPS ==================== */
 .radioGroup {
   display: flex;
   gap: 0.6rem;
-  flex-wrap: wrap
+  flex-wrap: wrap;
 }
 
 .radioItem {
-  position: relative
+  position: relative;
 }
 
 .radioInput {
-  display: none
+  display: none;
 }
 
 .radioLabel {
@@ -369,40 +488,30 @@
   padding: 10px 14px;
   border-radius: 12px;
   border: 2px solid rgba(106, 76, 147, 0.08);
-  background: #fff;
+  background: var(--white);
   color: var(--primary-purple);
   font-weight: 700;
   cursor: pointer;
-  transition: all 180ms ease;
-  box-shadow: 0 6px 18px rgba(106, 76, 147, 0.04)
+  transition: var(--transition);
+  box-shadow: 0 6px 18px rgba(106, 76, 147, 0.04);
 }
 
-.radioInput:checked+.radioLabel,
-.pill.active .radioLabel {
+.radioInput:checked + .radioLabel {
   background: var(--primary-purple);
-  color: #fff;
+  color: var(--white);
   border-color: var(--primary-purple);
-  box-shadow: 0 10px 30px rgba(106, 76, 147, 0.12)
+  box-shadow: 0 10px 30px rgba(106, 76, 147, 0.12);
 }
 
-.radioInput:focus+.radioLabel {
+.radioInput:focus + .radioLabel {
   box-shadow: 0 8px 22px rgba(106, 76, 147, 0.08);
 }
 
-@media (max-width: 640px) {
-  .radioGroup {
-    gap: 0.5rem
-  }
-
-  .radioLabel {
-    padding: 9px 12px
-  }
-}
-
+/* ==================== BUTTONS ==================== */
 .buttonGroup {
   display: flex;
   gap: 0.75rem;
-  margin-top: 1.25rem
+  margin-top: 1.25rem;
 }
 
 .prevBtn,
@@ -420,225 +529,179 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem
+  gap: 0.5rem;
+  font-family: 'Verdana', sans-serif;
 }
 
 .prevBtn {
   background: var(--primary-yellow);
-  color: #111
+  color: var(--black);
+  box-shadow: 0 4px 12px rgba(255, 191, 0, 0.2);
 }
 
 .prevBtn:hover {
-  transform: translateY(-3px)
-}
-
-.nextBtn {
-  background: var(--primary-purple);
-  color: #fff;
-  margin-left: auto;
-}
-
-.selectedFiles {}
-
-.nextBtn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 18px rgba(106, 76, 147, 0.18)
+  box-shadow: 0 8px 18px rgba(255, 191, 0, 0.3);
 }
 
-.submitBtn {
-  background: var(--primary-purple);
-  color: #fff;
+.nextBtn,
+.submitBtn,
+.downloadBtn {
+  background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+  color: var(--white);
   margin-left: auto;
+  box-shadow: 0 4px 12px rgba(106, 76, 147, 0.2);
 }
 
-.submitBtn:hover:not(:disabled) {
-  transform: translateY(-3px)
+.nextBtn:hover,
+.submitBtn:hover:not(:disabled),
+.downloadBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(106, 76, 147, 0.3);
 }
 
 .submitBtn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.newAdmissionBtn {
+  background: var(--primary-yellow);
+  color: var(--black);
+  box-shadow: 0 4px 12px rgba(255, 191, 0, 0.2);
+}
+
+.newAdmissionBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(255, 191, 0, 0.3);
 }
 
 .spinner {
-  animation: spin 0.8s linear infinite
+  animation: spin 0.8s linear infinite;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg)
-  }
+/* ==================== SUCCESS BOX ==================== */
+.successBox {
+  background: var(--white);
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
 }
 
+/* ==================== SUCCESS CARD ==================== */
 .successCard {
-  background: #fff;
+  background: var(--white);
   border-radius: 12px;
   padding: 1.25rem;
   box-shadow: 0 12px 40px rgba(106, 76, 147, 0.06);
   text-align: center;
-  max-width: 680px
+  max-width: 680px;
+  border: 1px solid var(--border-color);
+  animation: slideUp 0.4s ease-out;
+  width: 100%;
 }
 
 .successIcon {
   font-size: 3rem;
   color: var(--primary-purple);
   margin-bottom: 1rem;
-  animation: bounce 0.6s ease-in-out
-}
-
-@keyframes bounce {
-
-  0%,
-  100% {
-    transform: scale(1)
-  }
-
-  50% {
-    transform: scale(1.2)
-  }
+  animation: bounce 0.6s ease-in-out;
 }
 
 .successCard h1 {
   font-size: 1.6rem;
-  color: #333;
-  margin: 0 0 1rem 0
+  color: var(--black);
+  margin: 0 0 1rem 0;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
+/* ==================== CONFIRMATION CONTENT ==================== */
 .confirmationContent {
-  background: #fff;
+  background: var(--white);
   border-radius: 10px;
   padding: 1rem;
   margin: 1rem 0;
   text-align: left;
-  border: 1px solid rgba(106, 76, 147, 0.04)
+  border: 1px solid rgba(106, 76, 147, 0.04);
 }
 
 .admissionDetails h2 {
   font-size: 1.15rem;
-  color: #333;
-  margin: 0 0 1rem 0
+  color: red;
+  margin: 0 0 1rem 0;
+  font-weight: 700;
 }
 
 .detailsGrid {
   display: grid;
-  gap: 1rem
+  gap: 1rem;
 }
 
 .detailRow {
   display: flex;
   justify-content: space-between;
   padding: 0.75rem;
-  background: #fff;
+  background: var(--bg-light);
   border-radius: 8px;
-  border-left: 4px solid var(--primary-purple)
+  border-left: 4px solid var(--primary-purple);
+  transition: var(--transition);
+}
+
+.detailRow:hover {
+  background: rgba(106, 76, 147, 0.03);
+  transform: translateX(2px);
 }
 
 .label {
   font-weight: 700;
-  color: #666
+  color: var(--text-gray);
 }
 
 .value {
-  color: #333;
-  font-weight: 500
+  color: var(--black);
+  font-weight: 500;
 }
 
 .value.pending {
   background: var(--primary-yellow);
-  color: #111;
+  color: #000000;
   padding: 0.25rem 0.75rem;
   border-radius: 4px;
-  font-size: 0.9rem
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .infoText {
   margin: 1rem 0 0 0;
-  color: #666;
+  color: var(--text-gray);
   font-size: 0.95rem;
-  line-height: 1.6
+  line-height: 1.6;
 }
-
+/* ==================== ACTION BUTTONS ==================== */
 .actionButtons {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-top: 1.25rem
+  margin-top: 1.25rem;
 }
 
 .downloadBtn,
 .newAdmissionBtn {
   width: 100%;
-  flex: none
-}
-
-.downloadBtn {
-  background: var(--primary-purple);
-  color: #fff
-}
-
-.downloadBtn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 18px rgba(106, 76, 147, 0.12)
-}
-
-.newAdmissionBtn {
-  background: var(--primary-yellow);
-  color: #111
-}
-
-.newAdmissionBtn:hover {
-  transform: translateY(-2px)
+  flex: none;
 }
 
 .pdfContent {
   padding: 20px;
-  background: #fff
+  background: var(--white);
 }
 
-@media (max-width: 900px) {
-  .formLayout {
-    grid-template-columns: 180px 1fr
-  }
-}
-
-@media (max-width: 720px) {
-  .formLayout {
-    grid-template-columns: 1fr
-  }
-
-  .side {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between
-  }
-
-  .stepIndicator {
-    flex-direction: row;
-    gap: 0.5rem
-  }
-
-  .step {
-    padding: 0.35rem
-  }
-
-  .header {
-    text-align: center
-  }
-
-  .buttonGroup {
-    flex-direction: column
-  }
-
-  .detailRow {
-    flex-direction: column;
-    gap: 0.5rem
-  }
-
-  .actionButtons {
-    flex-direction: column
-  }
-}
-
+/* ==================== FILE STATUS ==================== */
 .selectedFiles {
   display: grid;
   gap: 10px;
@@ -652,32 +715,19 @@
   padding: 12px 14px;
   border-radius: 10px;
   border: 1.5px solid;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: var(--transition);
   animation: slideIn 0.4s ease-out;
 }
 
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* Uploaded - Green */
 .fileStatusItem.uploaded {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.04));
-  border-color: #10b981;
+  border-color: var(--success);
   color: #047857;
 }
 
 .fileStatusItem.uploaded .fileStatusIcon {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
+  background: linear-gradient(135deg, var(--success), #059669);
+  color: var(--white);
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
 
@@ -686,7 +736,6 @@
   font-weight: 600;
 }
 
-/* Not Uploaded - Yellow/Orange */
 .fileStatusItem.notUploaded {
   background: linear-gradient(135deg, rgba(251, 146, 60, 0.08), rgba(245, 158, 11, 0.04));
   border-color: var(--primary-yellow);
@@ -695,7 +744,7 @@
 
 .fileStatusItem.notUploaded .fileStatusIcon {
   background: var(--primary-yellow);
-  color: white;
+  color: var(--white);
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
 }
 
@@ -714,7 +763,7 @@
   font-weight: 900;
   font-size: 14px;
   flex-shrink: 0;
-  transition: all 0.3s ease;
+  transition: var(--transition);
 }
 
 .fileStatusText {
@@ -735,16 +784,401 @@
   border-color: var(--primary-yellow);
 }
 
-/* Mobile Responsive */
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* Tablets & Large Devices (1024px and up) */
+@media (max-width: 1200px) {
+  .admissionForm {
+    padding: 6rem 1.5rem;
+  }
+
+  .formCard {
+    padding: 2rem;
+  }
+
+  .container {
+    margin: 1.5rem auto;
+    padding: 0.75rem;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .admissionForm {
+    padding: 5rem 1.5rem;
+  }
+
+  .formCard {
+    padding: 1.75rem;
+  }
+
+  .header h1 {
+    font-size: 1.4rem;
+  }
+
+  .header p {
+    font-size: 0.9rem;
+  }
+
+  .pills {
+    gap: 0.75rem;
+  }
+
+  .pill {
+    gap: 10px;
+    padding: 4px 8px;
+  }
+
+  .pillNumber {
+    width: 40px;
+    height: 40px;
+    font-size: 0.9rem;
+  }
+
+  .pillText {
+    font-size: 0.95rem;
+  }
+
+  .stepContent h2 {
+    font-size: 1.1rem;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  .formGroup input,
+  .formGroup select,
+  .formGroup textarea {
+    padding: 12px 14px;
+    font-size: 0.95rem;
+  }
+
+  .formGroup label {
+    font-size: 0.9rem;
+  }
+
+  .topProgress {
+    margin-bottom: 4rem;
+  }
+}
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 900px) {
+  .admissionForm {
+    padding: 4rem 1.25rem;
+  }
+
+  .formCard {
+    padding: 1.5rem;
+  }
+
+  .header {
+    text-align: center;
+  }
+
+  .header h1 {
+    font-size: 1.3rem;
+  }
+
+  .pills {
+    gap: 0.5rem;
+  }
+
+  .pill {
+    gap: 8px;
+    padding: 3px 6px;
+  }
+
+  .pillNumber {
+    width: 38px;
+    height: 38px;
+    font-size: 0.85rem;
+  }
+
+  .pillText {
+    display: none;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 1.15rem;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+  }
+
+  .buttonGroup {
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .prevBtn,
+  .nextBtn {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .submitBtn {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .detailRow {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .actionButtons {
+    flex-direction: column;
+  }
+}
+
 @media (max-width: 768px) {
+  .admissionForm {
+    padding: 3.5rem 1rem;
+  }
+
+  .formCard {
+    padding: 1.25rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(106, 76, 147, 0.08);
+  }
+
+  .formCard::before {
+    width: 300px;
+    height: 300px;
+    top: -30%;
+    right: -30%;
+  }
+
+  .container {
+    margin: 1rem auto;
+    padding: 0.5rem;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .header h1 {
+    font-size: 1.2rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .header p {
+    font-size: 0.85rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .topProgress {
+    margin-bottom: 3.5rem;
+  }
+
+  .progressWrap {
+    height: 6px;
+    border-radius: 6px;
+  }
+
+  .pills {
+    gap: 0.35rem;
+    margin-top: 0.35rem;
+  }
+
+  .pill {
+    gap: 4px;
+    padding: 2px 3px;
+  }
+
+  .pillNumber {
+    width: 36px;
+    height: 36px;
+    font-size: 0.8rem;
+    box-shadow: 0 3px 10px rgba(106, 76, 147, 0.03);
+  }
+
+  .pillIcon {
+    font-size: 1rem;
+  }
+
+  .main {
+    padding: 0.25rem 0.5rem;
+  }
+
+  .stepContent {
+    margin-bottom: 2.5rem;
+  }
+
+  .stepContent h2 {
+    font-size: 1rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .formGroup {
+    margin-bottom: 1rem;
+  }
+
+  .formGroup label {
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.6px;
+  }
+
+  .formGroup input,
+  .formGroup select,
+  .formGroup textarea {
+    padding: 11px 13px;
+    font-size: 0.95rem;
+    border-radius: 12px;
+  }
+
+  .formGroup textarea {
+    min-height: 100px;
+  }
+
+  .formGrid {
+    gap: 1rem;
+  }
+
+  .formRow {
+    gap: 0.75rem;
+  }
+
+  .inputWrapper .icon {
+    left: 14px;
+    font-size: 1.1rem;
+  }
+
+  .inputWrapper input,
+  .inputWrapper select {
+    padding-left: 44px;
+  }
+
+  .fileUploadBox {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  .uploadPlaceholder span {
+    font-size: 1.4rem;
+  }
+
+  .uploadPlaceholder small {
+    font-size: 0.8rem;
+  }
+
+  .filePreview img {
+    max-width: 120px;
+    max-height: 120px;
+  }
+
+  .radioGroup {
+    gap: 0.45rem;
+  }
+
+  .radioLabel {
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+  }
+
+  .buttonGroup {
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .prevBtn,
+  .nextBtn,
+  .submitBtn,
+  .downloadBtn,
+  .newAdmissionBtn {
+    padding: 0.65rem 0.95rem;
+    font-size: 0.95rem;
+    border-radius: 10px;
+  }
+
+  .successCard {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .successIcon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .successCard h1 {
+    font-size: 1.4rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .confirmationContent {
+    padding: 0.85rem;
+    margin: 0.85rem 0;
+  }
+
+  .admissionDetails h2 {
+    font-size: 1rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .detailRow {
+    padding: 0.65rem;
+    border-left-width: 3px;
+  }
+
+  .label {
+    font-size: 0.9rem;
+  }
+
+  .value {
+    font-size: 0.9rem;
+  }
+
+  .value.pending {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .infoText {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .actionButtons {
+    gap: 0.85rem;
+    margin-top: 1rem;
+  }
+
+  .downloadBtn,
+  .newAdmissionBtn {
+    padding: 0.7rem 1rem;
+    font-size: 0.95rem;
+  }
+
   .selectedFiles {
     gap: 8px;
+    margin-top: 10px;
   }
 
   .fileStatusItem {
     padding: 10px 12px;
     font-size: 12px;
     gap: 10px;
+    border-radius: 8px;
   }
 
   .fileStatusIcon {
@@ -758,15 +1192,270 @@
   }
 }
 
-@media (max-width: 480px) {
+/* Small Tablets (640px - 768px) */
+@media (max-width: 640px) {
+  .admissionForm {
+    padding: 2.5rem 0.75rem;
+  }
+
+  .formCard {
+    padding: 1rem;
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(106, 76, 147, 0.08);
+  }
+
+  .formCard::before {
+    width: 250px;
+    height: 250px;
+    top: -25%;
+    right: -25%;
+  }
+
+  .container {
+    margin: 0.75rem auto;
+    padding: 0.4rem;
+  }
+
+  .header {
+    margin-bottom: 0.65rem;
+  }
+
+  .header h1 {
+    font-size: 1.1rem;
+    margin-bottom: 0.1rem;
+  }
+
+  .header p {
+    font-size: 0.8rem;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+
+  .topProgress {
+    margin-bottom: 3rem;
+  }
+
+  .progressWrap {
+    height: 5px;
+    border-radius: 5px;
+  }
+
+  .pills {
+    gap: 0.25rem;
+    margin-top: 0.25rem;
+  }
+
+  .pill {
+    gap: 2px;
+    padding: 1px 2px;
+  }
+
+  .pillNumber {
+    width: 32px;
+    height: 32px;
+    font-size: 0.7rem;
+    box-shadow: 0 2px 6px rgba(106, 76, 147, 0.02);
+  }
+
+  .pillIcon {
+    font-size: 0.85rem;
+  }
+
+  .main {
+    padding: 0;
+  }
+
+  .stepContent {
+    margin-bottom: 2rem;
+  }
+
+  .stepContent h2 {
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .formGroup {
+    margin-bottom: 0.9rem;
+  }
+
+  .formGroup label {
+    font-size: 0.8rem;
+    margin-bottom: 0.35rem;
+    letter-spacing: 0.5px;
+  }
+
+  .formGroup input,
+  .formGroup select,
+  .formGroup textarea {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    border-radius: 10px;
+  }
+
+  .formGroup textarea {
+    min-height: 90px;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+
+  .inputWrapper .icon {
+    left: 12px;
+    font-size: 1rem;
+  }
+
+  .inputWrapper input,
+  .inputWrapper select {
+    padding-left: 40px;
+  }
+
+  .fileUploadField label {
+    font-size: 0.8rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .fileUploadBox {
+    padding: 0.85rem;
+    border-radius: 8px;
+  }
+
+  .uploadPlaceholder span {
+    font-size: 1.25rem;
+  }
+
+  .uploadPlaceholder small {
+    font-size: 0.75rem;
+  }
+
+  .filePreview img {
+    max-width: 100px;
+    max-height: 100px;
+  }
+
+  .filePreview p {
+    font-size: 0.8rem;
+  }
+
+  .clickToChange {
+    font-size: 0.8rem;
+  }
+
+  .errorMessage {
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+  }
+
+  .radioGroup {
+    gap: 0.35rem;
+  }
+
+  .radioLabel {
+    padding: 7px 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+  }
+
+  .buttonGroup {
+    gap: 0.4rem;
+    margin-top: 0.85rem;
+  }
+
+  .prevBtn,
+  .nextBtn,
+  .submitBtn,
+  .downloadBtn,
+  .newAdmissionBtn {
+    padding: 0.6rem 0.9rem;
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+
+  .successCard {
+    padding: 0.9rem;
+    border-radius: 10px;
+  }
+
+  .successIcon {
+    font-size: 2.2rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .successCard h1 {
+    font-size: 1.3rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .confirmationContent {
+    padding: 0.75rem;
+    margin: 0.75rem 0;
+    border-radius: 8px;
+  }
+
+  .admissionDetails h2 {
+    font-size: 0.95rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .detailsGrid {
+    gap: 0.75rem;
+  }
+
+  .detailRow {
+    padding: 0.6rem;
+    border-left-width: 3px;
+  }
+
+  .label {
+    font-size: 0.85rem;
+  }
+
+  .value {
+    font-size: 0.85rem;
+  }
+
+  .value.pending {
+    padding: 0.18rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .infoText {
+    margin-top: 0.65rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .actionButtons {
+    gap: 0.7rem;
+    margin-top: 0.85rem;
+  }
+
+  .downloadBtn,
+  .newAdmissionBtn {
+    padding: 0.65rem 0.9rem;
+    font-size: 0.9rem;
+  }
+
   .selectedFiles {
     gap: 6px;
+    margin-top: 8px;
   }
 
   .fileStatusItem {
-    padding: 9px 10px;
+    padding: 8px 10px;
     gap: 8px;
     border-radius: 8px;
+    font-size: 11px;
   }
 
   .fileStatusIcon {
@@ -778,4 +1467,1260 @@
   .fileStatusText {
     font-size: 11px;
   }
+}
+
+/* Mobile Phones (480px - 640px) */
+@media (max-width: 480px) {
+  .admissionForm {
+    padding: 2rem 0.5rem;
+  }
+
+  .formCard {
+    padding: 0.85rem;
+    border-radius: 12px;
+  }
+
+  .formCard::before {
+    width: 200px;
+    height: 200px;
+    top: -20%;
+    right: -20%;
+  }
+
+  .container {
+    margin: 0.5rem auto;
+    padding: 0.3rem;
+  }
+
+  .header {
+    margin-bottom: 0.5rem;
+  }
+
+  .header h1 {
+    font-size: 1rem;
+    margin-bottom: 0.08rem;
+  }
+
+  .header p {
+    font-size: 0.75rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .topProgress {
+    margin-bottom: 2.5rem;
+    gap: 0.6rem;
+  }
+
+  .progressWrap {
+    height: 4px;
+    border-radius: 4px;
+  }
+
+  .pills {
+    gap: 0.2rem;
+    margin-top: 0.15rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pill {
+    gap: 1px;
+    padding: 0px;
+  }
+
+  .pillNumber {
+    width: 28px;
+    height: 28px;
+    font-size: 0.65rem;
+    box-shadow: 0 1px 3px rgba(106, 76, 147, 0.02);
+  }
+
+  .pillIcon {
+    font-size: 0.75rem;
+  }
+
+  .stepContent {
+    margin-bottom: 1.75rem;
+  }
+
+  .stepContent h2 {
+    font-size: 0.9rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .formGroup {
+    margin-bottom: 0.8rem;
+  }
+
+  .formGroup label {
+    font-size: 0.75rem;
+    margin-bottom: 0.3rem;
+    letter-spacing: 0.4px;
+  }
+
+  .formGroup input,
+  .formGroup select,
+  .formGroup textarea {
+    padding: 9px 11px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .formGroup textarea {
+    min-height: 80px;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+
+  .inputWrapper .icon {
+    left: 10px;
+    font-size: 0.95rem;
+  }
+
+  .inputWrapper input,
+  .inputWrapper select {
+    padding-left: 36px;
+  }
+
+  .fileUploadField label {
+    font-size: 0.75rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .fileUploadBox {
+    padding: 0.75rem;
+    border-radius: 8px;
+  }
+
+  .uploadPlaceholder span {
+    font-size: 1.1rem;
+  }
+
+  .uploadPlaceholder small {
+    font-size: 0.7rem;
+  }
+
+  .filePreview img {
+    max-width: 90px;
+    max-height: 90px;
+  }
+
+  .filePreview p {
+    font-size: 0.75rem;
+  }
+
+  .clickToChange {
+    font-size: 0.75rem;
+  }
+
+  .errorMessage {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+  }
+
+  .radioGroup {
+    gap: 0.3rem;
+  }
+
+  .radioLabel {
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+  }
+
+  .buttonGroup {
+    gap: 0.3rem;
+    margin-top: 0.75rem;
+    flex-direction: column;
+  }
+
+  .prevBtn,
+  .nextBtn,
+  .submitBtn,
+  .downloadBtn,
+  .newAdmissionBtn {
+    width: 100%;
+    padding: 0.55rem 0.8rem;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    margin: 0;
+  }
+
+  .successCard {
+    padding: 0.8rem;
+    border-radius: 10px;
+  }
+
+  .successIcon {
+    font-size: 2rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .successCard h1 {
+    font-size: 1.2rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .confirmationContent {
+    padding: 0.65rem;
+    margin: 0.65rem 0;
+  }
+
+  .admissionDetails h2 {
+    font-size: 0.9rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .detailsGrid {
+    gap: 0.65rem;
+  }
+
+  .detailRow {
+    padding: 0.5rem;
+    border-left-width: 2px;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .label {
+    font-size: 0.8rem;
+  }
+
+  .value {
+    font-size: 0.8rem;
+  }
+
+  .value.pending {
+    padding: 0.15rem 0.45rem;
+    font-size: 0.75rem;
+  }
+
+  .infoText {
+    margin-top: 0.55rem;
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  .actionButtons {
+    gap: 0.65rem;
+    margin-top: 0.75rem;
+  }
+
+  .downloadBtn,
+  .newAdmissionBtn {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .selectedFiles {
+    gap: 5px;
+    margin-top: 6px;
+  }
+
+  .fileStatusItem {
+    padding: 7px 9px;
+    gap: 6px;
+    border-radius: 6px;
+    font-size: 10px;
+  }
+
+  .fileStatusIcon {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+
+  .fileStatusText {
+    font-size: 10px;
+  }
+}
+
+/* Extra Small Phones (380px - 480px) */
+@media (max-width: 380px) {
+  .admissionForm {
+    padding: 1.75rem 0.4rem;
+  }
+
+  .formCard {
+    padding: 0.75rem;
+  }
+
+  .formCard::before {
+    width: 180px;
+    height: 180px;
+    top: -15%;
+    right: -15%;
+  }
+
+  .header h1 {
+    font-size: 0.95rem;
+  }
+
+  .header p {
+    font-size: 0.7rem;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .topProgress {
+    margin-bottom: 2rem;
+  }
+
+  .pills {
+    gap: 0.15rem;
+  }
+
+  .pillNumber {
+    width: 24px;
+    height: 24px;
+    font-size: 0.6rem;
+  }
+
+  .stepContent {
+    margin-bottom: 1.5rem;
+  }
+
+  .stepContent h2 {
+    font-size: 0.85rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .formGroup {
+    margin-bottom: 0.7rem;
+  }
+
+  .formGroup label {
+    font-size: 0.7rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .formGroup input,
+  .formGroup select,
+  .formGroup textarea {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .formGroup textarea {
+    min-height: 70px;
+  }
+
+  .fileUploadBox {
+    padding: 0.7rem;
+  }
+
+  .uploadPlaceholder span {
+    font-size: 1rem;
+  }
+
+  .radioLabel {
+    padding: 5px 6px;
+    font-size: 0.75rem;
+  }
+
+  .prevBtn,
+  .nextBtn,
+  .submitBtn,
+  .downloadBtn,
+  .newAdmissionBtn {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.8rem;
+  }
+
+  .successCard {
+    padding: 0.7rem;
+  }
+
+  .successIcon {
+    font-size: 1.8rem;
+  }
+
+  .successCard h1 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .detailRow {
+    padding: 0.45rem;
+  }
+
+  .label {
+    font-size: 0.75rem;
+  }
+
+  .value {
+    font-size: 0.75rem;
+  }
+
+  .selectedFiles {
+    gap: 4px;
+  }
+
+  .fileStatusItem {
+    padding: 6px 8px;
+    gap: 5px;
+    font-size: 9px;
+  }
+
+  .fileStatusIcon {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+}
+
+
+
+/* ==================== FOCUS VISIBLE STYLES ==================== */
+.prevBtn:focus-visible,
+.nextBtn:focus-visible,
+.submitBtn:focus-visible,
+.downloadBtn:focus-visible,
+.newAdmissionBtn:focus-visible {
+  outline: 3px solid var(--primary-yellow);
+  outline-offset: 2px;
+}
+
+.formGroup input:focus-visible,
+.formGroup select:focus-visible,
+.formGroup textarea:focus-visible {
+  outline: none;
+}
+
+.radioInput:focus-visible + .radioLabel {
+  outline: 2px solid var(--primary-yellow);
+  outline-offset: 2px;
+}
+
+/* ==================== PRINT STYLES ==================== */
+@media print {
+  .admissionForm {
+    padding: 0;
+    background: var(--white);
+  }
+
+  .topProgress,
+  .pills,
+  .buttonGroup,
+  .actionButtons {
+    display: none;
+  }
+
+  .formCard {
+    box-shadow: none;
+    border: 1px solid var(--border-color);
+    page-break-inside: avoid;
+  }
+
+  .successCard {
+    page-break-inside: avoid;
+  }
+
+  body {
+    font-size: 12pt;
+  }
+}
+
+/* ==================== UTILITY CLASSES ==================== */
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gap-sm {
+  gap: 0.5rem;
+}
+
+.gap-md {
+  gap: 1rem;
+}
+
+.gap-lg {
+  gap: 1.5rem;
+}
+
+.p-sm {
+  padding: 0.5rem;
+}
+
+.p-md {
+  padding: 1rem;
+}
+
+.p-lg {
+  padding: 1.5rem;
+}
+
+.rounded-sm {
+  border-radius: 8px;
+}
+
+.rounded-md {
+  border-radius: 12px;
+}
+
+.rounded-lg {
+  border-radius: 16px;
+}
+
+.shadow-sm {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.shadow-md {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.shadow-lg {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* ==================== SCROLLBAR STYLES ==================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-light);
+}
+
+
+
+/* ==================== ADMISSION CONFIRMATION SLIP ==================== */
+
+.confirmationSlipWrapper {
+  padding: 20px;
+  font-family: 'Arial', 'Verdana', sans-serif;
+  background: var(--white);
+  color: var(--black);
+  line-height: 1.6;
+}
+
+.confirmationTitle {
+  text-align: center;
+  font-size: 1.8rem;
+  color: var(--primary-purple);
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.confirmationSubtitle {
+  text-align: center;
+  font-size: 1.4rem;
+  color: var(--primary-purple);
+  margin: 0 0 1rem 0;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.confirmationDivider {
+  border: none;
+  border-top: 2px solid var(--border-color);
+  margin: 1.5rem 0;
+  opacity: 0.6;
+}
+
+.admissionNumberBox {
+  text-align: center;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(255, 191, 0, 0.08), rgba(106, 76, 147, 0.04));
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-yellow);
+}
+
+.admissionNumberLabel {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.admissionNumberLabel strong {
+  font-size: 1.1rem;
+  color: var(--primary-purple);
+  font-weight: 700;
+}
+
+.confirmationSection {
+  margin-top: 1.75rem;
+  margin-bottom: 1.75rem;
+}
+
+.sectionHeading {
+  font-size: 1.1rem;
+  color: var(--primary-purple);
+  margin: 0 0 1rem 0;
+  font-weight: 700;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--primary-yellow);
+}
+
+.detailItem {
+  margin: 0.75rem 0;
+  font-size: 0.95rem;
+  color: var(--black);
+  padding-left: 1rem;
+}
+
+.detailItem:first-of-type {
+  margin-top: 0;
+}
+
+.detailItem:last-of-type {
+  margin-bottom: 0;
+}
+
+.confirmationFooter {
+  font-size: 0.85rem;
+  color: var(--text-gray);
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  line-height: 1.6;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+  .confirmationSlipWrapper {
+    padding: 18px;
+  }
+
+  .confirmationTitle {
+    font-size: 1.6rem;
+  }
+
+  .confirmationSubtitle {
+    font-size: 1.3rem;
+  }
+
+  .admissionNumberBox {
+    padding: 0.9rem;
+    margin-top: 1.25rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .confirmationSection {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .sectionHeading {
+    font-size: 1rem;
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.4rem;
+  }
+
+  .detailItem {
+    margin: 0.65rem 0;
+    font-size: 0.9rem;
+    padding-left: 0.85rem;
+  }
+
+  .confirmationFooter {
+    font-size: 0.8rem;
+    margin-top: 1.75rem;
+    padding-top: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .confirmationSlipWrapper {
+    padding: 16px;
+  }
+
+  .confirmationTitle {
+    font-size: 1.4rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .confirmationSubtitle {
+    font-size: 1.2rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .confirmationDivider {
+    margin: 1.25rem 0;
+  }
+
+  .admissionNumberBox {
+    padding: 0.85rem;
+    margin-top: 1.1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 6px;
+  }
+
+  .admissionNumberLabel {
+    font-size: 0.95rem;
+  }
+
+  .admissionNumberLabel strong {
+    font-size: 1rem;
+  }
+
+  .confirmationSection {
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .sectionHeading {
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.35rem;
+  }
+
+  .detailItem {
+    margin: 0.6rem 0;
+    font-size: 0.85rem;
+    padding-left: 0.75rem;
+  }
+
+  .confirmationFooter {
+    font-size: 0.75rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+  }
+}
+
+/* Small Tablets (640px - 768px) */
+@media (max-width: 640px) {
+  .confirmationSlipWrapper {
+    padding: 14px;
+  }
+
+  .confirmationTitle {
+    font-size: 1.25rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .confirmationSubtitle {
+    font-size: 1.05rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .confirmationDivider {
+    margin: 1.1rem 0;
+  }
+
+  .admissionNumberBox {
+    padding: 0.75rem;
+    margin-top: 0.95rem;
+    margin-bottom: 1.25rem;
+    border-radius: 6px;
+    border-left-width: 3px;
+  }
+
+  .admissionNumberLabel {
+    font-size: 0.9rem;
+  }
+
+  .admissionNumberLabel strong {
+    font-size: 0.95rem;
+  }
+
+  .confirmationSection {
+    margin-top: 1.1rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .sectionHeading {
+    font-size: 0.9rem;
+    margin-bottom: 0.65rem;
+    padding-bottom: 0.3rem;
+  }
+
+  .detailItem {
+    margin: 0.5rem 0;
+    font-size: 0.8rem;
+    padding-left: 0.65rem;
+  }
+
+  .detailItem:first-of-type {
+    margin-top: 0;
+  }
+
+  .detailItem:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .confirmationFooter {
+    font-size: 0.7rem;
+    margin-top: 1.25rem;
+    padding-top: 0.85rem;
+  }
+}
+
+/* Mobile Phones (480px - 640px) */
+@media (max-width: 480px) {
+  .confirmationSlipWrapper {
+    padding: 12px;
+  }
+
+  .confirmationTitle {
+    font-size: 1.15rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .confirmationSubtitle {
+    font-size: 0.95rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .confirmationDivider {
+    margin: 1rem 0;
+  }
+
+  .admissionNumberBox {
+    padding: 0.65rem;
+    margin-top: 0.85rem;
+    margin-bottom: 1.1rem;
+    border-radius: 5px;
+    border-left-width: 3px;
+  }
+
+  .admissionNumberLabel {
+    font-size: 0.85rem;
+  }
+
+  .admissionNumberLabel strong {
+    font-size: 0.9rem;
+  }
+
+  .confirmationSection {
+    margin-top: 0.95rem;
+    margin-bottom: 0.95rem;
+  }
+
+  .sectionHeading {
+    font-size: 0.85rem;
+    margin-bottom: 0.55rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .detailItem {
+    margin: 0.45rem 0;
+    font-size: 0.75rem;
+    padding-left: 0.6rem;
+  }
+
+  .detailItem:first-of-type {
+    margin-top: 0;
+  }
+
+  .detailItem:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .confirmationFooter {
+    font-size: 0.65rem;
+    margin-top: 1.1rem;
+    padding-top: 0.75rem;
+  }
+}
+
+/* Extra Small Phones (380px - 480px) */
+@media (max-width: 380px) {
+  .confirmationSlipWrapper {
+    padding: 10px;
+  }
+
+  .confirmationTitle {
+    font-size: 1.05rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .confirmationSubtitle {
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .confirmationDivider {
+    margin: 0.9rem 0;
+  }
+
+  .admissionNumberBox {
+    padding: 0.6rem;
+    margin-top: 0.75rem;
+    margin-bottom: 0.95rem;
+    border-left-width: 2px;
+  }
+
+  .admissionNumberLabel {
+    font-size: 0.8rem;
+  }
+
+  .admissionNumberLabel strong {
+    font-size: 0.85rem;
+  }
+
+  .confirmationSection {
+    margin-top: 0.85rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .sectionHeading {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.2rem;
+  }
+
+  .detailItem {
+    margin: 0.4rem 0;
+    font-size: 0.7rem;
+    padding-left: 0.5rem;
+  }
+
+  .confirmationFooter {
+    font-size: 0.6rem;
+    margin-top: 0.95rem;
+    padding-top: 0.65rem;
+  }
+}
+
+/* ==================== PRINT STYLES ==================== */
+@media print {
+  .confirmationSlipWrapper {
+    padding: 0;
+    page-break-inside: avoid;
+    color: var(--black);
+  }
+
+  .confirmationTitle,
+  .confirmationSubtitle,
+  .sectionHeading {
+    page-break-after: avoid;
+  }
+
+  .confirmationSection {
+    page-break-inside: avoid;
+  }
+}
+
+
+
+/* ==================== SCROLLBAR STYLES ==================== */
+
+/* ==================== WEBKIT SCROLLBARS (Chrome, Safari, Edge) ==================== */
+
+/* Main scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* Scrollbar track */
+::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, var(--bg-light), rgba(106, 76, 147, 0.02));
+  border-radius: 10px;
+}
+
+/* Scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary-purple), var(--secondary-purple));
+  border-radius: 10px;
+  border: 2px solid var(--bg-light);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  transition: var(--transition);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--primary-yellow), var(--primary-purple));
+  border-color: var(--primary-yellow);
+  box-shadow: 0 0 12px rgba(255, 191, 0, 0.3), inset 0 0 6px rgba(0, 0, 0, 0.15);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: var(--primary-purple);
+  box-shadow: 0 0 15px rgba(106, 76, 147, 0.4), inset 0 0 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Scrollbar corner */
+::-webkit-scrollbar-corner {
+  background: var(--bg-light);
+}
+
+/* Horizontal scrollbar styling */
+::-webkit-scrollbar:horizontal {
+  height: 10px;
+}
+
+::-webkit-scrollbar-track:horizontal {
+  background: linear-gradient(90deg, var(--bg-light), rgba(106, 76, 147, 0.02));
+}
+
+
+
+/* ==================== CUSTOM SCROLLBAR FOR SPECIFIC ELEMENTS ==================== */
+
+/* Form inputs and textareas scrollbar */
+.formGroup textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+.formGroup textarea::-webkit-scrollbar-track {
+  background: rgba(106, 76, 147, 0.04);
+  border-radius: 8px;
+}
+
+.formGroup textarea::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(255, 191, 0, 0.6), rgba(106, 76, 147, 0.6));
+  border-radius: 8px;
+  border: 1px solid rgba(106, 76, 147, 0.1);
+}
+
+.formGroup textarea::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--primary-yellow), var(--primary-purple));
+  border-color: var(--primary-yellow);
+}
+
+/* Pills/stepper scrollbar */
+.pills::-webkit-scrollbar {
+  height: 6px;
+}
+
+.pills::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.pills::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+.pills::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-purple);
+  box-shadow: 0 0 8px rgba(106, 76, 147, 0.3);
+}
+
+/* Confirmation slip scrollbar */
+.confirmationSlipWrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.confirmationSlipWrapper::-webkit-scrollbar-track {
+  background: rgba(249, 247, 255, 1);
+}
+
+.confirmationSlipWrapper::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary-yellow), var(--primary-purple));
+  border-radius: 8px;
+}
+
+.confirmationSlipWrapper::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--primary-purple), var(--secondary-purple));
+  box-shadow: 0 0 10px rgba(106, 76, 147, 0.4);
+}
+
+/* Success card scrollbar */
+.successCard::-webkit-scrollbar {
+  width: 8px;
+}
+
+.successCard::-webkit-scrollbar-track {
+  background: var(--bg-light);
+  border-radius: 8px;
+}
+
+.successCard::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.7), rgba(5, 150, 105, 0.7));
+  border-radius: 8px;
+}
+
+.successCard::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--success), #059669);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
+
+/* ==================== SCROLLBAR ANIMATIONS ==================== */
+@keyframes scrollbarPulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+::-webkit-scrollbar-thumb:hover {
+  animation: scrollbarPulse 0.6s ease-in-out;
+}
+
+
+
+/* ==================== MOBILE SCROLLBAR STYLES ==================== */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-width: 1px;
+  }
+
+  .formGroup textarea::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .pills::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .pills::-webkit-scrollbar-thumb {
+    border: none;
+  }
+}
+
+@media (max-width: 480px) {
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(249, 247, 255, 0.5);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-width: 0;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    box-shadow: none;
+  }
+
+  .formGroup textarea::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .pills::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  .pills::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* ==================== ACCESSIBILITY - REDUCED MOTION ==================== */
+@media (prefers-reduced-motion: reduce) {
+  ::-webkit-scrollbar-thumb {
+    animation: none;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    animation: none;
+    transition: none;
+  }
+}
+
+
+/* Override smooth scroll for specific scenarios */
+.pills {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ==================== CUSTOM SCROLLBAR FOR MODAL/DIALOG ==================== */
+.modal::-webkit-scrollbar,
+.dialog::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal::-webkit-scrollbar-track,
+.dialog::-webkit-scrollbar-track {
+  background: var(--bg-light);
+  border-radius: 8px;
+}
+
+.modal::-webkit-scrollbar-thumb,
+.dialog::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary-purple), var(--secondary-purple));
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.modal::-webkit-scrollbar-thumb:hover,
+.dialog::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--primary-yellow), var(--primary-purple));
+}
+
+/* ==================== WEBKIT ONLY - ADVANCED STYLING ==================== */
+@supports selector(::-webkit-scrollbar) {
+  /* Gradient background for scrollbar thumb on hover */
+  ::-webkit-scrollbar-thumb {
+    background-image: linear-gradient(180deg, var(--primary-purple), var(--secondary-purple));
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-image: linear-gradient(180deg, var(--primary-yellow), var(--primary-purple));
+  }
+}
+
+/* ==================== UTILITY CLASSES ==================== */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-auto {
+  scrollbar-width: auto;
+}
+
+.scrollbar-auto::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
 }

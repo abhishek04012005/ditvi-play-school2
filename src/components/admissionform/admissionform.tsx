@@ -280,141 +280,141 @@ export default function AdmissionForm() {
   // Success Screen
   if (submitted && submissionResult) {
     return (
+      <section className={styles.successBox}>
+        <div className={styles.container}>
+          <div className={styles.successCard}>
+            <FaCheckCircle className={styles.successIcon} />
+            <h1>Admission Submitted Successfully!</h1>
 
-      <div className={styles.container}>
-        <div className={styles.successCard}>
-          <FaCheckCircle className={styles.successIcon} />
-          <h1>Admission Submitted Successfully!</h1>
+            {/* Step 1: Child Details */}
+            {step === 1 && (
+              <div className={styles.stepContent}>
 
-          {/* Step 1: Child Details */}
-          {step === 1 && (
-            <div className={styles.stepContent}>
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label>Child's Full Name *</label>
+                    <input
+                      type="text"
+                      name="child_name"
+                      value={formData.child_name}
+                      onChange={handleInputChange}
+                      placeholder="Enter child's full name"
+                      required
+                    />
+                  </div>
 
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label>Child's Full Name *</label>
-                  <input
-                    type="text"
-                    name="child_name"
-                    value={formData.child_name}
-                    onChange={handleInputChange}
-                    placeholder="Enter child's full name"
-                    required
-                  />
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label>Date of Birth *</label>
-                  <input
-                    type="date"
-                    name="child_dob"
-                    value={formData.child_dob}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className={styles.formRow}>
-                <div className={styles.formGroup}>
-                  <label>Gender *</label>
-                  <div className={styles.radioGroup}>
-                    <div className={styles.radioItem}>
-                      <input
-                        type="radio"
-                        id="gender_male"
-                        name="child_gender"
-                        value="male"
-                        checked={formData.child_gender === 'male'}
-                        onChange={handleInputChange}
-                        className={styles.radioInput}
-                      />
-                      <label htmlFor="gender_male" className={styles.radioLabel}>Male</label>
-                    </div>
-
-                    <div className={styles.radioItem}>
-                      <input
-                        type="radio"
-                        id="gender_female"
-                        name="child_gender"
-                        value="female"
-                        checked={formData.child_gender === 'female'}
-                        onChange={handleInputChange}
-                        className={styles.radioInput}
-                      />
-                      <label htmlFor="gender_female" className={styles.radioLabel}>Female</label>
-                    </div>
+                  <div className={styles.formGroup}>
+                    <label>Date of Birth *</label>
+                    <input
+                      type="date"
+                      name="child_dob"
+                      value={formData.child_dob}
+                      onChange={handleInputChange}
+                      required
+                    />
                   </div>
                 </div>
 
-                <div className={styles.formGroup}>
-                  <label>Place of Birth *</label>
-                  <input
-                    type="text"
-                    name="child_place_of_birth"
-                    value={formData.child_place_of_birth}
-                    onChange={handleInputChange}
-                    placeholder="Enter place of birth"
-                    required
-                  />
+                <div className={styles.formRow}>
+                  <div className={styles.formGroup}>
+                    <label>Gender *</label>
+                    <div className={styles.radioGroup}>
+                      <div className={styles.radioItem}>
+                        <input
+                          type="radio"
+                          id="gender_male"
+                          name="child_gender"
+                          value="male"
+                          checked={formData.child_gender === 'male'}
+                          onChange={handleInputChange}
+                          className={styles.radioInput}
+                        />
+                        <label htmlFor="gender_male" className={styles.radioLabel}>Male</label>
+                      </div>
+
+                      <div className={styles.radioItem}>
+                        <input
+                          type="radio"
+                          id="gender_female"
+                          name="child_gender"
+                          value="female"
+                          checked={formData.child_gender === 'female'}
+                          onChange={handleInputChange}
+                          className={styles.radioInput}
+                        />
+                        <label htmlFor="gender_female" className={styles.radioLabel}>Female</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label>Place of Birth *</label>
+                    <input
+                      type="text"
+                      name="child_place_of_birth"
+                      value={formData.child_place_of_birth}
+                      onChange={handleInputChange}
+                      placeholder="Enter place of birth"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
+            )}
+
+            {/* Render confirmation slip (used for PDF) */}
+            <div ref={pdfRef}>
+              <AdmissionConfirmationSlip data={submissionResult} formData={formData} />
             </div>
-          )}
 
-          {/* Render confirmation slip (used for PDF) */}
-          <div ref={pdfRef}>
-            <AdmissionConfirmationSlip data={submissionResult} formData={formData} />
-          </div>
+            <div className={styles.buttonGroup}>
+              <button
+                type="button"
+                className={styles.nextBtn}
+                onClick={generatePDF}
+              >
+                <FaDownload /> Download PDF
+              </button>
 
-          <div className={styles.buttonGroup}>
-            <button
-              type="button"
-              className={styles.nextBtn}
-              onClick={generatePDF}
-            >
-              <FaDownload /> Download PDF
-            </button>
-
-            <button
-              type="button"
-              className={styles.nextBtn}
-              onClick={() => {
-                // Reset form to allow another submission
-                setSubmitted(false);
-                setSubmissionResult(null);
-                setStep(1);
-                setFormData({
-                  child_name: '',
-                  child_dob: '',
-                  child_gender: '',
-                  child_place_of_birth: '',
-                  parent_name: '',
-                  parent_mobile_number: '',
-                  parent_email: '',
-                  program_name: '',
-                  previous_school: '',
-                });
-                setFiles({
-                  photo: null,
-                  birth_certificate: null,
-                  aadhar_card: null,
-                  parent_id_proof: null,
-                });
-                setFilePreviews({
-                  photo: null,
-                  birth_certificate: null,
-                  aadhar_card: null,
-                  parent_id_proof: null,
-                });
-              }}
-            >
-              Submit Another Application
-            </button>
+              <button
+                type="button"
+                className={styles.nextBtn}
+                onClick={() => {
+                  // Reset form to allow another submission
+                  setSubmitted(false);
+                  setSubmissionResult(null);
+                  setStep(1);
+                  setFormData({
+                    child_name: '',
+                    child_dob: '',
+                    child_gender: '',
+                    child_place_of_birth: '',
+                    parent_name: '',
+                    parent_mobile_number: '',
+                    parent_email: '',
+                    program_name: '',
+                    previous_school: '',
+                  });
+                  setFiles({
+                    photo: null,
+                    birth_certificate: null,
+                    aadhar_card: null,
+                    parent_id_proof: null,
+                  });
+                  setFilePreviews({
+                    photo: null,
+                    birth_certificate: null,
+                    aadhar_card: null,
+                    parent_id_proof: null,
+                  });
+                }}
+              >
+                Submit Another Application
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-
+      </section>
     );
   }
 
@@ -873,36 +873,38 @@ function AdmissionConfirmationSlip({
   formData: FormData;
 }) {
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1 style={{ textAlign: 'center' }}>🎓 Ditvi Play School</h1>
-      <h2 style={{ textAlign: 'center' }}>Admission Confirmation Slip</h2>
-      <hr />
+    <div className={styles.confirmationSlipWrapper}>
+      <h1 className={styles.confirmationTitle}>🎓 Ditvi Play School</h1>
+      <h2 className={styles.confirmationSubtitle}>Admission Confirmation Slip</h2>
+      <hr className={styles.confirmationDivider} />
 
-      <p style={{ textAlign: 'center' }}>
-        <strong>Admission Number: {data.admission_number}</strong>
-      </p>
-
-      <div style={{ marginTop: '30px' }}>
-        <h3>Child Details:</h3>
-        <p>Name: {data.child_name}</p>
-        <p>DOB: {formData.child_dob}</p>
-        <p>Gender: {formData.child_gender}</p>
-        <p>Place of Birth: {formData.child_place_of_birth}</p>
+      <div className={styles.admissionNumberBox}>
+        <p className={styles.admissionNumberLabel}>
+          <strong>Admission Number: {data.admission_number}</strong>
+        </p>
       </div>
 
-      <div style={{ marginTop: '20px' }}>
-        <h3>Parent Details:</h3>
-        <p>Name: {formData.parent_name}</p>
-        <p>Mobile: {data.parent_mobile_number}</p>
+      <div className={styles.confirmationSection}>
+        <h3 className={styles.sectionHeading}>Child Details:</h3>
+        <p className={styles.detailItem}>Name: {data.child_name}</p>
+        <p className={styles.detailItem}>DOB: {formData.child_dob}</p>
+        <p className={styles.detailItem}>Gender: {formData.child_gender}</p>
+        <p className={styles.detailItem}>Place of Birth: {formData.child_place_of_birth}</p>
       </div>
 
-      <div style={{ marginTop: '20px' }}>
-        <h3>Program Details:</h3>
-        <p>Program: {data.program_name}</p>
+      <div className={styles.confirmationSection}>
+        <h3 className={styles.sectionHeading}>Parent Details:</h3>
+        <p className={styles.detailItem}>Name: {formData.parent_name}</p>
+        <p className={styles.detailItem}>Mobile: {data.parent_mobile_number}</p>
       </div>
 
-      <hr style={{ marginTop: '30px' }} />
-      <p style={{ fontSize: '12px', color: '#666' }}>
+      <div className={styles.confirmationSection}>
+        <h3 className={styles.sectionHeading}>Program Details:</h3>
+        <p className={styles.detailItem}>Program: {data.program_name}</p>
+      </div>
+
+      <hr className={styles.confirmationDivider} />
+      <p className={styles.confirmationFooter}>
         Thank you for choosing Ditvi Play School. We will review your application and contact you shortly.
       </p>
     </div>

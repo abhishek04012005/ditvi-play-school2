@@ -4,6 +4,7 @@ import Contact from "@/components/contact/contact";
 import EnquiryPopup from "@/components/enquiry/enquirypopup/enquirypopup";
 import Gallery from "@/components/gallery/gallery";
 import Hero from "@/components/hero/hero";
+import InstagramHashtag from "@/components/instagramhashtag/instagramhashtag";
 import Program from "@/components/program/program";
 import Testimonials from "@/components/testimonials/testimonials";
 import { galleryItems, instagramVideos, normalVideos, youtubeVideos } from '@/json/gallery';
@@ -26,6 +27,7 @@ export default function Home() {
       />
       <Testimonials />
       <Contact />
+      <InstagramHashtag />
     </div>
   );
 }
