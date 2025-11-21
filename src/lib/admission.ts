@@ -63,15 +63,19 @@ export const createAdmissionFolder = async (
 ): Promise<string> => {
   try {
     initializeGoogleAuth();
-    const drive = google.drive({ version: 'v3', auth: new google.auth.OAuth2(
+    
+    // Create OAuth2 client properly
+    const auth = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET
-    ) });
+    );
 
-    // Set credentials
-    drive.context._options.auth?.setCredentials({
+    // Set credentials correctly
+    auth.setCredentials({
       refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
     });
+
+    const drive = google.drive({ version: 'v3', auth });
 
     // Create folder metadata
     const fileMetadata: any = {
@@ -123,14 +127,19 @@ export const uploadAdmissionDocument = async (
 ): Promise<string> => {
   try {
     initializeGoogleAuth();
-    const drive = google.drive({ version: 'v3', auth: new google.auth.OAuth2(
+    
+    // Create OAuth2 client properly
+    const auth = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET
-    ) });
+    );
 
-    drive.context._options.auth?.setCredentials({
+    // Set credentials correctly
+    auth.setCredentials({
       refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
     });
+
+    const drive = google.drive({ version: 'v3', auth });
 
     // Extract file extension
     const ext = fileName.split('.').pop();

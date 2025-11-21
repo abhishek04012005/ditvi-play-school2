@@ -364,8 +364,6 @@ export default function AdmissionForm() {
             >
               <AdmissionConfirmationSlip data={submissionResult} formData={formData} />
             </motion.div>
-
-            {/* Action Buttons */}
             <motion.div
               className={styles.successButtonGroup}
               initial={{ opacity: 0 }}
@@ -376,11 +374,6 @@ export default function AdmissionForm() {
                 <FaDownload className={styles.btnIcon} />
                 <span>Download PDF</span>
               </button>
-          
-              {/* <button className={styles.btnSecondary} onClick={handleShare}>
-                <FaShare className={styles.btnIcon} />
-                <span>Share</span>
-              </button> */}
             </motion.div>
 
             {/* Info Box */}
