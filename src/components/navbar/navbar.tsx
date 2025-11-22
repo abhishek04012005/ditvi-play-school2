@@ -70,7 +70,7 @@ const Navbar = () => {
               ))}
             </div>
 
-            <Link href="/admission" className={styles.enrollBtn}>
+            <Link href="/admission-form" className={styles.enrollBtn}>
               Admission Now
             </Link>
 

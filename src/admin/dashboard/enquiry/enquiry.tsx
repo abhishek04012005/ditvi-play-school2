@@ -22,6 +22,7 @@ import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
 import styles from './enquiry.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
+import Loader from '@/custom/loader/loader';
 
 interface Enquiry {
     id: string;
@@ -252,6 +253,10 @@ const EnquiryDashboard = () => {
             toast.error('Failed to save note');
         }
     };
+
+    if(loading) {
+        return <Loader isVisible={true} message="Loading Enquiries..." fullScreen={true} />;
+    }
 
     return (
         <div className={styles.dashboardWrapper}>

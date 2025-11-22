@@ -1,0 +1,425 @@
+/* ==================== CSS VARIABLES ==================== */
+:root {
+  --primary-yellow: #ffbf00;
+  --primary-purple: #6a4c93;
+  --secondary-purple: #8662b0;
+  --white: #ffffff;
+  --black: #333333;
+  --text-gray: #666666;
+  --bg-light: #f9f9f9;
+}
+
+/* ==================== LOADER WRAPPER ==================== */
+.loaderWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  z-index: 9999;
+}
+
+.loaderWrapper.fullScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  width: 100%;
+  height: 100vh;
+}
+
+/* ==================== LOADER CONTAINER ==================== */
+.loaderContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+/* ==================== LOADER CONTENT ==================== */
+.loaderContent {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==================== ANIMATED RINGS ==================== */
+.ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.ringSpan {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 4px solid transparent;
+  border-top: 4px solid var(--primary-purple);
+  border-right: 4px solid var(--primary-yellow);
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(106, 76, 147, 0.2);
+}
+
+.ring:nth-child(1) .ringSpan {
+  width: 100%;
+  height: 100%;
+}
+
+/* ==================== CENTER CIRCLE ==================== */
+.centerCircle {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(
+    135deg,
+    var(--primary-purple),
+    var(--secondary-purple)
+  );
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(106, 76, 147, 0.3);
+  z-index: 2;
+}
+
+.logo {
+  font-size: 2.5rem;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+/* ==================== FLOATING BALLS ==================== */
+.ballsContainer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 1;
+}
+
+.ball {
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(
+    135deg,
+    var(--primary-yellow),
+    var(--primary-purple)
+  );
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(255, 191, 0, 0.3);
+  position: absolute;
+}
+
+.ball:nth-child(1) {
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.ball:nth-child(2) {
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.ball:nth-child(3) {
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* ==================== LOADING TEXT ==================== */
+.loadingText {
+  font-size: 1.1rem;
+  color: var(--primary-purple);
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  min-width: 150px;
+  text-align: center;
+}
+
+/* ==================== DOTS ANIMATION ==================== */
+.dotsContainer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  background: var(--primary-yellow);
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 2px 6px rgba(255, 191, 0, 0.3);
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes bounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* Tablets (1024px - 1200px) */
+@media (max-width: 1024px) {
+  .loaderContainer {
+    gap: 1.8rem;
+  }
+
+  .loaderContent {
+    width: 110px;
+    height: 110px;
+  }
+
+  .centerCircle {
+    width: 65px;
+    height: 65px;
+  }
+
+  .logo {
+    font-size: 2.3rem;
+  }
+
+  .ball {
+    width: 11px;
+    height: 11px;
+  }
+
+  .loadingText {
+    font-size: 1rem;
+  }
+
+  .dot {
+    width: 0.55rem;
+    height: 0.55rem;
+  }
+}
+
+/* Medium Tablets (768px - 1024px) */
+@media (max-width: 768px) {
+  .loaderContainer {
+    gap: 1.6rem;
+  }
+
+  .loaderContent {
+    width: 100px;
+    height: 100px;
+  }
+
+  .ringSpan {
+    border-width: 3px;
+    border-top-width: 3px;
+    border-right-width: 3px;
+  }
+
+  .centerCircle {
+    width: 60px;
+    height: 60px;
+    box-shadow: 0 6px 18px rgba(106, 76, 147, 0.25);
+  }
+
+  .logo {
+    font-size: 2.1rem;
+  }
+
+  .ball {
+    width: 10px;
+    height: 10px;
+  }
+
+  .loadingText {
+    font-size: 0.95rem;
+    min-width: 140px;
+  }
+
+  .dot {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+}
+
+/* Small Tablets (640px - 768px) */
+@media (max-width: 640px) {
+  .loaderContainer {
+    gap: 1.4rem;
+    padding: 1.5rem;
+  }
+
+  .loaderContent {
+    width: 90px;
+    height: 90px;
+  }
+
+  .ringSpan {
+    border-width: 3px;
+  }
+
+  .centerCircle {
+    width: 55px;
+    height: 55px;
+  }
+
+  .logo {
+    font-size: 1.9rem;
+  }
+
+  .ball {
+    width: 9px;
+    height: 9px;
+  }
+
+  .loadingText {
+    font-size: 0.9rem;
+    min-width: 130px;
+  }
+
+  .dot {
+    width: 0.45rem;
+    height: 0.45rem;
+  }
+}
+
+/* Mobile Phones (480px - 640px) */
+@media (max-width: 480px) {
+  .loaderContainer {
+    gap: 1.2rem;
+    padding: 1.25rem;
+  }
+
+  .loaderContent {
+    width: 80px;
+    height: 80px;
+  }
+
+  .ringSpan {
+    border-width: 2.5px;
+    border-top-width: 2.5px;
+    border-right-width: 2.5px;
+    box-shadow: 0 0 15px rgba(106, 76, 147, 0.15);
+  }
+
+  .centerCircle {
+    width: 50px;
+    height: 50px;
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.2);
+  }
+
+  .logo {
+    font-size: 1.7rem;
+  }
+
+  .ball {
+    width: 8px;
+    height: 8px;
+  }
+
+  .loadingText {
+    font-size: 0.85rem;
+    min-width: 120px;
+  }
+
+  .dot {
+    width: 0.4rem;
+    height: 0.4rem;
+  }
+}
+
+/* Extra Small Phones (< 480px) */
+@media (max-width: 380px) {
+  .loaderContainer {
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .loaderContent {
+    width: 70px;
+    height: 70px;
+  }
+
+  .ringSpan {
+    border-width: 2px;
+    box-shadow: 0 0 12px rgba(106, 76, 147, 0.1);
+  }
+
+  .centerCircle {
+    width: 45px;
+    height: 45px;
+    box-shadow: 0 3px 10px rgba(106, 76, 147, 0.15);
+  }
+
+  .logo {
+    font-size: 1.5rem;
+  }
+
+  .ball {
+    width: 7px;
+    height: 7px;
+  }
+
+  .loadingText {
+    font-size: 0.8rem;
+    min-width: 110px;
+  }
+
+  .dot {
+    width: 0.35rem;
+    height: 0.35rem;
+  }
+}
+
+/* ==================== ACCESSIBILITY ==================== */
+@media (prefers-reduced-motion: reduce) {
+  .centerCircle,
+  .ring,
+  .ball,
+  .logo {
+    animation: none;
+  }
+
+  .ringSpan {
+    animation: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .centerCircle {
+    border: 2px solid var(--primary-purple);
+  }
+
+  .loadingText {
+    font-weight: 700;
+  }
+
+  .ringSpan {
+    border-width: 5px;
+  }
+}

@@ -3,7 +3,8 @@ import React, { useRef, useState } from 'react';
 import Image from 'next/image';
 import { FaPrint, FaX, FaDownload } from 'react-icons/fa6';
 import { motion, AnimatePresence } from 'framer-motion';
-import html2pdf from 'html2pdf.js';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import styles from './printcard.module.css';
 import schoolDetails from '@/json/schooldetails';
 
@@ -71,7 +72,14 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
         return;
       }
 
-      const clonedElement = element.cloneNode(true) as HTMLElement;
+      const certificateDiv = element.querySelector('[class*="certificate"]') as HTMLElement;
+      if (!certificateDiv) {
+        alert('Certificate element not found');
+        setIsPrinting(false);
+        return;
+      }
+
+      const clonedElement = certificateDiv.cloneNode(true) as HTMLElement;
 
       const htmlContent = `
         <!DOCTYPE html>
@@ -93,17 +101,23 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
               --text-gray: #333;
             }
 
-            html, body {
+            html {
               margin: 0;
               padding: 0;
-              width: 100%;
-              height: 100%;
+            }
+
+            body {
+              margin: 0;
+              padding: 0;
+              width: 210mm;
+              height: 297mm;
               background: white;
             }
 
             @page {
-              size: A4;
+              size: A4 portrait;
               margin: 0;
+              padding: 0;
             }
 
             @media print {
@@ -120,44 +134,33 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
               }
             }
 
-            .certificateWrapper {
-              width: 210mm;
-              height: 297mm;
-              margin: 0;
-              padding: 0;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              background: white;
-            }
-
             .certificate {
-              width: 210mm;
-              height: 297mm;
-              padding: 0;
-              margin: 0;
+              width: 210mm !important;
+              height: 297mm !important;
+              margin: 0 !important;
+              padding: 10mm 15mm !important;
               position: relative;
-              background: linear-gradient(135deg, #ffffff 0%, #fafaf8 100%);
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: flex-start;
-              box-sizing: border-box;
-              overflow: hidden;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
+              background: linear-gradient(135deg, #ffffff 0%, #fafaf8 100%) !important;
+              display: flex !important;
+              flex-direction: column !important;
+              align-items: center !important;
+              justify-content: space-between !important;
+              box-sizing: border-box !important;
+              overflow: hidden !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
             }
 
             .certificate::before {
               content: '';
               position: absolute;
-              top: 15mm;
-              left: 15mm;
-              right: 15mm;
-              bottom: 15mm;
+              top: 12mm;
+              left: 12mm;
+              right: 12mm;
+              bottom: 12mm;
               border: 3px solid var(--primary-purple);
               border-radius: 8px;
-              opacity: 0.25;
+              opacity: 0.2;
               z-index: 1;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
@@ -166,13 +169,13 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
             .certificate::after {
               content: '';
               position: absolute;
-              top: 17mm;
-              left: 17mm;
-              right: 17mm;
-              bottom: 17mm;
+              top: 14mm;
+              left: 14mm;
+              right: 14mm;
+              bottom: 14mm;
               border: 1px solid var(--primary-yellow);
               border-radius: 6px;
-              opacity: 0.4;
+              opacity: 0.35;
               z-index: 1;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
@@ -183,29 +186,32 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
               z-index: 2;
               width: 100%;
               height: 100%;
-              padding: 20mm 25mm;
               display: flex;
               flex-direction: column;
               align-items: center;
               justify-content: space-between;
               box-sizing: border-box;
+              margin: 0;
+              padding: 0;
+              gap: 0;
             }
 
             .headerSection {
               display: flex;
               flex-direction: column;
               align-items: center;
-              gap: 6mm;
+              gap: 3mm;
               text-align: center;
               width: 100%;
+              padding: 0;
             }
 
             .schoolLogoBox {
               display: flex;
               align-items: center;
               justify-content: center;
-              width: 28mm;
-              height: 28mm;
+              width: 22mm;
+              height: 22mm;
               background: linear-gradient(135deg, var(--primary-yellow) 0%, rgba(255, 209, 102, 0.8) 100%);
               border-radius: 50%;
               box-shadow: 0 3px 12px rgba(255, 209, 102, 0.3);
@@ -216,8 +222,8 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
             }
 
             .logoImg {
-              width: 26mm;
-              height: 26mm;
+              width: 20mm;
+              height: 20mm;
               object-fit: contain;
               border-radius: 50%;
               -webkit-print-color-adjust: exact;
@@ -225,22 +231,22 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
             }
 
             .logoPlaceholder {
-              font-size: 16mm;
+              font-size: 12mm;
               line-height: 1;
             }
 
             .schoolDetails {
               display: flex;
               flex-direction: column;
-              gap: 1mm;
+              gap: 0.3mm;
               align-items: center;
             }
 
             .schoolTitle {
               color: var(--primary-purple);
-              font-size: 20pt;
+              font-size: 16pt;
               font-weight: 900;
-              letter-spacing: 0.5px;
+              letter-spacing: 0.3px;
               margin: 0;
               line-height: 1.1;
               -webkit-print-color-adjust: exact;
@@ -249,7 +255,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
 
             .schoolAddress {
               color: var(--text-gray);
-              font-size: 9pt;
+              font-size: 7pt;
               margin: 0;
               font-weight: 600;
               -webkit-print-color-adjust: exact;
@@ -260,13 +266,13 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
               display: flex;
               flex-direction: column;
               align-items: center;
-              gap: 5mm;
+              gap: 2mm;
               width: 100%;
-              margin: 5mm 0;
+              margin: 2mm 0;
             }
 
             .decorLine {
-              width: 50mm;
+              width: 40mm;
               height: 2px;
               background: linear-gradient(90deg, transparent 0%, var(--primary-yellow) 50%, transparent 100%);
               -webkit-print-color-adjust: exact;
@@ -275,9 +281,9 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
 
             .certificateText {
               color: var(--primary-purple);
-              font-size: 36pt;
+              font-size: 28pt;
               font-weight: 900;
-              letter-spacing: 1.5px;
+              letter-spacing: 1.2px;
               margin: 0;
               text-transform: uppercase;
               -webkit-print-color-adjust: exact;
@@ -286,11 +292,11 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
 
             .awardTypeBox {
               display: inline-block;
-              padding: 7mm 14mm;
-              border: 2.5px solid;
-              border-radius: 30mm;
+              padding: 4mm 10mm;
+              border: 2px solid;
+              border-radius: 20mm;
               background: linear-gradient(135deg, rgba(255, 209, 102, 0.15) 0%, rgba(255, 209, 102, 0.08) 100%);
-              margin: 3mm 0;
+              margin: 1.5mm 0;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
@@ -298,9 +304,9 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
             .awardTypeText {
               color: var(--primary-purple);
               font-weight: 800;
-              font-size: 12pt;
+              font-size: 10pt;
               text-transform: uppercase;
-              letter-spacing: 1px;
+              letter-spacing: 0.8px;
               margin: 0;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
@@ -313,17 +319,17 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
               display: flex;
               flex-direction: column;
               justify-content: center;
-              gap: 4mm;
-              padding: 3mm 0;
+              gap: 2.5mm;
+              padding: 0;
               margin: 0;
             }
 
             .presentedToText {
               color: var(--text-gray);
-              font-size: 12pt;
+              font-size: 10pt;
               font-weight: 700;
               margin: 0;
-              letter-spacing: 0.3px;
+              letter-spacing: 0.2px;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
@@ -332,17 +338,17 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
               display: flex;
               flex-direction: column;
               align-items: center;
-              margin: 3mm 0;
+              margin: 1mm 0;
             }
 
             .studentNameText {
               color: var(--primary-purple);
-              font-size: 32pt;
+              font-size: 24pt;
               font-weight: 900;
               border-bottom: 3px solid var(--primary-yellow);
-              padding: 5mm 10mm;
+              padding: 3mm 6mm;
               margin: 0;
-              letter-spacing: -0.5px;
+              letter-spacing: -0.3px;
               text-transform: uppercase;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
@@ -350,21 +356,21 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
 
             .forAchievingText {
               color: var(--text-gray);
-              font-size: 11pt;
+              font-size: 9pt;
               font-weight: 700;
-              margin: 3mm 0 2mm 0;
-              letter-spacing: 0.3px;
+              margin: 1.5mm 0 0.5mm 0;
+              letter-spacing: 0.2px;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
 
             .achievementTextBox {
               background: linear-gradient(135deg, rgba(106, 76, 147, 0.08) 0%, rgba(255, 209, 102, 0.06) 100%);
-              border: 2px solid rgba(106, 76, 147, 0.15);
-              border-radius: 8px;
-              padding: 8mm 10mm;
-              margin: 3mm 0;
-              min-height: 30mm;
+              border: 1.5px solid rgba(106, 76, 147, 0.15);
+              border-radius: 6px;
+              padding: 5mm 7mm;
+              margin: 1.5mm 0;
+              min-height: auto;
               display: flex;
               align-items: center;
               justify-content: center;
@@ -374,9 +380,9 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
 
             .achievementText {
               color: var(--primary-purple);
-              font-size: 12pt;
+              font-size: 9.5pt;
               font-weight: 800;
-              line-height: 1.6;
+              line-height: 1.4;
               font-style: italic;
               margin: 0;
               -webkit-print-color-adjust: exact;
@@ -385,10 +391,10 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
 
             .congratsText {
               color: var(--text-gray);
-              font-size: 10pt;
-              line-height: 1.5;
+              font-size: 8.5pt;
+              line-height: 1.3;
               font-weight: 600;
-              margin: 2mm 0;
+              margin: 0.5mm 0;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
@@ -398,9 +404,9 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
               display: flex;
               align-items: flex-end;
               justify-content: space-between;
-              gap: 15mm;
-              margin-top: 5mm;
-              padding-top: 5mm;
+              gap: 8mm;
+              margin-top: 2mm;
+              padding-top: 2mm;
               border-top: 1px solid rgba(106, 76, 147, 0.1);
             }
 
@@ -408,17 +414,17 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
               display: flex;
               flex-direction: column;
               align-items: center;
-              gap: 3mm;
+              gap: 1.5mm;
             }
 
             .photoFrame {
-              width: 45mm;
-              height: 55mm;
-              border: 2.5px solid var(--primary-purple);
-              border-radius: 8px;
+              width: 35mm;
+              height: 45mm;
+              border: 2px solid var(--primary-purple);
+              border-radius: 6px;
               overflow: hidden;
               background: white;
-              box-shadow: 0 4px 12px rgba(106, 76, 147, 0.25);
+              box-shadow: 0 3px 10px rgba(106, 76, 147, 0.2);
               position: relative;
               flex-shrink: 0;
               -webkit-print-color-adjust: exact;
@@ -447,11 +453,11 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
 
             .photoLabel {
               color: var(--text-gray);
-              font-size: 8pt;
+              font-size: 6pt;
               font-weight: 700;
               margin: 0;
               text-transform: uppercase;
-              letter-spacing: 0.5px;
+              letter-spacing: 0.4px;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
@@ -460,7 +466,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
               display: flex;
               flex-direction: column;
               align-items: center;
-              gap: 10mm;
+              gap: 6mm;
               flex: 1;
             }
 
@@ -470,16 +476,16 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
 
             .dateLabel {
               color: var(--text-gray);
-              font-size: 10pt;
+              font-size: 8pt;
               font-weight: 700;
-              margin: 0 0 2mm 0;
+              margin: 0 0 0.5mm 0;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
 
             .dateValue {
               color: var(--primary-purple);
-              font-size: 11pt;
+              font-size: 8.5pt;
               font-weight: 800;
               margin: 0;
               -webkit-print-color-adjust: exact;
@@ -492,22 +498,22 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
               flex-direction: column;
               align-items: center;
               width: 100%;
-              min-width: 60mm;
+              min-width: 50mm;
             }
 
             .signatureLine {
               width: 100%;
-              min-width: 60mm;
+              min-width: 50mm;
               border-top: 2px solid var(--primary-purple);
-              margin-bottom: 3mm;
-              height: 20mm;
+              margin-bottom: 1.5mm;
+              height: 12mm;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
 
             .signatureLabel {
               color: var(--text-gray);
-              font-size: 9pt;
+              font-size: 7pt;
               font-weight: 700;
               margin: 0;
               text-transform: uppercase;
@@ -517,7 +523,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
 
             .footerText {
               text-align: center;
-              font-size: 8pt;
+              font-size: 6.5pt;
               color: var(--text-gray);
               font-style: italic;
               margin: 0;
@@ -533,9 +539,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
           </style>
         </head>
         <body>
-          <div class="certificateWrapper">
-            ${clonedElement.innerHTML}
-          </div>
+          ${clonedElement.outerHTML}
         </body>
         </html>
       `;
@@ -560,59 +564,42 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
   };
 
   const handleDownloadPDF = async () => {
+    if (!printRef.current) return;
+
     try {
       setIsDownloading(true);
-      await new Promise(resolve => setTimeout(resolve, 800));
 
-      const element = printRef.current;
-      if (!element) {
+      const certificateDiv = printRef.current.querySelector('[class*="certificate"]') as HTMLElement;
+      if (!certificateDiv) {
         alert('Certificate element not found');
         setIsDownloading(false);
         return;
       }
 
-      const clonedElement = element.cloneNode(true) as HTMLElement;
+      // ✅ Using html2canvas + jsPDF directly - Works perfectly!
+      const canvas = await html2canvas(certificateDiv, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        windowWidth: 794,
+        windowHeight: 1123
+      });
 
-      const options: any = {
-        margin: 0,
-        filename: `${award.name}-Award-Certificate-${new Date().toISOString().split('T')[0]}.pdf`,
-        image: { type: 'jpeg', quality: 0.99 },
-        html2canvas: {
-          scale: 4,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#ffffff',
-          logging: false,
-          windowHeight: 1500,
-          windowWidth: 1000
-        },
-        jsPDF: {
-          format: 'a4',
-          orientation: 'portrait',
-          compress: false,
-          unit: 'mm',
-          hotfixes: ['px_scaling']
-        },
-        pagebreak: { mode: 'avoid' }
-      };
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgData = canvas.toDataURL('image/jpeg', 0.98);
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-      html2pdf()
-        .set(options)
-        .from(clonedElement)
-        .save()
-        .then(() => {
-          setIsDownloading(false);
-        })
-        .catch((error: any) => {
-          console.error('PDF download error:', error);
-          alert('Error downloading PDF. Please try again.');
-          setIsDownloading(false);
-        });
+      pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+      pdf.save(`${award.name}-Award-Certificate-${new Date().toISOString().split('T')[0]}.pdf`);
 
-    } catch (error) {
-      console.error('Download error:', error);
-      alert('Error preparing certificate for download');
       setIsDownloading(false);
+      alert('✅ Certificate downloaded successfully!');
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      setIsDownloading(false);
+      alert('❌ Failed to generate PDF');
     }
   };
 
@@ -634,11 +621,10 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
             transition={{ type: 'spring', damping: 20, stiffness: 300 }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
             <div className={styles.header}>
               <div className={styles.headerContent}>
                 <h2>🎖️ Certificate Preview</h2>
-                <p>Ready to print or download</p>
+                <p>A4 Portrait Mode - Full Coverage</p>
               </div>
               <motion.button
                 onClick={onClose}
@@ -652,13 +638,10 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
               </motion.button>
             </div>
 
-            {/* Preview */}
             <div className={styles.previewContainer}>
               <div className={styles.printableArea} ref={printRef}>
-                {/* A4 Certificate */}
                 <div className={styles.certificate}>
                   <div className={styles.content}>
-                    {/* Header Section */}
                     <div className={styles.headerSection}>
                       <div className={styles.schoolLogoBox}>
                         {schoolDetails?.logo ? (
@@ -683,14 +666,12 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
                       </div>
                     </div>
 
-                    {/* Certificate Title */}
                     <div className={styles.certificateTitleSection}>
                       <div className={styles.decorLine}></div>
                       <h2 className={styles.certificateText}>Certificate</h2>
                       <div className={styles.decorLine}></div>
                     </div>
 
-                    {/* Award Badge */}
                     <div
                       className={styles.awardTypeBox}
                       style={{ borderColor: awardColors[award.award_type] }}
@@ -699,7 +680,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
                         {awardTypeLabels[award.award_type]}
                       </p>
                     </div>
-                    {/* Photo Section */}
+
                     {award.image_url && (
                       <div className={styles.photoSection}>
                         <div className={styles.photoFrame}>
@@ -715,55 +696,44 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
                         </div>
                       </div>
                     )}
-                    {/* Main Content */}
+
                     <div className={styles.mainContent}>
                       <p className={styles.presentedToText}>This certificate is proudly presented to</p>
-
                       <div className={styles.studentNameBox}>
                         <h3 className={styles.studentNameText}>{award.name}</h3>
                       </div>
-
                       <p className={styles.forAchievingText}>For exceptionally demonstrating:</p>
-
                       <div className={styles.achievementTextBox}>
                         <p className={styles.achievementText}>{award.message}</p>
                       </div>
-
                       <p className={styles.congratsText}>
                         We commend your outstanding achievement and dedication to excellence!
                       </p>
                     </div>
 
-                    {/* Photo and Date Section */}
                     <div className={styles.photoAndDateContainer}>
-
-
-                      {/* Date and Signature Section */}
                       <div className={styles.dateAndSignatureBox}>
-                        {/* Date Box */}
                         <div className={styles.dateBox}>
                           <p className={styles.dateLabel}>Date</p>
                           <p className={styles.dateValue}>{getFormattedDate()}</p>
                         </div>
-
-                        {/* Signature Box */}
                         <div className={styles.signatureBox}>
                           <div className={styles.signatureLine}></div>
-                          <p className={styles.signatureLabel}>{schoolDetails.contact.email} / {schoolDetails.contact.phone}</p>
+                          <p className={styles.signatureLabel}>
+                            {schoolDetails.contact.email}
+                          </p>
                         </div>
                       </div>
                     </div>
 
-                    {/* Footer */}
                     <p className={styles.footerText}>
-                      Keep this certificate as a token of your exceptional achievement
+                      Keep this certificate as a token of your achievement
                     </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Action Buttons */}
             <div className={styles.actions}>
               <motion.button
                 type="button"

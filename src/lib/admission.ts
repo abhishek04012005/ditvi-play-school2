@@ -63,15 +63,19 @@ export const createAdmissionFolder = async (
 ): Promise<string> => {
   try {
     initializeGoogleAuth();
-    const drive = google.drive({ version: 'v3', auth: new google.auth.OAuth2(
+    
+    // Create OAuth2 client properly
+    const auth = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET
-    ) });
+    );
 
-    // Set credentials
-    drive.context._options.auth?.setCredentials({
+    // Set credentials correctly
+    auth.setCredentials({
       refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
     });
+
+    const drive = google.drive({ version: 'v3', auth });
 
     // Create folder metadata
     const fileMetadata: any = {
@@ -123,14 +127,19 @@ export const uploadAdmissionDocument = async (
 ): Promise<string> => {
   try {
     initializeGoogleAuth();
-    const drive = google.drive({ version: 'v3', auth: new google.auth.OAuth2(
+    
+    // Create OAuth2 client properly
+    const auth = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET
-    ) });
+    );
 
-    drive.context._options.auth?.setCredentials({
+    // Set credentials correctly
+    auth.setCredentials({
       refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
     });
+
+    const drive = google.drive({ version: 'v3', auth });
 
     // Extract file extension
     const ext = fileName.split('.').pop();
@@ -174,9 +183,27 @@ export const uploadAdmissionDocument = async (
       throw new Error('Failed to upload file to Google Drive');
     }
 
+    // Set file permissions to make it accessible
+    try {
+      await drive.permissions.create({
+        fileId: fileId,
+        requestBody: {
+          role: 'reader',
+          type: 'anyone',
+        },
+      });
+      console.log(`Set file permissions for: ${renamedFileName}`);
+    } catch (permError) {
+      console.warn(`Warning: Could not set file permissions:`, permError);
+    }
+
+    // Generate direct download URL (works for files shared with "anyone")
+    // Format: https://drive.google.com/uc?export=download&id=FILE_ID
+    const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+
     console.log(`Uploaded admission document: ${renamedFileName} (ID: ${fileId})`);
     
-    return webViewLink || '';
+    return downloadUrl;
   } catch (error) {
     console.error('Error uploading admission document:', error);
     throw error;
@@ -200,10 +227,10 @@ export const saveAdmissionToDatabase = async (admissionData: {
   parent_email?: string;
   program_name: string;
   previous_school?: string;
-  photo_url: string;
-  birth_certificate_url: string;
-  aadhar_card_url: string;
-  parent_id_proof_url: string;
+  photo_url?: string | null;
+  birth_certificate_url?: string | null;
+  aadhar_card_url?: string | null;
+  parent_id_proof_url?: string | null;
   google_drive_folder_id: string;
 }): Promise<any> => {
   try {

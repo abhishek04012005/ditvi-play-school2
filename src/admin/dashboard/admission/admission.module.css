@@ -1,4 +1,4 @@
-/* ==================== CSS Variables ==================== */
+/* ==================== CSS VARIABLES ==================== */
 :root {
     --primary-yellow: #ffbf00;
     --primary-purple: #6a4c93;
@@ -14,6 +14,7 @@
     --warning: #ffbf00;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 
 /* ==================== Dashboard Wrapper ==================== */
 .dashboardWrapper {
@@ -56,6 +57,7 @@
 .statusCard:hover {
     border-color: var(--primary-purple);
     box-shadow: 0 8px 24px rgba(106, 76, 147, 0.15);
+    transform: translateY(-4px);
 }
 
 .statusCard.active {
@@ -115,7 +117,6 @@
         opacity: 1;
         transform: scale(1);
     }
-
     50% {
         opacity: 0.7;
         transform: scale(1.2);
@@ -321,24 +322,6 @@
     color: var(--black);
 }
 
-/* ==================== Email Link ==================== */
-.emailLink {
-    display: inline-block;
-    color: var(--primary-purple);
-    text-decoration: none;
-    font-weight: 600;
-    transition: var(--transition);
-    max-width: 200px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.emailLink:hover {
-    color: var(--primary-yellow);
-    text-decoration: underline;
-}
-
 /* ==================== Contact Links ==================== */
 .contactLinks {
     display: flex;
@@ -407,18 +390,6 @@
     transform: scale(0.95);
 }
 
-/* ==================== Message Cell ==================== */
-.messageCell {
-    max-width: 250px;
-    white-space: normal;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    line-height: 1.4;
-}
-
 /* ==================== Status Badge ==================== */
 .status {
     display: inline-block;
@@ -433,28 +404,34 @@
     transition: var(--transition);
 }
 
-.status.new {
+.status.in-review {
     color: #3b82f6;
     background: rgba(59, 130, 246, 0.1);
     border-color: #3b82f6;
 }
 
-.status.replied {
+.status.reviewed {
     color: #f59e0b;
     background: rgba(245, 158, 11, 0.1);
     border-color: #f59e0b;
 }
 
-.status.resolved {
+.status.interview-scheduled {
+    color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.1);
+    border-color: #8b5cf6;
+}
+
+.status.confirmed {
     color: var(--success);
     background: rgba(16, 185, 129, 0.1);
     border-color: var(--success);
 }
 
-.status.archived {
-    color: #6b7280;
-    background: rgba(107, 114, 128, 0.1);
-    border-color: #6b7280;
+.status.rejected {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.1);
+    border-color: #dc2626;
 }
 
 /* ==================== Status Select ==================== */
@@ -570,11 +547,38 @@
         opacity: 1;
         transform: scale(1);
     }
-
     50% {
         opacity: 0.6;
         transform: scale(1.3);
     }
+}
+
+/* ==================== View Button ==================== */
+.viewBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.1));
+    color: #1e40af;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.viewBtn:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(37, 99, 235, 0.15));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.viewBtn:active {
+    transform: translateY(0);
 }
 
 /* ==================== Modal Overlay ==================== */
@@ -586,24 +590,29 @@
     bottom: 0;
     width: 100%;
     height: 100%;
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
     z-index: 999;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     padding: 1rem;
 }
 
+.modalOverlay.active {
+    display: flex;
+}
+
 /* ==================== Modal ==================== */
 .modal {
     position: fixed;
-    top: 20%;
-    left: 33%;
+    top: 10%;
+    left: 30%;
     background: var(--white);
     border-radius: 16px;
     padding: 0;
     width: 100%;
-    max-width: 600px;
+    max-width: 700px;
     max-height: 90vh;
     overflow: hidden;
     z-index: 1000;
@@ -612,6 +621,18 @@
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     border: 1px solid var(--border-color);
     margin: auto;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
 /* ==================== Modal Header ==================== */
@@ -661,6 +682,7 @@
     border-radius: 8px;
     transition: var(--transition);
     flex-shrink: 0;
+    margin-left: auto;
 }
 
 .closeBtn:hover {
@@ -673,6 +695,89 @@
     flex: 1;
     overflow-y: auto;
     padding: 2rem;
+}
+
+.modalContent::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modalContent::-webkit-scrollbar-track {
+    background: var(--bg-light);
+}
+
+.modalContent::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.modalContent::-webkit-scrollbar-thumb:hover {
+    background: var(--text-light);
+}
+
+/* ==================== Details Grid ==================== */
+.detailsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.detailItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: var(--bg-light);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.detailLabel {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detailValue {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--black);
+    word-break: break-word;
+}
+
+/* ==================== Section Labels ==================== */
+.sectionLabel {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary-purple);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.75rem;
+}
+
+/* ==================== Status Section ==================== */
+.statusSection {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: var(--bg-light);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.statusSection .statusSelect {
+    width: 100%;
+}
+
+/* ==================== Notes Section ==================== */
+.notesSection {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: var(--bg-light);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
 }
 
 .noteTextarea {
@@ -688,6 +793,7 @@
     background: var(--white);
     line-height: 1.6;
     box-sizing: border-box;
+    min-height: 150px;
 }
 
 .noteTextarea::placeholder {
@@ -706,6 +812,73 @@
     opacity: 0.6;
 }
 
+/* ==================== Documents Section ==================== */
+.documentsSection {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: var(--bg-light);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.documentsList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.documentItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.documentItem:hover {
+    border-color: var(--primary-purple);
+    background: rgba(106, 76, 147, 0.02);
+}
+
+.documentIcon {
+    font-size: 1.2rem;
+    color: var(--primary-purple);
+    flex-shrink: 0;
+}
+
+.documentName {
+    flex: 1;
+    font-weight: 600;
+    color: var(--black);
+    font-size: 0.9rem;
+    word-break: break-word;
+}
+
+.docBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: rgba(106, 76, 147, 0.1);
+    color: var(--primary-purple);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.85rem;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.docBtn:hover {
+    background: rgba(106, 76, 147, 0.2);
+    transform: scale(1.05);
+}
+
 /* ==================== Modal Footer ==================== */
 .modalFooter {
     display: flex;
@@ -715,6 +888,7 @@
     background: var(--bg-light);
     justify-content: flex-end;
     flex-shrink: 0;
+    flex-wrap: wrap;
 }
 
 .cancelBtn,
@@ -760,7 +934,73 @@
     cursor: not-allowed;
 }
 
+.spinner {
+    display: inline-block;
+    animation: spin 0.8s linear infinite;
+}
+
+/* ==================== Preview Content ==================== */
+.previewContent {
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    background: var(--bg-light);
+}
+
+.previewImage {
+    max-width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.previewIframe {
+    width: 100%;
+    height: 500px;
+    border: none;
+    border-radius: 10px;
+}
+
+.previewPlaceholder {
+    text-align: center;
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+.downloadLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.8rem 1.6rem;
+    background: linear-gradient(90deg, var(--primary-purple), var(--secondary-purple));
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.25);
+}
+
+.downloadLink:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(106, 76, 147, 0.35);
+}
+
 /* ==================== Responsive Design ==================== */
+
+@media (max-width: 1400px) {
+    .modal {
+        left: 25%;
+        max-width: 600px;
+    }
+}
+
 @media (max-width: 1200px) {
     .statusCardsSection {
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -777,11 +1017,6 @@
 
     .dashboard {
         padding: 1.5rem;
-    }
-
-    .modal {
-        left: 25%;
-        /* max-width: 500px; */
     }
 }
 
@@ -817,13 +1052,13 @@
         font-size: 0.9rem;
     }
 
-    .messageCell {
-        max-width: 200px;
+    .detailsGrid {
+        grid-template-columns: 1fr;
     }
 
     .modal {
         left: 15%;
-        /* max-width: 450px; */
+        max-width: 600px;
     }
 }
 
@@ -899,30 +1134,42 @@
         font-size: 0.85rem;
     }
 
-    .messageCell {
-        max-width: 150px;
-    }
-
-    .emailLink {
-        max-width: 150px;
-    }
-
     .modal {
+        left:0;
         width: 100%;
+        /* max-width: 600px; */
         max-height: 95vh;
-        left: 5%;
     }
 
     .modalHeader {
         padding: 1.5rem;
+        flex-direction: column;
     }
 
     .modalHeader h2 {
         font-size: 1.2rem;
+        margin-right: 0;
+    }
+
+    .closeBtn {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        margin-left: 0;
     }
 
     .modalContent {
         padding: 1.5rem;
+        margin-top: 0;
+    }
+
+    .detailsGrid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .detailItem {
+        padding: 0.75rem;
     }
 
     .noteTextarea {
@@ -936,7 +1183,8 @@
     }
 
     .cancelBtn,
-    .saveBtn {
+    .saveBtn,
+    .downloadLink {
         padding: 0.7rem 1.2rem;
         font-size: 0.9rem;
     }
@@ -1012,24 +1260,21 @@
         padding-right: 1.8rem;
     }
 
-    .messageCell {
-        max-width: 120px;
-    }
-
-    .emailLink {
-        max-width: 120px;
-    }
-
     .modal {
-        width: 100%;
+        width: 95vw;
         max-height: 90vh;
-        left: 0;
+        max-width: 100%;
+        border-radius: 20px 20px 0 0;
+        bottom: 0;
+    }
+
+    .modalOverlay {
+        align-items: flex-end;
     }
 
     .modalHeader {
         padding: 1.25rem;
-        flex-direction: column;
-        gap: 1rem;
+        position: relative;
     }
 
     .modalHeader h2 {
@@ -1037,6 +1282,9 @@
     }
 
     .closeBtn {
+        position: absolute;
+        top: 1.25rem;
+        right: 1.25rem;
         width: 36px;
         height: 36px;
         font-size: 1.25rem;
@@ -1046,10 +1294,27 @@
         padding: 1.25rem;
     }
 
+    .detailsGrid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .detailItem {
+        padding: 0.6rem;
+    }
+
+    .detailLabel {
+        font-size: 0.7rem;
+    }
+
+    .detailValue {
+        font-size: 0.85rem;
+    }
+
     .noteTextarea {
         font-size: 0.95rem;
         padding: 0.7rem;
-        min-height: 150px;
+        min-height: 120px;
     }
 
     .modalFooter {
@@ -1059,7 +1324,8 @@
     }
 
     .cancelBtn,
-    .saveBtn {
+    .saveBtn,
+    .downloadLink {
         width: 100%;
         justify-content: center;
         padding: 0.7rem 1.2rem;
@@ -1081,6 +1347,10 @@
         width: 32px;
         height: 32px;
         font-size: 0.9rem;
+    }
+
+    .previewIframe {
+        height: 300px;
     }
 }
 
@@ -1154,17 +1424,16 @@
         font-size: 0.85rem;
     }
 
-    .messageCell {
-        max-width: 100px;
-    }
-
-    .emailLink {
-        max-width: 100px;
-    }
-
     .modal {
-        width: 100%;
-        max-height: 95vh;
+        position: fixed;
+        width: 100vw;
+        max-height: 100vh;
+        border-radius: 20px 20px 0 0;
+        left: 0;
+    }
+
+    .modalOverlay {
+        align-items: flex-end;
     }
 
     .modalHeader {
@@ -1190,10 +1459,27 @@
         padding: 1rem;
     }
 
+    .detailsGrid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .detailItem {
+        padding: 0.5rem;
+    }
+
+    .detailLabel {
+        font-size: 0.65rem;
+    }
+
+    .detailValue {
+        font-size: 0.8rem;
+    }
+
     .noteTextarea {
         font-size: 0.9rem;
         padding: 0.6rem;
-        min-height: 120px;
+        min-height: 100px;
     }
 
     .modalFooter {
@@ -1203,7 +1489,8 @@
     }
 
     .cancelBtn,
-    .saveBtn {
+    .saveBtn,
+    .downloadLink {
         width: 100%;
         padding: 0.65rem 1rem;
         font-size: 0.85rem;
@@ -1225,16 +1512,39 @@
         height: 30px;
         font-size: 0.85rem;
     }
+
+    .documentItem {
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .documentName {
+        font-size: 0.8rem;
+    }
+
+    .docBtn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.75rem;
+    }
+
+    .previewContent {
+        min-height: 300px;
+        padding: 1rem;
+    }
+
+    .previewIframe {
+        height: 250px;
+    }
 }
 
 /* ==================== Accessibility ==================== */
 @media (prefers-reduced-motion: reduce) {
     .statusCardDot,
-    .notesIndicator {
+    .notesIndicator,
+    .modal {
         animation: none;
     }
-
- 
 }
 
 @media (prefers-contrast: more) {
@@ -1256,7 +1566,8 @@
 .notesBtn:focus,
 .closeBtn:focus,
 .cancelBtn:focus,
-.saveBtn:focus {
+.saveBtn:focus,
+.docBtn:focus {
     outline: 3px solid var(--primary-yellow);
     outline-offset: 2px;
 }
@@ -1278,7 +1589,8 @@
         display: none !important;
     }
 
-    .notesBtn {
+    .notesBtn,
+    .viewBtn {
         display: none;
     }
 

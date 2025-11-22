@@ -18,28 +18,29 @@ const Footer = () => {
   ];
 
   const quickLinks = [
+    { text: 'Home', href: '/' },
     { text: 'About Us', href: '/about' },
     { text: 'Programs', href: '/programs' },
-    { text: 'Admission', href: '/admission' },
+    { text: 'Admission', href: '/admission-form' },
     { text: 'Gallery', href: '/gallery' },
     { text: 'Contact', href: '/contact' },
     { text: 'Admin', href: '/admin/login' },
   ];
 
   const contactDetails = [
-    { 
-      icon: <FaMapMarkerAlt />, 
+    {
+      icon: <FaMapMarkerAlt />,
       text: `${schoolDetails.address.street}, ${schoolDetails.address.city}, ${schoolDetails.address.state} - ${schoolDetails.address.pincode}`,
       type: 'address'
     },
-    { 
-      icon: <FaPhoneAlt />, 
+    {
+      icon: <FaPhoneAlt />,
       text: `${schoolDetails.contact.phone}`,
       type: 'phone',
       href: `tel:${schoolDetails.contact.phone}`
     },
-    { 
-      icon: <FaEnvelope />, 
+    {
+      icon: <FaEnvelope />,
       text: `${schoolDetails.contact.email}`,
       type: 'email',
       href: `mailto:${schoolDetails.contact.email}`
@@ -125,7 +126,7 @@ const Footer = () => {
                     {info.icon}
                   </span>
                   {info.href ? (
-                    <motion.a 
+                    <motion.a
                       href={info.href}
                       className={styles.contactLink}
                       whileHover={{ x: 5 }}
