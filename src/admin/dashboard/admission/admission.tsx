@@ -23,6 +23,7 @@ import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
 import styles from './admission.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
+import Loader from '@/custom/loader/loader';
 
 interface Admission {
     admission_number: ReactNode;
@@ -137,6 +138,7 @@ const STATUS_COLORS: Record<string, { color: string; bgColor: string }> = {
 export default function AdminAdmission() {
     const [admissions, setAdmissions] = useState<Admission[]>([]);
     const [loading, setLoading] = useState(true);
+    const [pageLoading, setPageLoading] = useState(true);  // Add this for full page loader
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState<'all' | 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected'>('all');
     const [sortField, setSortField] = useState<SortField>('created_at');
@@ -148,7 +150,12 @@ export default function AdminAdmission() {
     const [notesUpdating, setNotesUpdating] = useState(false);
 
     useEffect(() => {
-        fetchAdmissions();
+        const initializePage = async () => {
+            setPageLoading(true);
+            await fetchAdmissions();
+            setPageLoading(false);
+        };
+        initializePage();
     }, []);
 
     const fetchAdmissions = async () => {
@@ -354,6 +361,11 @@ export default function AdminAdmission() {
         setSelectedAdmission(null);
         setNoteText('');
     };
+
+    if (pageLoading) {
+        return <Loader isVisible={true} message="Loading Admissions..." fullScreen={true} />;
+    }
+
 
     return (
         <div className={styles.dashboardWrapper}>

@@ -8,11 +8,12 @@ import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
 import styles from './spotlight.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
+import Loader from '@/custom/loader/loader';
 
 // Dynamically import PrintCard to avoid SSR issues
 const PrintCard = dynamic(() => import('./printcard/printcard'), {
     ssr: false,
-    loading: () => <div>Loading...</div>,
+    loading: () => <div><Loader /></div>,
 });
 
 interface Spotlight {
@@ -304,17 +305,11 @@ const Spotlight = () => {
 
     // Don't render until mounted on client
     if (!isMounted) {
-        return (
-            <div className={styles.staroftheweek}>
-                <HeadingTitle text='Spotlight Dashboard' />
-                <div className={styles.adminContainer}>
-                    <div className={styles.loadingContainer}>
-                        <FaSpinner className={styles.spinnerLarge} />
-                        <p>Loading...</p>
-                    </div>
-                </div>
-            </div>
-        );
+        return <Loader isVisible={true} message="Loading Spotlight..." fullScreen={true} />;
+    }
+
+    if (spotlightsLoading || loading || homepageLoading) {
+        return <Loader isVisible={true} message="Loading..." fullScreen={true} />;
     }
 
     return (

@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import styles from './instagramhashtag.module.css';
 import { FaInstagram, FaArrowRight, FaPlay, FaHeart, FaComment, FaShare } from 'react-icons/fa';
-import Loader from '@/custom/loader/loader';
 
 interface InstagramPost {
   id: string;
@@ -58,11 +57,10 @@ export default function InstagramHashtag() {
         {/* Instagram Feed */}
         <div className={styles.feedWrapper}>
           {isLoading && (
-            // <div className={styles.loadingContainer}>
-            //   <div className={styles.spinner}></div>
-            //   <p className={styles.loadingText}>Loading Instagram Feed...</p>
-            // </div>
-            <Loader/>
+            <div className={styles.loadingContainer}>
+              <div className={styles.spinner}></div>
+              <p className={styles.loadingText}>Loading Instagram Feed...</p>
+            </div>
           )}
 
           <div

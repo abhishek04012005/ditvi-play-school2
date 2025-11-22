@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     FaCog,
     FaSignOutAlt,
-    FaBell,
     FaUserCircle,
     FaChevronDown,
 } from 'react-icons/fa';
@@ -15,6 +14,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import styles from './navbar.module.css';
 import schoolDetails from '@/json/schooldetails';
+import Loader from '@/custom/loader/loader';
 
 interface NavItem {
     label: string;
@@ -28,7 +28,7 @@ const AdminNavbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
-    const [notifications, setNotifications] = useState(3);
+    const [loading, setLoading] = useState(false);
     const pathname = usePathname();
 
     // Pages where admin navbar should NOT appear
@@ -39,15 +39,15 @@ const AdminNavbar = () => {
 
     // Admin navigation items
     const navItems: NavItem[] = [
-         {
+        {
             label: 'Dashboard',
             href: '/admin/dashboard',
         },
-         {
+        {
             label: 'Admission Dashboard',
             href: '/admin/dashboard/admission',
         },
-         {
+        {
             label: 'Enquiry Dashboard',
             href: '/admin/dashboard/enquiry',
         },
@@ -64,17 +64,17 @@ const AdminNavbar = () => {
     const isActive = (href?: string) => href && pathname === href;
 
     const handleLogout = async () => {
+        setLoading(true);
         try {
             console.log('Logging out...');
             window.location.href = '/admin/login';
         } catch (error) {
             console.error('Logout error:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const handleNotificationClick = () => {
-        setNotifications(0);
-    };
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -89,12 +89,17 @@ const AdminNavbar = () => {
         return null;
     }
 
+    if (loading) {
+        return <Loader isVisible={true} message="Logging out..." fullScreen={true} />;
+    }
+
+
     return (
         <>
             <nav className={styles.navbar}>
                 <div className={styles.navContainer}>
                     {/* Logo Section */}
-                    <Link href="/admin/dashboard/contact" className={styles.logo}>
+                    <Link href="/admin/dashboard" className={styles.logo}>
                         <Image
                             src={schoolDetails?.logo || '/logo.png'}
                             alt={schoolDetails?.name || 'School Logo'}

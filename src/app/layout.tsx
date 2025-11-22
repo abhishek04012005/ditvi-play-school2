@@ -1,12 +1,17 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import Navbar from "@/components/navbar/navbar";
-import AdminNavbar from "../admin/navbar/navbar";
-import Footer from "@/components/footer/footer";
+import type { Metadata } from 'next';
+import './globals.css';
+import RootLayoutClient from './layout-client';
 
 export const metadata: Metadata = {
-  title: "Ditvi Play School",
-  description: "Best Play School in Your City",
+  title: 'Ditvi Play School',
+  description: 'Best Play School in Your City',
+  keywords: 'play school, nursery, kindergarten, preschool',
+  authors: [{ name: 'Ditvi Play School' }],
+  openGraph: {
+    title: 'Ditvi Play School',
+    description: 'Best Play School in Your City',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({
@@ -16,17 +21,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </head>
       <body>
-        {/* Admin Navbar - Shows on /admin/* (except /admin/login, /admin/register) */}
-        <AdminNavbar />
-        
-        {/* Public Navbar - Shows on non-admin pages */}
-        <Navbar />
-        
-        {children}
-        
-        {/* Footer */}
-        <Footer />
+        <RootLayoutClient>{children}</RootLayoutClient>
       </body>
     </html>
   );

@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { supabase } from '@/lib/supabase';
 import styles from './login.module.css';
 import schoolDetails from '@/json/schooldetails';
+import Loader from '@/custom/loader/loader';
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -48,13 +49,14 @@ export default function AdminLogin() {
     }
   };
 
+
+if(loading) {
+    return <Loader isVisible={true} message="Logging in..." fullScreen={true} />;
+}
+
   return (
     <div className={styles.loginPage}>
-      {/* <div className={styles.decorativeElements}>
-        <div className={styles.circle}></div>
-        <div className={styles.dots}></div>
-        <div className={styles.squiggly}></div>
-      </div> */}
+
 
       <motion.div 
         className={styles.loginContainer}

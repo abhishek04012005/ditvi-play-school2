@@ -15,6 +15,7 @@ import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
 import styles from './dashboard.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
+import Loader from '@/custom/loader/loader';
 
 interface Contact {
     id: string;
@@ -190,16 +191,7 @@ const Dashboard = () => {
 
     if (loading) {
         return (
-            <div className={styles.loadingWrapper}>
-                <motion.div
-                    className={styles.loadingContent}
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                >
-                    <div className={styles.loadingSpinner}></div>
-                    <p>Loading dashboard...</p>
-                </motion.div>
-            </div>
+            <Loader />
         );
     }
 
