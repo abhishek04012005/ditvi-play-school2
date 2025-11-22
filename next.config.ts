@@ -23,21 +23,6 @@ const nextConfig = {
     ],
     unoptimized: true,
   },
-  output: "export",
-
-  // Exclude API routes from static export
-  exportPathMap: async (defaultPathMap, { dev, dir, outDir, distDir }) => {
-    const paths = { ...defaultPathMap };
-
-    // Remove all API routes
-    Object.keys(paths).forEach((path) => {
-      if (path.startsWith("/api/")) {
-        delete paths[path];
-      }
-    });
-
-    return paths;
-  },
 };
 
 export default nextConfig;
