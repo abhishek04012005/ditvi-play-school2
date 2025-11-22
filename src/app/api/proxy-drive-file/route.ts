@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-/**
- * Mark this route as dynamic (not static)
- * Required for API routes when using output: export
- */
-export const dynamic = "force-dynamic";
+
 
 /**
  * API route to proxy Google Drive files
