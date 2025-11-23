@@ -30,6 +30,8 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
   const printRef = useRef<HTMLDivElement>(null);
   const [isPrinting, setIsPrinting] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [activeTab, setActiveTab] = useState<'preview' | 'details'>('preview');
+  const [showSuccess, setShowSuccess] = useState<string | null>(null);
 
   if (!isOpen || !award) return null;
 
@@ -39,10 +41,16 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
     yearly: 'Star of the Year'
   };
 
+  const awardIcons = {
+    weekly: '⭐',
+    monthly: '🌟',
+    yearly: '✨'
+  };
+
   const awardColors = {
-    weekly: '#FFD700',
-    monthly: '#C0C0C0',
-    yearly: '#CD7F32'
+    weekly: { primary: '#FFD700', gradient: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' },
+    monthly: { primary: '#C0C0C0', gradient: 'linear-gradient(135deg, #C0C0C0 0%, #808080 100%)' },
+    yearly: { primary: '#CD7F32', gradient: 'linear-gradient(135deg, #CD7F32 0%, #8B4513 100%)' }
   };
 
   const getFormattedDate = () => {
@@ -98,15 +106,10 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
             :root {
               --primary-purple: #6a4c93;
               --primary-yellow: #ffd166;
-              --text-gray: #333;
+              --text-gray: #2b2b2b;
             }
 
-            html {
-              margin: 0;
-              padding: 0;
-            }
-
-            body {
+            html, body {
               margin: 0;
               padding: 0;
               width: 210mm;
@@ -138,13 +141,13 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
               width: 210mm !important;
               height: 297mm !important;
               margin: 0 !important;
-              padding: 10mm 15mm !important;
+              padding: 0 !important;
               position: relative;
-              background: linear-gradient(135deg, #ffffff 0%, #fafaf8 100%) !important;
+              background: linear-gradient(135deg, #ffffff 0%, #f5f1fa 50%, #fff9e6 100%) !important;
               display: flex !important;
               flex-direction: column !important;
               align-items: center !important;
-              justify-content: space-between !important;
+              justify-content: center !important;
               box-sizing: border-box !important;
               overflow: hidden !important;
               -webkit-print-color-adjust: exact !important;
@@ -154,13 +157,10 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
             .certificate::before {
               content: '';
               position: absolute;
-              top: 12mm;
-              left: 12mm;
-              right: 12mm;
-              bottom: 12mm;
-              border: 3px solid var(--primary-purple);
-              border-radius: 8px;
-              opacity: 0.2;
+              inset: 20mm;
+              border: 4px solid;
+              border-image: linear-gradient(135deg, #6a4c93 0%, #ffd166 100%) 1;
+              border-radius: 12px;
               z-index: 1;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
@@ -169,13 +169,9 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
             .certificate::after {
               content: '';
               position: absolute;
-              top: 14mm;
-              left: 14mm;
-              right: 14mm;
-              bottom: 14mm;
-              border: 1px solid var(--primary-yellow);
-              border-radius: 6px;
-              opacity: 0.35;
+              inset: 22mm;
+              border: 1px dashed rgba(106, 76, 147, 0.3);
+              border-radius: 10px;
               z-index: 1;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
@@ -186,44 +182,40 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
               z-index: 2;
               width: 100%;
               height: 100%;
+              padding: 30mm 25mm;
               display: flex;
               flex-direction: column;
               align-items: center;
-              justify-content: space-between;
+              justify-content: space-around;
               box-sizing: border-box;
-              margin: 0;
-              padding: 0;
-              gap: 0;
+              text-align: center;
             }
 
             .headerSection {
               display: flex;
               flex-direction: column;
               align-items: center;
-              gap: 3mm;
-              text-align: center;
-              width: 100%;
-              padding: 0;
+              gap: 6mm;
             }
 
             .schoolLogoBox {
+              width: 30mm;
+              height: 30mm;
+              background: radial-gradient(circle, #ffd166 0%, #ffb84d 100%);
+              border-radius: 50%;
+              box-shadow: 0 8px 20px rgba(255, 209, 102, 0.4);
+              border: 3px solid white;
               display: flex;
               align-items: center;
               justify-content: center;
-              width: 22mm;
-              height: 22mm;
-              background: linear-gradient(135deg, var(--primary-yellow) 0%, rgba(255, 209, 102, 0.8) 100%);
-              border-radius: 50%;
-              box-shadow: 0 3px 12px rgba(255, 209, 102, 0.3);
-              border: 2px solid rgba(255, 209, 102, 0.6);
               flex-shrink: 0;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
 
             .logoImg {
-              width: 20mm;
-              height: 20mm;
+              width: 28mm;
+              height: 28mm;
               object-fit: contain;
               border-radius: 50%;
               -webkit-print-color-adjust: exact;
@@ -231,311 +223,164 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
             }
 
             .logoPlaceholder {
-              font-size: 12mm;
-              line-height: 1;
-            }
-
-            .schoolDetails {
-              display: flex;
-              flex-direction: column;
-              gap: 0.3mm;
-              align-items: center;
+              font-size: 16mm;
             }
 
             .schoolTitle {
-              color: var(--primary-purple);
-              font-size: 16pt;
+              color: #6a4c93;
+              font-size: 20pt;
               font-weight: 900;
-              letter-spacing: 0.3px;
+              letter-spacing: 1px;
               margin: 0;
-              line-height: 1.1;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
 
             .schoolAddress {
-              color: var(--text-gray);
-              font-size: 7pt;
-              margin: 0;
-              font-weight: 600;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-
-            .certificateTitleSection {
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              gap: 2mm;
-              width: 100%;
-              margin: 2mm 0;
-            }
-
-            .decorLine {
-              width: 40mm;
-              height: 2px;
-              background: linear-gradient(90deg, transparent 0%, var(--primary-yellow) 50%, transparent 100%);
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-
-            .certificateText {
-              color: var(--primary-purple);
-              font-size: 28pt;
-              font-weight: 900;
-              letter-spacing: 1.2px;
-              margin: 0;
-              text-transform: uppercase;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-
-            .awardTypeBox {
-              display: inline-block;
-              padding: 4mm 10mm;
-              border: 2px solid;
-              border-radius: 20mm;
-              background: linear-gradient(135deg, rgba(255, 209, 102, 0.15) 0%, rgba(255, 209, 102, 0.08) 100%);
-              margin: 1.5mm 0;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-
-            .awardTypeText {
-              color: var(--primary-purple);
-              font-weight: 800;
-              font-size: 10pt;
-              text-transform: uppercase;
-              letter-spacing: 0.8px;
-              margin: 0;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-
-            .mainContent {
-              text-align: center;
-              width: 100%;
-              flex: 1;
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
-              gap: 2.5mm;
-              padding: 0;
-              margin: 0;
-            }
-
-            .presentedToText {
-              color: var(--text-gray);
-              font-size: 10pt;
-              font-weight: 700;
-              margin: 0;
-              letter-spacing: 0.2px;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-
-            .studentNameBox {
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              margin: 1mm 0;
-            }
-
-            .studentNameText {
-              color: var(--primary-purple);
-              font-size: 24pt;
-              font-weight: 900;
-              border-bottom: 3px solid var(--primary-yellow);
-              padding: 3mm 6mm;
-              margin: 0;
-              letter-spacing: -0.3px;
-              text-transform: uppercase;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-
-            .forAchievingText {
-              color: var(--text-gray);
+              color: #666;
               font-size: 9pt;
-              font-weight: 700;
-              margin: 1.5mm 0 0.5mm 0;
-              letter-spacing: 0.2px;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-
-            .achievementTextBox {
-              background: linear-gradient(135deg, rgba(106, 76, 147, 0.08) 0%, rgba(255, 209, 102, 0.06) 100%);
-              border: 1.5px solid rgba(106, 76, 147, 0.15);
-              border-radius: 6px;
-              padding: 5mm 7mm;
-              margin: 1.5mm 0;
-              min-height: auto;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-
-            .achievementText {
-              color: var(--primary-purple);
-              font-size: 9.5pt;
-              font-weight: 800;
-              line-height: 1.4;
-              font-style: italic;
               margin: 0;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-
-            .congratsText {
-              color: var(--text-gray);
-              font-size: 8.5pt;
-              line-height: 1.3;
               font-weight: 600;
-              margin: 0.5mm 0;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
 
-            .photoAndDateContainer {
-              width: 100%;
-              display: flex;
-              align-items: flex-end;
-              justify-content: space-between;
-              gap: 8mm;
-              margin-top: 2mm;
-              padding-top: 2mm;
-              border-top: 1px solid rgba(106, 76, 147, 0.1);
-            }
-
-            .photoSection {
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              gap: 1.5mm;
-            }
-
-            .photoFrame {
-              width: 35mm;
-              height: 45mm;
-              border: 2px solid var(--primary-purple);
-              border-radius: 6px;
-              overflow: hidden;
-              background: white;
-              box-shadow: 0 3px 10px rgba(106, 76, 147, 0.2);
-              position: relative;
-              flex-shrink: 0;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-
-            .photoFrame::before {
-              content: '';
-              position: absolute;
-              inset: 0;
-              background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
-              pointer-events: none;
-              z-index: 1;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-
-            .photoImg {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              display: block;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-
-            .photoLabel {
-              color: var(--text-gray);
-              font-size: 6pt;
-              font-weight: 700;
-              margin: 0;
+            .certificateTitle {
+              font-size: 48pt;
+              font-weight: 900;
+              color: #6a4c93;
+              letter-spacing: 3px;
+              margin: 10mm 0;
               text-transform: uppercase;
-              letter-spacing: 0.4px;
+              text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
 
-            .dateAndSignatureBox {
+            .awardBadge {
+              display: inline-block;
+              background: linear-gradient(135deg, #ffd166 0%, #ffb84d 100%);
+              color: #6a4c93;
+              padding: 5mm 12mm;
+              border-radius: 25mm;
+              font-weight: 900;
+              font-size: 13pt;
+              margin: 5mm 0;
+              box-shadow: 0 6px 20px rgba(255, 209, 102, 0.4);
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+
+            .mainText {
+              margin: 8mm 0;
+              font-size: 11pt;
+              color: #2b2b2b;
+              font-weight: 700;
+              line-height: 1.8;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+
+            .studentName {
+              font-size: 32pt;
+              color: #6a4c93;
+              font-weight: 900;
+              text-transform: uppercase;
+              border-bottom: 4px solid;
+              padding: 4mm 0;
+              margin: 6mm 0;
+              letter-spacing: 2px;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+
+            .achievement {
+              background: rgba(106, 76, 147, 0.08);
+              border-left: 5px solid #6a4c93;
+              padding: 6mm 8mm;
+              margin: 8mm 0;
+              font-size: 11pt;
+              font-weight: 800;
+              font-style: italic;
+              color: #6a4c93;
+              line-height: 1.6;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+
+            .footerSection {
               display: flex;
-              flex-direction: column;
-              align-items: center;
-              gap: 6mm;
+              justify-content: space-between;
+              width: 100%;
+              margin-top: 15mm;
+              padding-top: 10mm;
+              border-top: 2px solid rgba(106, 76, 147, 0.2);
+              gap: 20mm;
+            }
+
+            .dateSection {
+              text-align: center;
               flex: 1;
             }
 
-            .dateBox {
+            .signatureSection {
               text-align: center;
+              flex: 1;
             }
 
-            .dateLabel {
-              color: var(--text-gray);
+            .label {
               font-size: 8pt;
               font-weight: 700;
-              margin: 0 0 0.5mm 0;
+              color: #666;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              margin-bottom: 2mm;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
 
-            .dateValue {
-              color: var(--primary-purple);
-              font-size: 8.5pt;
+            .date {
+              font-size: 11pt;
+              color: #6a4c93;
               font-weight: 800;
-              margin: 0;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
-            }
-
-            .signatureBox {
-              text-align: center;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              width: 100%;
-              min-width: 50mm;
             }
 
             .signatureLine {
               width: 100%;
-              min-width: 50mm;
-              border-top: 2px solid var(--primary-purple);
-              margin-bottom: 1.5mm;
-              height: 12mm;
+              height: 15mm;
+              border-top: 2px solid #6a4c93;
+              margin-bottom: 3mm;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
 
-            .signatureLabel {
-              color: var(--text-gray);
-              font-size: 7pt;
-              font-weight: 700;
-              margin: 0;
-              text-transform: uppercase;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
+            .sealIcon {
+              font-size: 24pt;
+              margin-top: 3mm;
             }
 
             .footerText {
-              text-align: center;
-              font-size: 6.5pt;
-              color: var(--text-gray);
+              font-size: 8pt;
+              color: #999;
               font-style: italic;
-              margin: 0;
-              font-weight: 600;
+              margin-top: 10mm;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
 
-            img {
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
+            .stars {
+              position: absolute;
+              font-size: 24pt;
+              opacity: 0.1;
+              z-index: 0;
             }
+
+            .star-1 { top: 10mm; left: 15mm; }
+            .star-2 { top: 20mm; right: 20mm; }
+            .star-3 { bottom: 30mm; left: 25mm; }
+            .star-4 { bottom: 25mm; right: 15mm; }
           </style>
         </head>
         <body>
@@ -553,6 +398,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
         setTimeout(() => {
           printWindow.close();
           setIsPrinting(false);
+          showSuccessMessage('Print initiated');
         }, 500);
       }, 1200);
 
@@ -576,9 +422,8 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
         return;
       }
 
-      // ✅ Using html2canvas + jsPDF directly - Works perfectly!
       const canvas = await html2canvas(certificateDiv, {
-        scale: 2,
+        scale: 3,
         useCORS: true,
         logging: false,
         backgroundColor: '#ffffff',
@@ -588,19 +433,42 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
 
       const pdf = new jsPDF('p', 'mm', 'a4');
       const imgData = canvas.toDataURL('image/jpeg', 0.98);
-      const imgWidth = 210; // A4 width in mm
+      const imgWidth = 210;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
       pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
       pdf.save(`${award.name}-Award-Certificate-${new Date().toISOString().split('T')[0]}.pdf`);
 
       setIsDownloading(false);
-      alert('✅ Certificate downloaded successfully!');
+      showSuccessMessage('PDF downloaded');
     } catch (error) {
       console.error('PDF generation error:', error);
       setIsDownloading(false);
       alert('❌ Failed to generate PDF');
     }
+  };
+
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: `${award.name} - Award Certificate`,
+          text: `${award.name} received ${awardTypeLabels[award.award_type]}!`,
+          url: window.location.href
+        });
+        showSuccessMessage('Shared successfully');
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        showSuccessMessage('Link copied to clipboard');
+      }
+    } catch (error) {
+      console.error('Share error:', error);
+    }
+  };
+
+  const showSuccessMessage = (message: string) => {
+    setShowSuccess(message);
+    setTimeout(() => setShowSuccess(null), 2000);
   };
 
   return (
@@ -615,142 +483,275 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
         >
           <motion.div
             className={styles.container}
-            initial={{ scale: 0.85, y: 40 }}
-            animate={{ scale: 1, y: 0 }}
-            exit={{ scale: 0.85, y: 40 }}
-            transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+            initial={{ scale: 0.8, y: 60, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            exit={{ scale: 0.8, y: 60, opacity: 0 }}
+            transition={{ type: 'spring', damping: 18, stiffness: 300 }}
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Header */}
             <div className={styles.header}>
-              <div className={styles.headerContent}>
-                <h2>🎖️ Certificate Preview</h2>
-                <p>A4 Portrait Mode - Full Coverage</p>
-              </div>
+              <motion.div 
+                className={styles.headerContent}
+                initial={{ x: -30 }}
+                animate={{ x: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <div className={styles.awardBadgeHeader}>
+                  <motion.span 
+                    className={styles.iconLarge}
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 20, repeat: Infinity }}
+                  >
+                    {awardIcons[award.award_type]}
+                  </motion.span>
+                  <div>
+                    <h2 className={styles.titleHeader}>🏆 Certificate of Excellence</h2>
+                    <p className={styles.subtitleHeader}>{awardTypeLabels[award.award_type]}</p>
+                  </div>
+                </div>
+              </motion.div>
               <motion.button
                 onClick={onClose}
                 className={styles.closeBtn}
                 type="button"
                 aria-label="Close"
-                whileHover={{ scale: 1.1, rotate: 90 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.2, rotate: 90 }}
+                whileTap={{ scale: 0.85 }}
               >
                 <FaX />
               </motion.button>
             </div>
 
-            <div className={styles.previewContainer}>
-              <div className={styles.printableArea} ref={printRef}>
-                <div className={styles.certificate}>
-                  <div className={styles.content}>
-                    <div className={styles.headerSection}>
-                      <div className={styles.schoolLogoBox}>
-                        {schoolDetails?.logo ? (
-                          <Image
-                            src={schoolDetails.logo}
-                            alt={schoolDetails.name}
-                            width={100}
-                            height={100}
-                            className={styles.logoImg}
-                            priority
-                            unoptimized
-                          />
-                        ) : (
-                          <div className={styles.logoPlaceholder}>🎓</div>
-                        )}
-                      </div>
-                      <div className={styles.schoolDetails}>
-                        <h1 className={styles.schoolTitle}>{schoolDetails?.name}</h1>
-                        <p className={styles.schoolAddress}>
-                          {schoolDetails?.address?.city}, {schoolDetails?.address?.state}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className={styles.certificateTitleSection}>
-                      <div className={styles.decorLine}></div>
-                      <h2 className={styles.certificateText}>Certificate</h2>
-                      <div className={styles.decorLine}></div>
-                    </div>
-
-                    <div
-                      className={styles.awardTypeBox}
-                      style={{ borderColor: awardColors[award.award_type] }}
-                    >
-                      <p className={styles.awardTypeText}>
-                        {awardTypeLabels[award.award_type]}
-                      </p>
-                    </div>
-
-                    {award.image_url && (
-                      <div className={styles.photoSection}>
-                        <div className={styles.photoFrame}>
-                          <Image
-                            src={award.image_url}
-                            alt={award.name}
-                            width={200}
-                            height={250}
-                            className={styles.photoImg}
-                            priority
-                            unoptimized
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    <div className={styles.mainContent}>
-                      <p className={styles.presentedToText}>This certificate is proudly presented to</p>
-                      <div className={styles.studentNameBox}>
-                        <h3 className={styles.studentNameText}>{award.name}</h3>
-                      </div>
-                      <p className={styles.forAchievingText}>For exceptionally demonstrating:</p>
-                      <div className={styles.achievementTextBox}>
-                        <p className={styles.achievementText}>{award.message}</p>
-                      </div>
-                      <p className={styles.congratsText}>
-                        We commend your outstanding achievement and dedication to excellence!
-                      </p>
-                    </div>
-
-                    <div className={styles.photoAndDateContainer}>
-                      <div className={styles.dateAndSignatureBox}>
-                        <div className={styles.dateBox}>
-                          <p className={styles.dateLabel}>Date</p>
-                          <p className={styles.dateValue}>{getFormattedDate()}</p>
-                        </div>
-                        <div className={styles.signatureBox}>
-                          <div className={styles.signatureLine}></div>
-                          <p className={styles.signatureLabel}>
-                            {schoolDetails.contact.email}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <p className={styles.footerText}>
-                      Keep this certificate as a token of your achievement
-                    </p>
-                  </div>
-                </div>
-              </div>
+            {/* Tabs */}
+            <div className={styles.tabs}>
+              <motion.button
+                className={`${styles.tab} ${activeTab === 'preview' ? styles.active : ''}`}
+                onClick={() => setActiveTab('preview')}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                👁️ Preview
+              </motion.button>
+              <motion.button
+                className={`${styles.tab} ${activeTab === 'details' ? styles.active : ''}`}
+                onClick={() => setActiveTab('details')}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                📋 Details
+              </motion.button>
             </div>
 
+            {/* Content */}
+            <AnimatePresence mode="wait">
+              {activeTab === 'preview' ? (
+                <motion.div
+                  key="preview"
+                  className={styles.previewContainer}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className={styles.printableArea} ref={printRef}>
+                    <div className={styles.certificate}>
+                      <div className={styles.starsDecoration}>
+                        <span className={styles.star1}>⭐</span>
+                        <span className={styles.star2}>✨</span>
+                        <span className={styles.star3}>🌟</span>
+                        <span className={styles.star4}>⭐</span>
+                      </div>
+
+                      <div className={styles.content}>
+                        {/* Header Section */}
+                        <div className={styles.headerSection}>
+                          <div className={styles.schoolLogoBoxNew}>
+                            {schoolDetails?.logo ? (
+                              <Image
+                                src={schoolDetails.logo}
+                                alt={schoolDetails.name}
+                                width={100}
+                                height={100}
+                                className={styles.logoImg}
+                                priority
+                                unoptimized
+                              />
+                            ) : (
+                              <div className={styles.logoPlaceholder}>🎓</div>
+                            )}
+                          </div>
+                          <h1 className={styles.schoolTitle}>{schoolDetails?.name}</h1>
+                          <p className={styles.schoolAddress}>
+                            {schoolDetails?.address?.city}, {schoolDetails?.address?.state}
+                          </p>
+                        </div>
+
+                        {/* Main Certificate Title */}
+                        <div className={styles.certificateTitle}>Certificate</div>
+
+                        {/* Award Type Badge */}
+                        <div
+                          className={styles.awardTypeBoxNew}
+                          style={{ background: awardColors[award.award_type].gradient }}
+                        >
+                          <span>{awardTypeLabels[award.award_type]}</span>
+                        </div>
+
+                        {/* Main Content */}
+                        <p className={styles.mainTextNew}>This Certificate is proudly presented to</p>
+
+                        <h3
+                          className={styles.studentNameNew}
+                          style={{ borderBottomColor: awardColors[award.award_type].primary }}
+                        >
+                          {award.name}
+                        </h3>
+
+                        <p className={styles.mainTextNew}>For Exceptional Achievement in</p>
+
+                        <div className={styles.achievementBoxNew}>
+                          <p className={styles.achievementTextNew}>{award.message}</p>
+                        </div>
+
+                        {/* Photo Section */}
+                        {award.image_url && (
+                          <div className={styles.photoSectionNew}>
+                            <div className={styles.photoFrameNew}>
+                              <Image
+                                src={award.image_url}
+                                alt={award.name}
+                                width={150}
+                                height={180}
+                                className={styles.photoImgNew}
+                                priority
+                                unoptimized
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Footer with Date and Signature */}
+                        <div className={styles.footerSectionNew}>
+                          <div className={styles.dateSectionNew}>
+                            <p className={styles.labelNew}>Date</p>
+                            <p className={styles.dateNew}>{getFormattedDate()}</p>
+                          </div>
+                          <div className={styles.signatureSectionNew}>
+                            <div className={styles.signatureLineNew}></div>
+                            <p className={styles.labelNew}>Principal Signature</p>
+                          </div>
+                        </div>
+
+                        <div className={styles.sealNew}>🎖️</div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="details"
+                  className={styles.detailsContainer}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className={styles.detailsGrid}>
+                    <motion.div 
+                      className={styles.detailsCard}
+                      whileHover={{ y: -8 }}
+                    >
+                      <div className={styles.detailIcon}>👤</div>
+                      <p className={styles.detailLabel}>Recipient Name</p>
+                      <p className={styles.detailValue}>{award.name}</p>
+                    </motion.div>
+                    <motion.div 
+                      className={styles.detailsCard}
+                      whileHover={{ y: -8 }}
+                    >
+                      <div className={styles.detailIcon}>🎖️</div>
+                      <p className={styles.detailLabel}>Award Type</p>
+                      <p className={styles.detailValue}>{awardTypeLabels[award.award_type]}</p>
+                    </motion.div>
+                    <motion.div 
+                      className={styles.detailsCard}
+                      whileHover={{ y: -8 }}
+                    >
+                      <div className={styles.detailIcon}>✍️</div>
+                      <p className={styles.detailLabel}>Achievement</p>
+                      <p className={styles.detailValue}>{award.message}</p>
+                    </motion.div>
+                    <motion.div 
+                      className={styles.detailsCard}
+                      whileHover={{ y: -8 }}
+                    >
+                      <div className={styles.detailIcon}>📅</div>
+                      <p className={styles.detailLabel}>Date Awarded</p>
+                      <p className={styles.detailValue}>{getFormattedDate()}</p>
+                    </motion.div>
+                    <motion.div 
+                      className={styles.detailsCard}
+                      whileHover={{ y: -8 }}
+                    >
+                      <div className={styles.detailIcon}>❤️</div>
+                      <p className={styles.detailLabel}>Recognition</p>
+                      <p className={styles.detailValue}>{award.like_count} Likes</p>
+                    </motion.div>
+                    <motion.div 
+                      className={styles.detailsCard}
+                      whileHover={{ y: -8 }}
+                    >
+                      <div className={styles.detailIcon}>🏫</div>
+                      <p className={styles.detailLabel}>School</p>
+                      <p className={styles.detailValue}>{schoolDetails?.name}</p>
+                    </motion.div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Success Toast */}
+            <AnimatePresence>
+              {showSuccess && (
+                <motion.div
+                  className={styles.toast}
+                  initial={{ opacity: 0, y: -15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                >
+                  ✅ {showSuccess}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Actions */}
             <div className={styles.actions}>
               <motion.button
                 type="button"
                 className={styles.cancelBtn}
                 onClick={onClose}
-                whileHover={{ scale: 1.02, translateY: -2 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.95 }}
                 disabled={isPrinting || isDownloading}
               >
                 Close
               </motion.button>
               <motion.button
                 type="button"
+                className={styles.shareBtn}
+                onClick={handleShare}
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                 Share
+              </motion.button>
+              <motion.button
+                type="button"
                 className={styles.downloadBtn}
                 onClick={handleDownloadPDF}
-                whileHover={{ scale: 1.02, translateY: -2 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.95 }}
                 disabled={isPrinting || isDownloading}
               >
                 {isDownloading ? (
@@ -768,8 +769,8 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
                 type="button"
                 className={styles.printBtn}
                 onClick={handlePrint}
-                whileHover={{ scale: 1.02, translateY: -2 }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.95 }}
                 disabled={isPrinting || isDownloading}
               >
                 {isPrinting ? (

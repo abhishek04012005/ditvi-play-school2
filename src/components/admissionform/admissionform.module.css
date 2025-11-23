@@ -771,7 +771,7 @@
   border-bottom: 1px solid var(--border-color);
 }
 
-.detailSection:nth-child(3n) {
+.detailSection:nth-child(2n) {
   border-right: none;
 }
 
@@ -1725,3 +1725,188 @@
   align-items: center;
   justify-content: center;
 }
+
+
+
+/* ==================== DOCUMENT STATUS ==================== */
+.documentStatus {
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 6px;
+  display: inline-block;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+/* Submitted Status */
+.documentStatusSubmitted {
+  /* background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.08)); */
+  color: #047857;
+  /* border-left: 3px solid #10b981; */
+}
+
+/* Pending Status */
+.documentStatusPending {
+  /* background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(255, 191, 0, 0.08)); */
+  color: #92400e;
+  /* border-left: 3px solid #fbbf24; */
+}
+
+
+/* ==================== NOTES SECTION ==================== */
+.notesSection {
+  padding: 25px 30px;
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.08), rgba(245, 158, 11, 0.04));
+  border: 2px solid rgba(245, 158, 11, 0.3);
+  border-radius: 12px;
+  margin: 0 30px 20px;
+}
+
+.notesTitle {
+  font-size: 1.1rem;
+  color: #92400e;
+  margin: 0 0 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.notesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notesList li {
+  padding: 10px 0;
+  padding-left: 28px;
+  color: #78350f;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.notesList li:hover {
+  padding-left: 32px;
+  color: #92400e;
+}
+
+.notesList li::before {
+  content: "•";
+  position: absolute;
+  left: 8px;
+  color: #f59e0b;
+  font-weight: 900;
+  font-size: 1.1rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+/* ==================== RESPONSIVE ADJUSTMENTS FOR NOTES & MASKED ==================== */
+@media (max-width: 1024px) {
+  .notesSection {
+    margin: 0 25px 15px;
+    padding: 20px 25px;
+  }
+
+  .notesTitle {
+    font-size: 1rem;
+  }
+
+  .notesList li {
+    font-size: 0.85rem;
+    padding: 8px 0 8px 25px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .documentStatus {
+    font-size: 0.8rem;
+    padding: 4px 10px;
+  }
+
+  .notesSection {
+    padding: 18px 20px;
+    margin: 0 20px 15px;
+    border-radius: 10px;
+  }
+
+  .notesTitle {
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+  }
+
+  .notesList li {
+    font-size: 0.8rem;
+    padding: 6px 0 6px 22px;
+  }
+
+  .notesList li::before {
+    font-size: 1rem;
+    left: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .documentStatus {
+    font-size: 0.75rem;
+    padding: 3px 8px;
+  }
+
+  .notesSection {
+    padding: 15px 15px;
+    margin: 0 15px 12px;
+    border-radius: 10px;
+  }
+
+  .notesTitle {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+
+  .notesList li {
+    font-size: 0.75rem;
+    padding: 5px 0 5px 20px;
+  }
+
+  .notesList li::before {
+    font-size: 0.9rem;
+    left: 4px;
+  }
+}
+
+@media (max-width: 360px) {
+  .documentStatus {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+
+  .notesSection {
+    padding: 12px 12px;
+    margin: 0 12px 10px;
+  }
+
+  .notesList li {
+    font-size: 0.7rem;
+    padding: 4px 0 4px 18px;
+  }
+
+  .notesList li::before {
+    font-size: 0.8rem;
+    left: 3px;
+  }
+}
+

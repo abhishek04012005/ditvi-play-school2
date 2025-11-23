@@ -11,6 +11,7 @@ import { EmojiPeople, FamilyRestroom, SchoolOutlined, DescriptionOutlined } from
 import LineArt from '@/custom/lineart/lineart';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import { schoolDetails } from '@/json/schooldetails';
+import Loader from '@/custom/loader/loader';
 
 interface FormData {
   child_name: string;
@@ -302,6 +303,12 @@ export default function AdmissionForm() {
     }
   };
 
+  if (loading) {
+    return (
+      <Loader isVisible={true} message="Submitting your application..." fullScreen={true} />
+    )
+  }
+
   // Success Screen
   if (submitted && submissionResult) {
     return (
@@ -353,16 +360,6 @@ export default function AdmissionForm() {
               Your application has been received. Check your email for further updates.
             </p>
 
-            {/* Confirmation Slip */}
-            <motion.div
-              ref={pdfRef}
-              className={styles.confirmationSlipContainer}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-            >
-              <AdmissionConfirmationSlip data={submissionResult} formData={formData} />
-            </motion.div>
             <motion.div
               className={styles.successButtonGroup}
               initial={{ opacity: 0 }}
@@ -374,59 +371,20 @@ export default function AdmissionForm() {
                 <span>Download PDF</span>
               </button>
             </motion.div>
-
-            {/* Info Box */}
+            {/* Confirmation Slip */}
             <motion.div
-              className={styles.infoBox}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
+              ref={pdfRef}
+              className={styles.confirmationSlipContainer}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
             >
-              <h3>📋 What's Next?</h3>
-              <ul className={styles.infoList}>
-                <li>You will receive an email confirmation shortly</li>
-                <li>Our team will review your application within 3-5 business days</li>
-                <li>You will be contacted at the provided phone number for verification</li>
-                <li>Fee payment and final admission details will be shared soon</li>
-              </ul>
+              <AdmissionConfirmationSlip data={submissionResult} formData={formData} />
             </motion.div>
 
-            {/* New Application Button */}
-            <motion.button
-              className={styles.newApplicationBtn}
-              onClick={() => {
-                setSubmitted(false);
-                setSubmissionResult(null);
-                setStep(1);
-                setFormData({
-                  child_name: '',
-                  child_dob: '',
-                  child_gender: '',
-                  child_place_of_birth: '',
-                  parent_name: '',
-                  parent_mobile_number: '',
-                  parent_email: '',
-                  program_name: '',
-                  previous_school: '',
-                });
-                setFiles({
-                  photo: null,
-                  birth_certificate: null,
-                  aadhar_card: null,
-                  parent_id_proof: null,
-                });
-                setFilePreviews({
-                  photo: null,
-                  birth_certificate: null,
-                  aadhar_card: null,
-                  parent_id_proof: null,
-                });
-              }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Submit Another Application
-            </motion.button>
+
+
+
           </motion.div>
         </div>
       </section>
@@ -958,6 +916,14 @@ function AdmissionConfirmationSlip({
     },
   };
 
+  // Function to mask contact number (last 4 digits visible)
+  const maskContactNumber = (phoneNumber: string): string => {
+    if (!phoneNumber) return 'Not provided';
+    const cleaned = phoneNumber.replace(/\D/g, '');
+    if (cleaned.length < 4) return phoneNumber;
+    return 'XXXXXX' + cleaned.slice(-4);
+  };
+
   return (
     <motion.div
       className={styles.confirmationSlip}
@@ -1028,7 +994,11 @@ function AdmissionConfirmationSlip({
           </div>
           <div className={styles.detailRow}>
             <span className={styles.label}>Contact Number</span>
-            <span className={styles.value}>{data.parent_mobile_number}</span>
+            <span className={styles.value}>{maskContactNumber(data.parent_mobile_number)}</span>
+          </div>
+          <div className={styles.detailRow}>
+            <span className={styles.label}>Email</span>
+            <span className={styles.value}>{formData.parent_email || 'Not provided'}</span>
           </div>
         </motion.div>
 
@@ -1037,14 +1007,49 @@ function AdmissionConfirmationSlip({
           <h3 className={styles.sectionTitle}>🎓 Program Details</h3>
           <div className={styles.detailRow}>
             <span className={styles.label}>Applied Program</span>
-            <span className={styles.programBadge}>{data.program_name}</span>
+            <span className={styles.value}>{data.program_name}</span>
           </div>
           <div className={styles.detailRow}>
-            <span className={styles.label}>Application Status</span>
-            <span className={styles.statusBadge}>Under Review</span>
+            <span className={styles.label}>Previous School</span>
+            <span className={styles.value}>{formData.previous_school || 'N/A'}</span>
+          </div>
+          <div className={styles.detailRow}>
+            <span className={styles.label}>Status</span>
+            <span className={styles.value}>Under Review</span>
           </div>
         </motion.div>
+
+
+        {/* Document Details */}
+        <motion.div className={styles.detailSection} variants={itemVariants}>
+        <h3 className={styles.sectionTitle}>📄 Document Details</h3>
+        <div className={styles.detailRow}>
+          <span className={styles.label}>Birth Certificate</span>
+          <span className={`${styles.documentStatus} ${formData.child_dob ? styles.documentStatusSubmitted : styles.documentStatusPending}`}>
+            {formData.child_dob ? '✓ Submitted' : '○ Pending'}
+          </span>
+        </div>
+        <div className={styles.detailRow}>
+          <span className={styles.label}>Aadhar Card</span>
+          <span className={`${styles.documentStatus} ${styles.documentStatusPending}`}>
+            ○ Pending
+          </span>
+        </div>
+        <div className={styles.detailRow}>
+          <span className={styles.label}>Parent ID Proof</span>
+          <span className={`${styles.documentStatus} ${styles.documentStatusPending}`}>
+            ○ Pending
+          </span>
+        </div>
+        <div className={styles.detailRow}>
+          <span className={styles.label}>Photo</span>
+          <span className={`${styles.documentStatus} ${styles.documentStatusPending}`}>
+            ○ Pending
+          </span>
+        </div>
+        </motion.div>
       </div>
+    
 
       {/* Footer Message */}
       <motion.div className={styles.slipFooter} variants={itemVariants}>
