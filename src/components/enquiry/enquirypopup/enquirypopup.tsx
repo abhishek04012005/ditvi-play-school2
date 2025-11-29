@@ -8,6 +8,7 @@ import Toast from '../../../custom/toast/toast';
 import SubmitModal from '../../../custom/popup/popup';
 import styles from './enquirypopup.module.css';
 import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined';
+import Loader from '@/custom/loader/loader';
 
 const programs = [
     "Play Group (1.5 - 2.5 years)",
@@ -242,6 +243,17 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
         setPopupDismissed(true);
         if (onClose) onClose();
     };
+
+
+      if (loading) {
+    return (
+      <Loader
+        isVisible={true}
+        message="Submitting your application..."
+        fullScreen={true}
+      />
+    );
+  }
 
     return (
         <>

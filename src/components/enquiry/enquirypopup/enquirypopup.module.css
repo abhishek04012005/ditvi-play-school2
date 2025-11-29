@@ -209,8 +209,8 @@
 }
 
 .inputWrapper input::placeholder {
-    color: var(--text-gray);
-    opacity: 0.6;
+    color: var(--primary-purple);
+    opacity: 1;
 }
 
 .inputWrapper input:focus,

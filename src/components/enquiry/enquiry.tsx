@@ -11,6 +11,7 @@ import styles from './enquiry.module.css';
 import HeadingTitle from '../heading/headingtitle';
 import LineArt from '@/custom/lineart/lineart';
 import AirplanemodeActiveOutlinedIcon from '@mui/icons-material/AirplanemodeActiveOutlined';
+import Loader from '@/custom/loader/loader';
 
 const programs = [
     "Play Group (1.5 - 2.5 years)",
@@ -207,6 +208,16 @@ const Enquiry = () => {
             setLoading(false);
         }
     };
+
+      if (loading) {
+    return (
+      <Loader
+        isVisible={true}
+        message="Submitting your application..."
+        fullScreen={true}
+      />
+    );
+  }
 
     return (
         <section className={styles.enquiry}>

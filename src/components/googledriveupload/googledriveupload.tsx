@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
 import styles from './googledriveupload.module.css';
+import Loader from '@/custom/loader/loader';
 
 interface UploadResponse {
   success: boolean;
@@ -121,6 +122,16 @@ export default function GoogleDriveUploadForm() {
       setLoading(false);
     }
   };
+
+    if (loading) {
+    return (
+      <Loader
+        isVisible={true}
+        message="Submitting your application..."
+        fullScreen={true}
+      />
+    );
+  }
 
   return (
     <div className={styles.container}>

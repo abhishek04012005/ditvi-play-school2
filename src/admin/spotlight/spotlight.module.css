@@ -1,44 +1,18 @@
-/* ==================== Main Section ==================== */
+/* ==================== MAIN SECTION ==================== */
 .staroftheweek {
     background: linear-gradient(135deg, #fbf7ff 0%, #fff 100%);
     padding: 2rem 1rem;
     min-height: 100vh;
 }
 
-/* ==================== Container ==================== */
+/* ==================== CONTAINER ==================== */
 .adminContainer {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0;
 }
 
-/* ==================== Header ==================== */
-.adminHeader {
-    text-align: center;
-    margin-bottom: 2.5rem;
-    animation: slideDown 0.6s ease-out;
-}
-
-.adminHeader h1 {
-    margin: 0;
-    color: var(--primary-purple);
-    font-size: 2.5rem;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-yellow) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.adminHeader p {
-    margin: 8px 0 0 0;
-    color: var(--text-gray);
-    font-size: 1.05rem;
-    font-weight: 500;
-}
-
-/* ==================== Form Section ==================== */
+/* ==================== FORM SECTION ==================== */
 .formSection {
     background: linear-gradient(135deg, #fff, #f8f9ff);
     border-radius: 20px;
@@ -52,12 +26,12 @@
 .formSection h2 {
     margin-top: 0;
     margin-bottom: 2rem;
-    color: var(--primary-purple);
+    color: #6a4c93;
     font-size: 1.5rem;
     font-weight: 800;
 }
 
-/* ==================== Form ==================== */
+/* ==================== FORM ==================== */
 .form {
     display: flex;
     flex-direction: column;
@@ -74,7 +48,7 @@
     grid-column: 1 / -1;
 }
 
-/* ==================== Form Group ==================== */
+/* ==================== FORM GROUP ==================== */
 .formGroup {
     display: flex;
     flex-direction: column;
@@ -82,7 +56,7 @@
 }
 
 .formGroup label {
-    color: var(--primary-purple);
+    color: #6a4c93;
     font-weight: 700;
     font-size: 1rem;
     text-transform: uppercase;
@@ -97,7 +71,7 @@
     border-radius: 12px;
     font-family: inherit;
     font-size: 1rem;
-    color: var(--text-gray);
+    color: #666;
     transition: all 0.3s ease;
     background: white;
 }
@@ -112,7 +86,7 @@
 .formGroup textarea:focus,
 .selectInput:focus {
     outline: none;
-    border-color: var(--primary-purple);
+    border-color: #6a4c93;
     box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
     background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(249, 247, 255, 1));
     transform: translateY(-2px);
@@ -128,7 +102,7 @@
     cursor: pointer;
 }
 
-/* ==================== Image Upload ==================== */
+/* ==================== IMAGE UPLOAD ==================== */
 .imageUploadWrapper {
     position: relative;
 }
@@ -154,12 +128,12 @@
     border-radius: 16px;
     background: linear-gradient(135deg, rgba(106, 76, 147, 0.03), rgba(255, 209, 102, 0.03));
     transition: all 0.3s ease;
-    color: var(--primary-purple);
+    color: #6a4c93;
     font-weight: 700;
 }
 
 .fileLabel:hover .uploadPlaceholder {
-    border-color: var(--primary-purple);
+    border-color: #6a4c93;
     background: linear-gradient(135deg, rgba(106, 76, 147, 0.08), rgba(255, 209, 102, 0.08));
     transform: translateY(-2px);
 }
@@ -170,7 +144,7 @@
 
 .uploadPlaceholder small {
     font-size: 0.85rem;
-    color: var(--text-gray);
+    color: #666;
     font-weight: 600;
 }
 
@@ -180,7 +154,7 @@
     align-items: center;
     gap: 12px;
     padding: 1.5rem;
-    border: 2px solid var(--primary-purple);
+    border: 2px solid #6a4c93;
     border-radius: 16px;
     background: linear-gradient(135deg, rgba(106, 76, 147, 0.08), rgba(255, 209, 102, 0.08));
 }
@@ -195,11 +169,11 @@
 
 .imagePreviewContainer span {
     font-size: 0.9rem;
-    color: var(--primary-purple);
+    color: #6a4c93;
     font-weight: 700;
 }
 
-/* ==================== Checkbox ==================== */
+/* ==================== CHECKBOX ==================== */
 .checkboxLabel {
     display: flex !important;
     align-items: center;
@@ -214,7 +188,7 @@
     cursor: pointer;
     width: 22px;
     height: 22px;
-    accent-color: var(--primary-purple);
+    accent-color: #6a4c93;
     transition: all 0.2s ease;
 }
 
@@ -222,10 +196,10 @@
     transform: scale(1.1);
 }
 
-/* ==================== Submit Button ==================== */
+/* ==================== SUBMIT BUTTON ==================== */
 .submitButton {
     padding: 14px 32px;
-    background: linear-gradient(135deg, var(--primary-purple) 0%, #8b6ba8 100%);
+    background: linear-gradient(135deg, #6a4c93 0%, #8b6ba8 100%);
     color: white;
     border: none;
     border-radius: 12px;
@@ -270,7 +244,7 @@
     }
 }
 
-/* ==================== Spotlights Section ==================== */
+/* ==================== SPOTLIGHTS SECTION ==================== */
 .spotlightsSection {
     background: linear-gradient(135deg, #fff, #f8f9ff);
     border-radius: 20px;
@@ -286,12 +260,12 @@
 
 .spotlightsSection h2 {
     margin: 0;
-    color: var(--primary-purple);
+    color: #6a4c93;
     font-size: 1.5rem;
     font-weight: 800;
 }
 
-/* ==================== Filter Buttons ==================== */
+/* ==================== FILTER BUTTONS ==================== */
 .filterButtons {
     display: flex;
     gap: 12px;
@@ -304,7 +278,7 @@
     background: white;
     border: 2px solid rgba(106, 76, 147, 0.15);
     border-radius: 25px;
-    color: var(--primary-purple);
+    color: #6a4c93;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -315,15 +289,15 @@
 }
 
 .filterButton:hover {
-    border-color: var(--primary-purple);
+    border-color: #6a4c93;
     background: rgba(106, 76, 147, 0.06);
     transform: translateY(-2px);
 }
 
 .filterButton.active {
-    background: linear-gradient(135deg, var(--primary-purple) 0%, #8b6ba8 100%);
+    background: linear-gradient(135deg, #6a4c93 0%, #8b6ba8 100%);
     color: white;
-    border-color: var(--primary-purple);
+    border-color: #6a4c93;
     box-shadow: 0 8px 20px rgba(106, 76, 147, 0.2);
 }
 
@@ -332,14 +306,14 @@
     opacity: 0.8;
 }
 
-/* ==================== Spotlights Grid ==================== */
+/* ==================== SPOTLIGHTS GRID ==================== */
 .spotlightsGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 2rem;
 }
 
-/* ==================== Spotlight Card ==================== */
+/* ==================== SPOTLIGHT CARD ==================== */
 .spotlightCard {
     background: linear-gradient(135deg, #fff, #f9f7ff);
     border-radius: 16px;
@@ -358,12 +332,12 @@
     border-color: rgba(106, 76, 147, 0.15);
 }
 
-/* ==================== Homepage Badge ==================== */
+/* ==================== HOMEPAGE BADGE ==================== */
 .homePageBadge {
     position: absolute;
     top: 12px;
     right: 12px;
-    background: linear-gradient(135deg, var(--primary-purple) 0%, #8b6ba8 100%);
+    background: linear-gradient(135deg, #6a4c93 0%, #8b6ba8 100%);
     color: white;
     padding: 8px 14px;
     border-radius: 20px;
@@ -378,7 +352,7 @@
     letter-spacing: 0.5px;
 }
 
-/* ==================== Card Image ==================== */
+/* ==================== CARD IMAGE ==================== */
 .cardImage {
     width: 100%;
     height: 220px;
@@ -398,7 +372,7 @@
     transform: scale(1.08) rotate(0.5deg);
 }
 
-/* ==================== Card Content ==================== */
+/* ==================== CARD CONTENT ==================== */
 .cardContent {
     padding: 1.2rem;
     flex: 1;
@@ -409,7 +383,7 @@
 
 .cardContent h3 {
     margin: 0;
-    color: var(--primary-purple);
+    color: #6a4c93;
     font-size: 1.15rem;
     font-weight: 800;
     line-height: 1.3;
@@ -430,7 +404,7 @@
     border-radius: 12px;
     font-weight: 700;
     font-size: 0.8rem;
-    color: var(--primary-purple);
+    color: #6a4c93;
     text-transform: uppercase;
     letter-spacing: 0.3px;
 }
@@ -449,7 +423,7 @@
 
 .message {
     margin: 0;
-    color: var(--text-gray);
+    color: #666;
     font-size: 0.95rem;
     line-height: 1.5;
     display: -webkit-box;
@@ -460,12 +434,12 @@
 
 .date {
     margin: 0;
-    color: var(--text-gray);
+    color: #666;
     font-size: 0.85rem;
     font-weight: 600;
 }
 
-/* ==================== Card Actions ==================== */
+/* ==================== CARD ACTIONS ==================== */
 .cardActions {
     display: flex;
     gap: 8px;
@@ -499,8 +473,8 @@
 }
 
 .printBtn {
-    color: var(--primary-purple);
-    border-color: var(--primary-purple);
+    color: #6a4c93;
+    border-color: #6a4c93;
 }
 
 .printBtn:hover {
@@ -508,8 +482,8 @@
 }
 
 .homepageBtn {
-    color: var(--primary-purple);
-    border-color: var(--primary-purple);
+    color: #6a4c93;
+    border-color: #6a4c93;
 }
 
 .homepageBtn:hover:not(.active) {
@@ -517,9 +491,9 @@
 }
 
 .homepageBtn.active {
-    background: linear-gradient(135deg, var(--primary-purple) 0%, #8b6ba8 100%);
+    background: linear-gradient(135deg, #6a4c93 0%, #8b6ba8 100%);
     color: white;
-    border-color: var(--primary-purple);
+    border-color: #6a4c93;
     box-shadow: 0 6px 20px rgba(106, 76, 147, 0.2);
 }
 
@@ -532,29 +506,244 @@
     background: rgba(255, 107, 107, 0.1);
 }
 
-/* ==================== Loading & Empty State ==================== */
-.loadingContainer,
+/* ==================== POPUP OVERLAY ==================== */
+.popupOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5000;
+    backdrop-filter: blur(8px);
+    padding: 1rem;
+}
+
+/* ==================== POPUP CONTAINER ==================== */
+.popupContainer {
+    position: relative;
+    background: linear-gradient(135deg, #fff 0%, #f9f7ff 100%);
+    border-radius: 28px;
+    padding: 0;
+    max-width: 550px;
+    width: 100%;
+    box-shadow: 0 30px 80px rgba(106, 76, 147, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    border: 2px solid rgba(106, 76, 147, 0.1);
+    overflow: hidden;
+}
+
+/* ==================== POPUP CLOSE BUTTON ==================== */
+.closeBtn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(106, 76, 147, 0.1);
+    border: 2px solid rgba(106, 76, 147, 0.2);
+    color: #6a4c93;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.closeBtn:hover {
+    background: rgba(106, 76, 147, 0.2);
+    border-color: #6a4c93;
+    transform: scale(1.1) rotate(90deg);
+}
+
+.closeBtn:active {
+    transform: scale(0.95);
+}
+
+/* ==================== POPUP HEADER ==================== */
+.popupHeader {
+    background: linear-gradient(135deg, #6a4c93 0%, #8b6ba8 100%);
+    color: white;
+    padding: 2rem 2rem 1.5rem;
+    text-align: center;
+}
+
+.popupHeader h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+}
+
+.popupHeader p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    opacity: 0.95;
+    letter-spacing: 0.5px;
+}
+
+/* ==================== POPUP CONTENT ==================== */
+.popupContent {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ==================== POPUP IMAGE CONTAINER ==================== */
+.popupImageContainer {
+    width: 100%;
+    height: 280px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #fffaf2, #fff);
+    box-shadow: 0 15px 40px rgba(106, 76, 147, 0.15);
+    border: 3px solid rgba(106, 76, 147, 0.1);
+}
+
+.popupImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.popupImageContainer:hover .popupImage {
+    transform: scale(1.08);
+}
+
+/* ==================== POPUP INFO ==================== */
+.popupInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.popupInfo h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #6a4c93;
+    line-height: 1.2;
+}
+
+.popupMeta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.popupType {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    background: rgba(106, 76, 147, 0.1);
+    border-radius: 16px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: #6a4c93;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 2px solid rgba(106, 76, 147, 0.2);
+}
+
+.popupLikes {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    background: rgba(255, 107, 107, 0.1);
+    border-radius: 16px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: #ff6b6b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 2px solid rgba(255, 107, 107, 0.2);
+}
+
+.popupMessage {
+    margin: 0;
+    color: #333;
+    font-size: 1rem;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.popupDate {
+    margin: 0;
+    color: #6a4c93;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+/* ==================== POPUP ACTIONS ==================== */
+.popupActions {
+    padding: 0 2rem 2rem;
+    display: flex;
+    gap: 12px;
+}
+
+.popupActionBtn {
+    flex: 1;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #6a4c93 0%, #8b6ba8 100%);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(106, 76, 147, 0.25);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.popupActionBtn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(106, 76, 147, 0.35);
+}
+
+.popupActionBtn:active {
+    transform: translateY(-1px);
+}
+
+/* ==================== CONFETTI CONTAINER ==================== */
+.confettiContainer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    border-radius: 28px;
+}
+
+.confetti {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+/* ==================== EMPTY STATE ==================== */
 .emptyState {
     text-align: center;
     padding: 4rem 1rem;
-    color: var(--text-gray);
+    color: #666;
 }
 
-.spinnerLarge {
-    font-size: 3rem;
-    animation: spin 1s linear infinite;
-    color: var(--primary-purple);
-    margin-bottom: 1rem;
-}
-
-.loadingContainer p,
 .emptyState p {
     margin: 0;
     font-size: 1.1rem;
     font-weight: 600;
 }
 
-/* ==================== Modal Overlay ==================== */
+/* ==================== MODAL OVERLAY ==================== */
 .modalOverlay {
     position: fixed;
     inset: 0;
@@ -568,7 +757,7 @@
     animation: fadeIn 0.3s ease-out;
 }
 
-/* ==================== Modal ==================== */
+/* ==================== MODAL ==================== */
 .modal {
     background: white;
     border-radius: 20px;
@@ -595,30 +784,30 @@
 
 .infoIcon {
     font-size: 1.8rem;
-    color: var(--primary-purple);
+    color: #6a4c93;
     animation: pulse 2s ease-in-out infinite;
 }
 
 .modalHeader h3 {
     margin: 0;
-    color: var(--primary-purple);
+    color: #6a4c93;
     font-size: 1.25rem;
     font-weight: 800;
 }
 
 .modalBody {
     margin: 0 0 1.5rem 0;
-    color: var(--text-gray);
+    color: #666;
     line-height: 1.6;
     font-size: 0.95rem;
 }
 
 .modalBody strong {
-    color: var(--primary-purple);
+    color: #6a4c93;
     font-weight: 700;
 }
 
-/* ==================== Modal Actions ==================== */
+/* ==================== MODAL ACTIONS ==================== */
 .modalActions {
     display: flex;
     gap: 12px;
@@ -643,18 +832,18 @@
 
 .cancelBtn {
     background: rgba(106, 76, 147, 0.1);
-    color: var(--primary-purple);
+    color: #6a4c93;
     border: 2px solid rgba(106, 76, 147, 0.2);
 }
 
 .cancelBtn:hover:not(:disabled) {
     background: rgba(106, 76, 147, 0.15);
-    border-color: var(--primary-purple);
+    border-color: #6a4c93;
     transform: translateY(-2px);
 }
 
 .confirmBtn {
-    background: linear-gradient(135deg, var(--primary-purple) 0%, #8b6ba8 100%);
+    background: linear-gradient(135deg, #6a4c93 0%, #8b6ba8 100%);
     color: white;
     box-shadow: 0 10px 30px rgba(106, 76, 147, 0.25);
 }
@@ -673,7 +862,7 @@
     cursor: not-allowed;
 }
 
-/* ==================== Animations ==================== */
+/* ==================== ANIMATIONS ==================== */
 @keyframes slideDown {
     from {
         opacity: 0;
@@ -706,7 +895,8 @@
 }
 
 @keyframes pulse {
-    0%, 100% {
+    0%,
+    100% {
         transform: scale(1);
     }
     50% {
@@ -714,7 +904,7 @@
     }
 }
 
-/* ==================== Responsive - Tablet ==================== */
+/* ==================== RESPONSIVE - TABLET 1024px ==================== */
 @media (max-width: 1024px) {
     .spotlightsGrid {
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -732,20 +922,28 @@
     .spotlightsSection {
         padding: 2rem;
     }
+
+    .popupContainer {
+        max-width: 480px;
+    }
+
+    .popupContent {
+        padding: 1.5rem;
+    }
+
+    .popupImageContainer {
+        height: 250px;
+    }
+
+    .popupActions {
+        padding: 0 1.5rem 1.5rem;
+    }
 }
 
-/* ==================== Responsive - Tablet Medium ==================== */
+/* ==================== RESPONSIVE - TABLET MEDIUM 768px ==================== */
 @media (max-width: 768px) {
     .staroftheweek {
         padding: 1.5rem 1rem;
-    }
-
-    .adminHeader h1 {
-        font-size: 2rem;
-    }
-
-    .adminHeader p {
-        font-size: 1rem;
     }
 
     .formSection,
@@ -828,9 +1026,52 @@
         width: 140px;
         height: 140px;
     }
+
+    .popupContainer {
+        max-width: 90vw;
+        border-radius: 24px;
+    }
+
+    .popupHeader {
+        padding: 1.5rem 1.5rem 1rem;
+    }
+
+    .popupHeader h2 {
+        font-size: 1.6rem;
+    }
+
+    .popupContent {
+        padding: 1.5rem;
+        gap: 1.2rem;
+    }
+
+    .popupImageContainer {
+        height: 220px;
+    }
+
+    .popupInfo h3 {
+        font-size: 1.3rem;
+    }
+
+    .popupActions {
+        padding: 0 1.5rem 1.5rem;
+    }
+
+    .popupActionBtn {
+        padding: 12px 20px;
+        font-size: 0.95rem;
+    }
+
+    .closeBtn {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+        top: 12px;
+        right: 12px;
+    }
 }
 
-/* ==================== Responsive - Mobile ==================== */
+/* ==================== RESPONSIVE - MOBILE 480px ==================== */
 @media (max-width: 480px) {
     .staroftheweek {
         padding: 1rem;
@@ -838,18 +1079,6 @@
 
     .adminContainer {
         padding: 0;
-    }
-
-    .adminHeader {
-        margin-bottom: 1.5rem;
-    }
-
-    .adminHeader h1 {
-        font-size: 1.6rem;
-    }
-
-    .adminHeader p {
-        font-size: 0.9rem;
     }
 
     .formSection,
@@ -1013,17 +1242,79 @@
         font-size: 0.85rem;
     }
 
-    .spinnerLarge {
-        font-size: 2.5rem;
+    .popupContainer {
+        max-width: 95vw;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(106, 76, 147, 0.3);
+    }
+
+    .closeBtn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+        top: 10px;
+        right: 10px;
+    }
+
+    .popupHeader {
+        padding: 1.2rem;
+    }
+
+    .popupHeader h2 {
+        font-size: 1.4rem;
+        margin-bottom: 6px;
+    }
+
+    .popupHeader p {
+        font-size: 0.9rem;
+    }
+
+    .popupContent {
+        padding: 1.2rem;
+        gap: 1rem;
+    }
+
+    .popupImageContainer {
+        height: 200px;
+        border-radius: 16px;
+    }
+
+    .popupInfo h3 {
+        font-size: 1.2rem;
+    }
+
+    .popupMeta {
+        gap: 8px;
+    }
+
+    .popupType,
+    .popupLikes {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+
+    .popupMessage {
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .popupDate {
+        font-size: 0.85rem;
+    }
+
+    .popupActions {
+        padding: 0 1.2rem 1.2rem;
+    }
+
+    .popupActionBtn {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+        border-radius: 12px;
     }
 }
 
-/* ==================== Ultra Mobile ==================== */
+/* ==================== RESPONSIVE - ULTRA MOBILE 360px ==================== */
 @media (max-width: 360px) {
-    .adminHeader h1 {
-        font-size: 1.4rem;
-    }
-
     .formSection,
     .spotlightsSection {
         padding: 1rem;
@@ -1045,20 +1336,46 @@
     .modal {
         padding: 1rem;
     }
+
+    .popupContainer {
+        max-width: 98vw;
+        border-radius: 18px;
+    }
+
+    .popupHeader {
+        padding: 1rem;
+    }
+
+    .popupHeader h2 {
+        font-size: 1.3rem;
+    }
+
+    .popupContent {
+        padding: 1rem;
+    }
+
+    .popupImageContainer {
+        height: 180px;
+    }
+
+    .popupActions {
+        padding: 0 1rem 1rem;
+    }
 }
 
-/* ==================== Print Styles ==================== */
+/* ==================== PRINT STYLES ==================== */
 @media print {
     .staroftheweek {
         background: white;
         padding: 0;
     }
 
-    .adminHeader,
     .formSection,
     .filterButtons,
     .cardActions,
-    .submitButton {
+    .submitButton,
+    .popupOverlay,
+    .modalOverlay {
         display: none;
     }
 

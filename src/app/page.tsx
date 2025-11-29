@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import About from "@/components/about/about";
-import Awards from "@/components/awards/awards";
+import Awards from "@/components/spotlight/spotlight";
 import Contact from "@/components/contact/contact";
 import EnquiryPopup from "@/components/enquiry/enquirypopup/enquirypopup";
 import Gallery from "@/components/gallery/gallery";
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <div>
-      <EnquiryPopup delay={3000} />
+      <EnquiryPopup delay={1000} />
       <Hero />
       <About />
       <Program />

@@ -13,7 +13,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
-import styles from './awards.module.css';
+import styles from './spotlight.module.css';
 import HeadingTitle from '../heading/headingtitle';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 import Confetti from '@/components/confetti/confetti';
@@ -68,6 +68,13 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
     const [showConfetti, setShowConfetti] = useState(false);
     const [confettiKey, setConfettiKey] = useState(0);
 
+    // ✨ SCROLL POPUP STATE ✨
+    const [showScrollPopup, setShowScrollPopup] = useState(false);
+    const [scrollPopupTriggered, setScrollPopupTriggered] = useState(false);
+    const [homepageSpotlight, setHomepageSpotlight] = useState<Award | null>(null);
+    const [scrollConfetti, setScrollConfetti] = useState(false);
+    const [scrollConfettiKey, setScrollConfettiKey] = useState(0);
+
     // like state maps for fast UI updates
     const [likedMap, setLikedMap] = useState<Record<string, boolean>>({});
     const [likesMap, setLikesMap] = useState<Record<string, number>>({});
@@ -76,6 +83,11 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
     const autoRef = useRef<number | null>(null);
     const pauseRef = useRef(false);
     const confettiTimeoutRef = useRef<number | null>(null);
+
+    // ✨ SCROLL POPUP REFS ✨
+    const spotlightSectionRef = useRef<HTMLDivElement>(null);
+    const observerRef = useRef<IntersectionObserver | null>(null);
+    const scrollConfettiTimeoutRef = useRef<number | null>(null);
 
     // fetch awards
     const fetchAwards = useCallback(async () => {
@@ -97,6 +109,11 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
             }));
             setAwards(processed);
 
+            // Find homepage spotlight
+            const homepageItem = processed.find((a) => a.is_show_on_home_page);
+            setHomepageSpotlight(homepageItem || null);
+            console.log('✨ Homepage spotlight:', homepageItem?.name || 'None');
+
             // initialize likes
             const likes: Record<string, number> = {};
             processed.forEach((p) => (likes[p.id] = p.like_count || 0));
@@ -117,6 +134,10 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
             } else {
                 setLikedMap({});
             }
+
+            // Reset scroll popup trigger for new data
+            setScrollPopupTriggered(false);
+            setShowScrollPopup(false);
         } catch (err) {
             console.error('fetchAwards error', err);
         } finally {
@@ -127,6 +148,64 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
     useEffect(() => {
         fetchAwards();
     }, [fetchAwards]);
+
+    // ✨ SCROLL DETECTION FOR POPUP - Works on both homepage and grid page ✨
+    useEffect(() => {
+        if (!spotlightSectionRef.current || !homepageSpotlight) {
+            console.log('⚠️ Scroll popup conditions not met:', {
+                hasRef: !!spotlightSectionRef.current,
+                hasHomepageSpotlight: !!homepageSpotlight
+            });
+            return;
+        }
+
+        console.log('🎯 Setting up IntersectionObserver for spotlight scroll popup');
+
+        // Cleanup previous observer
+        if (observerRef.current) {
+            observerRef.current.disconnect();
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    console.log('👀 Spotlight section intersection:', {
+                        isIntersecting: entry.isIntersecting,
+                        ratio: entry.intersectionRatio,
+                        triggered: scrollPopupTriggered
+                    });
+
+                    // Show popup when section comes into view and hasn't been triggered yet
+                    if (entry.isIntersecting && !scrollPopupTriggered && homepageSpotlight) {
+                        console.log('✨ SCROLL POPUP SHOULD APPEAR NOW!');
+
+                        // Delay for better UX
+                        setTimeout(() => {
+                            setShowScrollPopup(true);
+                            setScrollPopupTriggered(true);
+
+                            // Trigger confetti
+                            triggerScrollConfetti();
+                        }, 300);
+                    }
+                });
+            },
+            {
+                threshold: [0, 0.15, 0.3],
+                rootMargin: '50px'
+            }
+        );
+
+        observer.observe(spotlightSectionRef.current);
+        observerRef.current = observer;
+
+        return () => {
+            if (observerRef.current) {
+                observerRef.current.disconnect();
+                observerRef.current = null;
+            }
+        };
+    }, [homepageSpotlight, scrollPopupTriggered]);
 
     // Trigger confetti with 8 second duration
     const triggerConfetti = useCallback(() => {
@@ -139,6 +218,20 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
 
         confettiTimeoutRef.current = window.setTimeout(() => {
             setShowConfetti(false);
+        }, 8000);
+    }, []);
+
+    // ✨ TRIGGER SCROLL CONFETTI ✨
+    const triggerScrollConfetti = useCallback(() => {
+        if (scrollConfettiTimeoutRef.current) {
+            window.clearTimeout(scrollConfettiTimeoutRef.current);
+        }
+
+        setScrollConfettiKey((prev) => prev + 1);
+        setScrollConfetti(true);
+
+        scrollConfettiTimeoutRef.current = window.setTimeout(() => {
+            setScrollConfetti(false);
         }, 8000);
     }, []);
 
@@ -155,6 +248,16 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
         if (confettiTimeoutRef.current) {
             window.clearTimeout(confettiTimeoutRef.current);
             confettiTimeoutRef.current = null;
+        }
+    };
+
+    // ✨ CLOSE SCROLL POPUP ✨
+    const closeScrollPopup = () => {
+        setShowScrollPopup(false);
+        setScrollConfetti(false);
+        if (scrollConfettiTimeoutRef.current) {
+            window.clearTimeout(scrollConfettiTimeoutRef.current);
+            scrollConfettiTimeoutRef.current = null;
         }
     };
 
@@ -261,25 +364,146 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
         </motion.div>
     );
 
+    // ✨ SCROLL POPUP COMPONENT - Reusable for both pages ✨
+    const ScrollPopupContent = () => (
+        <AnimatePresence>
+            {showScrollPopup && homepageSpotlight && (
+                <motion.div
+                    className={styles.scrollPopupOverlay}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={closeScrollPopup}
+                >
+                    {/* Scroll Confetti - INSIDE OVERLAY */}
+                    <AnimatePresence>
+                        {scrollConfetti && (
+                            <motion.div
+                                key={`scroll-confetti-${scrollConfettiKey}`}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 9998 }}
+                            >
+                                <Confetti trigger={scrollConfetti} duration={8000} particleCount={3000} intensity="high" />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    <motion.div
+                        className={styles.scrollPopupContainer}
+                        initial={{ scale: 0.7, y: 50, opacity: 0 }}
+                        animate={{ scale: 1, y: 0, opacity: 1 }}
+                        exit={{ scale: 0.7, y: 50, opacity: 0 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                        onClick={(e) => e.stopPropagation()}
+                        role="dialog"
+                        aria-modal="true"
+                    >
+                        {/* Close Button */}
+                        <motion.button
+                            type="button"
+                            className={styles.scrollPopupCloseBtn}
+                            onClick={closeScrollPopup}
+                            whileHover={{ rotate: 90, scale: 1.1 }}
+                            whileTap={{ scale: 0.95 }}
+                            aria-label="Close popup"
+                        >
+                            <FaTimes />
+                        </motion.button>
+
+                        {/* Header */}
+                        <motion.div
+                            className={styles.scrollPopupHeader}
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                        >
+                            <div className={styles.scrollPopupBadge}>
+                                ⭐ {homepageSpotlight.award_type.charAt(0).toUpperCase() + homepageSpotlight.award_type.slice(1)}
+                            </div>
+                            <h2 className={styles.scrollPopupTitle}>🌟 Featured Spotlight 🌟</h2>
+                        </motion.div>
+
+                        {/* Content */}
+                        <motion.div
+                            className={styles.scrollPopupContent}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.3 }}
+                        >
+                            <div className={styles.scrollPopupImageWrapper}>
+                                <Image
+                                    src={homepageSpotlight.image_url || '/assets/default-avatar.png'}
+                                    alt={homepageSpotlight.name}
+                                    width={240}
+                                    height={240}
+                                    className={styles.scrollPopupImage}
+                                    unoptimized
+                                    priority
+                                />
+                            </div>
+
+                            <div className={styles.scrollPopupDetails}>
+                                <h3>{homepageSpotlight.name}</h3>
+                                <p className={styles.scrollPopupMessage}>"{homepageSpotlight.message}"</p>
+                                <p className={styles.scrollPopupDate}>
+                                    📅 {new Date(homepageSpotlight.date).toLocaleDateString('en-US', {
+                                        weekday: 'long',
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric'
+                                    })}
+                                </p>
+
+                                <motion.button
+                                    type="button"
+                                    className={`${styles.scrollPopupLikeButton} ${likedMap[homepageSpotlight.id] ? styles.liked : ''}`}
+                                    onClick={() => toggleLike(homepageSpotlight)}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    <motion.span
+                                        animate={likedMap[homepageSpotlight.id] ? { scale: [1, 1.3, 1] } : {}}
+                                        transition={{ duration: 0.25 }}
+                                    >
+                                        <FaHeart />
+                                    </motion.span>
+                                    <span>{likesMap[homepageSpotlight.id] ?? homepageSpotlight.like_count ?? 0}</span>
+                                </motion.button>
+                            </div>
+                        </motion.div>
+
+                        {/* Footer */}
+                        <motion.div
+                            className={styles.scrollPopupFooter}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.4 }}
+                        >
+                            <motion.button
+                                className={styles.scrollPopupActionBtn}
+                                onClick={closeScrollPopup}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                ✨ Celebrate
+                            </motion.button>
+                        </motion.div>
+
+                        {/* Confetti Container */}
+                        <div className={styles.scrollPopupConfettiContainer} />
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    );
+
     // Homepage Slider View
     if (isHomePage) {
         return (
             <>
-                {/* Confetti */}
-                <AnimatePresence>
-                    {showConfetti && (
-                        <motion.div
-                            key={`confetti-${confettiKey}`}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                        >
-                            <Confetti trigger={showConfetti} duration={8000} particleCount={2500} intensity="high" />
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-                <section className={styles.homeSection}>
+                <section className={styles.homeSection} ref={spotlightSectionRef}>
                     <LineArt
                         circle={{
                             size: 200,
@@ -325,8 +549,6 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
                         >
                             <HeadingTitle text="Spotlight" />
                         </motion.div>
-
-
 
                         <div
                             className={styles.sliderContainer}
@@ -414,7 +636,10 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
                     </div>
                 </section>
 
-                {/* Popup */}
+                {/* ✨ SCROLL POPUP WITH CONFETTI ✨ */}
+                <ScrollPopupContent />
+
+                {/* Regular Popup */}
                 <AnimatePresence>
                     {showPopup && selectedAward && (
                         <motion.div
@@ -424,6 +649,21 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
                             exit={{ opacity: 0 }}
                             onClick={closePopup}
                         >
+                            {/* Confetti - INSIDE OVERLAY */}
+                            <AnimatePresence>
+                                {showConfetti && (
+                                    <motion.div
+                                        key={`confetti-${confettiKey}`}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 9998 }}
+                                    >
+                                        <Confetti trigger={showConfetti} duration={8000} particleCount={2500} intensity="high" />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
                             <motion.div
                                 className={styles.popupContainer}
                                 initial={{ scale: 0.8, y: 50, opacity: 0 }}
@@ -521,21 +761,7 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
     // Full Page Grid View
     return (
         <>
-            {/* Confetti */}
-            <AnimatePresence>
-                {showConfetti && (
-                    <motion.div
-                        key={`confetti-${confettiKey}`}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                    >
-                        <Confetti trigger={showConfetti} duration={8000} particleCount={2500} intensity="high" />
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            <section className={styles.pageSection}>
+            <section className={styles.pageSection} ref={spotlightSectionRef}>
                 <LineArt
                     circle={{
                         size: 200,
@@ -575,7 +801,6 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
                 <div className={styles.container}>
                     <HeadingTitle text="Spotlight" />
 
-
                     {/* Grid */}
                     <motion.div
                         className={styles.gridContainer}
@@ -605,6 +830,9 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
                 </div>
             </section>
 
+            {/* ✨ SCROLL POPUP WITH CONFETTI - NOW APPEARS ON FULL PAGE GRID VIEW ✨ */}
+            <ScrollPopupContent />
+
             {/* Popup */}
             <AnimatePresence>
                 {showPopup && selectedAward && (
@@ -615,6 +843,21 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
                         exit={{ opacity: 0 }}
                         onClick={closePopup}
                     >
+                        {/* Confetti - INSIDE OVERLAY */}
+                        <AnimatePresence>
+                            {showConfetti && (
+                                <motion.div
+                                    key={`confetti-${confettiKey}`}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 9998 }}
+                                >
+                                    <Confetti trigger={showConfetti} duration={8000} particleCount={2500} intensity="high" />
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
                         <motion.div
                             className={styles.popupContainer}
                             initial={{ scale: 0.8, y: 50, opacity: 0 }}

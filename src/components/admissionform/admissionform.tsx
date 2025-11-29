@@ -1,17 +1,33 @@
-'use client';
-import { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
-import toast from 'react-hot-toast';
-import { FaSpinner, FaCheckCircle, FaDownload, FaPrint, FaShare } from 'react-icons/fa';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import styles from './admissionform.module.css';
-import HeadingTitle from '@/components/heading/headingtitle';
-import { EmojiPeople, FamilyRestroom, SchoolOutlined, DescriptionOutlined } from '@mui/icons-material';
-import LineArt from '@/custom/lineart/lineart';
-import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
-import { schoolDetails } from '@/json/schooldetails';
-import Loader from '@/custom/loader/loader';
+"use client";
+import { useState, useRef } from "react";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
+import { MdDateRange } from "react-icons/md";
+import {
+  FaSpinner,
+  FaCheckCircle,
+  FaDownload,
+  FaEnvelope,
+  FaChild,
+  FaBirthdayCake,
+  FaUsers,
+  FaHashtag,
+  FaSchool
+} from "react-icons/fa";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import styles from "./admissionform.module.css";
+import HeadingTitle from "@/components/heading/headingtitle";
+import {
+  EmojiPeople,
+  FamilyRestroom,
+  SchoolOutlined,
+  DescriptionOutlined,
+} from "@mui/icons-material";
+import LineArt from "@/custom/lineart/lineart";
+import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
+import { schoolDetails } from "@/json/schooldetails";
+import Loader from "@/custom/loader/loader";
 
 interface FormData {
   child_name: string;
@@ -40,30 +56,31 @@ interface SubmissionResult {
 }
 
 const programs = [
-  { value: 'playgroup', label: 'Play Group' },
-  { value: 'nursery', label: 'Nursery' },
-  { value: 'kg1', label: 'KG - 1' },
-  { value: 'kg2', label: 'KG - 2' },
+  { value: "playgroup", label: "Play Group" },
+  { value: "nursery", label: "Nursery" },
+  { value: "kg1", label: "KG - 1" },
+  { value: "kg2", label: "KG - 2" },
 ];
 
 export default function AdmissionForm() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
+  const [submissionResult, setSubmissionResult] =
+    useState<SubmissionResult | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [uploadDocsNow, setUploadDocsNow] = useState(true);
 
   const [formData, setFormData] = useState<FormData>({
-    child_name: '',
-    child_dob: '',
-    child_gender: '',
-    child_place_of_birth: '',
-    parent_name: '',
-    parent_mobile_number: '',
-    parent_email: '',
-    program_name: '',
-    previous_school: '',
+    child_name: "",
+    child_dob: "",
+    child_gender: "",
+    child_place_of_birth: "",
+    parent_name: "",
+    parent_mobile_number: "",
+    parent_email: "",
+    program_name: "",
+    previous_school: "",
   });
 
   const [files, setFiles] = useState<FormFiles>({
@@ -73,7 +90,9 @@ export default function AdmissionForm() {
     parent_id_proof: null,
   });
 
-  const [filePreviews, setFilePreviews] = useState<{ [key: string]: string | null }>({
+  const [filePreviews, setFilePreviews] = useState<{
+    [key: string]: string | null;
+  }>({
     photo: null,
     birth_certificate: null,
     aadhar_card: null,
@@ -82,39 +101,47 @@ export default function AdmissionForm() {
 
   const pdfRef = useRef<HTMLDivElement>(null);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     if (errors[name]) {
-      setErrors({ ...errors, [name]: '' });
+      setErrors({ ...errors, [name]: "" });
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, fieldName: keyof FormFiles) => {
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    fieldName: keyof FormFiles
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+    const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
     if (!allowedTypes.includes(file.type)) {
-      toast.error('Only JPG, PNG, and PDF files are allowed');
+      toast.error("Only JPG, PNG, and PDF files are allowed");
       return;
     }
 
     if (file.size > 10 * 1024 * 1024) {
-      toast.error('File size must be less than 10MB');
+      toast.error("File size must be less than 10MB");
       return;
     }
 
     setFiles({ ...files, [fieldName]: file });
 
-    if (file.type.startsWith('image/')) {
+    if (file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFilePreviews({ ...filePreviews, [fieldName]: reader.result as string });
+        setFilePreviews({
+          ...filePreviews,
+          [fieldName]: reader.result as string,
+        });
       };
       reader.readAsDataURL(file);
     } else {
-      setFilePreviews({ ...filePreviews, [fieldName]: '📄 ' + file.name });
+      setFilePreviews({ ...filePreviews, [fieldName]: "📄 " + file.name });
     }
   };
 
@@ -124,38 +151,38 @@ export default function AdmissionForm() {
 
     if (stepNum === 1) {
       if (!formData.child_name.trim()) {
-        errors.push('Child name is required');
-        fieldErrors.child_name = 'Child name is required';
+        errors.push("Child name is required");
+        fieldErrors.child_name = "Child name is required";
       }
       if (!formData.child_dob) {
-        errors.push('Date of birth is required');
-        fieldErrors.child_dob = 'Date of birth is required';
+        errors.push("Date of birth is required");
+        fieldErrors.child_dob = "Date of birth is required";
       }
       if (!formData.child_gender) {
-        errors.push('Gender is required');
-        fieldErrors.child_gender = 'Gender is required';
+        errors.push("Gender is required");
+        fieldErrors.child_gender = "Gender is required";
       }
       if (!formData.child_place_of_birth.trim()) {
-        errors.push('Place of birth is required');
-        fieldErrors.child_place_of_birth = 'Place of birth is required';
+        errors.push("Place of birth is required");
+        fieldErrors.child_place_of_birth = "Place of birth is required";
       }
     } else if (stepNum === 2) {
       if (!formData.parent_name.trim()) {
-        errors.push('Parent name is required');
-        fieldErrors.parent_name = 'Parent name is required';
+        errors.push("Parent name is required");
+        fieldErrors.parent_name = "Parent name is required";
       }
       if (!formData.parent_mobile_number.trim()) {
-        errors.push('Mobile number is required');
-        fieldErrors.parent_mobile_number = 'Mobile number is required';
+        errors.push("Mobile number is required");
+        fieldErrors.parent_mobile_number = "Mobile number is required";
       }
       if (!/^[0-9]{10}$/.test(formData.parent_mobile_number)) {
-        errors.push('Mobile number must be 10 digits');
-        fieldErrors.parent_mobile_number = 'Mobile number must be 10 digits';
+        errors.push("Mobile number must be 10 digits");
+        fieldErrors.parent_mobile_number = "Mobile number must be 10 digits";
       }
     } else if (stepNum === 3) {
       if (!formData.program_name) {
-        errors.push('Program is required');
-        fieldErrors.program_name = 'Program is required';
+        errors.push("Program is required");
+        fieldErrors.program_name = "Program is required";
       }
     }
 
@@ -170,7 +197,7 @@ export default function AdmissionForm() {
   };
 
   const handleSubmit = async (e?: React.FormEvent) => {
-    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+    if (e && typeof e.preventDefault === "function") e.preventDefault();
 
     if (!validateStep(4)) return;
 
@@ -179,45 +206,54 @@ export default function AdmissionForm() {
 
       const formDataToSend = new FormData();
 
-      formDataToSend.append('child_name', formData.child_name);
-      formDataToSend.append('child_dob', formData.child_dob);
-      formDataToSend.append('child_gender', formData.child_gender);
-      formDataToSend.append('child_place_of_birth', formData.child_place_of_birth);
-      formDataToSend.append('parent_name', formData.parent_name);
-      formDataToSend.append('parent_mobile_number', formData.parent_mobile_number);
+      formDataToSend.append("child_name", formData.child_name);
+      formDataToSend.append("child_dob", formData.child_dob);
+      formDataToSend.append("child_gender", formData.child_gender);
+      formDataToSend.append(
+        "child_place_of_birth",
+        formData.child_place_of_birth
+      );
+      formDataToSend.append("parent_name", formData.parent_name);
+      formDataToSend.append(
+        "parent_mobile_number",
+        formData.parent_mobile_number
+      );
       if (formData.parent_email) {
-        formDataToSend.append('parent_email', formData.parent_email);
+        formDataToSend.append("parent_email", formData.parent_email);
       }
-      formDataToSend.append('program_name', formData.program_name);
+      formDataToSend.append("program_name", formData.program_name);
       if (formData.previous_school) {
-        formDataToSend.append('previous_school', formData.previous_school);
+        formDataToSend.append("previous_school", formData.previous_school);
       }
 
       if (uploadDocsNow) {
-        if (files.photo) formDataToSend.append('photo', files.photo);
-        if (files.birth_certificate) formDataToSend.append('birth_certificate', files.birth_certificate);
-        if (files.aadhar_card) formDataToSend.append('aadhar_card', files.aadhar_card);
-        if (files.parent_id_proof) formDataToSend.append('parent_id_proof', files.parent_id_proof);
+        if (files.photo) formDataToSend.append("photo", files.photo);
+        if (files.birth_certificate)
+          formDataToSend.append("birth_certificate", files.birth_certificate);
+        if (files.aadhar_card)
+          formDataToSend.append("aadhar_card", files.aadhar_card);
+        if (files.parent_id_proof)
+          formDataToSend.append("parent_id_proof", files.parent_id_proof);
       }
 
-      const response = await fetch('/api/admission', {
-        method: 'POST',
+      const response = await fetch("/api/admission", {
+        method: "POST",
         body: formDataToSend,
       });
 
       const result = await response.json();
 
       if (!response.ok) {
-        toast.error(result.error || 'Submission failed');
+        toast.error(result.error || "Submission failed");
         return;
       }
 
       setSubmissionResult(result.data);
       setSubmitted(true);
-      toast.success('Admission submitted successfully!');
+      toast.success("Admission submitted successfully!");
     } catch (error) {
-      console.error('Submission error:', error);
-      toast.error('An error occurred during submission');
+      console.error("Submission error:", error);
+      toast.error("An error occurred during submission");
     } finally {
       setLoading(false);
     }
@@ -227,35 +263,35 @@ export default function AdmissionForm() {
     if (!pdfRef.current) return;
 
     try {
-      toast.loading('Generating PDF...');
+      toast.loading("Generating PDF...");
 
       const canvas = await html2canvas(pdfRef.current, {
         scale: 2,
         useCORS: true,
         logging: false,
-        backgroundColor: '#ffffff',
+        backgroundColor: "#ffffff",
       });
 
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF("p", "mm", "a4");
+      const imgData = canvas.toDataURL("image/png");
       const imgWidth = 210;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
       pdf.save(`Admission_${submissionResult?.admission_number}.pdf`);
 
       toast.dismiss();
-      toast.success('PDF downloaded successfully!');
+      toast.success("PDF downloaded successfully!");
     } catch (error) {
-      console.error('PDF generation error:', error);
+      console.error("PDF generation error:", error);
       toast.dismiss();
-      toast.error('Failed to generate PDF');
+      toast.error("Failed to generate PDF");
     }
   };
 
   const handlePrint = () => {
     if (!pdfRef.current) return;
-    const printWindow = window.open('', '', 'height=600,width=800');
+    const printWindow = window.open("", "", "height=600,width=800");
     if (printWindow) {
       printWindow.document.write(`
         <!DOCTYPE html>
@@ -284,29 +320,33 @@ export default function AdmissionForm() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Admission Confirmation',
+          title: "Admission Confirmation",
           text: text,
           url: window.location.href,
         });
       } catch (error) {
-        if ((error as Error).name !== 'AbortError') {
-          console.error('Error sharing:', error);
+        if ((error as Error).name !== "AbortError") {
+          console.error("Error sharing:", error);
         }
       }
     } else {
       try {
         await navigator.clipboard.writeText(text);
-        toast.success('Admission details copied to clipboard!');
+        toast.success("Admission details copied to clipboard!");
       } catch (error) {
-        toast.error('Failed to copy to clipboard');
+        toast.error("Failed to copy to clipboard");
       }
     }
   };
 
   if (loading) {
     return (
-      <Loader isVisible={true} message="Submitting your application..." fullScreen={true} />
-    )
+      <Loader
+        isVisible={true}
+        message="Submitting your application..."
+        fullScreen={true}
+      />
+    );
   }
 
   // Success Screen
@@ -316,24 +356,28 @@ export default function AdmissionForm() {
         <LineArt
           circle={{
             size: 200,
-            borderColor: 'var(--primary-yellow)',
+            borderColor: "var(--primary-yellow)",
             borderWidth: 3,
-            borderStyle: 'dashed',
+            borderStyle: "dashed",
             opacity: 1,
             animationSpeed: 30,
-            bottom: '7%',
-            left: '7%',
-            icon: <SchoolOutlinedIcon sx={{ fontSize: 40, transform: 'scale(-1, 1)' }} />,
-            iconColor: 'var(--primary-purple)',
+            bottom: "7%",
+            left: "7%",
+            icon: (
+              <SchoolOutlinedIcon
+                sx={{ fontSize: 40, transform: "scale(-1, 1)" }}
+              />
+            ),
+            iconColor: "var(--primary-purple)",
             showIcon: true,
           }}
           dot={{
             size: 150,
-            color: 'var(--primary-yellow)',
+            color: "var(--primary-yellow)",
             opacity: 0.3,
             animationSpeed: 6,
-            top: '10%',
-            right: '5%',
+            top: "10%",
+            right: "5%",
             blur: 60,
             show: true,
           }}
@@ -355,9 +399,12 @@ export default function AdmissionForm() {
               <FaCheckCircle className={styles.successIcon} />
             </motion.div>
 
-            <h1 className={styles.successTitle}>Admission Submitted Successfully!</h1>
+            <h1 className={styles.successTitle}>
+              Admission Submitted Successfully!
+            </h1>
             <p className={styles.successSubtitle}>
-              Your application has been received. Check your email for further updates.
+              Your application has been received. Check your email for further
+              updates.
             </p>
 
             <motion.div
@@ -379,12 +426,11 @@ export default function AdmissionForm() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
             >
-              <AdmissionConfirmationSlip data={submissionResult} formData={formData} />
+              <AdmissionConfirmationSlip
+                data={submissionResult}
+                formData={formData}
+              />
             </motion.div>
-
-
-
-
           </motion.div>
         </div>
       </section>
@@ -398,34 +444,38 @@ export default function AdmissionForm() {
         <LineArt
           circle={{
             size: 200,
-            borderColor: 'var(--primary-yellow)',
+            borderColor: "var(--primary-yellow)",
             borderWidth: 3,
-            borderStyle: 'dashed',
+            borderStyle: "dashed",
             opacity: 1,
             animationSpeed: 30,
-            bottom: '7%',
-            left: '7%',
-            icon: <SchoolOutlinedIcon sx={{ fontSize: 40, transform: 'scale(-1, 1)' }} />,
-            iconColor: 'var(--primary-purple)',
+            bottom: "7%",
+            left: "7%",
+            icon: (
+              <SchoolOutlinedIcon
+                sx={{ fontSize: 40, transform: "scale(-1, 1)" }}
+              />
+            ),
+            iconColor: "var(--primary-purple)",
             showIcon: true,
           }}
           dot={{
             size: 150,
-            color: 'var(--primary-yellow)',
+            color: "var(--primary-yellow)",
             opacity: 0.3,
             animationSpeed: 6,
-            top: '10%',
-            right: '5%',
+            top: "10%",
+            right: "5%",
             blur: 60,
             show: true,
           }}
           squiggly={{
             size: 100,
-            color: 'var(--primary-purple)',
+            color: "var(--primary-purple)",
             opacity: 0.1,
             animationSpeed: 8,
-            top: '30%',
-            left: '2%',
+            top: "30%",
+            left: "2%",
             show: true,
             reverse: true,
           }}
@@ -436,7 +486,9 @@ export default function AdmissionForm() {
           <div className={styles.formCard}>
             <div className={styles.formLayout}>
               <main className={styles.main}>
-                <p className={styles.subtitle}>Fill in the details below to apply for admission</p>
+                <p className={styles.subtitle}>
+                  Fill in the details below to apply for admission
+                </p>
 
                 {/* Progress Bar */}
                 <div className={styles.topProgress} aria-hidden>
@@ -449,16 +501,21 @@ export default function AdmissionForm() {
 
                   <div className={styles.pills}>
                     {[
-                      { n: 1, t: 'Child Details', icon: EmojiPeople },
+                      { n: 1, t: "Child Details", icon: EmojiPeople },
                       { n: 2, t: "Parent's Details", icon: FamilyRestroom },
-                      { n: 3, t: 'Academic Details', icon: SchoolOutlined },
-                      { n: 4, t: 'Upload Documents', icon: DescriptionOutlined },
+                      { n: 3, t: "Academic Details", icon: SchoolOutlined },
+                      {
+                        n: 4,
+                        t: "Upload Documents",
+                        icon: DescriptionOutlined,
+                      },
                     ].map((s) => {
                       const IconComponent = s.icon;
                       return (
                         <div
                           key={s.n}
-                          className={`${styles.pill} ${step >= s.n ? styles.active : ''} ${step > s.n ? styles.completed : ''}`}
+                          className={`${styles.pill} ${step >= s.n ? styles.active : ""
+                            } ${step > s.n ? styles.completed : ""}`}
                         >
                           <span className={styles.pillNumber}>{s.n}</span>
                           <IconComponent className={styles.pillIcon} />
@@ -488,29 +545,41 @@ export default function AdmissionForm() {
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
                           <label>Child's Full Name *</label>
-                          <input
-                            type="text"
-                            name="child_name"
-                            value={formData.child_name}
-                            onChange={handleInputChange}
-                            placeholder="Enter child's full name"
-                            required
-                          />
+                          <div className={styles.inputWrapper}>
+                            <FaChild className={styles.icon} />
+                            <input
+                              type="text"
+                              name="child_name"
+                              value={formData.child_name}
+                              onChange={handleInputChange}
+                              placeholder="Enter child's full name"
+                              required
+                            />
+                          </div>
                           {errors.child_name && (
-                            <p className={styles.errorMessage}>{errors.child_name}</p>
+                            <p className={styles.errorMessage}>
+                              {errors.child_name}
+                            </p>
                           )}
                         </div>
 
                         <div className={styles.formGroup}>
                           <label>Date of Birth *</label>
-                          <input
-                            type="date"
-                            name="child_dob"
-                            value={formData.child_dob}
-                            onChange={handleInputChange}
-                            required
-                          />
-                          {errors.child_dob && <p className={styles.errorMessage}>{errors.child_dob}</p>}
+                          <div className={styles.inputWrapper}>
+                            <MdDateRange className={styles.icon} />
+                            <input
+                              type="date"
+                              name="child_dob"
+                              value={formData.child_dob}
+                              onChange={handleInputChange}
+                              required
+                            />
+                          </div>
+                          {errors.child_dob && (
+                            <p className={styles.errorMessage}>
+                              {errors.child_dob}
+                            </p>
+                          )}
                         </div>
                       </div>
 
@@ -524,11 +593,14 @@ export default function AdmissionForm() {
                                 id="gender_male"
                                 name="child_gender"
                                 value="male"
-                                checked={formData.child_gender === 'male'}
+                                checked={formData.child_gender === "male"}
                                 onChange={handleInputChange}
                                 className={styles.radioInput}
                               />
-                              <label htmlFor="gender_male" className={styles.radioLabel}>
+                              <label
+                                htmlFor="gender_male"
+                                className={styles.radioLabel}
+                              >
                                 Male
                               </label>
                             </div>
@@ -539,32 +611,42 @@ export default function AdmissionForm() {
                                 id="gender_female"
                                 name="child_gender"
                                 value="female"
-                                checked={formData.child_gender === 'female'}
+                                checked={formData.child_gender === "female"}
                                 onChange={handleInputChange}
                                 className={styles.radioInput}
                               />
-                              <label htmlFor="gender_female" className={styles.radioLabel}>
+                              <label
+                                htmlFor="gender_female"
+                                className={styles.radioLabel}
+                              >
                                 Female
                               </label>
                             </div>
                           </div>
                           {errors.child_gender && (
-                            <p className={styles.errorMessage}>{errors.child_gender}</p>
+                            <p className={styles.errorMessage}>
+                              {errors.child_gender}
+                            </p>
                           )}
                         </div>
 
                         <div className={styles.formGroup}>
                           <label>Place of Birth *</label>
-                          <input
-                            type="text"
-                            name="child_place_of_birth"
-                            value={formData.child_place_of_birth}
-                            onChange={handleInputChange}
-                            placeholder="Enter place of birth"
-                            required
-                          />
+                          <div className={styles.inputWrapper}>
+                            <FaBirthdayCake className={styles.icon} />
+                            <input
+                              type="text"
+                              name="child_place_of_birth"
+                              value={formData.child_place_of_birth}
+                              onChange={handleInputChange}
+                              placeholder="Enter place of birth"
+                              required
+                            />
+                          </div>
                           {errors.child_place_of_birth && (
-                            <p className={styles.errorMessage}>{errors.child_place_of_birth}</p>
+                            <p className={styles.errorMessage}>
+                              {errors.child_place_of_birth}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -582,33 +664,44 @@ export default function AdmissionForm() {
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
                           <label>Parent's Full Name *</label>
-                          <input
-                            type="text"
-                            name="parent_name"
-                            value={formData.parent_name}
-                            onChange={handleInputChange}
-                            placeholder="Enter parent's full name"
-                            required
-                          />
-                          {errors.parent_name && (
-                            <p className={styles.errorMessage}>{errors.parent_name}</p>
-                          )}
+                          <div className={styles.inputWrapper}>
+                            <FaUsers className={styles.icon} />
+                            <input
+                              type="text"
+                              name="parent_name"
+                              value={formData.parent_name}
+                              onChange={handleInputChange}
+                              placeholder="Enter parent's full name"
+                              required
+                            />
+
+                            {errors.parent_name && (
+                              <p className={styles.errorMessage}>
+                                {errors.parent_name}
+                              </p>
+                            )}
+                          </div>
                         </div>
 
                         <div className={styles.formGroup}>
                           <label>Mobile Number *</label>
-                          <input
-                            type="tel"
-                            name="parent_mobile_number"
-                            value={formData.parent_mobile_number}
-                            onChange={handleInputChange}
-                            placeholder="10-digit mobile number"
-                            maxLength={10}
-                            pattern="[0-9]{10}"
-                            required
-                          />
+                          <div className={styles.inputWrapper}>
+                            <FaHashtag className={styles.icon} />
+                            <input
+                              type="tel"
+                              name="parent_mobile_number"
+                              value={formData.parent_mobile_number}
+                              onChange={handleInputChange}
+                              placeholder="10-digit mobile number"
+                              maxLength={10}
+                              pattern="[0-9]{10}"
+                              required
+                            />
+                          </div>
                           {errors.parent_mobile_number && (
-                            <p className={styles.errorMessage}>{errors.parent_mobile_number}</p>
+                            <p className={styles.errorMessage}>
+                              {errors.parent_mobile_number}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -616,13 +709,16 @@ export default function AdmissionForm() {
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
                           <label>Email (Optional)</label>
-                          <input
-                            type="email"
-                            name="parent_email"
-                            value={formData.parent_email}
-                            onChange={handleInputChange}
-                            placeholder="Enter parent's email"
-                          />
+                          <div className={styles.inputWrapper}>
+                            <FaEnvelope className={styles.icon} />
+                            <input
+                              type="email"
+                              name="parent_email"
+                              value={formData.parent_email}
+                              onChange={handleInputChange}
+                              placeholder="Enter parent's email"
+                            />
+                          </div>
                         </div>
                       </div>
                     </motion.div>
@@ -651,26 +747,34 @@ export default function AdmissionForm() {
                                   onChange={handleInputChange}
                                   className={styles.radioInput}
                                 />
-                                <label htmlFor={`program_${p.value}`} className={styles.radioLabel}>
+                                <label
+                                  htmlFor={`program_${p.value}`}
+                                  className={styles.radioLabel}
+                                >
                                   {p.label}
                                 </label>
                               </div>
                             ))}
                           </div>
                           {errors.program_name && (
-                            <p className={styles.errorMessage}>{errors.program_name}</p>
+                            <p className={styles.errorMessage}>
+                              {errors.program_name}
+                            </p>
                           )}
                         </div>
 
                         <div className={styles.formGroup}>
                           <label>Previous School (Optional)</label>
-                          <input
-                            type="text"
-                            name="previous_school"
-                            value={formData.previous_school}
-                            onChange={handleInputChange}
-                            placeholder="Enter previous school name"
-                          />
+                          <div className={styles.inputWrapper}>
+                            <FaSchool className={styles.icon} />
+                            <input
+                              type="text"
+                              name="previous_school"
+                              value={formData.previous_school}
+                              onChange={handleInputChange}
+                              placeholder="Enter previous school name"
+                            />
+                          </div>
                         </div>
                       </div>
                     </motion.div>
@@ -688,66 +792,84 @@ export default function AdmissionForm() {
                         <label>Selected Files Status</label>
                         <div className={styles.selectedFiles}>
                           <div
-                            className={`${styles.fileStatusItem} ${filePreviews.photo ? styles.uploaded : styles.notUploaded}`}
+                            className={`${styles.fileStatusItem} ${filePreviews.photo
+                              ? styles.uploaded
+                              : styles.notUploaded
+                              }`}
                           >
                             <span className={styles.fileStatusIcon}>
-                              {filePreviews.photo ? '✓' : '○'}
+                              {filePreviews.photo ? "✓" : "○"}
                             </span>
                             <span className={styles.fileStatusText}>
-                              Photo:{' '}
+                              Photo:{" "}
                               {filePreviews.photo
-                                ? filePreviews.photo.startsWith('data:image')
-                                  ? 'Image selected'
+                                ? filePreviews.photo.startsWith("data:image")
+                                  ? "Image selected"
                                   : filePreviews.photo
-                                : 'Not uploaded'}
+                                : "Not uploaded"}
                             </span>
                           </div>
 
                           <div
-                            className={`${styles.fileStatusItem} ${filePreviews.birth_certificate ? styles.uploaded : styles.notUploaded}`}
+                            className={`${styles.fileStatusItem} ${filePreviews.birth_certificate
+                              ? styles.uploaded
+                              : styles.notUploaded
+                              }`}
                           >
                             <span className={styles.fileStatusIcon}>
-                              {filePreviews.birth_certificate ? '✓' : '○'}
+                              {filePreviews.birth_certificate ? "✓" : "○"}
                             </span>
                             <span className={styles.fileStatusText}>
-                              Birth Certificate:{' '}
+                              Birth Certificate:{" "}
                               {filePreviews.birth_certificate
-                                ? filePreviews.birth_certificate.startsWith('data:image')
-                                  ? 'Image selected'
+                                ? filePreviews.birth_certificate.startsWith(
+                                  "data:image"
+                                )
+                                  ? "Image selected"
                                   : filePreviews.birth_certificate
-                                : 'Not uploaded'}
+                                : "Not uploaded"}
                             </span>
                           </div>
 
                           <div
-                            className={`${styles.fileStatusItem} ${filePreviews.aadhar_card ? styles.uploaded : styles.notUploaded}`}
+                            className={`${styles.fileStatusItem} ${filePreviews.aadhar_card
+                              ? styles.uploaded
+                              : styles.notUploaded
+                              }`}
                           >
                             <span className={styles.fileStatusIcon}>
-                              {filePreviews.aadhar_card ? '✓' : '○'}
+                              {filePreviews.aadhar_card ? "✓" : "○"}
                             </span>
                             <span className={styles.fileStatusText}>
-                              Aadhar Card:{' '}
+                              Aadhar Card:{" "}
                               {filePreviews.aadhar_card
-                                ? filePreviews.aadhar_card.startsWith('data:image')
-                                  ? 'Image selected'
+                                ? filePreviews.aadhar_card.startsWith(
+                                  "data:image"
+                                )
+                                  ? "Image selected"
                                   : filePreviews.aadhar_card
-                                : 'Not uploaded'}
+                                : "Not uploaded"}
                             </span>
                           </div>
 
                           <div
-                            className={`${styles.fileStatusItem} ${filePreviews.parent_id_proof ? styles.uploaded : styles.notUploaded}`}
+                            className={`${styles.fileStatusItem} ${filePreviews.parent_id_proof
+                              ? styles.uploaded
+                              : styles.notUploaded
+                              }`}
                           >
                             <span className={styles.fileStatusIcon}>
-                              {filePreviews.parent_id_proof ? '✓' : '○'}
+                              {filePreviews.parent_id_proof ? "✓" : "○"}
                             </span>
                             <span className={styles.fileStatusText}>
-                              Parent ID Proof:{' '}
+                              Parent ID Proof:{" "}
                               {filePreviews.parent_id_proof
-                                ? filePreviews.parent_id_proof.startsWith('data:image')
-                                  ? 'Image selected'
+                                ? filePreviews.parent_id_proof.startsWith(
+                                  "data:image"
+                                )
+                                  ? "Image selected"
                                   : filePreviews.parent_id_proof
-                                : 'Not uploaded'}
+                                : "Not uploaded"}
                             </span>
                           </div>
                         </div>
@@ -760,7 +882,7 @@ export default function AdmissionForm() {
                             fieldName="photo"
                             accept="image/*"
                             preview={filePreviews.photo}
-                            onChange={(e) => handleFileChange(e, 'photo')}
+                            onChange={(e) => handleFileChange(e, "photo")}
                           />
 
                           <FileUploadField
@@ -768,7 +890,9 @@ export default function AdmissionForm() {
                             fieldName="birth_certificate"
                             accept=".pdf,image/*"
                             preview={filePreviews.birth_certificate}
-                            onChange={(e) => handleFileChange(e, 'birth_certificate')}
+                            onChange={(e) =>
+                              handleFileChange(e, "birth_certificate")
+                            }
                           />
 
                           <FileUploadField
@@ -776,7 +900,7 @@ export default function AdmissionForm() {
                             fieldName="aadhar_card"
                             accept=".pdf,image/*"
                             preview={filePreviews.aadhar_card}
-                            onChange={(e) => handleFileChange(e, 'aadhar_card')}
+                            onChange={(e) => handleFileChange(e, "aadhar_card")}
                           />
 
                           <FileUploadField
@@ -784,7 +908,9 @@ export default function AdmissionForm() {
                             fieldName="parent_id_proof"
                             accept=".pdf,image/*"
                             preview={filePreviews.parent_id_proof}
-                            onChange={(e) => handleFileChange(e, 'parent_id_proof')}
+                            onChange={(e) =>
+                              handleFileChange(e, "parent_id_proof")
+                            }
                           />
                         </>
                       )}
@@ -824,10 +950,11 @@ export default function AdmissionForm() {
                       >
                         {loading ? (
                           <>
-                            <FaSpinner className={styles.spinner} /> Submitting...
+                            <FaSpinner className={styles.spinner} />{" "}
+                            Submitting...
                           </>
                         ) : (
-                          '✓ Submit Admission'
+                          "✓ Submit Admission"
                         )}
                       </button>
                     )}
@@ -866,12 +993,15 @@ function FileUploadField({
         accept={accept}
         onChange={onChange}
         className={styles.fileInput}
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
       />
-      <div className={styles.fileUploadBox} onClick={() => inputRef.current?.click()}>
+      <div
+        className={styles.fileUploadBox}
+        onClick={() => inputRef.current?.click()}
+      >
         {preview ? (
           <div className={styles.filePreview}>
-            {preview.startsWith('data:image') ? (
+            {preview.startsWith("data:image") ? (
               <img src={preview} alt="Preview" />
             ) : (
               <p>{preview}</p>
@@ -918,10 +1048,10 @@ function AdmissionConfirmationSlip({
 
   // Function to mask contact number (last 4 digits visible)
   const maskContactNumber = (phoneNumber: string): string => {
-    if (!phoneNumber) return 'Not provided';
-    const cleaned = phoneNumber.replace(/\D/g, '');
+    if (!phoneNumber) return "Not provided";
+    const cleaned = phoneNumber.replace(/\D/g, "");
     if (cleaned.length < 4) return phoneNumber;
-    return 'XXXXXX' + cleaned.slice(-4);
+    return "XXXXXX" + cleaned.slice(-4);
   };
 
   return (
@@ -937,7 +1067,11 @@ function AdmissionConfirmationSlip({
           {schoolDetails.logo && (
             <div className={styles.logoContainer}>
               <img
-                src={typeof schoolDetails.logo === 'string' ? schoolDetails.logo : schoolDetails.logo.src}
+                src={
+                  typeof schoolDetails.logo === "string"
+                    ? schoolDetails.logo
+                    : schoolDetails.logo.src
+                }
                 alt={schoolDetails.name}
                 className={styles.schoolLogo}
               />
@@ -949,7 +1083,8 @@ function AdmissionConfirmationSlip({
               {schoolDetails.address.street}, {schoolDetails.address.city}
             </p>
             <p className={styles.schoolContact}>
-              📞 {schoolDetails.contact.phone} | 📧 {schoolDetails.contact.email}
+              📞 {schoolDetails.contact.phone} | 📧{" "}
+              {schoolDetails.contact.email}
             </p>
           </div>
         </div>
@@ -981,7 +1116,9 @@ function AdmissionConfirmationSlip({
           </div>
           <div className={styles.detailRow}>
             <span className={styles.label}>Place of Birth</span>
-            <span className={styles.value}>{formData.child_place_of_birth}</span>
+            <span className={styles.value}>
+              {formData.child_place_of_birth}
+            </span>
           </div>
         </motion.div>
 
@@ -994,11 +1131,15 @@ function AdmissionConfirmationSlip({
           </div>
           <div className={styles.detailRow}>
             <span className={styles.label}>Contact Number</span>
-            <span className={styles.value}>{maskContactNumber(data.parent_mobile_number)}</span>
+            <span className={styles.value}>
+              {maskContactNumber(data.parent_mobile_number)}
+            </span>
           </div>
           <div className={styles.detailRow}>
             <span className={styles.label}>Email</span>
-            <span className={styles.value}>{formData.parent_email || 'Not provided'}</span>
+            <span className={styles.value}>
+              {formData.parent_email || "Not provided"}
+            </span>
           </div>
         </motion.div>
 
@@ -1011,58 +1152,69 @@ function AdmissionConfirmationSlip({
           </div>
           <div className={styles.detailRow}>
             <span className={styles.label}>Previous School</span>
-            <span className={styles.value}>{formData.previous_school || 'N/A'}</span>
+            <span className={styles.value}>
+              {formData.previous_school || "N/A"}
+            </span>
           </div>
           <div className={styles.detailRow}>
             <span className={styles.label}>Status</span>
             <span className={styles.value}>Under Review</span>
           </div>
         </motion.div>
-
-
         {/* Document Details */}
         <motion.div className={styles.detailSection} variants={itemVariants}>
-        <h3 className={styles.sectionTitle}>📄 Document Details</h3>
-        <div className={styles.detailRow}>
-          <span className={styles.label}>Birth Certificate</span>
-          <span className={`${styles.documentStatus} ${formData.child_dob ? styles.documentStatusSubmitted : styles.documentStatusPending}`}>
-            {formData.child_dob ? '✓ Submitted' : '○ Pending'}
-          </span>
-        </div>
-        <div className={styles.detailRow}>
-          <span className={styles.label}>Aadhar Card</span>
-          <span className={`${styles.documentStatus} ${styles.documentStatusPending}`}>
-            ○ Pending
-          </span>
-        </div>
-        <div className={styles.detailRow}>
-          <span className={styles.label}>Parent ID Proof</span>
-          <span className={`${styles.documentStatus} ${styles.documentStatusPending}`}>
-            ○ Pending
-          </span>
-        </div>
-        <div className={styles.detailRow}>
-          <span className={styles.label}>Photo</span>
-          <span className={`${styles.documentStatus} ${styles.documentStatusPending}`}>
-            ○ Pending
-          </span>
-        </div>
+          <h3 className={styles.sectionTitle}>📄 Document Details</h3>
+          <div className={styles.detailRow}>
+            <span className={styles.label}>Birth Certificate</span>
+            <span
+              className={`${styles.documentStatus} ${formData.child_dob
+                ? styles.documentStatusSubmitted
+                : styles.documentStatusPending
+                }`}
+            >
+              {formData.child_dob ? "✓ Submitted" : "○ Pending"}
+            </span>
+          </div>
+          <div className={styles.detailRow}>
+            <span className={styles.label}>Aadhar Card</span>
+            <span
+              className={`${styles.documentStatus} ${styles.documentStatusPending}`}
+            >
+              ○ Pending
+            </span>
+          </div>
+          <div className={styles.detailRow}>
+            <span className={styles.label}>Parent ID Proof</span>
+            <span
+              className={`${styles.documentStatus} ${styles.documentStatusPending}`}
+            >
+              ○ Pending
+            </span>
+          </div>
+          <div className={styles.detailRow}>
+            <span className={styles.label}>Photo</span>
+            <span
+              className={`${styles.documentStatus} ${styles.documentStatusPending}`}
+            >
+              ○ Pending
+            </span>
+          </div>
         </motion.div>
       </div>
-    
 
       {/* Footer Message */}
       <motion.div className={styles.slipFooter} variants={itemVariants}>
         <p className={styles.footerText}>
-          Thank you for choosing {schoolDetails.name}. We will review your application and contact you shortly.
+          Thank you for choosing {schoolDetails.name}. We will review your
+          application and contact you shortly.
         </p>
         <p className={styles.footerDate}>
-          Date:{' '}
-          {new Date().toLocaleDateString('en-IN', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
+          Date:{" "}
+          {new Date().toLocaleDateString("en-IN", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
           })}
         </p>
       </motion.div>

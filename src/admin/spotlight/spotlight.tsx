@@ -496,10 +496,7 @@ const Spotlight = () => {
 
                     {/* Spotlights Grid */}
                     {spotlightsLoading ? (
-                        <div className={styles.loadingContainer}>
-                            <FaSpinner className={styles.spinnerLarge} />
-                            <p>Loading Spotlight...</p>
-                        </div>
+                        <Loader />
                     ) : filteredSpotlights.length === 0 ? (
                         <div className={styles.emptyState}>
                             <p>😴 No Spotlight found</p>
