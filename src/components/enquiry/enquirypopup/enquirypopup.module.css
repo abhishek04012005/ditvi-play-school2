@@ -239,6 +239,10 @@
     transform: scale(1.15);
 }
 
+.formGroup:focus-within label {
+    color: var(--primary-yellow);
+}
+
 /* Input Error */
 .inputError {
     border-color: #ef4444 !important;

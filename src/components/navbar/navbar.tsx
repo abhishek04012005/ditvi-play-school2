@@ -4,9 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { FaWhatsapp } from 'react-icons/fa';
-import { BiMessageDetail } from 'react-icons/bi';
+import { BiMessageDetail, BiSearch } from 'react-icons/bi';
 import styles from './navbar.module.css';
-import Logo from '../../../public/assets/logo/logo.png'
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import schoolDetails from '@/json/schooldetails';
@@ -97,6 +96,13 @@ const Navbar = () => {
         >
           <BiMessageDetail />
           <span>Enquiry</span>
+        </Link>
+        <Link
+          href="/admission-status"
+          className={`${styles.floatingButton} ${styles.searchButton}`}
+        >
+          <BiSearch />
+          <span>Admission Status</span>
         </Link>
         <button
           className={`${styles.floatingButton} ${styles.whatsappButton}`}

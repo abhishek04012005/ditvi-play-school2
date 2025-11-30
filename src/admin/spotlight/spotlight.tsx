@@ -395,6 +395,10 @@ const Spotlight = () => {
         return <Loader isVisible={true} message="Loading..." fullScreen={true} />;
     }
 
+    const getTodayDate = (): string => {
+        return new Date().toISOString().split('T')[0];
+    };
+
     return (
         <div className={styles.staroftheweek}>
             <HeadingTitle text='Spotlight Dashboard' />
@@ -472,6 +476,7 @@ const Spotlight = () => {
                                     }
                                     disabled={loading}
                                     className={styles.dateInput}
+                                    max={getTodayDate()}
                                 />
                             </div>
 

@@ -186,6 +186,18 @@
   box-shadow: 0 6px 20px rgba(106, 76, 147, 0.2);
 }
 
+.searchButton {
+  background-color: var(--primary-yellow);
+  color: white;
+}
+
+.searchButton:hover {
+  background-color: var(--primary-purple);
+  color: var(--primary-yellow);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(106, 76, 147, 0.2);
+}
+
 .floatingButton svg {
   font-size: 1.3rem;
 }

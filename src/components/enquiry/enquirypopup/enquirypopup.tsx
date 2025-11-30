@@ -245,15 +245,15 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
     };
 
 
-      if (loading) {
-    return (
-      <Loader
-        isVisible={true}
-        message="Submitting your application..."
-        fullScreen={true}
-      />
-    );
-  }
+    if (loading) {
+        return (
+            <Loader
+                isVisible={true}
+                message="Submitting your application..."
+                fullScreen={true}
+            />
+        );
+    }
 
     return (
         <>
@@ -348,7 +348,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
                                                 type="text"
                                                 id="popupParentName"
                                                 name="parentName"
-                                                placeholder="Enter parent's full name"
+                                                placeholder="Enter parent's name"
                                                 value={formData.parentName}
                                                 onChange={handleChange}
                                                 className={errors.parentName ? styles.inputError : ''}
@@ -379,7 +379,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
                                                 type="text"
                                                 id="popupChildName"
                                                 name="childName"
-                                                placeholder="Enter child's full name"
+                                                placeholder="Enter child's name"
                                                 value={formData.childName}
                                                 onChange={handleChange}
                                                 className={errors.childName ? styles.inputError : ''}
@@ -501,7 +501,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.6 }}
                             >
-                                <p className={styles.popupSecure}> <DoneOutlinedIcon/> 100% Secure • <DoneOutlinedIcon/> Quick Response • <DoneOutlinedIcon/> No Spam</p>
+                                <p className={styles.popupSecure}> <DoneOutlinedIcon /> 100% Secure • <DoneOutlinedIcon /> Quick Response • <DoneOutlinedIcon /> No Spam</p>
                             </motion.div>
                         </motion.div>
                     </motion.div>
