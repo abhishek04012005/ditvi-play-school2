@@ -211,6 +211,69 @@ export const uploadAdmissionDocument = async (
 };
 
 /**
+ * Move an existing Drive file into a folder and rename it
+ * Returns a direct download URL for the moved file
+ */
+export const moveFileToFolder = async (
+  fileId: string,
+  newName: string,
+  folderId: string
+): Promise<string> => {
+  try {
+    initializeGoogleAuth();
+
+    const auth = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET
+    );
+    auth.setCredentials({ refresh_token: process.env.GOOGLE_REFRESH_TOKEN });
+
+    const drive = google.drive({ version: 'v3', auth });
+
+    // Get current parents
+    const meta = await drive.files.get({ fileId, fields: 'parents,name' });
+    const currentParents = (meta.data.parents || []).join(',');
+
+    // derive extension from existing name if possible
+    const existingName = meta.data.name || '';
+    const ext = existingName.includes('.') ? existingName.split('.').pop() : '';
+    const finalName = ext ? `${newName}.${ext}` : newName;
+
+    // Update file: rename and move into folder
+    await drive.files.update({
+      fileId,
+      addParents: folderId,
+      removeParents: currentParents || undefined,
+      requestBody: {
+        name: finalName,
+      },
+      fields: 'id, name',
+    });
+
+    // Ensure permission is set (reader-anyone)
+    try {
+      await drive.permissions.create({
+        fileId,
+        requestBody: {
+          role: 'reader',
+          type: 'anyone',
+        },
+      });
+    } catch (permErr) {
+      // non-fatal
+      console.warn('Could not set permission on moved file:', permErr);
+    }
+
+    // Return download URL
+    const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+    return downloadUrl;
+  } catch (error) {
+    console.error('Error moving file to folder:', error);
+    throw error;
+  }
+};
+
+/**
  * Save admission record to database
  * 
  * @param admissionData - Complete admission data including all URLs
@@ -231,7 +294,7 @@ export const saveAdmissionToDatabase = async (admissionData: {
   birth_certificate_url?: string | null;
   aadhar_card_url?: string | null;
   parent_id_proof_url?: string | null;
-  google_drive_folder_id: string;
+  google_drive_folder_id?: string | null;
 }): Promise<any> => {
   try {
     const { data, error } = await supabase

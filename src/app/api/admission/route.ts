@@ -3,6 +3,7 @@ import {
   generateAdmissionNumber,
   createAdmissionFolder,
   uploadAdmissionDocument,
+  moveFileToFolder,
   saveAdmissionToDatabase,
 } from '@/lib/admission';
 
@@ -49,6 +50,18 @@ export async function POST(request: NextRequest) {
     const aadharCardFile = formData.get('aadhar_card') as File;
     const parentIdProofFile = formData.get('parent_id_proof') as File;
 
+  // Extract links uploaded from client (uploaded on-select)
+  const photoUrlFromClient = (formData.get('photo_url') as string) || undefined;
+  const birthCertUrlFromClient = (formData.get('birth_certificate_url') as string) || undefined;
+  const aadharUrlFromClient = (formData.get('aadhar_card_url') as string) || undefined;
+  const idProofUrlFromClient = (formData.get('parent_id_proof_url') as string) || undefined;
+
+  // Extract file IDs (if client uploaded to Drive and returned IDs)
+  const photoFileIdFromClient = (formData.get('photo_file_id') as string) || undefined;
+  const birthCertFileIdFromClient = (formData.get('birth_certificate_file_id') as string) || undefined;
+  const aadharFileIdFromClient = (formData.get('aadhar_card_file_id') as string) || undefined;
+  const idProofFileIdFromClient = (formData.get('parent_id_proof_file_id') as string) || undefined;
+
     // Validate required fields (documents are optional)
     const errors: string[] = [];
     if (!child_name?.trim()) errors.push('Child name is required');
@@ -70,21 +83,31 @@ export async function POST(request: NextRequest) {
       console.log('Step 1: Generating admission number...');
       const admissionNumber = await generateAdmissionNumber();
 
-      // Step 2: Create folder in Google Drive
-      console.log('Step 2: Creating Google Drive folder...');
-      const folderId = await createAdmissionFolder(admissionNumber);
+      // Determine if any raw files were posted (fallback) or client provided file IDs
+      const hasRawFiles = Boolean(photoFile || birthCertificateFile || aadharCardFile || parentIdProofFile);
+      const hasClientFileIds = Boolean(photoFileIdFromClient || birthCertFileIdFromClient || aadharFileIdFromClient || idProofFileIdFromClient);
 
-      // Step 3: Upload all documents (optional)
-      console.log('Step 3: Uploading documents...');
+      let folderId: string | null = null;
+
+      // Step 2: Create folder in Google Drive if server will upload files or if client uploaded files and we need to organize them
+      if (hasRawFiles || hasClientFileIds) {
+        console.log('Step 2: Creating Google Drive folder...');
+        folderId = await createAdmissionFolder(admissionNumber);
+      } else {
+        console.log('No files to upload or organize on server; skipping Drive folder creation');
+      }
+
+      // Step 3: Upload all documents (optional server-side upload)
+      console.log('Step 3: Uploading documents (server-side if any)...');
       
       let photoUrl: string | null = null;
       let birthCertUrl: string | null = null;
       let aadharUrl: string | null = null;
       let idProofUrl: string | null = null;
 
-      const uploadPromises = [];
+      const uploadPromises: Promise<void>[] = [];
 
-      if (photoFile) {
+      if (photoFile && folderId) {
         uploadPromises.push(
           photoFile.arrayBuffer().then((buffer) =>
             uploadAdmissionDocument(
@@ -92,7 +115,7 @@ export async function POST(request: NextRequest) {
               photoFile.name,
               admissionNumber,
               'photo',
-              folderId
+              folderId as string
             )
           ).then((url) => {
             photoUrl = url;
@@ -100,7 +123,7 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      if (birthCertificateFile) {
+      if (birthCertificateFile && folderId) {
         uploadPromises.push(
           birthCertificateFile.arrayBuffer().then((buffer) =>
             uploadAdmissionDocument(
@@ -108,7 +131,7 @@ export async function POST(request: NextRequest) {
               birthCertificateFile.name,
               admissionNumber,
               'birth_certificate',
-              folderId
+              folderId as string
             )
           ).then((url) => {
             birthCertUrl = url;
@@ -116,7 +139,7 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      if (aadharCardFile) {
+      if (aadharCardFile && folderId) {
         uploadPromises.push(
           aadharCardFile.arrayBuffer().then((buffer) =>
             uploadAdmissionDocument(
@@ -124,7 +147,7 @@ export async function POST(request: NextRequest) {
               aadharCardFile.name,
               admissionNumber,
               'aadhar_card',
-              folderId
+              folderId as string
             )
           ).then((url) => {
             aadharUrl = url;
@@ -132,7 +155,7 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      if (parentIdProofFile) {
+      if (parentIdProofFile && folderId) {
         uploadPromises.push(
           parentIdProofFile.arrayBuffer().then((buffer) =>
             uploadAdmissionDocument(
@@ -140,7 +163,7 @@ export async function POST(request: NextRequest) {
               parentIdProofFile.name,
               admissionNumber,
               'parent_id_proof',
-              folderId
+              folderId as string
             )
           ).then((url) => {
             idProofUrl = url;
@@ -148,13 +171,63 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Wait for all available uploads
+      // Wait for all available server-side uploads
       if (uploadPromises.length > 0) {
         await Promise.all(uploadPromises);
       }
 
+      // If client provided file IDs (uploaded earlier), move those files into the newly created folder and rename them
+      if (folderId && hasClientFileIds) {
+        console.log('Organizing client-uploaded files into admission folder...');
+
+        const clientMovePromises: Promise<void>[] = [];
+
+        if (photoFileIdFromClient) {
+          clientMovePromises.push(
+            moveFileToFolder(photoFileIdFromClient, `${admissionNumber}_photo`, folderId).then((url) => {
+              photoUrl = url;
+            })
+          );
+        }
+
+        if (birthCertFileIdFromClient) {
+          clientMovePromises.push(
+            moveFileToFolder(birthCertFileIdFromClient, `${admissionNumber}_birth_certificate`, folderId).then((url) => {
+              birthCertUrl = url;
+            })
+          );
+        }
+
+        if (aadharFileIdFromClient) {
+          clientMovePromises.push(
+            moveFileToFolder(aadharFileIdFromClient, `${admissionNumber}_aadhar_card`, folderId).then((url) => {
+              aadharUrl = url;
+            })
+          );
+        }
+
+        if (idProofFileIdFromClient) {
+          clientMovePromises.push(
+            moveFileToFolder(idProofFileIdFromClient, `${admissionNumber}_parent_id_proof`, folderId).then((url) => {
+              idProofUrl = url;
+            })
+          );
+        }
+
+        if (clientMovePromises.length > 0) {
+          await Promise.all(clientMovePromises);
+        }
+      }
+
       // Step 4: Save to database
       console.log('Step 4: Saving to database...');
+
+      // Prefer client-provided links (uploaded on-select). Fall back to any server-uploaded URLs.
+      const finalPhotoUrl = photoUrlFromClient || photoUrl || null;
+      const finalBirthCertUrl = birthCertUrlFromClient || birthCertUrl || null;
+      const finalAadharUrl = aadharUrlFromClient || aadharUrl || null;
+      const finalIdProofUrl = idProofUrlFromClient || idProofUrl || null;
+
       const admissionRecord = await saveAdmissionToDatabase({
         admission_number: admissionNumber,
         child_name,
@@ -166,10 +239,10 @@ export async function POST(request: NextRequest) {
         parent_email,
         program_name,
         previous_school,
-        photo_url: photoUrl,
-        birth_certificate_url: birthCertUrl,
-        aadhar_card_url: aadharUrl,
-        parent_id_proof_url: idProofUrl,
+        photo_url: finalPhotoUrl,
+        birth_certificate_url: finalBirthCertUrl,
+        aadhar_card_url: finalAadharUrl,
+        parent_id_proof_url: finalIdProofUrl,
         google_drive_folder_id: folderId,
       });
 
