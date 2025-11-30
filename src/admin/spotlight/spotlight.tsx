@@ -59,7 +59,8 @@ const Spotlight = () => {
         name: '',
         message: '',
         award_type: 'weekly',
-        is_show_on_home_page: false
+        is_show_on_home_page: false,
+        date: new Date().toISOString().split('T')[0] // Add date field
     });
 
     // Spotlight list management
@@ -156,6 +157,10 @@ const Spotlight = () => {
             toast.error('Please enter student name');
             return;
         }
+        if (!formData.date) {
+            toast.error('Please select a date');
+            return;
+        }
         if (!formData.message.trim()) {
             toast.error('Please enter achievement message');
             return;
@@ -184,7 +189,7 @@ const Spotlight = () => {
                 imagePath = fileName;
             }
 
-            // Insert spotlight
+            // Insert spotlight with date
             const { error: insertError } = await supabase.from('awards').insert([
                 {
                     name: formData.name,
@@ -192,7 +197,7 @@ const Spotlight = () => {
                     award_type: formData.award_type,
                     is_show_on_home_page: formData.is_show_on_home_page,
                     image_url: imagePath,
-                    date: new Date().toISOString().split('T')[0],
+                    date: formData.date, // Use the selected date
                     like_count: 0
                 }
             ]);
@@ -208,7 +213,8 @@ const Spotlight = () => {
                 name: '',
                 message: '',
                 award_type: 'weekly',
-                is_show_on_home_page: false
+                is_show_on_home_page: false,
+                date: new Date().toISOString().split('T')[0]
             });
             setImageFile(null);
             setImagePreview(null);
@@ -451,6 +457,21 @@ const Spotlight = () => {
                                     }
                                     placeholder="Enter student name"
                                     disabled={loading}
+                                />
+                            </div>
+
+                            {/* Spotlight Date */}
+                            <div className={styles.formGroup}>
+                                <label htmlFor="spotlightDate">Spotlight Date *</label>
+                                <input
+                                    type="date"
+                                    id="spotlightDate"
+                                    value={formData.date}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, date: e.target.value })
+                                    }
+                                    disabled={loading}
+                                    className={styles.dateInput}
                                 />
                             </div>
 

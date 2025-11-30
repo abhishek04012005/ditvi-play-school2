@@ -1560,3 +1560,175 @@
         border-left-width: 3px;
     }
 }
+
+
+/* ==================== DATE INPUT STYLING ==================== */
+.dateInput {
+    padding: 14px 16px;
+    border: 2px solid rgba(106, 76, 147, 0.15);
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 1rem;
+    color: #666;
+    transition: all 0.3s ease;
+    background: white;
+    cursor: pointer;
+}
+
+.dateInput::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    color: #6a4c93;
+    filter: invert(0.6);
+    opacity: 0.8;
+    transition: all 0.2s ease;
+}
+
+.dateInput::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+.dateInput:hover {
+    border-color: rgba(106, 76, 147, 0.25);
+}
+
+.dateInput:focus {
+    outline: none;
+    border-color: #6a4c93;
+    box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(249, 247, 255, 1));
+    transform: translateY(-2px);
+}
+
+.dateInput:active {
+    transform: translateY(-1px);
+}
+
+.dateInput:disabled {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Calendar styling for different browsers */
+.dateInput::-webkit-outer-spin-button,
+.dateInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox specific */
+.dateInput::-moz-calendar-picker-indicator {
+    cursor: pointer;
+    color: #6a4c93;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+}
+
+.dateInput::-moz-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* Chrome/Edge specific */
+.dateInput::placeholder {
+    color: #999;
+}
+
+/* Update formRow for 3 columns */
+.formRow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.formRow .fullWidth {
+    grid-column: 1 / -1;
+}
+
+/* ==================== RESPONSIVE - TABLET 1024px ==================== */
+@media (max-width: 1024px) {
+    .formRow {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .formRow .fullWidth {
+        grid-column: 1 / -1;
+    }
+
+    .dateInput {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+    }
+}
+
+/* ==================== RESPONSIVE - TABLET MEDIUM 768px ==================== */
+@media (max-width: 768px) {
+    .formRow {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+    }
+
+    .formRow .fullWidth {
+        grid-column: 1;
+    }
+
+    .dateInput {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+    }
+
+    .dateInput::-webkit-calendar-picker-indicator {
+        filter: invert(0.5);
+    }
+}
+
+/* ==================== RESPONSIVE - MOBILE 480px ==================== */
+@media (max-width: 480px) {
+    .formRow {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .dateInput {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+
+    .dateInput::-webkit-calendar-picker-indicator {
+        height: 20px;
+        width: 20px;
+    }
+
+    .formGroup label {
+        font-size: 0.85rem;
+    }
+}
+
+/* ==================== RESPONSIVE - ULTRA MOBILE 360px ==================== */
+@media (max-width: 360px) {
+    .dateInput {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+
+    .dateInput::-webkit-calendar-picker-indicator {
+        height: 18px;
+        width: 18px;
+    }
+
+    .formGroup label {
+        font-size: 0.8rem;
+    }
+}
+
+/* ==================== PRINT STYLES ==================== */
+@media print {
+    .dateInput {
+        border: 1px solid #000;
+        background: none;
+    }
+
+    .dateInput::-webkit-calendar-picker-indicator {
+        display: none;
+    }
+}   
