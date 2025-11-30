@@ -100,6 +100,25 @@ export default function AdmissionForm() {
     parent_id_proof: null,
   });
 
+  // store metadata for uploaded files (uploaded-on-select)
+  const [fileMeta, setFileMeta] = useState<{
+    [key: string]: { fileId?: string; downloadUrl?: string; webViewLink?: string; fileName?: string } | null;
+  }>(
+    {
+      photo: null,
+      birth_certificate: null,
+      aadhar_card: null,
+      parent_id_proof: null,
+    }
+  );
+
+  const [fileUploadStatus, setFileUploadStatus] = useState<{ [key: string]: 'idle' | 'uploading' | 'done' | 'error' }>({
+    photo: 'idle',
+    birth_certificate: 'idle',
+    aadhar_card: 'idle',
+    parent_id_proof: 'idle',
+  });
+
   const pdfRef = useRef<HTMLDivElement>(null);
 
   const handleInputChange = (
@@ -143,6 +162,58 @@ export default function AdmissionForm() {
       reader.readAsDataURL(file);
     } else {
       setFilePreviews({ ...filePreviews, [fieldName]: "📄 " + file.name });
+    }
+
+    // Immediately upload selected file to Google Drive and store returned link
+    // Only attempt upload if uploadDocsNow flag is true
+    if (uploadDocsNow) {
+      uploadFileToDrive(file, fieldName as string);
+    }
+  };
+
+  const uploadFileToDrive = async (file: File, fieldName: string) => {
+    try {
+      setFileUploadStatus((s) => ({ ...s, [fieldName]: 'uploading' }));
+
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('field', fieldName);
+
+      const toastId = toast.loading(`Uploading ${fieldName}...`);
+
+      const res = await fetch(`/api/admission/upload-file`, {
+        method: 'POST',
+        body: fd,
+      });
+
+      const json = await res.json();
+
+      if (!res.ok) {
+        console.error('Upload error:', json);
+        setFileUploadStatus((s) => ({ ...s, [fieldName]: 'error' }));
+        toast.dismiss(toastId);
+        toast.error(json.error || 'Failed to upload file');
+        return;
+      }
+
+      const downloadUrl = json?.data?.downloadUrl || json?.data?.driveLink || json?.data?.webViewLink;
+      const fileId = json?.data?.fileId;
+      const fileName = json?.data?.fileName || file.name;
+
+      if (downloadUrl) {
+        setFileMeta((m) => ({ ...m, [fieldName]: { fileId, downloadUrl, webViewLink: json?.data?.webViewLink, fileName } }));
+        setFileUploadStatus((s) => ({ ...s, [fieldName]: 'done' }));
+        toast.dismiss(toastId);
+        toast.success(`${fieldName} uploaded`);
+      } else {
+        setFileUploadStatus((s) => ({ ...s, [fieldName]: 'error' }));
+        toast.dismiss(toastId);
+        toast.error('Upload finished but no link returned');
+      }
+    } catch (error) {
+      console.error('UploadToDrive error:', error);
+      setFileUploadStatus((s) => ({ ...s, [fieldName]: 'error' }));
+      toast.error('An error occurred while uploading file');
     }
   };
 
@@ -228,13 +299,43 @@ export default function AdmissionForm() {
       }
 
       if (uploadDocsNow) {
-        if (files.photo) formDataToSend.append("photo", files.photo);
-        if (files.birth_certificate)
-          formDataToSend.append("birth_certificate", files.birth_certificate);
-        if (files.aadhar_card)
-          formDataToSend.append("aadhar_card", files.aadhar_card);
-        if (files.parent_id_proof)
-          formDataToSend.append("parent_id_proof", files.parent_id_proof);
+        // Prefer client-uploaded download URLs (fileMeta[].downloadUrl). Also include
+        // file IDs so server can move files into admission folder and rename them.
+        if (fileMeta.photo?.downloadUrl) {
+          formDataToSend.append('photo_url', fileMeta.photo.downloadUrl);
+        } else if (files.photo) {
+          formDataToSend.append('photo', files.photo);
+        }
+        if (fileMeta.photo?.fileId) {
+          formDataToSend.append('photo_file_id', fileMeta.photo.fileId);
+        }
+
+        if (fileMeta.birth_certificate?.downloadUrl) {
+          formDataToSend.append('birth_certificate_url', fileMeta.birth_certificate.downloadUrl);
+        } else if (files.birth_certificate) {
+          formDataToSend.append('birth_certificate', files.birth_certificate);
+        }
+        if (fileMeta.birth_certificate?.fileId) {
+          formDataToSend.append('birth_certificate_file_id', fileMeta.birth_certificate.fileId);
+        }
+
+        if (fileMeta.aadhar_card?.downloadUrl) {
+          formDataToSend.append('aadhar_card_url', fileMeta.aadhar_card.downloadUrl);
+        } else if (files.aadhar_card) {
+          formDataToSend.append('aadhar_card', files.aadhar_card);
+        }
+        if (fileMeta.aadhar_card?.fileId) {
+          formDataToSend.append('aadhar_card_file_id', fileMeta.aadhar_card.fileId);
+        }
+
+        if (fileMeta.parent_id_proof?.downloadUrl) {
+          formDataToSend.append('parent_id_proof_url', fileMeta.parent_id_proof.downloadUrl);
+        } else if (files.parent_id_proof) {
+          formDataToSend.append('parent_id_proof', files.parent_id_proof);
+        }
+        if (fileMeta.parent_id_proof?.fileId) {
+          formDataToSend.append('parent_id_proof_file_id', fileMeta.parent_id_proof.fileId);
+        }
       }
 
       const response = await fetch("/api/admission", {
@@ -339,6 +440,20 @@ export default function AdmissionForm() {
       }
     }
   };
+
+  const isAnyUploading = Object.values(fileUploadStatus).some(
+    (s) => s === 'uploading'
+  );
+
+  if (isAnyUploading) {
+    return (
+      <Loader
+        isVisible={true}
+        message="Uploading documents..."
+        fullScreen={true}
+      />
+    );
+  }
 
   if (loading) {
     return (
