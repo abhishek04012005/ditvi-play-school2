@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Force a server-enabled build (standalone) so app routes (/api/*) run.
+  // CI environments may set GITHUB_PAGES=true which can trigger an export build.
+  // Setting `output: 'standalone'` explicitly prevents Next from using `output: 'export'`.
+  output: 'standalone',
   images: {
     remotePatterns: [
       {
