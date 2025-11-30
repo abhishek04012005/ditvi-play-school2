@@ -18,12 +18,20 @@ import {
     FaDownload,
     FaPhoneAlt,
     FaWhatsapp,
+    FaHistory,
+    FaTrash,
 } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
 import styles from './admission.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
+
+interface NoteEntry {
+    text: string;
+    timestamp: string;
+    id: string;
+}
 
 interface Admission {
     admission_number: ReactNode;
@@ -50,8 +58,8 @@ interface Admission {
     program?: string;
     previous_school?: string;
     previousSchool?: string;
-    status: 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected';
-    notes?: string;
+    admission_status: 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected';
+    notes?: NoteEntry[] | null;
     created_at: string;
     photo_url?: string | null;
     birth_certificate_url?: string | null;
@@ -69,7 +77,7 @@ interface StatusCard {
     id: string;
 }
 
-type SortField = 'created_at' | 'child_name' | 'status' | 'program_name';
+type SortField = 'created_at' | 'child_name' | 'admission_status' | 'program_name';
 type SortOrder = 'asc' | 'desc';
 
 const getGoogleDriveURL = (url: string, type: 'image' | 'pdf' | 'document') => {
@@ -119,6 +127,10 @@ const getProgram = (admission: Admission): string => {
     return admission.program_name || admission.program || 'N/A';
 };
 
+const getStatus = (admission: Admission): Admission['admission_status'] => {
+    return admission.admission_status || 'In Review';
+};
+
 const STATUS_OPTIONS: Array<'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected'> = [
     'In Review',
     'Reviewed',
@@ -138,16 +150,21 @@ const STATUS_COLORS: Record<string, { color: string; bgColor: string }> = {
 export default function AdminAdmission() {
     const [admissions, setAdmissions] = useState<Admission[]>([]);
     const [loading, setLoading] = useState(true);
-    const [pageLoading, setPageLoading] = useState(true);  // Add this for full page loader
+    const [pageLoading, setPageLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState<'all' | 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected'>('all');
     const [sortField, setSortField] = useState<SortField>('created_at');
     const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
-    const [selectedAdmission, setSelectedAdmission] = useState<Admission | null>(null);
-    const [noteText, setNoteText] = useState('');
+    const [notesModalOpen, setNotesModalOpen] = useState(false);
+    const [selectedAdmissionId, setSelectedAdmissionId] = useState<string | null>(null);
+    const [newNoteText, setNewNoteText] = useState('');
+    const [noteEntries, setNoteEntries] = useState<NoteEntry[]>([]);
+    const [isEditingNewNote, setIsEditingNewNote] = useState(false);
+    const [savingNote, setSavingNote] = useState(false);
+    const [deletingNoteId, setDeletingNoteId] = useState<string | null>(null);
     const [previewModal, setPreviewModal] = useState<{ url: string; type: 'image' | 'pdf' | 'document'; name: string } | null>(null);
     const [statusUpdating, setStatusUpdating] = useState(false);
-    const [notesUpdating, setNotesUpdating] = useState(false);
+    const [updatingId, setUpdatingId] = useState<string | null>(null);
 
     useEffect(() => {
         const initializePage = async () => {
@@ -166,7 +183,28 @@ export default function AdminAdmission() {
                 .select('*')
                 .order('created_at', { ascending: false });
             if (error) throw error;
-            setAdmissions(data || []);
+
+            const processedData = (data || []).map((admission: any) => {
+                let notes: NoteEntry[] = [];
+
+                if (admission.notes && Array.isArray(admission.notes)) {
+                    notes = admission.notes as NoteEntry[];
+                } else if (typeof admission.notes === 'string') {
+                    try {
+                        notes = JSON.parse(admission.notes);
+                    } catch (e) {
+                        console.error('Error parsing notes:', e);
+                        notes = [];
+                    }
+                }
+
+                return {
+                    ...admission,
+                    notes: notes.length > 0 ? notes : null,
+                };
+            });
+
+            setAdmissions(processedData);
         } catch (error) {
             console.error('Error:', error);
             toast.error('Failed to fetch admissions');
@@ -202,7 +240,7 @@ export default function AdminAdmission() {
                 email.includes(searchTerm.toLowerCase()) ||
                 mobile.includes(searchTerm);
 
-            const matchesFilter = filter === 'all' || admission.status === filter;
+            const matchesFilter = filter === 'all' || getStatus(admission) === filter;
 
             return matchesSearch && matchesFilter;
         })
@@ -212,8 +250,8 @@ export default function AdminAdmission() {
                     ? new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
                     : new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
             }
-            const aVal = sortField === 'child_name' ? getChildName(a) : sortField === 'program_name' ? getProgram(a) : a.status;
-            const bVal = sortField === 'child_name' ? getChildName(b) : sortField === 'program_name' ? getProgram(b) : b.status;
+            const aVal = sortField === 'child_name' ? getChildName(a) : sortField === 'program_name' ? getProgram(a) : getStatus(a);
+            const bVal = sortField === 'child_name' ? getChildName(b) : sortField === 'program_name' ? getProgram(b) : getStatus(b);
             return sortOrder === 'asc'
                 ? String(aVal).localeCompare(String(bVal))
                 : String(bVal).localeCompare(String(aVal));
@@ -221,11 +259,11 @@ export default function AdminAdmission() {
 
     const statusCounts = {
         total: admissions.length,
-        'In Review': admissions.filter((a) => a.status === 'In Review').length,
-        'Reviewed': admissions.filter((a) => a.status === 'Reviewed').length,
-        'Interview Scheduled': admissions.filter((a) => a.status === 'Interview Scheduled').length,
-        'Confirmed': admissions.filter((a) => a.status === 'Confirmed').length,
-        'Rejected': admissions.filter((a) => a.status === 'Rejected').length,
+        'In Review': admissions.filter((a) => getStatus(a) === 'In Review').length,
+        'Reviewed': admissions.filter((a) => getStatus(a) === 'Reviewed').length,
+        'Interview Scheduled': admissions.filter((a) => getStatus(a) === 'Interview Scheduled').length,
+        'Confirmed': admissions.filter((a) => getStatus(a) === 'Confirmed').length,
+        'Rejected': admissions.filter((a) => getStatus(a) === 'Rejected').length,
     };
 
     const statusCards: StatusCard[] = [
@@ -298,74 +336,213 @@ export default function AdminAdmission() {
         visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
     };
 
-    const handleStatusChange = async (id: string, newStatus: Admission['status']) => {
+    // ✨ FIXED: Update admission_status with comprehensive debugging ✨
+    const handleStatusChange = async (id: string, newStatus: Admission['admission_status']) => {
         try {
             setStatusUpdating(true);
-            const { error } = await supabase
+            setUpdatingId(id);
+
+            console.log('🔄 Updating status for admission:', id, 'to:', newStatus);
+            console.log('📊 Update payload:', { admission_status: newStatus });
+
+            const { data, error } = await supabase
                 .from('admission')
-                .update({ status: newStatus })
-                .eq('id', id);
+                .update({ admission_status: newStatus })
+                .eq('id', id)
+                .select();
 
-            if (error) throw error;
+            console.log('Response status:', data);
+            console.log('Response error:', error);
 
+            if (error) {
+                console.error('❌ Supabase error object:', JSON.stringify(error, null, 2));
+                toast.error(`Failed: ${error.message || 'Unknown error'}`);
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                console.warn('⚠️ No rows updated. Check RLS policies.');
+                toast.error('Status not updated. Check permissions.');
+                return;
+            }
+
+            console.log('✅ Status updated successfully. Rows affected:', data.length);
+
+            // ✨ Update local state immediately ✨
             setAdmissions((prev) =>
                 prev.map((adm) =>
-                    adm.id === id ? { ...adm, status: newStatus } : adm
+                    adm.id === id ? { ...adm, admission_status: newStatus } : adm
                 )
             );
-            if (selectedAdmission?.id === id) {
-                setSelectedAdmission({ ...selectedAdmission, status: newStatus });
-            }
-            toast.success('Status updated successfully');
-        } catch (error) {
-            console.error('Error:', error);
-            toast.error('Failed to update status');
+
+            toast.success(`✅ Status changed to ${newStatus}`);
+        } catch (error: any) {
+            console.error('❌ Try-catch error:', error);
+            toast.error(`Error: ${error?.message || 'Unknown error'}`);
         } finally {
             setStatusUpdating(false);
+            setUpdatingId(null);
         }
     };
 
-    const handleNotesOpen = (admission: Admission) => {
-        setSelectedAdmission(admission);
-        setNoteText(admission.notes || '');
+    // ✨ OPEN NOTES MODAL ✨
+    const openNotesModal = (admission: Admission) => {
+        setSelectedAdmissionId(admission.id);
+        setNoteEntries(admission.notes || []);
+        setNewNoteText('');
+        setIsEditingNewNote(false);
+        setNotesModalOpen(true);
     };
 
-    const handleNotesSave = async (id: string) => {
-        try {
-            setNotesUpdating(true);
-            const { error } = await supabase
-                .from('admission')
-                .update({ notes: noteText })
-                .eq('id', id);
+    // ✨ CLOSE NOTES MODAL ✨
+    const closeNotesModal = () => {
+        setNotesModalOpen(false);
+        setSelectedAdmissionId(null);
+        setNoteEntries([]);
+        setNewNoteText('');
+        setIsEditingNewNote(false);
+        setDeletingNoteId(null);
+    };
 
-            if (error) throw error;
+    // ✨ SAVE NEW NOTE ✨
+    const saveNewNote = async () => {
+        if (!selectedAdmissionId) {
+            console.error('❌ No admission selected');
+            toast.error('Please select an admission first');
+            return;
+        }
+
+        if (!newNoteText.trim()) {
+            toast.error('Please enter a note');
+            return;
+        }
+
+        try {
+            setSavingNote(true);
+
+            const newEntry: NoteEntry = {
+                id: Date.now().toString(),
+                text: newNoteText.trim(),
+                timestamp: new Date().toISOString(),
+            };
+
+            const updatedNotes = [...noteEntries, newEntry];
+
+            console.log('📝 Saving notes to database. Notes array:', JSON.stringify(updatedNotes));
+
+            const { error, data } = await supabase
+                .from('admission')
+                .update({
+                    notes: updatedNotes,
+                })
+                .eq('id', selectedAdmissionId)
+                .select('id, notes');
+
+            if (error) {
+                console.error('❌ Supabase error:', error);
+                throw error;
+            }
+
+            console.log('✅ Note saved to database. Response:', data);
 
             setAdmissions((prev) =>
-                prev.map((adm) =>
-                    adm.id === id ? { ...adm, notes: noteText } : adm
+                prev.map((admission) =>
+                    admission.id === selectedAdmissionId
+                        ? {
+                            ...admission,
+                            notes: updatedNotes,
+                        }
+                        : admission
                 )
             );
-            if (selectedAdmission?.id === id) {
-                setSelectedAdmission({ ...selectedAdmission, notes: noteText });
-            }
-            toast.success('Notes saved successfully');
+
+            setNoteEntries(updatedNotes);
+            setNewNoteText('');
+            setIsEditingNewNote(false);
+            toast.success('✨ Note saved successfully!');
         } catch (error) {
-            console.error('Error:', error);
-            toast.error('Failed to save notes');
+            console.error('❌ Error saving note:', error);
+            toast.error('Failed to save note. Check console for details.');
         } finally {
-            setNotesUpdating(false);
+            setSavingNote(false);
         }
     };
 
-    const handleCloseModal = () => {
-        setSelectedAdmission(null);
-        setNoteText('');
+    // ✨ DELETE NOTE ENTRY ✨
+    const deleteNoteEntry = async (noteId: string) => {
+        if (!selectedAdmissionId) {
+            console.error('❌ No admission selected');
+            toast.error('Please select an admission first');
+            return;
+        }
+
+        try {
+            setDeletingNoteId(noteId);
+
+            console.log('🗑️ Deleting note ID:', noteId);
+
+            const updatedNotes = noteEntries.filter((entry) => entry.id !== noteId);
+
+            console.log('🗑️ Updated notes after deletion:', JSON.stringify(updatedNotes));
+
+            const { error, data } = await supabase
+                .from('admission')
+                .update({
+                    notes: updatedNotes.length > 0 ? updatedNotes : null,
+                })
+                .eq('id', selectedAdmissionId)
+                .select('id, notes');
+
+            if (error) {
+                console.error('❌ Supabase error:', error);
+                throw error;
+            }
+
+            console.log('✅ Note deleted from database:', data);
+
+            setNoteEntries(updatedNotes);
+
+            setAdmissions((prev) =>
+                prev.map((admission) =>
+                    admission.id === selectedAdmissionId
+                        ? {
+                            ...admission,
+                            notes: updatedNotes.length > 0 ? updatedNotes : null,
+                        }
+                        : admission
+                )
+            );
+
+            toast.success('✅ Note deleted successfully');
+        } catch (error) {
+            console.error('❌ Error deleting note:', error);
+            toast.error('Failed to delete note. Check console for details.');
+        } finally {
+            setDeletingNoteId(null);
+        }
+    };
+
+    // ✨ FORMAT TIMESTAMP ✨
+    const formatTimestamp = (timestamp: string) => {
+        try {
+            const date = new Date(timestamp);
+            return date.toLocaleDateString('en-US', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
+            });
+        } catch (e) {
+            console.error('Error formatting timestamp:', e);
+            return timestamp;
+        }
     };
 
     if (pageLoading) {
         return <Loader isVisible={true} message="Loading Admissions..." fullScreen={true} />;
     }
-
 
     return (
         <div className={styles.dashboardWrapper}>
@@ -419,13 +596,10 @@ export default function AdminAdmission() {
                     <table className={styles.table}>
                         <thead>
                             <tr>
-                                <th>
-                                    Application No.
-                                </th>
+                                <th>Application No.</th>
                                 <th onClick={() => handleSort('created_at')}>
                                     Date {getSortIcon('created_at')}
                                 </th>
-
                                 <th onClick={() => handleSort('child_name')}>
                                     Child Name {getSortIcon('child_name')}
                                 </th>
@@ -435,8 +609,8 @@ export default function AdminAdmission() {
                                     Program {getSortIcon('program_name')}
                                 </th>
                                 <th>Notes</th>
-                                <th onClick={() => handleSort('status')}>
-                                    Status {getSortIcon('status')}
+                                <th onClick={() => handleSort('admission_status')}>
+                                    Status {getSortIcon('admission_status')}
                                 </th>
                                 <th>Action</th>
                             </tr>
@@ -444,13 +618,13 @@ export default function AdminAdmission() {
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan={8} className={styles.loading}>
+                                    <td colSpan={9} className={styles.loading}>
                                         <FaSpinner className={styles.loadingIcon} /> Loading admissions...
                                     </td>
                                 </tr>
                             ) : sortedAndFilteredAdmissions.length === 0 ? (
                                 <tr>
-                                    <td colSpan={8} className={styles.noResults}>
+                                    <td colSpan={9} className={styles.noResults}>
                                         No admissions found
                                     </td>
                                 </tr>
@@ -462,9 +636,7 @@ export default function AdminAdmission() {
                                         animate={{ opacity: 1 }}
                                         transition={{ duration: 0.3 }}
                                     >
-                                        <td>
-                                            {admission.admission_number}
-                                        </td>
+                                        <td>{admission.admission_number}</td>
                                         <td>
                                             {new Date(admission.created_at).toLocaleDateString('en-US', {
                                                 day: '2-digit',
@@ -498,23 +670,39 @@ export default function AdminAdmission() {
                                         <td>{getProgram(admission)}</td>
                                         <td>
                                             <button
-                                                className={`${styles.notesBtn} ${admission.notes ? styles.hasNotes : ''}`}
-                                                onClick={() => handleNotesOpen(admission)}
-                                                title={admission.notes ? admission.notes : 'Add note'}
+                                                className={`${styles.notesBtn} ${admission.notes && admission.notes.length > 0 ? styles.hasNotes : ''}`}
+                                                onClick={() => openNotesModal(admission)}
+                                                title={admission.notes && admission.notes.length > 0 ? `${admission.notes.length} notes` : 'Add note'}
                                             >
                                                 <FaStickyNote />
-                                                {admission.notes && <span className={styles.notesIndicator}></span>}
+                                                {admission.notes && admission.notes.length > 0 && (
+                                                    <span className={styles.notesIndicator}>{admission.notes.length}</span>
+                                                )}
                                             </button>
                                         </td>
                                         <td>
-                                            <span className={`${styles.status}}`}>
-                                                {admission.status}
-                                            </span>
+                                            <select
+                                                value={getStatus(admission)}
+                                                onChange={(e) => handleStatusChange(admission.id, e.target.value as Admission['admission_status'])}
+                                                disabled={updatingId === admission.id}
+                                                className={styles.statusDropdown}
+                                            >
+                                                <option value="In Review">In Review</option>
+                                                <option value="Reviewed">Reviewed</option>
+                                                <option value="Interview Scheduled">Interview Scheduled</option>
+                                                <option value="Confirmed">Confirmed</option>
+                                                <option value="Rejected">Rejected</option>
+                                            </select>
+                                            {updatingId === admission.id && (
+                                                <FaSpinner
+                                                    className={styles.statusSpinner}
+                                                />
+                                            )}
                                         </td>
                                         <td>
                                             <button
                                                 className={styles.viewBtn}
-                                                onClick={() => handleNotesOpen(admission)}
+                                                onClick={() => openNotesModal(admission)}
                                                 title="View Details"
                                             >
                                                 <FaEye /> View
@@ -528,17 +716,25 @@ export default function AdminAdmission() {
                 </div>
             </div>
 
-            {/* Details Modal */}
-            <AdmissionDetailsModal
-                isOpen={selectedAdmission !== null}
-                onClose={handleCloseModal}
-                admission={selectedAdmission}
-                noteText={noteText}
-                setNoteText={setNoteText}
-                onSaveNote={() => handleNotesSave(selectedAdmission?.id || '')}
+            {/* Notes Modal */}
+            <NotesModal
+                isOpen={notesModalOpen}
+                onClose={closeNotesModal}
+                noteEntries={noteEntries}
+                newNoteText={newNoteText}
+                setNewNoteText={setNewNoteText}
+                isEditingNewNote={isEditingNewNote}
+                setIsEditingNewNote={setIsEditingNewNote}
+                onSaveNewNote={saveNewNote}
+                onDeleteNote={deleteNoteEntry}
+                admission={admissions.find(a => a.id === selectedAdmissionId)}
+                formatTimestamp={formatTimestamp}
+                savingNote={savingNote}
+                deletingNoteId={deletingNoteId}
                 onStatusChange={handleStatusChange}
                 onPreview={setPreviewModal}
-                loading={statusUpdating || notesUpdating}
+                statusUpdating={statusUpdating}
+                updatingId={updatingId}
             />
 
             {/* Document Preview Modal */}
@@ -603,32 +799,46 @@ const StatusCardComponent = ({
     );
 };
 
-const AdmissionDetailsModal = ({
+const NotesModal = ({
     isOpen,
     onClose,
+    noteEntries,
+    newNoteText,
+    setNewNoteText,
+    isEditingNewNote,
+    setIsEditingNewNote,
+    onSaveNewNote,
+    onDeleteNote,
     admission,
-    noteText,
-    setNoteText,
-    onSaveNote,
+    formatTimestamp,
+    savingNote,
+    deletingNoteId,
     onStatusChange,
     onPreview,
-    loading,
+    statusUpdating,
+    updatingId,
 }: {
     isOpen: boolean;
     onClose: () => void;
-    admission: Admission | null;
-    noteText: string;
-    setNoteText: (text: string) => void;
-    onSaveNote: () => void;
-    onStatusChange: (id: string, status: Admission['status']) => void;
+    noteEntries: NoteEntry[];
+    newNoteText: string;
+    setNewNoteText: (text: string) => void;
+    isEditingNewNote: boolean;
+    setIsEditingNewNote: (editing: boolean) => void;
+    onSaveNewNote: () => void;
+    onDeleteNote: (noteId: string) => void;
+    admission?: Admission;
+    formatTimestamp: (timestamp: string) => string;
+    savingNote?: boolean;
+    deletingNoteId?: string | null;
+    onStatusChange: (id: string, status: Admission['admission_status']) => void;
     onPreview: (preview: { url: string; type: 'image' | 'pdf' | 'document'; name: string }) => void;
-    loading: boolean;
+    statusUpdating: boolean;
+    updatingId: string | null;
 }) => {
-    if (!admission) return null;
-
-    const childName = getChildName(admission);
-    const parentName = getParentName(admission);
-    const parentEmail = getParentEmail(admission);
+    const isProcessing = savingNote || !!deletingNoteId || statusUpdating;
+    const childName = getChildName(admission || {} as Admission);
+    const parentName = getParentName(admission || {} as Admission);
 
     return (
         <AnimatePresence>
@@ -650,118 +860,200 @@ const AdmissionDetailsModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2>Admission Details</h2>
+                                <h2>📝 Admission Details & Notes</h2>
                                 <p>{childName} • {parentName}</p>
-                                <p style={{ fontSize: '0.85rem', color: '#999', marginTop: '0.5rem' }}>
-                                    {new Date(admission.created_at).toLocaleDateString()}
-                                </p>
+                                {noteEntries.length > 0 && (
+                                    <p className={styles.notesCount}>
+                                        <FaHistory /> {noteEntries.length} note{noteEntries.length !== 1 ? 's' : ''} saved
+                                    </p>
+                                )}
                             </div>
                             <button
                                 className={styles.closeBtn}
                                 onClick={onClose}
                                 aria-label="Close"
+                                disabled={isProcessing}
                             >
                                 <FaTimes />
                             </button>
                         </div>
 
                         <div className={styles.modalContent}>
-                            <div className={styles.detailsGrid}>
-                                <DetailItem label="Child Name" value={childName} />
-                                <DetailItem label="Date of Birth" value={admission.child_dob} />
-                                <DetailItem label="Gender" value={admission.child_gender} />
-                                <DetailItem label="Place of Birth" value={admission.child_place_of_birth} />
-                                <DetailItem label="Parent Name" value={parentName} />
-                                <DetailItem label="Email" value={parentEmail} />
-                                <DetailItem label="Mobile" value={getParentMobile(admission)} />
-                                <DetailItem label="Program" value={getProgram(admission)} />
-                                <DetailItem label="Previous School" value={admission.previous_school || 'N/A'} />
-                            </div>
+                            {/* Details Section */}
+                            {admission && (
+                                <>
+                                    <div className={styles.detailsGrid}>
+                                        <DetailItem label="Child Name" value={childName} />
+                                        <DetailItem label="Date of Birth" value={admission.child_dob || 'N/A'} />
+                                        <DetailItem label="Gender" value={admission.child_gender || 'N/A'} />
+                                        <DetailItem label="Place of Birth" value={admission.child_place_of_birth || 'N/A'} />
+                                        <DetailItem label="Parent Name" value={parentName} />
+                                        <DetailItem label="Email" value={getParentEmail(admission)} />
+                                        <DetailItem label="Mobile" value={getParentMobile(admission)} />
+                                        <DetailItem label="Program" value={getProgram(admission)} />
+                                        <DetailItem label="Previous School" value={admission.previous_school || 'N/A'} />
+                                    </div>
 
-                            <div className={styles.statusSection}>
-                                <label className={styles.sectionLabel}>Change Status</label>
-                                <select
-                                    value={admission.status}
-                                    onChange={(e) => onStatusChange(admission.id, e.target.value as Admission['status'])}
-                                    className={styles.statusSelect}
-                                    disabled={loading}
-                                >
-                                    <option value="In Review">In Review</option>
-                                    <option value="Reviewed">Reviewed</option>
-                                    <option value="Interview Scheduled">Interview Scheduled</option>
-                                    <option value="Confirmed">Confirmed</option>
-                                    <option value="Rejected">Rejected</option>
-                                </select>
-                            </div>
+                                    <div className={styles.statusSection}>
+                                        <label className={styles.sectionLabel}>📊 Change Status</label>
+                                        <div className={styles.statusContainer}>
+                                            <select
+                                                value={getStatus(admission)}
+                                                onChange={(e) => onStatusChange(admission.id, e.target.value as Admission['admission_status'])}
+                                                className={styles.statusSelectModal}
+                                                disabled={isProcessing}
+                                            >
+                                                <option value="In Review">In Review</option>
+                                                <option value="Reviewed">Reviewed</option>
+                                                <option value="Interview Scheduled">Interview Scheduled</option>
+                                                <option value="Confirmed">Confirmed</option>
+                                                <option value="Rejected">Rejected</option>
+                                            </select>
+                                            {statusUpdating && (
+                                                <div className={styles.updatingIndicator}>
+                                                    <FaSpinner className={styles.spinnerIcon} />
+                                                    <span>Updating...</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
 
-                            <div className={styles.notesSection}>
-                                <label className={styles.sectionLabel}>Internal Notes</label>
-                                <textarea
-                                    value={noteText}
-                                    onChange={(e) => setNoteText(e.target.value)}
-                                    placeholder="Add internal notes here..."
-                                    className={styles.noteTextarea}
-                                    rows={5}
-                                    disabled={loading}
-                                />
-                            </div>
+                                    <div className={styles.documentsSection}>
+                                        <label className={styles.sectionLabel}>📄 Documents</label>
+                                        <div className={styles.documentsList}>
+                                            {admission.photo_url && (
+                                                <DocumentListItem
+                                                    name="Child Photo"
+                                                    onPreview={() =>
+                                                        onPreview({
+                                                            url: admission.photo_url!,
+                                                            type: 'image',
+                                                            name: 'Child Photo',
+                                                        })
+                                                    }
+                                                    onDownload={admission.photo_url}
+                                                />
+                                            )}
+                                            {admission.birth_certificate_url && (
+                                                <DocumentListItem
+                                                    name="Birth Certificate"
+                                                    onPreview={() =>
+                                                        onPreview({
+                                                            url: admission.birth_certificate_url!,
+                                                            type: 'pdf',
+                                                            name: 'Birth Certificate',
+                                                        })
+                                                    }
+                                                    onDownload={admission.birth_certificate_url}
+                                                />
+                                            )}
+                                            {admission.aadhar_card_url && (
+                                                <DocumentListItem
+                                                    name="Aadhar Card"
+                                                    onPreview={() =>
+                                                        onPreview({
+                                                            url: admission.aadhar_card_url!,
+                                                            type: 'pdf',
+                                                            name: 'Aadhar Card',
+                                                        })
+                                                    }
+                                                    onDownload={admission.aadhar_card_url}
+                                                />
+                                            )}
+                                            {admission.parent_id_proof_url && (
+                                                <DocumentListItem
+                                                    name="Parent ID Proof"
+                                                    onPreview={() =>
+                                                        onPreview({
+                                                            url: admission.parent_id_proof_url!,
+                                                            type: 'pdf',
+                                                            name: "Parent's ID Proof",
+                                                        })
+                                                    }
+                                                    onDownload={admission.parent_id_proof_url}
+                                                />
+                                            )}
+                                        </div>
+                                    </div>
 
-                            <div className={styles.documentsSection}>
-                                <label className={styles.sectionLabel}>Documents</label>
-                                <div className={styles.documentsList}>
-                                    {admission.photo_url && (
-                                        <DocumentListItem
-                                            name="Child Photo"
-                                            onPreview={() =>
-                                                onPreview({
-                                                    url: admission.photo_url!,
-                                                    type: 'image',
-                                                    name: 'Child Photo',
-                                                })
-                                            }
-                                            onDownload={admission.photo_url}
-                                        />
-                                    )}
-                                    {admission.birth_certificate_url && (
-                                        <DocumentListItem
-                                            name="Birth Certificate"
-                                            onPreview={() =>
-                                                onPreview({
-                                                    url: admission.birth_certificate_url!,
-                                                    type: 'pdf',
-                                                    name: 'Birth Certificate',
-                                                })
-                                            }
-                                            onDownload={admission.birth_certificate_url}
-                                        />
-                                    )}
-                                    {admission.aadhar_card_url && (
-                                        <DocumentListItem
-                                            name="Aadhar Card"
-                                            onPreview={() =>
-                                                onPreview({
-                                                    url: admission.aadhar_card_url!,
-                                                    type: 'pdf',
-                                                    name: 'Aadhar Card',
-                                                })
-                                            }
-                                            onDownload={admission.aadhar_card_url}
-                                        />
-                                    )}
-                                    {admission.parent_id_proof_url && (
-                                        <DocumentListItem
-                                            name="Parent ID Proof"
-                                            onPreview={() =>
-                                                onPreview({
-                                                    url: admission.parent_id_proof_url!,
-                                                    type: 'pdf',
-                                                    name: "Parent's ID Proof",
-                                                })
-                                            }
-                                            onDownload={admission.parent_id_proof_url}
-                                        />
-                                    )}
+                                    <div className={styles.notesDivider}>
+                                        <span>Internal Notes</span>
+                                    </div>
+                                </>
+                            )}
+
+                            {/* Notes History Section */}
+                            {noteEntries.length > 0 && (
+                                <div className={styles.notesHistory}>
+                                    <h3 className={styles.notesHistoryTitle}>
+                                        <FaHistory /> Note History
+                                    </h3>
+                                    <div className={styles.notesList}>
+                                        <AnimatePresence>
+                                            {noteEntries.map((entry, index) => (
+                                                <motion.div
+                                                    key={entry.id}
+                                                    className={styles.noteEntry}
+                                                    initial={{ opacity: 0, y: 10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, y: -10 }}
+                                                    layout
+                                                >
+                                                    <div className={styles.noteEntryHeader}>
+                                                        <span className={styles.noteNumber}>Note #{index + 1}</span>
+                                                        <span className={styles.noteTimestamp}>
+                                                            🕒 {formatTimestamp(entry.timestamp)}
+                                                        </span>
+                                                        <motion.button
+                                                            type="button"
+                                                            className={styles.deleteNoteBtn}
+                                                            onClick={() => {
+                                                                console.log('🗑️ Delete clicked for note:', entry.id);
+                                                                onDeleteNote(entry.id);
+                                                            }}
+                                                            whileHover={{ scale: 1.05 }}
+                                                            whileTap={{ scale: 0.95 }}
+                                                            title="Delete note"
+                                                            disabled={!!deletingNoteId}
+                                                        >
+                                                            {deletingNoteId === entry.id ? (
+                                                                <FaSpinner className={styles.spinnerIcon} />
+                                                            ) : (
+                                                                <FaTrash />
+                                                            )}
+                                                        </motion.button>
+                                                    </div>
+                                                    <div className={styles.noteEntryContent}>
+                                                        <p>{entry.text}</p>
+                                                    </div>
+                                                </motion.div>
+                                            ))}
+                                        </AnimatePresence>
+                                    </div>
                                 </div>
+                            )}
+
+                            {/* Divider */}
+                            {noteEntries.length > 0 && (
+                                <div className={styles.notesDivider}>
+                                    <span>New Note</span>
+                                </div>
+                            )}
+
+                            {/* New Note Input Section */}
+                            <div className={styles.newNoteSection}>
+                                <h3 className={styles.newNoteTitle}>
+                                    {isEditingNewNote ? '✍️ Write New Note' : '➕ Add New Note'}
+                                </h3>
+                                <textarea
+                                    value={newNoteText}
+                                    onChange={(e) => setNewNoteText(e.target.value)}
+                                    placeholder="Write your internal notes here... e.g., 'Follow up on interview' or 'Additional documents required'"
+                                    className={styles.noteTextarea}
+                                    rows={6}
+                                    onFocus={() => setIsEditingNewNote(true)}
+                                    disabled={isProcessing}
+                                />
                             </div>
                         </div>
 
@@ -769,25 +1061,27 @@ const AdmissionDetailsModal = ({
                             <button
                                 className={styles.cancelBtn}
                                 onClick={onClose}
-                                disabled={loading}
+                                disabled={isProcessing}
                             >
                                 <FaTimes /> Close
                             </button>
-                            <button
+                            <motion.button
                                 className={styles.saveBtn}
-                                onClick={onSaveNote}
-                                disabled={loading || noteText === (admission.notes || '')}
+                                onClick={onSaveNewNote}
+                                disabled={!newNoteText.trim() || isProcessing}
+                                whileHover={{ scale: !newNoteText.trim() || isProcessing ? 1 : 1.05 }}
+                                whileTap={{ scale: !newNoteText.trim() || isProcessing ? 1 : 0.95 }}
                             >
-                                {loading ? (
+                                {savingNote ? (
                                     <>
-                                        <FaSpinner className={styles.spinner} /> Saving...
+                                        <FaSpinner className={styles.loadingIcon} /> Saving...
                                     </>
                                 ) : (
                                     <>
-                                        <FaCheck /> Save Notes
+                                        <FaCheck /> Save New Note
                                     </>
                                 )}
-                            </button>
+                            </motion.button>
                         </div>
                     </motion.div>
                 </>
@@ -796,7 +1090,7 @@ const AdmissionDetailsModal = ({
     );
 };
 
-const DetailItem = ({ label, value }: { label: string; value: string }) => (
+const DetailItem = ({ label, value }: { label: string; value: string | ReactNode }) => (
     <div className={styles.detailItem}>
         <span className={styles.detailLabel}>{label}</span>
         <span className={styles.detailValue}>{value}</span>

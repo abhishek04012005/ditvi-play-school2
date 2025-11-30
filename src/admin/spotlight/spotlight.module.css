@@ -1384,3 +1384,179 @@
         gap: 1rem;
     }
 }
+
+/* ==================== COMPARISON CONTAINER ==================== */
+.comparisonContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(106, 76, 147, 0.05), rgba(255, 209, 102, 0.05));
+    border-radius: 16px;
+    border: 2px solid rgba(106, 76, 147, 0.1);
+}
+
+.comparisonCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    flex: 1;
+    padding: 1rem;
+    background: white;
+    border-radius: 12px;
+    border: 2px solid rgba(106, 76, 147, 0.08);
+    transition: all 0.3s ease;
+}
+
+.comparisonCard:hover {
+    transform: translateY(-4px);
+    border-color: rgba(106, 76, 147, 0.2);
+    box-shadow: 0 8px 20px rgba(106, 76, 147, 0.1);
+}
+
+.comparisonLabel {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #6a4c93;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+.comparisonImage {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 6px 15px rgba(106, 76, 147, 0.15);
+    border: 2px solid rgba(106, 76, 147, 0.1);
+}
+
+.comparisonName {
+    font-weight: 700;
+    color: #6a4c93;
+    font-size: 0.9rem;
+    text-align: center;
+    line-height: 1.3;
+}
+
+.comparisonType {
+    font-size: 0.8rem;
+    color: #888;
+    font-weight: 600;
+}
+
+.comparisonArrow {
+    font-size: 2rem;
+    color: #6a4c93;
+    font-weight: 800;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+}
+
+/* ==================== INFO BOX ==================== */
+.infoBox {
+    background: linear-gradient(135deg, rgba(74, 144, 226, 0.08), rgba(106, 76, 147, 0.08));
+    border-left: 4px solid #4a90e2;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    color: #333;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.infoBox p {
+    margin: 0;
+}
+
+.infoBox strong {
+    color: #6a4c93;
+}
+
+/* ==================== RESPONSIVE - TABLET 768px ==================== */
+@media (max-width: 768px) {
+    .comparisonContainer {
+        gap: 1rem;
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+
+    .comparisonImage {
+        width: 80px;
+        height: 80px;
+    }
+
+    .comparisonName {
+        font-size: 0.85rem;
+    }
+
+    .comparisonArrow {
+        font-size: 1.5rem;
+    }
+
+    .infoBox {
+        padding: 0.8rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* ==================== RESPONSIVE - MOBILE 480px ==================== */
+@media (max-width: 480px) {
+    .comparisonContainer {
+        gap: 0.8rem;
+        padding: 1rem;
+        margin: 1rem 0;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .comparisonCard {
+        padding: 0.8rem;
+        gap: 0.6rem;
+        min-width: 120px;
+    }
+
+    .comparisonLabel {
+        font-size: 0.7rem;
+    }
+
+    .comparisonImage {
+        width: 70px;
+        height: 70px;
+    }
+
+    .comparisonName {
+        font-size: 0.8rem;
+    }
+
+    .comparisonType {
+        font-size: 0.7rem;
+    }
+
+    .comparisonArrow {
+        font-size: 1.3rem;
+        order: 2;
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+
+    .infoBox {
+        padding: 0.8rem;
+        font-size: 0.8rem;
+        border-left-width: 3px;
+    }
+}

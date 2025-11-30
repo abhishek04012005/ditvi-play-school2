@@ -60,7 +60,7 @@ const getUserId = () => {
     return userId;
 };
 
-const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }: AwardsProps) => {
+const Awards = ({ isHomePage = false }: AwardsProps) => {
     const [awards, setAwards] = useState<Award[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedAward, setSelectedAward] = useState<Award | null>(null);
@@ -75,6 +75,10 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
     const [scrollConfetti, setScrollConfetti] = useState(false);
     const [scrollConfettiKey, setScrollConfettiKey] = useState(0);
 
+    // ✨ LIKE CONFETTI STATE ✨
+    const [likeConfetti, setLikeConfetti] = useState(false);
+    const [likeConfettiKey, setLikeConfettiKey] = useState(0);
+
     // like state maps for fast UI updates
     const [likedMap, setLikedMap] = useState<Record<string, boolean>>({});
     const [likesMap, setLikesMap] = useState<Record<string, number>>({});
@@ -88,6 +92,9 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
     const spotlightSectionRef = useRef<HTMLDivElement>(null);
     const observerRef = useRef<IntersectionObserver | null>(null);
     const scrollConfettiTimeoutRef = useRef<number | null>(null);
+
+    // ✨ LIKE CONFETTI TIMEOUT REF ✨
+    const likeConfettiTimeoutRef = useRef<number | null>(null);
 
     // fetch awards
     const fetchAwards = useCallback(async () => {
@@ -235,6 +242,20 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
         }, 8000);
     }, []);
 
+    // ✨ TRIGGER LIKE CONFETTI ✨
+    const triggerLikeConfetti = useCallback(() => {
+        if (likeConfettiTimeoutRef.current) {
+            window.clearTimeout(likeConfettiTimeoutRef.current);
+        }
+
+        setLikeConfettiKey((prev) => prev + 1);
+        setLikeConfetti(true);
+
+        likeConfettiTimeoutRef.current = window.setTimeout(() => {
+            setLikeConfetti(false);
+        }, 6000);
+    }, []);
+
     const openPopupFor = (award: Award) => {
         setSelectedAward(award);
         setShowPopup(true);
@@ -271,11 +292,13 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
                 setLikedMap((m) => ({ ...m, [award.id]: false }));
                 setLikesMap((m) => ({ ...m, [award.id]: Math.max(0, (m[award.id] || 1) - 1) }));
             } else {
+                // ✨ TRIGGER CONFETTI ON LIKE ✨
+                triggerLikeConfetti();
+                
                 await supabase.from('award_likes').insert([{ award_id: award.id, user_id: userId, created_at: new Date().toISOString() }]);
                 await supabase.from('awards').update({ like_count: (likesMap[award.id] || 0) + 1 }).eq('id', award.id);
                 setLikedMap((m) => ({ ...m, [award.id]: true }));
                 setLikesMap((m) => ({ ...m, [award.id]: (m[award.id] || 0) + 1 }));
-                triggerConfetti();
             }
         } catch (err) {
             console.error('toggleLike error', err);
@@ -448,8 +471,7 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
                                 <h3>{homepageSpotlight.name}</h3>
                                 <p className={styles.scrollPopupMessage}>"{homepageSpotlight.message}"</p>
                                 <p className={styles.scrollPopupDate}>
-                                    📅 {new Date(homepageSpotlight.date).toLocaleDateString('en-US', {
-                                        weekday: 'long',
+                                    {new Date(homepageSpotlight.date).toLocaleDateString('en-US', {
                                         year: 'numeric',
                                         month: 'long',
                                         day: 'numeric'
@@ -638,6 +660,21 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
 
                 {/* ✨ SCROLL POPUP WITH CONFETTI ✨ */}
                 <ScrollPopupContent />
+
+                {/* ✨ LIKE CONFETTI - GLOBAL ✨ */}
+                <AnimatePresence>
+                    {likeConfetti && (
+                        <motion.div
+                            key={`like-confetti-${likeConfettiKey}`}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 9999 }}
+                        >
+                            <Confetti trigger={likeConfetti} duration={6000} particleCount={1500} intensity="medium" />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 {/* Regular Popup */}
                 <AnimatePresence>
@@ -832,6 +869,21 @@ const Awards = ({ asSection = false, awardType = 'weekly', isHomePage = false }:
 
             {/* ✨ SCROLL POPUP WITH CONFETTI - NOW APPEARS ON FULL PAGE GRID VIEW ✨ */}
             <ScrollPopupContent />
+
+            {/* ✨ LIKE CONFETTI - GLOBAL ✨ */}
+            <AnimatePresence>
+                {likeConfetti && (
+                    <motion.div
+                        key={`like-confetti-${likeConfettiKey}`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 9999 }}
+                    >
+                        <Confetti trigger={likeConfetti} duration={6000} particleCount={1500} intensity="medium" />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Popup */}
             <AnimatePresence>

@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { FaTrash, FaHome, FaCheck, FaTimes, FaEye, FaEyeSlash, FaSpinner, FaPrint } from 'react-icons/fa';
+import { FaTrash, FaHome, FaCheck, FaTimes, FaEye, FaEyeSlash, FaSpinner, FaPrint, FaExclamationTriangle } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
@@ -72,6 +72,14 @@ const Spotlight = () => {
     const [selectedForHomepage, setSelectedForHomepage] = useState<Spotlight | null>(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [homepageLoading, setHomepageLoading] = useState(false);
+
+    // ✨ CONFLICT MODAL STATE - When trying to add to homepage when one already exists GLOBALLY ✨
+    const [showConflictModal, setShowConflictModal] = useState(false);
+    const [conflictData, setConflictData] = useState<{
+        newCard: Spotlight | null;
+        existingCard: Spotlight | null;
+    }>({ newCard: null, existingCard: null });
+    const [conflictLoading, setConflictLoading] = useState(false);
 
     // Print modal state
     const [showPrintModal, setShowPrintModal] = useState(false);
@@ -251,6 +259,76 @@ const Spotlight = () => {
         }
     };
 
+    // ✨ HANDLE HOMEPAGE BUTTON CLICK - Check for GLOBAL conflicts (only ONE homepage badge across ALL types) ✨
+    const handleHomepageClick = (spotlight: Spotlight) => {
+        // If already on homepage, just show regular toggle modal to remove it
+        if (spotlight.is_show_on_home_page) {
+            setSelectedForHomepage(spotlight);
+            setShowHomepageModal(true);
+            return;
+        }
+
+        // ✨ Find if ANY card has homepage badge (not just same type) ✨
+        const existingHomepageCard = spotlights.find((s) => s.is_show_on_home_page);
+
+        if (existingHomepageCard) {
+            // ✨ CONFLICT DETECTED - Another card ALREADY has homepage badge ✨
+            console.log('⚠️ CONFLICT: Another card already on homepage');
+            setConflictData({
+                newCard: spotlight,
+                existingCard: existingHomepageCard
+            });
+            setShowConflictModal(true);
+        } else {
+            // ✨ NO CONFLICT - Show regular modal to add ✨
+            setSelectedForHomepage(spotlight);
+            setShowHomepageModal(true);
+        }
+    };
+
+    // ✨ HANDLE CONFLICT RESOLUTION - Replace existing card with new one ✨
+    const handleReplaceHomepageCard = async () => {
+        if (!conflictData.newCard || !conflictData.existingCard) return;
+
+        try {
+            setConflictLoading(true);
+
+            // Remove homepage badge from existing card
+            const { error: removeError } = await supabase
+                .from('awards')
+                .update({ is_show_on_home_page: false })
+                .eq('id', conflictData.existingCard.id);
+
+            if (removeError) throw removeError;
+
+            // Add homepage badge to new card
+            const { error: addError } = await supabase
+                .from('awards')
+                .update({ is_show_on_home_page: true })
+                .eq('id', conflictData.newCard.id);
+
+            if (addError) throw addError;
+
+            toast.success(
+                `✨ Homepage badge moved! ${conflictData.newCard.name} is now featured!`
+            );
+            setShowConflictModal(false);
+            setConflictData({ newCard: null, existingCard: null });
+            await fetchSpotlights();
+        } catch (err) {
+            console.error('Replace error:', err);
+            toast.error('Error replacing homepage badge');
+        } finally {
+            setConflictLoading(false);
+        }
+    };
+
+    // ✨ HANDLE CONFLICT CANCELLATION ✨
+    const handleCancelConflict = () => {
+        setShowConflictModal(false);
+        setConflictData({ newCard: null, existingCard: null });
+    };
+
     // Toggle homepage visibility
     const handleHomepageToggle = async () => {
         if (!selectedForHomepage) return;
@@ -260,12 +338,11 @@ const Spotlight = () => {
 
             const newValue = !selectedForHomepage.is_show_on_home_page;
 
-            // If setting to true, remove from other spotlights first
+            // If setting to true, remove homepage badge from ALL other spotlights first
             if (newValue) {
                 const { error: updateError } = await supabase
                     .from('awards')
                     .update({ is_show_on_home_page: false })
-                    .eq('award_type', selectedForHomepage.award_type)
                     .neq('id', selectedForHomepage.id);
 
                 if (updateError) throw updateError;
@@ -284,7 +361,7 @@ const Spotlight = () => {
             }
 
             toast.success(
-                newValue ? 'Spotlight added to homepage!' : 'Spotlight removed from homepage!'
+                newValue ? '✨ Homepage badge added!' : '🚫 Homepage badge removed!'
             );
             setShowHomepageModal(false);
             setSelectedForHomepage(null);
@@ -520,9 +597,13 @@ const Spotlight = () => {
                                     >
                                         {/* Badge for homepage */}
                                         {spotlight.is_show_on_home_page && (
-                                            <div className={styles.homePageBadge}>
+                                            <motion.div
+                                                className={styles.homePageBadge}
+                                                animate={{ scale: [1, 1.05, 1] }}
+                                                transition={{ duration: 2, repeat: Infinity }}
+                                            >
                                                 <FaHome /> Homepage
-                                            </div>
+                                            </motion.div>
                                         )}
 
                                         {/* Image */}
@@ -578,10 +659,7 @@ const Spotlight = () => {
                                                 type="button"
                                                 className={`${styles.actionBtn} ${styles.homepageBtn} ${spotlight.is_show_on_home_page ? styles.active : ''
                                                     }`}
-                                                onClick={() => {
-                                                    setSelectedForHomepage(spotlight);
-                                                    setShowHomepageModal(true);
-                                                }}
+                                                onClick={() => handleHomepageClick(spotlight)}
                                                 whileHover={{ scale: 1.1 }}
                                                 whileTap={{ scale: 0.95 }}
                                                 title={
@@ -694,6 +772,119 @@ const Spotlight = () => {
                 )}
             </AnimatePresence>
 
+            {/* ✨ CONFLICT MODAL - ONLY ONE HOMEPAGE BADGE ALLOWED GLOBALLY ✨ */}
+            <AnimatePresence>
+                {showConflictModal && conflictData.newCard && conflictData.existingCard && (
+                    <motion.div
+                        className={styles.modalOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={handleCancelConflict}
+                    >
+                        <motion.div
+                            className={styles.modal}
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className={styles.modalHeader}>
+                                <FaExclamationTriangle className={styles.warningIcon} />
+                                <h3>🎖️ Only One Homepage Badge!</h3>
+                            </div>
+                            <p className={styles.modalBody}>
+                                <strong>{conflictData.existingCard.name}</strong> is currently featured on the homepage.
+                            </p>
+                            <p className={styles.modalBody}>
+                                To feature <strong>{conflictData.newCard.name}</strong> instead, you must first remove the homepage badge from{' '}
+                                <strong>{conflictData.existingCard.name}</strong>.
+                            </p>
+
+                            {/* Comparison Cards */}
+                            <div className={styles.comparisonContainer}>
+                                <div className={styles.comparisonCard}>
+                                    <div className={styles.comparisonLabel}>Currently Featured</div>
+                                    <Image
+                                        src={conflictData.existingCard.image_url}
+                                        alt={conflictData.existingCard.name}
+                                        width={100}
+                                        height={100}
+                                        className={styles.comparisonImage}
+                                        unoptimized
+                                    />
+                                    <div className={styles.comparisonName}>{conflictData.existingCard.name}</div>
+                                    <div className={styles.comparisonType}>
+                                        {conflictData.existingCard.award_type === 'weekly'
+                                            ? '⭐ Weekly'
+                                            : conflictData.existingCard.award_type === 'monthly'
+                                                ? '✨ Monthly'
+                                                : '🏆 Yearly'}
+                                    </div>
+                                </div>
+
+                                <div className={styles.comparisonArrow}>↔️</div>
+
+                                <div className={styles.comparisonCard}>
+                                    <div className={styles.comparisonLabel}>Want to Feature</div>
+                                    <Image
+                                        src={conflictData.newCard.image_url}
+                                        alt={conflictData.newCard.name}
+                                        width={100}
+                                        height={100}
+                                        className={styles.comparisonImage}
+                                        unoptimized
+                                    />
+                                    <div className={styles.comparisonName}>{conflictData.newCard.name}</div>
+                                    <div className={styles.comparisonType}>
+                                        {conflictData.newCard.award_type === 'weekly'
+                                            ? '⭐ Weekly'
+                                            : conflictData.newCard.award_type === 'monthly'
+                                                ? '✨ Monthly'
+                                                : '🏆 Yearly'}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className={styles.infoBox}>
+                                <p>💡 <strong>Tip:</strong> Click "Replace Badge" to automatically remove the badge from {conflictData.existingCard.name} and add it to {conflictData.newCard.name}.</p>
+                            </div>
+
+                            <div className={styles.modalActions}>
+                                <motion.button
+                                    type="button"
+                                    className={`${styles.modalBtn} ${styles.cancelBtn}`}
+                                    onClick={handleCancelConflict}
+                                    disabled={conflictLoading}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    Cancel
+                                </motion.button>
+                                <motion.button
+                                    type="button"
+                                    className={`${styles.modalBtn} ${styles.confirmBtn}`}
+                                    onClick={handleReplaceHomepageCard}
+                                    disabled={conflictLoading}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    {conflictLoading ? (
+                                        <>
+                                            <FaSpinner className={styles.spinnerIcon} />
+                                            Replacing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <FaCheck />
+                                            Replace Badge
+                                        </>
+                                    )}
+                                </motion.button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Homepage Toggle Modal */}
             <AnimatePresence>
                 {showHomepageModal && selectedForHomepage && (
@@ -715,21 +906,18 @@ const Spotlight = () => {
                                 <FaHome className={styles.infoIcon} />
                                 <h3>
                                     {selectedForHomepage.is_show_on_home_page
-                                        ? 'Remove from Homepage'
-                                        : 'Add to Homepage'}
+                                        ? 'Remove Homepage Badge'
+                                        : 'Add Homepage Badge'}
                                 </h3>
                             </div>
                             <p className={styles.modalBody}>
                                 {selectedForHomepage.is_show_on_home_page ? (
                                     <>
-                                        Remove <strong>{selectedForHomepage.name}</strong>'s spotlight
-                                        from the homepage?
+                                        Remove the homepage badge from <strong>{selectedForHomepage.name}</strong>'s spotlight?
                                     </>
                                 ) : (
                                     <>
-                                        Add <strong>{selectedForHomepage.name}</strong>'s spotlight to
-                                        the homepage? This will remove any other{' '}
-                                        {selectedForHomepage.award_type} spotlight from homepage.
+                                        Add the homepage badge to <strong>{selectedForHomepage.name}</strong>'s spotlight?
                                     </>
                                 )}
                             </p>

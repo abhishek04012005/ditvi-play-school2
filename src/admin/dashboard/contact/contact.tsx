@@ -16,12 +16,20 @@ import {
     FaTimes,
     FaCheck,
     FaClock,
+    FaHistory,
+    FaTrash,
 } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
 import styles from './contact.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
+
+interface NoteEntry {
+    text: string;
+    timestamp: string;
+    id: string;
+}
 
 interface Contact {
     id: string;
@@ -31,8 +39,7 @@ interface Contact {
     message: string;
     status: 'new' | 'replied' | 'resolved' | 'archived';
     created_at: string;
-    notes?: string;
-    notes_updated_at?: string;
+    notes?: NoteEntry[] | null;
 }
 
 interface StatusCard {
@@ -57,7 +64,11 @@ const ContactDashboard = () => {
     const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
     const [notesModalOpen, setNotesModalOpen] = useState(false);
     const [selectedContactId, setSelectedContactId] = useState<string | null>(null);
-    const [noteText, setNoteText] = useState('');
+    const [newNoteText, setNewNoteText] = useState('');
+    const [noteEntries, setNoteEntries] = useState<NoteEntry[]>([]);
+    const [isEditingNewNote, setIsEditingNewNote] = useState(false);
+    const [savingNote, setSavingNote] = useState(false);
+    const [deletingNoteId, setDeletingNoteId] = useState<string | null>(null);
 
     useEffect(() => {
         fetchContacts();
@@ -71,11 +82,39 @@ const ContactDashboard = () => {
                 .select('*')
                 .order('created_at', { ascending: false });
 
-            if (error) throw error;
-            setContacts(data || []);
+            if (error) {
+                console.error('Fetch error:', error);
+                throw error;
+            }
+
+            // ✨ PROCESS NOTES FROM JSONB COLUMN ✨
+            const processedData = (data || []).map((contact: any) => {
+                let notes: NoteEntry[] = [];
+
+                // Supabase returns JSONB as object directly, not string
+                if (contact.notes && Array.isArray(contact.notes)) {
+                    notes = contact.notes as NoteEntry[];
+                } else if (typeof contact.notes === 'string') {
+                    // Fallback for string format
+                    try {
+                        notes = JSON.parse(contact.notes);
+                    } catch (e) {
+                        console.error('Error parsing notes:', e);
+                        notes = [];
+                    }
+                }
+
+                return {
+                    ...contact,
+                    notes: notes.length > 0 ? notes : null,
+                };
+            });
+
+            setContacts(processedData);
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error fetching contacts:', error);
             toast.error('Failed to fetch contacts');
+            setContacts([]);
         } finally {
             setLoading(false);
         }
@@ -207,53 +246,181 @@ const ContactDashboard = () => {
         }
     };
 
+    // ✨ OPEN NOTES MODAL ✨
     const openNotesModal = (contact: Contact) => {
         setSelectedContactId(contact.id);
-        setNoteText(contact.notes || '');
+        setNoteEntries(contact.notes || []);
+        setNewNoteText('');
+        setIsEditingNewNote(false);
         setNotesModalOpen(true);
     };
 
+    // ✨ CLOSE NOTES MODAL ✨
     const closeNotesModal = () => {
         setNotesModalOpen(false);
         setSelectedContactId(null);
-        setNoteText('');
+        setNoteEntries([]);
+        setNewNoteText('');
+        setIsEditingNewNote(false);
+        setDeletingNoteId(null);
     };
 
-    const saveNote = async () => {
-        if (!selectedContactId) return;
+    // ✨ SAVE NEW NOTE ✨
+    const saveNewNote = async () => {
+        if (!selectedContactId) {
+            console.error('❌ No contact selected');
+            toast.error('Please select a contact first');
+            return;
+        }
+
+        if (!newNoteText.trim()) {
+            toast.error('Please enter a note');
+            return;
+        }
 
         try {
-            const { error } = await supabase
+            setSavingNote(true);
+
+            // Create new note entry with timestamp
+            const newEntry: NoteEntry = {
+                id: Date.now().toString(),
+                text: newNoteText.trim(),
+                timestamp: new Date().toISOString(),
+            };
+
+            // Add to existing entries
+            const updatedNotes = [...noteEntries, newEntry];
+
+            console.log('📝 Saving notes to JSONB:', updatedNotes);
+
+            // ✨ SAVE DIRECTLY AS JSONB ARRAY ✨
+            const { data, error } = await supabase
                 .from('contacts')
                 .update({
-                    notes: noteText,
-                    notes_updated_at: new Date().toISOString(),
+                    notes: updatedNotes,
                 })
-                .eq('id', selectedContactId);
+                .eq('id', selectedContactId)
+                .select();
 
-            if (error) throw error;
+            if (error) {
+                console.error('❌ Supabase error:', error);
+                throw error;
+            }
 
+            if (!data || data.length === 0) {
+                throw new Error('Failed to update contact - no data returned');
+            }
+
+            console.log('✅ Note saved successfully:', data[0]);
+
+            // Update local state
             setContacts((prev) =>
                 prev.map((contact) =>
                     contact.id === selectedContactId
                         ? {
                             ...contact,
-                            notes: noteText,
-                            notes_updated_at: new Date().toISOString(),
+                            notes: updatedNotes,
                         }
                         : contact
                 )
             );
 
-            toast.success('Note saved successfully');
-            closeNotesModal();
+            // Reset form
+            setNoteEntries(updatedNotes);
+            setNewNoteText('');
+            setIsEditingNewNote(false);
+            toast.success('✨ Note added successfully');
         } catch (error) {
-            console.error('Error:', error);
+            console.error('❌ Error saving note:', error);
             toast.error('Failed to save note');
+        } finally {
+            setSavingNote(false);
         }
     };
 
-    if(loading) {
+    // ✨ DELETE NOTE ENTRY - FIXED ✨
+    const deleteNoteEntry = async (noteId: string) => {
+        if (!selectedContactId) {
+            console.error('❌ No contact selected');
+            toast.error('Please select a contact first');
+            return;
+        }
+
+        try {
+            // ✨ FIXED: Set the specific note ID being deleted ✨
+            setDeletingNoteId(noteId);
+
+            console.log('🗑️ Deleting note ID:', noteId);
+
+            // Remove the entry from array
+            const updatedNotes = noteEntries.filter((entry) => entry.id !== noteId);
+
+            console.log('🗑️ Updated notes after deletion:', updatedNotes);
+
+            // ✨ UPDATE JSONB COLUMN ✨
+            const { data, error } = await supabase
+                .from('contacts')
+                .update({
+                    notes: updatedNotes.length > 0 ? updatedNotes : null,
+                })
+                .eq('id', selectedContactId)
+                .select();
+
+            if (error) {
+                console.error('❌ Supabase error:', error);
+                throw error;
+            }
+
+            if (!data || data.length === 0) {
+                throw new Error('Failed to update contact - no data returned');
+            }
+
+            console.log('✅ Note deleted successfully:', data[0]);
+
+            // ✨ FIXED: Update local state immediately ✨
+            setNoteEntries(updatedNotes);
+
+            // Update main contacts list
+            setContacts((prev) =>
+                prev.map((contact) =>
+                    contact.id === selectedContactId
+                        ? {
+                            ...contact,
+                            notes: updatedNotes.length > 0 ? updatedNotes : null,
+                        }
+                        : contact
+                )
+            );
+
+            toast.success('✅ Note deleted successfully');
+        } catch (error) {
+            console.error('❌ Error deleting note:', error);
+            toast.error('Failed to delete note');
+        } finally {
+            // ✨ FIXED: Reset deletion state ✨
+            setDeletingNoteId(null);
+        }
+    };
+
+    // ✨ FORMAT TIMESTAMP ✨
+    const formatTimestamp = (timestamp: string) => {
+        try {
+            const date = new Date(timestamp);
+            return date.toLocaleDateString('en-US', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
+            });
+        } catch (e) {
+            console.error('Error formatting timestamp:', e);
+            return timestamp;
+        }
+    };
+
+    if (loading) {
         return <Loader isVisible={true} message="Loading Contacts..." fullScreen={true} />;
     }
 
@@ -386,12 +553,14 @@ const ContactDashboard = () => {
                                         </td>
                                         <td>
                                             <button
-                                                className={`${styles.notesBtn} ${contact.notes ? styles.hasNotes : ''}`}
+                                                className={`${styles.notesBtn} ${contact.notes && contact.notes.length > 0 ? styles.hasNotes : ''}`}
                                                 onClick={() => openNotesModal(contact)}
-                                                title={contact.notes ? contact.notes : 'Add note'}
+                                                title={contact.notes && contact.notes.length > 0 ? `${contact.notes.length} notes` : 'Add note'}
                                             >
                                                 <FaStickyNote />
-                                                {contact.notes && <span className={styles.notesIndicator}></span>}
+                                                {contact.notes && contact.notes.length > 0 && (
+                                                    <span className={styles.notesIndicator}>{contact.notes.length}</span>
+                                                )}
                                             </button>
                                         </td>
                                         <td>
@@ -425,30 +594,54 @@ const ContactDashboard = () => {
             <NotesModal
                 isOpen={notesModalOpen}
                 onClose={closeNotesModal}
-                noteText={noteText}
-                setNoteText={setNoteText}
-                onSave={saveNote}
+                noteEntries={noteEntries}
+                newNoteText={newNoteText}
+                setNewNoteText={setNewNoteText}
+                isEditingNewNote={isEditingNewNote}
+                setIsEditingNewNote={setIsEditingNewNote}
+                onSaveNewNote={saveNewNote}
+                onDeleteNote={deleteNoteEntry}
                 contact={contacts.find(c => c.id === selectedContactId)}
+                formatTimestamp={formatTimestamp}
+                savingNote={savingNote}
+                deletingNoteId={deletingNoteId}
             />
         </div>
     );
 };
 
+// ✨ NOTES MODAL COMPONENT - UPDATED ✨
 const NotesModal = ({
     isOpen,
     onClose,
-    noteText,
-    setNoteText,
-    onSave,
+    noteEntries,
+    newNoteText,
+    setNewNoteText,
+    isEditingNewNote,
+    setIsEditingNewNote,
+    onSaveNewNote,
+    onDeleteNote,
     contact,
+    formatTimestamp,
+    savingNote,
+    deletingNoteId,
 }: {
     isOpen: boolean;
     onClose: () => void;
-    noteText: string;
-    setNoteText: (text: string) => void;
-    onSave: () => void;
+    noteEntries: NoteEntry[];
+    newNoteText: string;
+    setNewNoteText: (text: string) => void;
+    isEditingNewNote: boolean;
+    setIsEditingNewNote: (editing: boolean) => void;
+    onSaveNewNote: () => void;
+    onDeleteNote: (noteId: string) => void;
     contact?: Contact;
+    formatTimestamp: (timestamp: string) => string;
+    savingNote?: boolean;
+    deletingNoteId?: string | null;
 }) => {
+    const isProcessing = savingNote || !!deletingNoteId;
+
     return (
         <AnimatePresence>
             {isOpen && (
@@ -469,17 +662,11 @@ const NotesModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2>Notes for {contact?.name}</h2>
+                                <h2>📝 Notes for {contact?.name}</h2>
                                 <p>{contact?.email} • {contact?.phone}</p>
-                                {contact?.notes_updated_at && (
-                                    <p className={styles.lastUpdated}>
-                                        Last updated: {new Date(contact.notes_updated_at).toLocaleDateString('en-US', {
-                                            day: '2-digit',
-                                            month: 'short',
-                                            year: 'numeric',
-                                            hour: '2-digit',
-                                            minute: '2-digit',
-                                        })}
+                                {noteEntries.length > 0 && (
+                                    <p className={styles.notesCount}>
+                                        <FaHistory /> {noteEntries.length} note{noteEntries.length !== 1 ? 's' : ''} saved
                                     </p>
                                 )}
                             </div>
@@ -487,35 +674,114 @@ const NotesModal = ({
                                 className={styles.closeBtn}
                                 onClick={onClose}
                                 aria-label="Close"
+                                disabled={isProcessing}
                             >
                                 <FaTimes />
                             </button>
                         </div>
 
                         <div className={styles.modalContent}>
-                            <textarea
-                                value={noteText}
-                                onChange={(e) => setNoteText(e.target.value)}
-                                placeholder="Add your notes here... e.g., 'Follow up next week'"
-                                className={styles.noteTextarea}
-                                rows={8}
-                            />
+                            {/* Notes History Section */}
+                            {noteEntries.length > 0 && (
+                                <div className={styles.notesHistory}>
+                                    <h3 className={styles.notesHistoryTitle}>
+                                        <FaHistory /> Note History
+                                    </h3>
+                                    <div className={styles.notesList}>
+                                        <AnimatePresence>
+                                            {noteEntries.map((entry, index) => (
+                                                <motion.div
+                                                    key={entry.id}
+                                                    className={styles.noteEntry}
+                                                    initial={{ opacity: 0, y: 10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, y: -10 }}
+                                                    layout
+                                                >
+                                                    <div className={styles.noteEntryHeader}>
+                                                        <span className={styles.noteNumber}>Note #{index + 1}</span>
+                                                        <span className={styles.noteTimestamp}>
+                                                            🕒 {formatTimestamp(entry.timestamp)}
+                                                        </span>
+                                                        {/* ✨ FIXED: Pass entry.id to delete function ✨ */}
+                                                        <motion.button
+                                                            type="button"
+                                                            className={styles.deleteNoteBtn}
+                                                            onClick={() => {
+                                                                console.log('🗑️ Delete clicked for note:', entry.id);
+                                                                onDeleteNote(entry.id);
+                                                            }}
+                                                            whileHover={{ scale: 1.05 }}
+                                                            whileTap={{ scale: 0.95 }}
+                                                            title="Delete note"
+                                                            disabled={!!deletingNoteId}
+                                                        >
+                                                            {deletingNoteId === entry.id ? (
+                                                                <Loader isVisible={true} fullScreen={true} message="Deleting..." />
+                                                            ) : (
+                                                                <FaTrash />
+                                                            )}
+                                                        </motion.button>
+                                                    </div>
+                                                    <div className={styles.noteEntryContent}>
+                                                        <p>{entry.text}</p>
+                                                    </div>
+                                                </motion.div>
+                                            ))}
+                                        </AnimatePresence>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Divider */}
+                            {noteEntries.length > 0 && (
+                                <div className={styles.notesDivider}>
+                                    <span>New Note</span>
+                                </div>
+                            )}
+
+                            {/* New Note Input Section */}
+                            <div className={styles.newNoteSection}>
+                                <h3 className={styles.newNoteTitle}>
+                                    {isEditingNewNote ? '✍️ Write New Note' : '➕ Add New Note'}
+                                </h3>
+                                <textarea
+                                    value={newNoteText}
+                                    onChange={(e) => setNewNoteText(e.target.value)}
+                                    placeholder="Write your note here... e.g., 'Follow up next week'"
+                                    className={styles.noteTextarea}
+                                    rows={6}
+                                    onFocus={() => setIsEditingNewNote(true)}
+                                    disabled={isProcessing}
+                                />
+                            </div>
                         </div>
 
                         <div className={styles.modalFooter}>
                             <button
                                 className={styles.cancelBtn}
                                 onClick={onClose}
+                                disabled={isProcessing}
                             >
-                                <FaTimes /> Cancel
+                                <FaTimes /> Close
                             </button>
-                            <button
+                            <motion.button
                                 className={styles.saveBtn}
-                                onClick={onSave}
-                                disabled={!noteText.trim()}
+                                onClick={onSaveNewNote}
+                                disabled={!newNoteText.trim() || isProcessing}
+                                whileHover={{ scale: !newNoteText.trim() || isProcessing ? 1 : 1.05 }}
+                                whileTap={{ scale: !newNoteText.trim() || isProcessing ? 1 : 0.95 }}
                             >
-                                <FaCheck /> Save Note
-                            </button>
+                                {savingNote ? (
+                                    <>
+                                        <Loader isVisible={true} fullScreen={true} message="Saving..." />
+                                    </>
+                                ) : (
+                                    <>
+                                        <FaCheck /> Save New Note
+                                    </>
+                                )}
+                            </motion.button>
                         </div>
                     </motion.div>
                 </>

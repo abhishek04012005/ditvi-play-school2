@@ -331,7 +331,6 @@
   color: var(--primary-purple);
   margin-bottom: 0.5rem;
   font-size: 0.95rem;
-  text-transform: uppercase;
   letter-spacing: 0.8px;
 }
 
@@ -350,7 +349,7 @@
       rgba(249, 247, 255, 0.95) 100%);
   color: var(--primary-purple);
   font-family: "Verdana", sans-serif;
-    text-indent: 1.5rem;
+  text-indent: 1.5rem;
 
 }
 
@@ -425,7 +424,6 @@
   color: var(--primary-purple);
   margin-bottom: 0.5rem;
   font-size: 0.95rem;
-  text-transform: uppercase;
   letter-spacing: 0.8px;
 }
 
@@ -437,6 +435,11 @@
   text-align: center;
   transition: var(--transition);
   background: var(--white);
+}
+
+.fileColor {
+  color: var(--primary-yellow);
+  font-size: 2rem;
 }
 
 .fileUploadBox:hover {
@@ -454,10 +457,12 @@
 .uploadPlaceholder span {
   font-size: 1.6rem;
   margin-bottom: 0.25rem;
+  color: var(--primary-purple);
+
 }
 
 .uploadPlaceholder small {
-  color: var(--text-light);
+  color: var(--primary-purple);
   font-size: 0.85rem;
 }
 

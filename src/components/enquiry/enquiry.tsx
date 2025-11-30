@@ -304,7 +304,7 @@ const Enquiry = () => {
                         viewport={{ once: true }}
                     >
                         <div className={styles.formHeader}>
-                            <h3>Quick Enquiry Form</h3>
+                            <h3>Admission Enquiry Form</h3>
                             <p>Fill in your details and we'll contact you</p>
                         </div>
 
@@ -323,7 +323,7 @@ const Enquiry = () => {
                                         type="text"
                                         id="parentName"
                                         name="parentName"
-                                        placeholder="Enter parent's full name"
+                                        placeholder="Enter parent's name"
                                         value={formData.parentName}
                                         onChange={handleChange}
                                         className={errors.parentName ? styles.inputError : ''}
@@ -354,7 +354,7 @@ const Enquiry = () => {
                                         type="text"
                                         id="childName"
                                         name="childName"
-                                        placeholder="Enter child's full name"
+                                        placeholder="Enter child's name"
                                         value={formData.childName}
                                         onChange={handleChange}
                                         className={errors.childName ? styles.inputError : ''}

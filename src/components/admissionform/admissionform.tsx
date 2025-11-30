@@ -10,9 +10,10 @@ import {
   FaEnvelope,
   FaChild,
   FaBirthdayCake,
-  FaUsers,
-  FaHashtag,
-  FaSchool
+  FaUser,
+  FaPhone,
+  FaSchool,
+  FaFile
 } from "react-icons/fa";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -544,7 +545,7 @@ export default function AdmissionForm() {
                     >
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
-                          <label>Child's Full Name *</label>
+                          <label>Child's Name *</label>
                           <div className={styles.inputWrapper}>
                             <FaChild className={styles.icon} />
                             <input
@@ -552,7 +553,7 @@ export default function AdmissionForm() {
                               name="child_name"
                               value={formData.child_name}
                               onChange={handleInputChange}
-                              placeholder="Enter child's full name"
+                              placeholder="Enter child's name"
                               required
                             />
                           </div>
@@ -665,7 +666,7 @@ export default function AdmissionForm() {
                         <div className={styles.formGroup}>
                           <label>Parent's Full Name *</label>
                           <div className={styles.inputWrapper}>
-                            <FaUsers className={styles.icon} />
+                            <FaUser className={styles.icon} />
                             <input
                               type="text"
                               name="parent_name"
@@ -686,7 +687,7 @@ export default function AdmissionForm() {
                         <div className={styles.formGroup}>
                           <label>Mobile Number *</label>
                           <div className={styles.inputWrapper}>
-                            <FaHashtag className={styles.icon} />
+                            <FaPhone className={styles.icon} />
                             <input
                               type="tel"
                               name="parent_mobile_number"
@@ -734,7 +735,7 @@ export default function AdmissionForm() {
                     >
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
-                          <label>Program *</label>
+                          <label>Select Program *</label>
                           <div className={styles.radioGroup}>
                             {programs.map((p) => (
                               <div className={styles.radioItem} key={p.value}>
@@ -1010,7 +1011,7 @@ function FileUploadField({
           </div>
         ) : (
           <div className={styles.uploadPlaceholder}>
-            <span>📁 Click to upload file</span>
+            <span><FaFile className={styles.fileColor}/> Click to upload file</span>
             <small>Max 10MB • JPG, PNG, PDF</small>
           </div>
         )}
