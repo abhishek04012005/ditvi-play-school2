@@ -18,6 +18,8 @@ import {
     FaClock,
     FaHistory,
     FaTrash,
+    FaChevronLeft,
+    FaChevronRight,
 } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
@@ -54,6 +56,7 @@ interface StatusCard {
 
 type SortField = 'created_at' | 'name' | 'status';
 type SortOrder = 'asc' | 'desc';
+type ItemsPerPage = 20 | 50 | 100;
 
 const ContactDashboard = () => {
     const [contacts, setContacts] = useState<Contact[]>([]);
@@ -70,9 +73,18 @@ const ContactDashboard = () => {
     const [savingNote, setSavingNote] = useState(false);
     const [deletingNoteId, setDeletingNoteId] = useState<string | null>(null);
 
+    // ✨ PAGINATION STATE ✨
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState<ItemsPerPage>(20);
+
     useEffect(() => {
         fetchContacts();
     }, []);
+
+    // ✨ RESET TO PAGE 1 WHEN FILTER/SEARCH CHANGES ✨
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, filter]);
 
     const fetchContacts = async () => {
         try {
@@ -91,11 +103,9 @@ const ContactDashboard = () => {
             const processedData = (data || []).map((contact: any) => {
                 let notes: NoteEntry[] = [];
 
-                // Supabase returns JSONB as object directly, not string
                 if (contact.notes && Array.isArray(contact.notes)) {
                     notes = contact.notes as NoteEntry[];
                 } else if (typeof contact.notes === 'string') {
-                    // Fallback for string format
                     try {
                         notes = JSON.parse(contact.notes);
                     } catch (e) {
@@ -127,6 +137,7 @@ const ContactDashboard = () => {
             setSortField(field);
             setSortOrder('asc');
         }
+        setCurrentPage(1);
     };
 
     const getSortIcon = (field: SortField) => {
@@ -155,6 +166,12 @@ const ContactDashboard = () => {
                 ? a[sortField].localeCompare(b[sortField])
                 : b[sortField].localeCompare(a[sortField]);
         });
+
+    // ✨ PAGINATION LOGIC ✨
+    const totalPages = Math.ceil(sortedAndFilteredContacts.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedContacts = sortedAndFilteredContacts.slice(startIndex, endIndex);
 
     const statusCounts = {
         total: contacts.length,
@@ -246,7 +263,6 @@ const ContactDashboard = () => {
         }
     };
 
-    // ✨ OPEN NOTES MODAL ✨
     const openNotesModal = (contact: Contact) => {
         setSelectedContactId(contact.id);
         setNoteEntries(contact.notes || []);
@@ -255,7 +271,6 @@ const ContactDashboard = () => {
         setNotesModalOpen(true);
     };
 
-    // ✨ CLOSE NOTES MODAL ✨
     const closeNotesModal = () => {
         setNotesModalOpen(false);
         setSelectedContactId(null);
@@ -265,7 +280,6 @@ const ContactDashboard = () => {
         setDeletingNoteId(null);
     };
 
-    // ✨ SAVE NEW NOTE ✨
     const saveNewNote = async () => {
         if (!selectedContactId) {
             console.error('❌ No contact selected');
@@ -281,19 +295,16 @@ const ContactDashboard = () => {
         try {
             setSavingNote(true);
 
-            // Create new note entry with timestamp
             const newEntry: NoteEntry = {
                 id: Date.now().toString(),
                 text: newNoteText.trim(),
                 timestamp: new Date().toISOString(),
             };
 
-            // Add to existing entries
             const updatedNotes = [...noteEntries, newEntry];
 
             console.log('📝 Saving notes to JSONB:', updatedNotes);
 
-            // ✨ SAVE DIRECTLY AS JSONB ARRAY ✨
             const { data, error } = await supabase
                 .from('contacts')
                 .update({
@@ -313,7 +324,6 @@ const ContactDashboard = () => {
 
             console.log('✅ Note saved successfully:', data[0]);
 
-            // Update local state
             setContacts((prev) =>
                 prev.map((contact) =>
                     contact.id === selectedContactId
@@ -325,7 +335,6 @@ const ContactDashboard = () => {
                 )
             );
 
-            // Reset form
             setNoteEntries(updatedNotes);
             setNewNoteText('');
             setIsEditingNewNote(false);
@@ -338,7 +347,6 @@ const ContactDashboard = () => {
         }
     };
 
-    // ✨ DELETE NOTE ENTRY - FIXED ✨
     const deleteNoteEntry = async (noteId: string) => {
         if (!selectedContactId) {
             console.error('❌ No contact selected');
@@ -347,17 +355,14 @@ const ContactDashboard = () => {
         }
 
         try {
-            // ✨ FIXED: Set the specific note ID being deleted ✨
             setDeletingNoteId(noteId);
 
             console.log('🗑️ Deleting note ID:', noteId);
 
-            // Remove the entry from array
             const updatedNotes = noteEntries.filter((entry) => entry.id !== noteId);
 
             console.log('🗑️ Updated notes after deletion:', updatedNotes);
 
-            // ✨ UPDATE JSONB COLUMN ✨
             const { data, error } = await supabase
                 .from('contacts')
                 .update({
@@ -377,10 +382,8 @@ const ContactDashboard = () => {
 
             console.log('✅ Note deleted successfully:', data[0]);
 
-            // ✨ FIXED: Update local state immediately ✨
             setNoteEntries(updatedNotes);
 
-            // Update main contacts list
             setContacts((prev) =>
                 prev.map((contact) =>
                     contact.id === selectedContactId
@@ -397,12 +400,10 @@ const ContactDashboard = () => {
             console.error('❌ Error deleting note:', error);
             toast.error('Failed to delete note');
         } finally {
-            // ✨ FIXED: Reset deletion state ✨
             setDeletingNoteId(null);
         }
     };
 
-    // ✨ FORMAT TIMESTAMP ✨
     const formatTimestamp = (timestamp: string) => {
         try {
             const date = new Date(timestamp);
@@ -420,8 +421,26 @@ const ContactDashboard = () => {
         }
     };
 
+    // ✨ HANDLE ITEMS PER PAGE CHANGE ✨
+    const handleItemsPerPageChange = (value: ItemsPerPage) => {
+        setItemsPerPage(value);
+        setCurrentPage(1);
+    };
+
+    // ✨ HANDLE PAGE CHANGE ✨
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+            // Scroll to top of table
+            const tableElement = document.querySelector(`.${styles.tableWrapper}`);
+            if (tableElement) {
+                tableElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    };
+
     if (loading) {
-        return <Loader isVisible={true} message="Loading Contacts..." fullScreen={true} />;
+        return <Loader isVisible={true} message="Loading Contact Dashboard..." fullScreen={true} />;
     }
 
     return (
@@ -501,7 +520,7 @@ const ContactDashboard = () => {
                                     </td>
                                 </tr>
                             ) : (
-                                sortedAndFilteredContacts.map((contact) => (
+                                paginatedContacts.map((contact) => (
                                     <motion.tr
                                         key={contact.id}
                                         initial={{ opacity: 0 }}
@@ -588,6 +607,106 @@ const ContactDashboard = () => {
                         </tbody>
                     </table>
                 </div>
+
+                {/* ✨ PAGINATION SECTION ✨ */}
+                {sortedAndFilteredContacts.length > 0 && (
+                    <div className={styles.paginationSection}>
+                        <div className={styles.paginationInfo}>
+                            <p className={styles.paginationText}>
+                                Showing <strong>{startIndex + 1}</strong> to{' '}
+                                <strong>{Math.min(endIndex, sortedAndFilteredContacts.length)}</strong> of{' '}
+                                <strong>{sortedAndFilteredContacts.length}</strong> contacts
+                            </p>
+                        </div>
+
+                        <div className={styles.paginationControls}>
+                            {/* Items Per Page Selector */}
+                            <div className={styles.itemsPerPageSelector}>
+                                <label htmlFor="itemsPerPage">Items per page:</label>
+                                <select
+                                    id="itemsPerPage"
+                                    value={itemsPerPage}
+                                    onChange={(e) =>
+                                        handleItemsPerPageChange(Number(e.target.value) as ItemsPerPage)
+                                    }
+                                    className={styles.itemsPerPageSelect}
+                                >
+                                    <option value={20}>20</option>
+                                    <option value={50}>50</option>
+                                    <option value={100}>100</option>
+                                </select>
+                            </div>
+
+                            {/* Pagination Buttons */}
+                            <div className={styles.paginationButtons}>
+                                <motion.button
+                                    className={styles.paginationBtn}
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    whileHover={{ scale: currentPage === 1 ? 1 : 1.05 }}
+                                    whileTap={{ scale: currentPage === 1 ? 1 : 0.95 }}
+                                    title="Previous page"
+                                >
+                                    <FaChevronLeft /> Previous
+                                </motion.button>
+
+                                <div className={styles.pageNumbers}>
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                                        // Show first page, last page, current page, and nearby pages
+                                        const showPage =
+                                            page === 1 ||
+                                            page === totalPages ||
+                                            (page >= currentPage - 1 && page <= currentPage + 1);
+
+                                        if (!showPage) {
+                                            // Show ellipsis if needed
+                                            if (page === currentPage - 2 || page === currentPage + 2) {
+                                                return (
+                                                    <span key={`ellipsis-${page}`} className={styles.ellipsis}>
+                                                        ...
+                                                    </span>
+                                                );
+                                            }
+                                            return null;
+                                        }
+
+                                        return (
+                                            <motion.button
+                                                key={page}
+                                                className={`${styles.pageBtn} ${
+                                                    page === currentPage ? styles.active : ''
+                                                }`}
+                                                onClick={() => handlePageChange(page)}
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                            >
+                                                {page}
+                                            </motion.button>
+                                        );
+                                    })}
+                                </div>
+
+                                <motion.button
+                                    className={styles.paginationBtn}
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    whileHover={{ scale: currentPage === totalPages ? 1 : 1.05 }}
+                                    whileTap={{ scale: currentPage === totalPages ? 1 : 0.95 }}
+                                    title="Next page"
+                                >
+                                    Next <FaChevronRight />
+                                </motion.button>
+                            </div>
+
+                            {/* Page Info */}
+                            <div className={styles.pageInfo}>
+                                <p>
+                                    Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Notes Modal */}
@@ -610,7 +729,9 @@ const ContactDashboard = () => {
     );
 };
 
-// ✨ NOTES MODAL COMPONENT - UPDATED ✨
+// Rest of the component code remains the same...
+// (NotesModal, StatusCardComponent, etc.)
+
 const NotesModal = ({
     isOpen,
     onClose,
@@ -681,7 +802,6 @@ const NotesModal = ({
                         </div>
 
                         <div className={styles.modalContent}>
-                            {/* Notes History Section */}
                             {noteEntries.length > 0 && (
                                 <div className={styles.notesHistory}>
                                     <h3 className={styles.notesHistoryTitle}>
@@ -703,7 +823,6 @@ const NotesModal = ({
                                                         <span className={styles.noteTimestamp}>
                                                             🕒 {formatTimestamp(entry.timestamp)}
                                                         </span>
-                                                        {/* ✨ FIXED: Pass entry.id to delete function ✨ */}
                                                         <motion.button
                                                             type="button"
                                                             className={styles.deleteNoteBtn}
@@ -733,14 +852,12 @@ const NotesModal = ({
                                 </div>
                             )}
 
-                            {/* Divider */}
                             {noteEntries.length > 0 && (
                                 <div className={styles.notesDivider}>
                                     <span>New Note</span>
                                 </div>
                             )}
 
-                            {/* New Note Input Section */}
                             <div className={styles.newNoteSection}>
                                 <h3 className={styles.newNoteTitle}>
                                     {isEditingNewNote ? '✍️ Write New Note' : '➕ Add New Note'}

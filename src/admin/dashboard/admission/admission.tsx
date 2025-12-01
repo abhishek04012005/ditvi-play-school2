@@ -20,6 +20,8 @@ import {
     FaWhatsapp,
     FaHistory,
     FaTrash,
+    FaChevronLeft,
+    FaChevronRight,
 } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
@@ -79,6 +81,7 @@ interface StatusCard {
 
 type SortField = 'created_at' | 'child_name' | 'admission_status' | 'program_name';
 type SortOrder = 'asc' | 'desc';
+type ItemsPerPage = 20 | 50 | 100;
 
 const getGoogleDriveURL = (url: string, type: 'image' | 'pdf' | 'document') => {
     if (!url) return url;
@@ -140,6 +143,10 @@ export default function AdminAdmission() {
     const [sortField, setSortField] = useState<SortField>('created_at');
     const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
+    // ✨ PAGINATION STATE ✨
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState<ItemsPerPage>(20);
+
     // Notes Modal State
     const [notesModalOpen, setNotesModalOpen] = useState(false);
     const [selectedAdmissionIdForNotes, setSelectedAdmissionIdForNotes] = useState<string | null>(null);
@@ -163,6 +170,11 @@ export default function AdminAdmission() {
         };
         initializePage();
     }, []);
+
+    // ✨ RESET TO PAGE 1 WHEN FILTER/SEARCH CHANGES ✨
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, filter]);
 
     const fetchAdmissions = async () => {
         try {
@@ -209,6 +221,7 @@ export default function AdminAdmission() {
             setSortField(field);
             setSortOrder('asc');
         }
+        setCurrentPage(1);
     };
 
     const getSortIcon = (field: SortField) => {
@@ -247,6 +260,12 @@ export default function AdminAdmission() {
                 ? String(aVal).localeCompare(String(bVal))
                 : String(bVal).localeCompare(String(aVal));
         });
+
+    // ✨ PAGINATION LOGIC ✨
+    const totalPages = Math.ceil(sortedAndFilteredAdmissions.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedAdmissions = sortedAndFilteredAdmissions.slice(startIndex, endIndex);
 
     const statusCounts = {
         total: admissions.length,
@@ -515,6 +534,23 @@ export default function AdminAdmission() {
         }
     };
 
+    // ✨ HANDLE ITEMS PER PAGE CHANGE ✨
+    const handleItemsPerPageChange = (value: ItemsPerPage) => {
+        setItemsPerPage(value);
+        setCurrentPage(1);
+    };
+
+    // ✨ HANDLE PAGE CHANGE ✨
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+            const tableElement = document.querySelector(`.${styles.tableWrapper}`);
+            if (tableElement) {
+                tableElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    };
+
     if (pageLoading) {
         return <Loader isVisible={true} message="Loading Admissions..." fullScreen={true} />;
     }
@@ -604,7 +640,7 @@ export default function AdminAdmission() {
                                     </td>
                                 </tr>
                             ) : (
-                                sortedAndFilteredAdmissions.map((admission) => (
+                                paginatedAdmissions.map((admission) => (
                                     <motion.tr
                                         key={admission.id}
                                         initial={{ opacity: 0 }}
@@ -689,6 +725,104 @@ export default function AdminAdmission() {
                         </tbody>
                     </table>
                 </div>
+
+                {/* ✨ PAGINATION SECTION ✨ */}
+                {sortedAndFilteredAdmissions.length > 0 && (
+                    <div className={styles.paginationSection}>
+                        <div className={styles.paginationInfo}>
+                            <p className={styles.paginationText}>
+                                Showing <strong>{startIndex + 1}</strong> to{' '}
+                                <strong>{Math.min(endIndex, sortedAndFilteredAdmissions.length)}</strong> of{' '}
+                                <strong>{sortedAndFilteredAdmissions.length}</strong> admissions
+                            </p>
+                        </div>
+
+                        <div className={styles.paginationControls}>
+                            {/* Items Per Page Selector */}
+                            <div className={styles.itemsPerPageSelector}>
+                                <label htmlFor="itemsPerPage">Items per page:</label>
+                                <select
+                                    id="itemsPerPage"
+                                    value={itemsPerPage}
+                                    onChange={(e) =>
+                                        handleItemsPerPageChange(Number(e.target.value) as ItemsPerPage)
+                                    }
+                                    className={styles.itemsPerPageSelect}
+                                >
+                                    <option value={20}>20</option>
+                                    <option value={50}>50</option>
+                                    <option value={100}>100</option>
+                                </select>
+                            </div>
+
+                            {/* Pagination Buttons */}
+                            <div className={styles.paginationButtons}>
+                                <motion.button
+                                    className={styles.paginationBtn}
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    whileHover={{ scale: currentPage === 1 ? 1 : 1.05 }}
+                                    whileTap={{ scale: currentPage === 1 ? 1 : 0.95 }}
+                                    title="Previous page"
+                                >
+                                    <FaChevronLeft /> Previous
+                                </motion.button>
+
+                                <div className={styles.pageNumbers}>
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                                        const showPage =
+                                            page === 1 ||
+                                            page === totalPages ||
+                                            (page >= currentPage - 1 && page <= currentPage + 1);
+
+                                        if (!showPage) {
+                                            if (page === currentPage - 2 || page === currentPage + 2) {
+                                                return (
+                                                    <span key={`ellipsis-${page}`} className={styles.ellipsis}>
+                                                        ...
+                                                    </span>
+                                                );
+                                            }
+                                            return null;
+                                        }
+
+                                        return (
+                                            <motion.button
+                                                key={page}
+                                                className={`${styles.pageBtn} ${
+                                                    page === currentPage ? styles.active : ''
+                                                }`}
+                                                onClick={() => handlePageChange(page)}
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                            >
+                                                {page}
+                                            </motion.button>
+                                        );
+                                    })}
+                                </div>
+
+                                <motion.button
+                                    className={styles.paginationBtn}
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    whileHover={{ scale: currentPage === totalPages ? 1 : 1.05 }}
+                                    whileTap={{ scale: currentPage === totalPages ? 1 : 0.95 }}
+                                    title="Next page"
+                                >
+                                    Next <FaChevronRight />
+                                </motion.button>
+                            </div>
+
+                            {/* Page Info */}
+                            <div className={styles.pageInfo}>
+                                <p>
+                                    Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Notes Modal */}

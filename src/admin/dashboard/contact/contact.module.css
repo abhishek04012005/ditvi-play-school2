@@ -1701,3 +1701,406 @@
         border: 1px solid var(--border-color);
     }
 }
+
+/* ==================== PAGINATION SECTION ==================== */
+.paginationSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+    border-top: 2px solid var(--border-color);
+    background: linear-gradient(135deg, #f9f7ff 0%, #fafbfc 100%);
+    border-radius: 0 0 16px 16px;
+}
+
+.paginationInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.paginationText {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.paginationText strong {
+    color: var(--primary-purple);
+    font-weight: 700;
+}
+
+.paginationControls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+/* ==================== ITEMS PER PAGE SELECTOR ==================== */
+.itemsPerPageSelector {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.itemsPerPageSelector label {
+    color: var(--text-gray);
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.itemsPerPageSelect {
+    padding: 0.65rem 1.25rem;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--white);
+    color: var(--primary-purple);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Verdana', sans-serif;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath fill='%236a4c93' d='M7 10.5L1 4.5h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    padding-right: 2.5rem;
+    min-width: 100px;
+}
+
+.itemsPerPageSelect:hover {
+    border-color: var(--primary-purple);
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.1);
+    background-color: rgba(243, 232, 255, 0.5);
+}
+
+.itemsPerPageSelect:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
+}
+
+/* ==================== PAGINATION BUTTONS CONTAINER ==================== */
+.paginationButtons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.paginationBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1.4rem;
+    background: var(--primary-purple);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.2);
+    font-family: 'Verdana', sans-serif;
+}
+
+.paginationBtn:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(106, 76, 147, 0.3);
+}
+
+.paginationBtn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.paginationBtn:disabled {
+    background: var(--border-color);
+    color: var(--text-light);
+    cursor: not-allowed;
+    opacity: 0.6;
+    box-shadow: none;
+}
+
+/* ==================== PAGE NUMBERS ==================== */
+.pageNumbers {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pageBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--white);
+    color: var(--primary-purple);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    padding: 0;
+    font-family: 'Verdana', sans-serif;
+}
+
+.pageBtn:hover:not(.active) {
+    border-color: var(--primary-purple);
+    background: rgba(243, 232, 255, 0.5);
+    box-shadow: 0 2px 8px rgba(106, 76, 147, 0.1);
+}
+
+.pageBtn:active:not(.active) {
+    transform: scale(0.95);
+}
+
+.pageBtn.active {
+    background: var(--primary-purple);
+    color: var(--white);
+    border-color: var(--primary-purple);
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.25);
+}
+
+.ellipsis {
+    color: var(--text-light);
+    padding: 0 0.5rem;
+    font-weight: 600;
+    user-select: none;
+}
+
+/* ==================== PAGE INFO ==================== */
+.pageInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 150px;
+}
+
+.pageInfo p {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-align: center;
+}
+
+.pageInfo strong {
+    color: var(--primary-purple);
+    font-weight: 700;
+}
+
+/* ==================== RESPONSIVE - TABLET 1024px ==================== */
+@media (max-width: 1024px) {
+    .paginationSection {
+        padding: 1.5rem;
+        gap: 1.25rem;
+    }
+
+    .paginationControls {
+        gap: 1.25rem;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .itemsPerPageSelector {
+        justify-content: center;
+    }
+
+    .paginationButtons {
+        justify-content: center;
+    }
+
+    .pageInfo {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .paginationSection {
+        padding: 1.25rem;
+        gap: 1rem;
+    }
+
+    .paginationText {
+        font-size: 0.9rem;
+    }
+
+    .paginationControls {
+        gap: 1rem;
+        flex-direction: column;
+    }
+
+    .itemsPerPageSelector {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .itemsPerPageSelect {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .paginationButtons {
+        width: 100%;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .pageBtn {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+    }
+
+    .paginationBtn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+    .pageInfo {
+        width: 100%;
+    }
+
+    .pageInfo p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .paginationSection {
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+
+    .paginationText {
+        font-size: 0.85rem;
+    }
+
+    .paginationControls {
+        gap: 0.75rem;
+    }
+
+    .itemsPerPageSelector {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+    }
+
+    .itemsPerPageSelector label {
+        font-size: 0.85rem;
+        white-space: normal;
+    }
+
+    .itemsPerPageSelect {
+        width: 100%;
+    }
+
+    .paginationButtons {
+        width: 100%;
+        gap: 0.4rem;
+    }
+
+    .pageBtn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+
+    .paginationBtn {
+        padding: 0.55rem 1rem;
+        font-size: 0.85rem;
+        gap: 0.4rem;
+    }
+
+    .paginationBtn svg {
+        font-size: 0.8rem;
+    }
+
+    .ellipsis {
+        padding: 0 0.3rem;
+        font-size: 0.9rem;
+    }
+
+    .pageInfo p {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .paginationSection {
+        padding: 0.75rem;
+        gap: 0.5rem;
+    }
+
+    .paginationText {
+        font-size: 0.8rem;
+    }
+
+    .paginationControls {
+        gap: 0.5rem;
+    }
+
+    .itemsPerPageSelector {
+        width: 100%;
+        gap: 0.4rem;
+    }
+
+    .itemsPerPageSelector label {
+        font-size: 0.8rem;
+    }
+
+    .itemsPerPageSelect {
+        width: 100%;
+        font-size: 0.85rem;
+    }
+
+    .paginationButtons {
+        width: 100%;
+        gap: 0.3rem;
+    }
+
+    .pageBtn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.75rem;
+    }
+
+    .paginationBtn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+        gap: 0.3rem;
+    }
+
+    .paginationBtn svg {
+        font-size: 0.75rem;
+    }
+
+    .ellipsis {
+        padding: 0 0.2rem;
+        font-size: 0.85rem;
+    }
+
+    .pageInfo {
+        min-width: auto;
+    }
+
+    .pageInfo p {
+        font-size: 0.8rem;
+    }
+}
