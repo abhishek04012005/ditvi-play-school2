@@ -835,6 +835,7 @@ const NotesModal = ({
                                                             )}
                                                         </motion.button>
                                                     </div>
+                                                    <div className={styles.notesModalLining}></div>
                                                     <div className={styles.noteEntryContent}>
                                                         <p>{entry.text}</p>
                                                     </div>

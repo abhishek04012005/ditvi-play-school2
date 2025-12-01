@@ -109,11 +109,13 @@
 }
 
 @keyframes pulse {
+
     0%,
     100% {
         opacity: 1;
         transform: scale(1);
     }
+
     50% {
         opacity: 0.7;
         transform: scale(1.2);
@@ -448,11 +450,13 @@
 }
 
 @keyframes pulse-indicator {
+
     0%,
     100% {
         opacity: 1;
         transform: scale(1);
     }
+
     50% {
         opacity: 0.6;
         transform: scale(1.3);
@@ -1165,6 +1169,7 @@
         opacity: 0;
         transform: translateX(-10px) rotate(-20deg);
     }
+
     to {
         opacity: 1;
         transform: translateX(0) rotate(0deg);
@@ -2455,4 +2460,12 @@
     .pageInfo p {
         font-size: 0.8rem;
     }
+}
+
+.notesModalLining {
+    height: 2px;
+    width: 100%;
+    background-color: var(--primary-purple);
+    border-radius: 16px;
+    margin-bottom: 1rem;
 }

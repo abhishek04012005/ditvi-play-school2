@@ -2083,3 +2083,11 @@
         font-size: 0.8rem;
     }
 }
+
+.notesModalLining {
+    height: 2px;
+    width: 100%;
+    background-color: var(--primary-purple);
+    border-radius: 16px;
+    margin-bottom: 1rem;
+}

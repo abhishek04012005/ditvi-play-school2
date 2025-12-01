@@ -789,9 +789,8 @@ export default function AdminAdmission() {
                                         return (
                                             <motion.button
                                                 key={page}
-                                                className={`${styles.pageBtn} ${
-                                                    page === currentPage ? styles.active : ''
-                                                }`}
+                                                className={`${styles.pageBtn} ${page === currentPage ? styles.active : ''
+                                                    }`}
                                                 onClick={() => handlePageChange(page)}
                                                 whileHover={{ scale: 1.05 }}
                                                 whileTap={{ scale: 0.95 }}
@@ -1020,6 +1019,7 @@ const NotesModal = ({
                                                             )}
                                                         </motion.button>
                                                     </div>
+                                                    <div className={styles.notesModalLining}></div>
                                                     <div className={styles.noteEntryContent}>
                                                         <p>{entry.text}</p>
                                                     </div>
