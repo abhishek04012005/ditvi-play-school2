@@ -779,7 +779,7 @@ export default function AdmissionForm() {
                     >
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
-                          <label>Parent's Full Name *</label>
+                          <label>Parent's Name *</label>
                           <div className={styles.inputWrapper}>
                             <FaUser className={styles.icon} />
                             <input
@@ -787,7 +787,7 @@ export default function AdmissionForm() {
                               name="parent_name"
                               value={formData.parent_name}
                               onChange={handleInputChange}
-                              placeholder="Enter parent's full name"
+                              placeholder="Enter parent's name"
                               required
                             />
 

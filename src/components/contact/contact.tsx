@@ -26,7 +26,10 @@ const Contact = () => {
   });
 
   const [errors, setErrors] = useState({
+    name: "",
+    email: "",
     phone: "",
+    message: "",
   });
 
   const [submitStatus, setSubmitStatus] = useState<
@@ -48,6 +51,11 @@ const Contact = () => {
   const validatePhone = (phone: string): boolean => {
     const phoneRegex = /^[6-9]\d{9}$/;
     return phoneRegex.test(phone);
+  };
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
   const contactInfo = [
@@ -85,73 +93,46 @@ const Contact = () => {
     setShowModal(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    setLoading(true);
-    e.preventDefault();
+  const validateForm = (): boolean => {
+    const newErrors: typeof errors = {
+      name: "",
+      email: "",
+      phone: "",
+      message: "",
+    };
+    let isValid = true;
 
-    if (!validatePhone(formData.phone)) {
-      setErrors((prev) => ({
-        ...prev,
-        phone: "Please enter a valid phone number",
-      }));
-      showErrorModal(
-        "Please enter a valid 10-digit phone number starting with 6-9.",
-        "Invalid Phone Number"
-      );
-      return;
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+      isValid = false;
     }
 
-    setSubmitStatus("submitting");
-
-    try {
-      const { data, error } = await supabase.from("contacts").insert([
-        {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          message: formData.message,
-          status: "new",
-        },
-      ]);
-
-      if (error) {
-        throw error;
-      }
-
-      setSubmitStatus("success");
-
-      // Show success modal with confetti
-      showSuccessModal("We will get back to you soon.", "🎉Thank you!🎉");
-
-      // Show toast notification
-      setToastType("success");
-      setToastMessage("Your message has been sent successfully!");
-      setShowToast(true);
-
-      // Reset form
-      setFormData({ name: "", email: "", phone: "", message: "" });
-      setErrors({ phone: "" });
-
-      setTimeout(() => setSubmitStatus("idle"), 3000);
-    } catch (error) {
-      console.error("Error:", error);
-      setSubmitStatus("error");
-
-      // Show error modal
-      showErrorModal(
-        "Failed to send your message. Please try again later or contact us directly.",
-        "Failed to Send Message"
-      );
-
-      // Show error toast
-      setToastType("error");
-      setToastMessage("Failed to send message. Please try again.");
-      setShowToast(true);
-
-      setTimeout(() => setSubmitStatus("idle"), 3000);
-    } finally {
-      setLoading(false);
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    } else if (!validateEmail(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+      isValid = false;
     }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Phone number is required";
+      isValid = false;
+    } else if (!validatePhone(formData.phone)) {
+      newErrors.phone = "Please enter a valid 10-digit phone number";
+      isValid = false;
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = "Message is required";
+      isValid = false;
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = "Message must be at least 10 characters long";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
   };
 
   const handleChange = (
@@ -193,17 +174,135 @@ const Contact = () => {
             phone: "",
           }));
         }
-      } else {
+      } else if (truncated.length > 0 && truncated.length < 10) {
         setErrors((prev) => ({
           ...prev,
-          phone: "Phone number must be 10 digits",
+          phone: `Enter ${10 - truncated.length} more digits`,
         }));
       }
-    } else {
+    } else if (name === "email") {
       setFormData((prev) => ({
         ...prev,
         [name]: value,
       }));
+
+      if (value.trim()) {
+        if (!validateEmail(value)) {
+          setErrors((prev) => ({
+            ...prev,
+            email: "Please enter a valid email address",
+          }));
+        } else {
+          setErrors((prev) => ({
+            ...prev,
+            email: "",
+          }));
+        }
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          email: "",
+        }));
+      }
+    } else if (name === "name") {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+
+      if (value.trim()) {
+        setErrors((prev) => ({
+          ...prev,
+          name: "",
+        }));
+      }
+    } else if (name === "message") {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+
+      if (value.trim()) {
+        if (value.trim().length < 10) {
+          setErrors((prev) => ({
+            ...prev,
+            message: "Message must be at least 10 characters",
+          }));
+        } else {
+          setErrors((prev) => ({
+            ...prev,
+            message: "",
+          }));
+        }
+      }
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      showErrorModal(
+        "Please fill all fields correctly before submitting.",
+        "Validation Error"
+      );
+      return;
+    }
+
+    setLoading(true);
+    setSubmitStatus("submitting");
+
+    try {
+      const { data, error } = await supabase.from("contacts").insert([
+        {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          message: formData.message,
+          status: "new",
+        },
+      ]);
+
+      if (error) {
+        throw error;
+      }
+
+      setSubmitStatus("success");
+
+      // Show success modal with confetti
+      showSuccessModal(
+        "We will get back to you soon.",
+        "🎉Thank you!🎉"
+      );
+
+      // Show toast notification
+      setToastType("success");
+      setToastMessage("Your message has been sent successfully!");
+      setShowToast(true);
+
+      // Reset form
+      setFormData({ name: "", email: "", phone: "", message: "" });
+      setErrors({ name: "", email: "", phone: "", message: "" });
+
+      setTimeout(() => setSubmitStatus("idle"), 3000);
+    } catch (error) {
+      console.error("Error:", error);
+      setSubmitStatus("error");
+
+      // Show error modal
+      showErrorModal(
+        "Failed to send your message. Please try again later or contact us directly.",
+        "Failed to Send Message"
+      );
+
+      // Show error toast
+      setToastType("error");
+      setToastMessage("Failed to send message. Please try again.");
+      setShowToast(true);
+
+      setTimeout(() => setSubmitStatus("idle"), 3000);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -224,7 +323,7 @@ const Contact = () => {
           <div className={styles.circleInner}>
             <AirplanemodeActiveOutlinedIcon
               sx={{
-                fontSize: 40,
+                fontSize: 100,
                 transform: "scale(-1, 1)",
               }}
             />
@@ -300,36 +399,45 @@ const Contact = () => {
             <div className={styles.formGrid}>
               {/* Name Field */}
               <motion.div
-                className={`${styles.inputGroup} ${styles.fullWidth}`}
+                className={`${styles.formGroup} ${styles.fullWidth}`}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
                 viewport={{ once: true }}
               >
-                <label htmlFor="name">Your Name</label>
+                <label htmlFor="name">Your Name *</label>
                 <div className={styles.inputWrapper}>
                   <FaUser className={styles.icon} />
                   <input
                     id="name"
                     type="text"
                     name="name"
-                    placeholder="Enter your full name"
+                    placeholder="Enter your name"
                     value={formData.name}
                     onChange={handleChange}
-                    required
+                    className={errors.name ? styles.inputError : ""}
                   />
                 </div>
+                {errors.name && (
+                  <motion.span
+                    className={styles.errorMessage}
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    {errors.name}
+                  </motion.span>
+                )}
               </motion.div>
 
               {/* Email Field */}
               <motion.div
-                className={`${styles.inputGroup} ${styles.fullWidth}`}
+                className={`${styles.formGroup} ${styles.fullWidth}`}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 }}
                 viewport={{ once: true }}
               >
-                <label htmlFor="email">Your Email</label>
+                <label htmlFor="email">Your Email *</label>
                 <div className={styles.inputWrapper}>
                   <FaEnvelope className={styles.icon} />
                   <input
@@ -339,19 +447,29 @@ const Contact = () => {
                     placeholder="Enter your email address"
                     value={formData.email}
                     onChange={handleChange}
-                    required
+                    className={errors.email ? styles.inputError : ""}
                   />
                 </div>
+                {errors.email && (
+                  <motion.span
+                    className={styles.errorMessage}
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    {errors.email}
+                  </motion.span>
+                )}
               </motion.div>
+
               {/* Phone Field */}
               <motion.div
-                className={`${styles.inputGroup} ${styles.fullWidth}`}
+                className={`${styles.formGroup} ${styles.fullWidth}`}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
                 viewport={{ once: true }}
               >
-                <label htmlFor="phone">Your Phone</label>
+                <label htmlFor="phone">Your Phone *</label>
                 <div className={styles.inputWrapper}>
                   <FaPhone className={styles.icon} />
                   <input
@@ -383,13 +501,13 @@ const Contact = () => {
 
               {/* Message Field */}
               <motion.div
-                className={`${styles.inputGroup} ${styles.fullWidth}`}
+                className={`${styles.formGroup} ${styles.fullWidth}`}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.35 }}
                 viewport={{ once: true }}
               >
-                <label htmlFor="message">Your Message</label>
+                <label htmlFor="message">Your Message *</label>
                 <div className={styles.inputWrapper}>
                   <FaPen className={styles.icon} />
                   <textarea
@@ -398,9 +516,18 @@ const Contact = () => {
                     placeholder="Write your message here..."
                     value={formData.message}
                     onChange={handleChange}
-                    required
+                    className={errors.message ? styles.inputError : ""}
                   ></textarea>
                 </div>
+                {errors.message && (
+                  <motion.span
+                    className={styles.errorMessage}
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    {errors.message}
+                  </motion.span>
+                )}
               </motion.div>
             </div>
 
@@ -427,6 +554,8 @@ const Contact = () => {
                       : "Send Message"}
               </span>
             </motion.button>
+
+            <p className={styles.requiredNote}>* Required fields</p>
           </form>
         </motion.div>
       </div>

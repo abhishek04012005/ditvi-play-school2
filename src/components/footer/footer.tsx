@@ -24,6 +24,7 @@ const Footer = () => {
     { text: 'Admission', href: '/admission-form' },
     { text: 'Gallery', href: '/gallery' },
     { text: 'Contact', href: '/contact' },
+    { text: 'Admission Status', href: '/admission-status' },
     { text: 'Admin', href: '/admin/login' },
   ];
 

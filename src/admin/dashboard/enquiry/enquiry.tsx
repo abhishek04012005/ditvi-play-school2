@@ -15,10 +15,11 @@ import {
     FaWhatsapp,
     FaStickyNote,
     FaTimes,
-    FaEdit,
     FaCheck,
     FaHistory,
     FaTrash,
+    FaChevronLeft,
+    FaChevronRight,
 } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
@@ -55,6 +56,7 @@ interface StatusCard {
 
 type SortField = 'created_at' | 'child_name' | 'parent_name' | 'status';
 type SortOrder = 'asc' | 'desc';
+type ItemsPerPage = 20 | 50 | 100;
 
 const EnquiryDashboard = () => {
     const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
@@ -69,12 +71,20 @@ const EnquiryDashboard = () => {
     const [noteEntries, setNoteEntries] = useState<NoteEntry[]>([]);
     const [isEditingNewNote, setIsEditingNewNote] = useState(false);
     const [savingNote, setSavingNote] = useState(false);
-    // ✨ FIXED: Track per-note deletion state ✨
     const [deletingNoteId, setDeletingNoteId] = useState<string | null>(null);
+
+    // ✨ PAGINATION STATE ✨
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState<ItemsPerPage>(20);
 
     useEffect(() => {
         fetchEnquiries();
     }, []);
+
+    // ✨ RESET TO PAGE 1 WHEN FILTER/SEARCH CHANGES ✨
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, filter]);
 
     const fetchEnquiries = async () => {
         try {
@@ -93,11 +103,9 @@ const EnquiryDashboard = () => {
             const processedData = (data || []).map((enquiry: any) => {
                 let notes: NoteEntry[] = [];
 
-                // Supabase returns JSONB as object directly, not string
                 if (enquiry.notes && Array.isArray(enquiry.notes)) {
                     notes = enquiry.notes as NoteEntry[];
                 } else if (typeof enquiry.notes === 'string') {
-                    // Fallback for string format
                     try {
                         notes = JSON.parse(enquiry.notes);
                     } catch (e) {
@@ -129,6 +137,7 @@ const EnquiryDashboard = () => {
             setSortField(field);
             setSortOrder('asc');
         }
+        setCurrentPage(1);
     };
 
     const getSortIcon = (field: SortField) => {
@@ -136,12 +145,13 @@ const EnquiryDashboard = () => {
         return sortOrder === 'asc' ? <FaSortUp /> : <FaSortDown />;
     };
 
+    // ✨ FIXED FILTER WITH NULL CHECKING ✨
     const sortedAndFilteredEnquiries = enquiries
         .filter((enquiry) => {
             const matchesSearch =
-                enquiry.parent_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                enquiry.child_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                enquiry.phone.includes(searchTerm);
+                (enquiry.parent_name?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
+                (enquiry.child_name?.toLowerCase() ?? '').includes(searchTerm.toLowerCase()) ||
+                (enquiry.phone?.toString() ?? '').includes(searchTerm);
 
             const matchesFilter = filter === 'all' || enquiry.status === filter;
 
@@ -153,10 +163,20 @@ const EnquiryDashboard = () => {
                     ? new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
                     : new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
             }
+            
+            const aValue = (a[sortField] ?? '').toString();
+            const bValue = (b[sortField] ?? '').toString();
+            
             return sortOrder === 'asc'
-                ? a[sortField].localeCompare(b[sortField])
-                : b[sortField].localeCompare(a[sortField]);
+                ? aValue.localeCompare(bValue)
+                : bValue.localeCompare(aValue);
         });
+
+    // ✨ PAGINATION LOGIC ✨
+    const totalPages = Math.ceil(sortedAndFilteredEnquiries.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedEnquiries = sortedAndFilteredEnquiries.slice(startIndex, endIndex);
 
     const statusCounts = {
         total: enquiries.length,
@@ -248,7 +268,6 @@ const EnquiryDashboard = () => {
         }
     };
 
-    // ✨ OPEN NOTES MODAL ✨
     const openNotesModal = (enquiry: Enquiry) => {
         setSelectedEnquiryId(enquiry.id);
         setNoteEntries(enquiry.notes || []);
@@ -257,7 +276,6 @@ const EnquiryDashboard = () => {
         setNotesModalOpen(true);
     };
 
-    // ✨ CLOSE NOTES MODAL ✨
     const closeNotesModal = () => {
         setNotesModalOpen(false);
         setSelectedEnquiryId(null);
@@ -267,7 +285,6 @@ const EnquiryDashboard = () => {
         setDeletingNoteId(null);
     };
 
-    // ✨ SAVE NEW NOTE ✨
     const saveNewNote = async () => {
         if (!selectedEnquiryId) {
             console.error('❌ No enquiry selected');
@@ -283,19 +300,16 @@ const EnquiryDashboard = () => {
         try {
             setSavingNote(true);
 
-            // Create new note entry with timestamp
             const newEntry: NoteEntry = {
                 id: Date.now().toString(),
                 text: newNoteText.trim(),
                 timestamp: new Date().toISOString(),
             };
 
-            // Add to existing entries
             const updatedNotes = [...noteEntries, newEntry];
 
             console.log('📝 Saving notes to JSONB:', updatedNotes);
 
-            // ✨ SAVE DIRECTLY AS JSONB ARRAY ✨
             const { data, error } = await supabase
                 .from('enquiries')
                 .update({
@@ -315,7 +329,6 @@ const EnquiryDashboard = () => {
 
             console.log('✅ Note saved successfully:', data[0]);
 
-            // Update local state
             setEnquiries((prev) =>
                 prev.map((enquiry) =>
                     enquiry.id === selectedEnquiryId
@@ -327,7 +340,6 @@ const EnquiryDashboard = () => {
                 )
             );
 
-            // Reset form
             setNoteEntries(updatedNotes);
             setNewNoteText('');
             setIsEditingNewNote(false);
@@ -340,7 +352,6 @@ const EnquiryDashboard = () => {
         }
     };
 
-    // ✨ DELETE NOTE ENTRY - FIXED ✨
     const deleteNoteEntry = async (noteId: string) => {
         if (!selectedEnquiryId) {
             console.error('❌ No enquiry selected');
@@ -349,17 +360,14 @@ const EnquiryDashboard = () => {
         }
 
         try {
-            // ✨ FIXED: Set the specific note ID being deleted ✨
             setDeletingNoteId(noteId);
 
             console.log('🗑️ Deleting note ID:', noteId);
 
-            // Remove the entry from array
             const updatedNotes = noteEntries.filter((entry) => entry.id !== noteId);
 
             console.log('🗑️ Updated notes after deletion:', updatedNotes);
 
-            // ✨ UPDATE JSONB COLUMN ✨
             const { data, error } = await supabase
                 .from('enquiries')
                 .update({
@@ -379,10 +387,8 @@ const EnquiryDashboard = () => {
 
             console.log('✅ Note deleted successfully:', data[0]);
 
-            // ✨ FIXED: Update local state immediately ✨
             setNoteEntries(updatedNotes);
 
-            // Update main enquiries list
             setEnquiries((prev) =>
                 prev.map((enquiry) =>
                     enquiry.id === selectedEnquiryId
@@ -399,12 +405,10 @@ const EnquiryDashboard = () => {
             console.error('❌ Error deleting note:', error);
             toast.error('Failed to delete note');
         } finally {
-            // ✨ FIXED: Reset deletion state ✨
             setDeletingNoteId(null);
         }
     };
 
-    // ✨ FORMAT TIMESTAMP ✨
     const formatTimestamp = (timestamp: string) => {
         try {
             const date = new Date(timestamp);
@@ -419,6 +423,23 @@ const EnquiryDashboard = () => {
         } catch (e) {
             console.error('Error formatting timestamp:', e);
             return timestamp;
+        }
+    };
+
+    // ✨ HANDLE ITEMS PER PAGE CHANGE ✨
+    const handleItemsPerPageChange = (value: ItemsPerPage) => {
+        setItemsPerPage(value);
+        setCurrentPage(1);
+    };
+
+    // ✨ HANDLE PAGE CHANGE ✨
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+            const tableElement = document.querySelector(`.${styles.tableWrapper}`);
+            if (tableElement) {
+                tableElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
     };
 
@@ -505,7 +526,7 @@ const EnquiryDashboard = () => {
                                     </td>
                                 </tr>
                             ) : (
-                                sortedAndFilteredEnquiries.map((enquiry) => (
+                                paginatedEnquiries.map((enquiry) => (
                                     <motion.tr
                                         key={enquiry.id}
                                         initial={{ opacity: 0 }}
@@ -519,28 +540,32 @@ const EnquiryDashboard = () => {
                                                 year: 'numeric',
                                             })}
                                         </td>
-                                        <td>{enquiry.child_name}</td>
-                                        <td>{enquiry.parent_name}</td>
-                                        <td>{enquiry.program}</td>
+                                        <td>{enquiry.child_name || 'N/A'}</td>
+                                        <td>{enquiry.parent_name || 'N/A'}</td>
+                                        <td>{enquiry.program || 'N/A'}</td>
                                         <td>
                                             <div className={styles.contactLinks}>
-                                                <span>{enquiry.phone}</span>
-                                                <a
-                                                    href={`tel:${enquiry.phone}`}
-                                                    className={styles.phoneLink}
-                                                    title="Call"
-                                                >
-                                                    <FaPhoneAlt />
-                                                </a>
-                                                <a
-                                                    href={`https://wa.me/${enquiry.phone.replace(/\D/g, '')}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className={styles.whatsappLink}
-                                                    title="WhatsApp"
-                                                >
-                                                    <FaWhatsapp />
-                                                </a>
+                                                <span>{enquiry.phone || 'N/A'}</span>
+                                                {enquiry.phone && (
+                                                    <>
+                                                        <a
+                                                            href={`tel:${enquiry.phone}`}
+                                                            className={styles.phoneLink}
+                                                            title="Call"
+                                                        >
+                                                            <FaPhoneAlt />
+                                                        </a>
+                                                        <a
+                                                            href={`https://wa.me/${enquiry.phone.replace(/\D/g, '')}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className={styles.whatsappLink}
+                                                            title="WhatsApp"
+                                                        >
+                                                            <FaWhatsapp />
+                                                        </a>
+                                                    </>
+                                                )}
                                             </div>
                                         </td>
                                         <td>
@@ -580,6 +605,104 @@ const EnquiryDashboard = () => {
                         </tbody>
                     </table>
                 </div>
+
+                {/* ✨ PAGINATION SECTION ✨ */}
+                {sortedAndFilteredEnquiries.length > 0 && (
+                    <div className={styles.paginationSection}>
+                        <div className={styles.paginationInfo}>
+                            <p className={styles.paginationText}>
+                                Showing <strong>{startIndex + 1}</strong> to{' '}
+                                <strong>{Math.min(endIndex, sortedAndFilteredEnquiries.length)}</strong> of{' '}
+                                <strong>{sortedAndFilteredEnquiries.length}</strong> enquiries
+                            </p>
+                        </div>
+
+                        <div className={styles.paginationControls}>
+                            {/* Items Per Page Selector */}
+                            <div className={styles.itemsPerPageSelector}>
+                                <label htmlFor="itemsPerPage">Items per page:</label>
+                                <select
+                                    id="itemsPerPage"
+                                    value={itemsPerPage}
+                                    onChange={(e) =>
+                                        handleItemsPerPageChange(Number(e.target.value) as ItemsPerPage)
+                                    }
+                                    className={styles.itemsPerPageSelect}
+                                >
+                                    <option value={20}>20</option>
+                                    <option value={50}>50</option>
+                                    <option value={100}>100</option>
+                                </select>
+                            </div>
+
+                            {/* Pagination Buttons */}
+                            <div className={styles.paginationButtons}>
+                                <motion.button
+                                    className={styles.paginationBtn}
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    whileHover={{ scale: currentPage === 1 ? 1 : 1.05 }}
+                                    whileTap={{ scale: currentPage === 1 ? 1 : 0.95 }}
+                                    title="Previous page"
+                                >
+                                    <FaChevronLeft /> Previous
+                                </motion.button>
+
+                                <div className={styles.pageNumbers}>
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                                        const showPage =
+                                            page === 1 ||
+                                            page === totalPages ||
+                                            (page >= currentPage - 1 && page <= currentPage + 1);
+
+                                        if (!showPage) {
+                                            if (page === currentPage - 2 || page === currentPage + 2) {
+                                                return (
+                                                    <span key={`ellipsis-${page}`} className={styles.ellipsis}>
+                                                        ...
+                                                    </span>
+                                                );
+                                            }
+                                            return null;
+                                        }
+
+                                        return (
+                                            <motion.button
+                                                key={page}
+                                                className={`${styles.pageBtn} ${
+                                                    page === currentPage ? styles.active : ''
+                                                }`}
+                                                onClick={() => handlePageChange(page)}
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                            >
+                                                {page}
+                                            </motion.button>
+                                        );
+                                    })}
+                                </div>
+
+                                <motion.button
+                                    className={styles.paginationBtn}
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    whileHover={{ scale: currentPage === totalPages ? 1 : 1.05 }}
+                                    whileTap={{ scale: currentPage === totalPages ? 1 : 0.95 }}
+                                    title="Next page"
+                                >
+                                    Next <FaChevronRight />
+                                </motion.button>
+                            </div>
+
+                            {/* Page Info */}
+                            <div className={styles.pageInfo}>
+                                <p>
+                                    Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Notes Modal */}
@@ -602,7 +725,6 @@ const EnquiryDashboard = () => {
     );
 };
 
-// ✨ NOTES MODAL COMPONENT - UPDATED ✨
 const NotesModal = ({
     isOpen,
     onClose,
@@ -673,7 +795,6 @@ const NotesModal = ({
                         </div>
 
                         <div className={styles.modalContent}>
-                            {/* Notes History Section */}
                             {noteEntries.length > 0 && (
                                 <div className={styles.notesHistory}>
                                     <h3 className={styles.notesHistoryTitle}>
@@ -695,7 +816,6 @@ const NotesModal = ({
                                                         <span className={styles.noteTimestamp}>
                                                             🕒 {formatTimestamp(entry.timestamp)}
                                                         </span>
-                                                        {/* ✨ FIXED: Pass entry.id to delete function ✨ */}
                                                         <motion.button
                                                             type="button"
                                                             className={styles.deleteNoteBtn}
@@ -715,6 +835,7 @@ const NotesModal = ({
                                                             )}
                                                         </motion.button>
                                                     </div>
+                                                    <div className={styles.notesModalLining}></div>
                                                     <div className={styles.noteEntryContent}>
                                                         <p>{entry.text}</p>
                                                     </div>
@@ -725,14 +846,12 @@ const NotesModal = ({
                                 </div>
                             )}
 
-                            {/* Divider */}
                             {noteEntries.length > 0 && (
                                 <div className={styles.notesDivider}>
                                     <span>New Note</span>
                                 </div>
                             )}
 
-                            {/* New Note Input Section */}
                             <div className={styles.newNoteSection}>
                                 <h3 className={styles.newNoteTitle}>
                                     {isEditingNewNote ? '✍️ Write New Note' : '➕ Add New Note'}
@@ -740,7 +859,7 @@ const NotesModal = ({
                                 <textarea
                                     value={newNoteText}
                                     onChange={(e) => setNewNoteText(e.target.value)}
-                                    placeholder="Write your note here... e.g., 'Parent requested callback next week on Tuesday'"
+                                    placeholder="Write your note here..."
                                     className={styles.noteTextarea}
                                     rows={6}
                                     onFocus={() => setIsEditingNewNote(true)}

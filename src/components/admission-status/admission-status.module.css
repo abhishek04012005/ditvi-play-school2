@@ -1,0 +1,991 @@
+/* ==================== CSS Variables ==================== */
+:root {
+    --primary-yellow: #ffbf00;
+    --primary-purple: #6a4c93;
+    --white: #ffffff;
+    --black: #333333;
+    --text-gray: #666666;
+    --text-light: #999999;
+    --bg-light: #f9f9f9;
+    --border-color: #e5e5e5;
+    --error-red: #ef4444;
+    --success-green: #10b981;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== Main Section ==================== */
+.admissionStatusSection {
+    padding: 8rem 2rem;
+    background: linear-gradient(135deg, #f9f7ff 0%, #fafbfc 100%);
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+}
+
+.decorativeElements {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.circle {
+    position: absolute;
+    top: 10%;
+    right: 5%;
+    width: 300px;
+    height: 300px;
+    border: 3px dashed var(--primary-yellow);
+    border-radius: 50%;
+    opacity: 0.15;
+    animation: rotate 30s linear infinite;
+}
+
+.dot {
+    position: absolute;
+    bottom: 15%;
+    left: 3%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, var(--primary-purple) 2px, transparent 2px);
+    background-size: 25px 25px;
+    opacity: 0.08;
+}
+
+.squiggly {
+    position: absolute;
+    top: 30%;
+    left: 2%;
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(45deg, transparent 48%, var(--primary-purple) 49%, var(--primary-purple) 51%, transparent 52%) 0 0 / 1.5em 1.5em;
+    opacity: 0.08;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==================== Container ==================== */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* ==================== Search Container ==================== */
+.searchContainer {
+    margin-bottom: 3rem;
+}
+
+.formWrapper {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 50px rgba(106, 76, 147, 0.12);
+    border: 2px solid rgba(106, 76, 147, 0.08);
+}
+
+.searchForm {
+    margin-bottom: 1.5rem;
+}
+
+.inputGroup {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.inputWrapper {
+    flex: 1;
+    min-width: 250px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 1.25rem;
+    color: var(--primary-purple);
+    font-size: 1.1rem;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 1rem 1.25rem 1rem 3.5rem;
+    border: 2px solid var(--primary-purple);
+    border-radius: 14px;
+    background: rgba(106, 76, 147, 0.03);
+    font-size: 1rem;
+    color: var(--primary-purple);
+    transition: var(--transition);
+    font-family: inherit;
+}
+
+.searchInput::placeholder {
+    color: var(--text-gray);
+    opacity: 0.6;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
+}
+
+.searchInput:disabled {
+    background: var(--bg-light);
+    color: var(--text-light);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.searchBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-purple) 100%);
+    color: var(--white);
+    border: none;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 10px 25px rgba(106, 76, 147, 0.25);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-height: 50px;
+}
+
+.searchBtn:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--primary-yellow) 0%, #f0c656 100%);
+    color: var(--primary-purple);
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(255, 191, 0, 0.3);
+}
+
+.searchBtn:active:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.searchBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.spinnerIcon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.helpText {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    margin: 0;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* ==================== Empty State ==================== */
+.emptyState {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: var(--white);
+    border-radius: 20px;
+    border: 2px dashed var(--border-color);
+    box-shadow: 0 10px 30px rgba(106, 76, 147, 0.08);
+}
+
+.emptyStateIcon {
+    font-size: 4rem;
+    color: var(--primary-purple);
+    margin-bottom: 1.5rem;
+    opacity: 0.7;
+}
+
+.emptyState h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+    color: var(--primary-purple);
+    font-weight: 700;
+}
+
+.emptyState p {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* ==================== Error Card ==================== */
+.errorCard {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 2.5rem;
+    border: 2px solid var(--error-red);
+    box-shadow: 0 20px 50px rgba(239, 68, 68, 0.12);
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.errorIcon {
+    font-size: 4rem;
+    color: var(--error-red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 16px;
+    flex-shrink: 0;
+}
+
+.errorContent {
+    flex: 1;
+    min-width: 200px;
+}
+
+.errorContent h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.3rem;
+    color: var(--error-red);
+    font-weight: 700;
+}
+
+.errorContent p {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.resetBtn {
+    padding: 0.85rem 1.75rem;
+    background: var(--error-red);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.resetBtn:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.35);
+}
+
+.resetBtn:active {
+    transform: translateY(0);
+}
+
+/* ==================== Result Card ==================== */
+.resultCard {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 50px rgba(106, 76, 147, 0.12);
+    border: 2px solid rgba(106, 76, 147, 0.08);
+}
+
+.resultHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.resultHeaderLeft {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex: 1;
+    min-width: 250px;
+}
+
+.statusIconLarge {
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    flex-shrink: 0;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.resultHeaderLeft h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.6rem;
+    color: var(--primary-purple);
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.applicationDate {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.newSearchBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.5rem;
+    background: rgba(106, 76, 147, 0.1);
+    color: var(--primary-purple);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.newSearchBtn:hover {
+    background: rgba(106, 76, 147, 0.2);
+    border-color: var(--primary-purple);
+    transform: translateY(-2px);
+}
+
+.newSearchBtn:active {
+    transform: translateY(0);
+}
+
+/* ==================== Status Badge ==================== */
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(106, 76, 147, 0.08);
+    border-radius: 30px;
+    margin-bottom: 2rem;
+    border: 2px solid rgba(106, 76, 147, 0.15);
+}
+
+.statusBadgeDot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.2);
+    }
+}
+
+/* ==================== Details Grid ==================== */
+.detailsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.detailCard {
+    background: var(--bg-light);
+    padding: 1.25rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.detailCard:hover {
+    border-color: var(--primary-purple);
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.08);
+}
+
+.detailCard label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.detailCard p {
+    margin: 0;
+    font-size: 1.05rem;
+    color: var(--black);
+    font-weight: 600;
+    word-break: break-word;
+}
+
+/* ==================== Status Message ==================== */
+.statusMessage {
+    padding: 1.75rem;
+    border-radius: 14px;
+    border-left: 5px solid;
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    background-size: 100% 100%;
+}
+
+.statusMessage > div:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+}
+
+.statusMessage h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.statusMessage p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+/* ==================== Timeline Section ==================== */
+.timelineSection {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--bg-light);
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+}
+
+.timelineSection h4 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.05rem;
+    color: var(--primary-purple);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.timeline {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    position: relative;
+    padding: 1rem 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    right: 5%;
+    height: 2px;
+    background: var(--border-color);
+    z-index: 0;
+}
+
+.timelineStep {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    opacity: 0.6;
+    transition: var(--transition);
+}
+
+.timelineStep.completed {
+    opacity: 1;
+}
+
+.timelineCircle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--text-light);
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.timelineStep.completed .timelineCircle {
+    background: var(--success-green);
+    border-color: var(--success-green);
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.timelineStep p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-gray);
+    font-weight: 600;
+}
+
+.timelineStep.completed p {
+    color: var(--success-green);
+    font-weight: 700;
+}
+
+/* ==================== Next Steps Section ==================== */
+.nextStepsSection {
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(255, 191, 0, 0.08), rgba(106, 76, 147, 0.08));
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    border-left: 5px solid var(--primary-yellow);
+    margin-bottom: 2rem;
+}
+
+.nextStepsHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.nextStepsHeader svg {
+    font-size: 1.3rem;
+    color: var(--primary-yellow);
+}
+
+.nextStepsSection h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    color: var(--primary-purple);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.nextStepsSection p {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+/* ==================== Contact Section ==================== */
+.contactSection {
+    padding: 1.75rem;
+    background: var(--white);
+    border-radius: 14px;
+    border: 2px solid rgba(106, 76, 147, 0.15);
+}
+
+.contactSection h4 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.05rem;
+    color: var(--primary-purple);
+    font-weight: 700;
+}
+
+.contactSection > p {
+    margin: 0 0 1.25rem 0;
+    color: var(--text-gray);
+    font-size: 0.95rem;
+}
+
+.contactLinks {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.contactLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-purple) 100%);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    transition: var(--transition);
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.2);
+}
+
+.contactLink:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(106, 76, 147, 0.3);
+}
+
+.contactLink:active {
+    transform: translateY(-1px);
+}
+
+/* ==================== Responsive Design ==================== */
+
+@media (max-width: 1024px) {
+    .admissionStatusSection {
+        padding: 6rem 1.5rem;
+    }
+
+    .formWrapper {
+        padding: 2rem;
+    }
+
+    .resultCard {
+        padding: 2rem;
+    }
+
+    .resultHeader {
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .statusIconLarge {
+        width: 70px;
+        height: 70px;
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .admissionStatusSection {
+        padding: 4rem 1.5rem;
+    }
+
+    .circle {
+        width: 250px;
+        height: 250px;
+        top: 5%;
+        right: 2%;
+    }
+
+    .formWrapper {
+        padding: 1.75rem;
+    }
+
+    .inputGroup {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .inputWrapper {
+        min-width: auto;
+        width: 100%;
+    }
+
+    .searchBtn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .resultCard {
+        padding: 1.75rem;
+    }
+
+    .resultHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-bottom: 1.25rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .resultHeaderLeft {
+        width: 100%;
+    }
+
+    .newSearchBtn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .detailsGrid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+    }
+
+    .timeline {
+        gap: 0.5rem;
+    }
+
+    .timelineCircle {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+
+    .timelineStep p {
+        font-size: 0.8rem;
+    }
+
+    .contactLinks {
+        gap: 0.75rem;
+    }
+
+    .contactLink {
+        padding: 0.65rem 1.25rem;
+        font-size: 0.9rem;
+        flex: 1;
+        min-width: 150px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 640px) {
+    .admissionStatusSection {
+        padding: 3rem 1rem;
+    }
+
+    .circle {
+        width: 200px;
+        height: 200px;
+    }
+
+    .dot {
+        width: 150px;
+        height: 150px;
+    }
+
+    .formWrapper {
+        padding: 1.5rem;
+    }
+
+    .searchInput {
+        padding: 0.85rem 1rem 0.85rem 3.25rem;
+        font-size: 0.95rem;
+    }
+
+    .searchBtn {
+        padding: 0.85rem 1.5rem;
+        font-size: 0.9rem;
+        gap: 0.5rem;
+    }
+
+    .resultCard {
+        padding: 1.5rem;
+    }
+
+    .resultHeaderLeft h2 {
+        font-size: 1.3rem;
+    }
+
+    .statusIconLarge {
+        width: 60px;
+        height: 60px;
+        font-size: 1.8rem;
+    }
+
+    .detailsGrid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .statusMessage {
+        padding: 1.25rem;
+        gap: 1rem;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .statusMessage > div:first-child {
+        width: 100%;
+    }
+
+    .timeline {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+
+    .timeline::before {
+        display: none;
+    }
+
+    .timelineCircle {
+        width: 40px;
+        height: 40px;
+    }
+
+    .contactSection {
+        padding: 1.5rem;
+    }
+
+    .contactLinks {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .contactLink {
+        width: 100%;
+        min-width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .admissionStatusSection {
+        padding: 2rem 0.75rem;
+    }
+
+    .formWrapper {
+        padding: 1.25rem;
+    }
+
+    .searchInput {
+        padding: 0.75rem 0.9rem 0.75rem 3rem;
+        font-size: 0.9rem;
+    }
+
+    .searchBtn {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.85rem;
+    }
+
+    .helpText {
+        font-size: 0.85rem;
+    }
+
+    .emptyState {
+        padding: 2rem 1rem;
+    }
+
+    .emptyStateIcon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .emptyState h3 {
+        font-size: 1.2rem;
+    }
+
+    .resultCard {
+        padding: 1.25rem;
+    }
+
+    .resultHeaderLeft {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .resultHeaderLeft h2 {
+        font-size: 1.15rem;
+    }
+
+    .applicationDate {
+        font-size: 0.85rem;
+    }
+
+    .statusBadge {
+        padding: 0.65rem 1.25rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.85rem;
+    }
+
+    .detailCard label {
+        font-size: 0.75rem;
+    }
+
+    .detailCard p {
+        font-size: 0.95rem;
+    }
+
+    .statusMessage {
+        padding: 1rem;
+    }
+
+    .statusMessage h4 {
+        font-size: 1rem;
+    }
+
+    .statusMessage p {
+        font-size: 0.9rem;
+    }
+
+    .timelineStep {
+        gap: 0.5rem;
+    }
+
+    .timelineCircle {
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+    }
+
+    .timelineStep p {
+        font-size: 0.75rem;
+    }
+
+    .contactSection h4 {
+        font-size: 0.95rem;
+    }
+
+    .contactSection > p {
+        font-size: 0.85rem;
+    }
+
+    .contactLink {
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+        gap: 0.4rem;
+    }
+}
+
+
+/* ==================== Focus States ==================== */
+.searchBtn:focus-visible,
+.newSearchBtn:focus-visible,
+.resetBtn:focus-visible,
+.contactLink:focus-visible {
+    outline: 3px solid var(--primary-yellow);
+    outline-offset: 2px;
+}
+
+.searchInput:focus-visible {
+    outline: none;
+}

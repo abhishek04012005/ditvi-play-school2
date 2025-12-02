@@ -20,6 +20,8 @@ import {
     FaWhatsapp,
     FaHistory,
     FaTrash,
+    FaChevronLeft,
+    FaChevronRight,
 } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
@@ -79,6 +81,7 @@ interface StatusCard {
 
 type SortField = 'created_at' | 'child_name' | 'admission_status' | 'program_name';
 type SortOrder = 'asc' | 'desc';
+type ItemsPerPage = 20 | 50 | 100;
 
 const getGoogleDriveURL = (url: string, type: 'image' | 'pdf' | 'document') => {
     if (!url) return url;
@@ -131,22 +134,6 @@ const getStatus = (admission: Admission): Admission['admission_status'] => {
     return admission.admission_status || 'In Review';
 };
 
-const STATUS_OPTIONS: Array<'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected'> = [
-    'In Review',
-    'Reviewed',
-    'Interview Scheduled',
-    'Confirmed',
-    'Rejected',
-];
-
-const STATUS_COLORS: Record<string, { color: string; bgColor: string }> = {
-    'In Review': { color: '#3b82f6', bgColor: '#eff6ff' },
-    'Reviewed': { color: '#f59e0b', bgColor: '#fffbf0' },
-    'Interview Scheduled': { color: '#8b5cf6', bgColor: '#faf5ff' },
-    'Confirmed': { color: '#10b981', bgColor: '#f0fdf4' },
-    'Rejected': { color: '#ef4444', bgColor: '#fef2f2' },
-};
-
 export default function AdminAdmission() {
     const [admissions, setAdmissions] = useState<Admission[]>([]);
     const [loading, setLoading] = useState(true);
@@ -155,13 +142,22 @@ export default function AdminAdmission() {
     const [filter, setFilter] = useState<'all' | 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected'>('all');
     const [sortField, setSortField] = useState<SortField>('created_at');
     const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+
+    // ✨ PAGINATION STATE ✨
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState<ItemsPerPage>(20);
+
+    // Notes Modal State
     const [notesModalOpen, setNotesModalOpen] = useState(false);
-    const [selectedAdmissionId, setSelectedAdmissionId] = useState<string | null>(null);
+    const [selectedAdmissionIdForNotes, setSelectedAdmissionIdForNotes] = useState<string | null>(null);
     const [newNoteText, setNewNoteText] = useState('');
     const [noteEntries, setNoteEntries] = useState<NoteEntry[]>([]);
-    const [isEditingNewNote, setIsEditingNewNote] = useState(false);
     const [savingNote, setSavingNote] = useState(false);
     const [deletingNoteId, setDeletingNoteId] = useState<string | null>(null);
+
+    // Details Modal State
+    const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+    const [selectedAdmissionIdForDetails, setSelectedAdmissionIdForDetails] = useState<string | null>(null);
     const [previewModal, setPreviewModal] = useState<{ url: string; type: 'image' | 'pdf' | 'document'; name: string } | null>(null);
     const [statusUpdating, setStatusUpdating] = useState(false);
     const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -174,6 +170,11 @@ export default function AdminAdmission() {
         };
         initializePage();
     }, []);
+
+    // ✨ RESET TO PAGE 1 WHEN FILTER/SEARCH CHANGES ✨
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, filter]);
 
     const fetchAdmissions = async () => {
         try {
@@ -220,6 +221,7 @@ export default function AdminAdmission() {
             setSortField(field);
             setSortOrder('asc');
         }
+        setCurrentPage(1);
     };
 
     const getSortIcon = (field: SortField) => {
@@ -233,11 +235,13 @@ export default function AdminAdmission() {
             const parentName = getParentName(admission).toLowerCase();
             const email = getParentEmail(admission).toLowerCase();
             const mobile = getParentMobile(admission);
+            const admissionNumber = String(admission.admission_number).toLowerCase();
 
             const matchesSearch =
                 childName.includes(searchTerm.toLowerCase()) ||
                 parentName.includes(searchTerm.toLowerCase()) ||
                 email.includes(searchTerm.toLowerCase()) ||
+                admissionNumber.includes(searchTerm.toLowerCase()) ||
                 mobile.includes(searchTerm);
 
             const matchesFilter = filter === 'all' || getStatus(admission) === filter;
@@ -256,6 +260,12 @@ export default function AdminAdmission() {
                 ? String(aVal).localeCompare(String(bVal))
                 : String(bVal).localeCompare(String(aVal));
         });
+
+    // ✨ PAGINATION LOGIC ✨
+    const totalPages = Math.ceil(sortedAndFilteredAdmissions.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedAdmissions = sortedAndFilteredAdmissions.slice(startIndex, endIndex);
 
     const statusCounts = {
         total: admissions.length,
@@ -336,14 +346,12 @@ export default function AdminAdmission() {
         visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
     };
 
-    // ✨ FIXED: Update admission_status with comprehensive debugging ✨
     const handleStatusChange = async (id: string, newStatus: Admission['admission_status']) => {
         try {
             setStatusUpdating(true);
             setUpdatingId(id);
 
             console.log('🔄 Updating status for admission:', id, 'to:', newStatus);
-            console.log('📊 Update payload:', { admission_status: newStatus });
 
             const { data, error } = await supabase
                 .from('admission')
@@ -351,24 +359,20 @@ export default function AdminAdmission() {
                 .eq('id', id)
                 .select();
 
-            console.log('Response status:', data);
-            console.log('Response error:', error);
-
             if (error) {
-                console.error('❌ Supabase error object:', JSON.stringify(error, null, 2));
+                console.error('❌ Supabase error:', error);
                 toast.error(`Failed: ${error.message || 'Unknown error'}`);
                 return;
             }
 
             if (!data || data.length === 0) {
-                console.warn('⚠️ No rows updated. Check RLS policies.');
+                console.warn('⚠️ No rows updated.');
                 toast.error('Status not updated. Check permissions.');
                 return;
             }
 
-            console.log('✅ Status updated successfully. Rows affected:', data.length);
+            console.log('✅ Status updated successfully.');
 
-            // ✨ Update local state immediately ✨
             setAdmissions((prev) =>
                 prev.map((adm) =>
                     adm.id === id ? { ...adm, admission_status: newStatus } : adm
@@ -377,7 +381,7 @@ export default function AdminAdmission() {
 
             toast.success(`✅ Status changed to ${newStatus}`);
         } catch (error: any) {
-            console.error('❌ Try-catch error:', error);
+            console.error('❌ Error:', error);
             toast.error(`Error: ${error?.message || 'Unknown error'}`);
         } finally {
             setStatusUpdating(false);
@@ -385,29 +389,24 @@ export default function AdminAdmission() {
         }
     };
 
-    // ✨ OPEN NOTES MODAL ✨
+    // ✨ NOTES MODAL FUNCTIONS ✨
     const openNotesModal = (admission: Admission) => {
-        setSelectedAdmissionId(admission.id);
+        setSelectedAdmissionIdForNotes(admission.id);
         setNoteEntries(admission.notes || []);
         setNewNoteText('');
-        setIsEditingNewNote(false);
         setNotesModalOpen(true);
     };
 
-    // ✨ CLOSE NOTES MODAL ✨
     const closeNotesModal = () => {
         setNotesModalOpen(false);
-        setSelectedAdmissionId(null);
+        setSelectedAdmissionIdForNotes(null);
         setNoteEntries([]);
         setNewNoteText('');
-        setIsEditingNewNote(false);
         setDeletingNoteId(null);
     };
 
-    // ✨ SAVE NEW NOTE ✨
     const saveNewNote = async () => {
-        if (!selectedAdmissionId) {
-            console.error('❌ No admission selected');
+        if (!selectedAdmissionIdForNotes) {
             toast.error('Please select an admission first');
             return;
         }
@@ -428,26 +427,21 @@ export default function AdminAdmission() {
 
             const updatedNotes = [...noteEntries, newEntry];
 
-            console.log('📝 Saving notes to database. Notes array:', JSON.stringify(updatedNotes));
-
             const { error, data } = await supabase
                 .from('admission')
                 .update({
                     notes: updatedNotes,
                 })
-                .eq('id', selectedAdmissionId)
+                .eq('id', selectedAdmissionIdForNotes)
                 .select('id, notes');
 
             if (error) {
-                console.error('❌ Supabase error:', error);
                 throw error;
             }
 
-            console.log('✅ Note saved to database. Response:', data);
-
             setAdmissions((prev) =>
                 prev.map((admission) =>
-                    admission.id === selectedAdmissionId
+                    admission.id === selectedAdmissionIdForNotes
                         ? {
                             ...admission,
                             notes: updatedNotes,
@@ -458,20 +452,17 @@ export default function AdminAdmission() {
 
             setNoteEntries(updatedNotes);
             setNewNoteText('');
-            setIsEditingNewNote(false);
             toast.success('✨ Note saved successfully!');
         } catch (error) {
-            console.error('❌ Error saving note:', error);
-            toast.error('Failed to save note. Check console for details.');
+            console.error('Error saving note:', error);
+            toast.error('Failed to save note.');
         } finally {
             setSavingNote(false);
         }
     };
 
-    // ✨ DELETE NOTE ENTRY ✨
     const deleteNoteEntry = async (noteId: string) => {
-        if (!selectedAdmissionId) {
-            console.error('❌ No admission selected');
+        if (!selectedAdmissionIdForNotes) {
             toast.error('Please select an admission first');
             return;
         }
@@ -479,32 +470,25 @@ export default function AdminAdmission() {
         try {
             setDeletingNoteId(noteId);
 
-            console.log('🗑️ Deleting note ID:', noteId);
-
             const updatedNotes = noteEntries.filter((entry) => entry.id !== noteId);
 
-            console.log('🗑️ Updated notes after deletion:', JSON.stringify(updatedNotes));
-
-            const { error, data } = await supabase
+            const { error } = await supabase
                 .from('admission')
                 .update({
                     notes: updatedNotes.length > 0 ? updatedNotes : null,
                 })
-                .eq('id', selectedAdmissionId)
+                .eq('id', selectedAdmissionIdForNotes)
                 .select('id, notes');
 
             if (error) {
-                console.error('❌ Supabase error:', error);
                 throw error;
             }
-
-            console.log('✅ Note deleted from database:', data);
 
             setNoteEntries(updatedNotes);
 
             setAdmissions((prev) =>
                 prev.map((admission) =>
-                    admission.id === selectedAdmissionId
+                    admission.id === selectedAdmissionIdForNotes
                         ? {
                             ...admission,
                             notes: updatedNotes.length > 0 ? updatedNotes : null,
@@ -515,14 +499,24 @@ export default function AdminAdmission() {
 
             toast.success('✅ Note deleted successfully');
         } catch (error) {
-            console.error('❌ Error deleting note:', error);
-            toast.error('Failed to delete note. Check console for details.');
+            console.error('Error deleting note:', error);
+            toast.error('Failed to delete note.');
         } finally {
             setDeletingNoteId(null);
         }
     };
 
-    // ✨ FORMAT TIMESTAMP ✨
+    // ✨ DETAILS MODAL FUNCTIONS ✨
+    const openDetailsModal = (admission: Admission) => {
+        setSelectedAdmissionIdForDetails(admission.id);
+        setDetailsModalOpen(true);
+    };
+
+    const closeDetailsModal = () => {
+        setDetailsModalOpen(false);
+        setSelectedAdmissionIdForDetails(null);
+    };
+
     const formatTimestamp = (timestamp: string) => {
         try {
             const date = new Date(timestamp);
@@ -537,6 +531,23 @@ export default function AdminAdmission() {
         } catch (e) {
             console.error('Error formatting timestamp:', e);
             return timestamp;
+        }
+    };
+
+    // ✨ HANDLE ITEMS PER PAGE CHANGE ✨
+    const handleItemsPerPageChange = (value: ItemsPerPage) => {
+        setItemsPerPage(value);
+        setCurrentPage(1);
+    };
+
+    // ✨ HANDLE PAGE CHANGE ✨
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+            const tableElement = document.querySelector(`.${styles.tableWrapper}`);
+            if (tableElement) {
+                tableElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
     };
 
@@ -572,7 +583,7 @@ export default function AdminAdmission() {
                             <FaSearch className={styles.searchIcon} />
                             <input
                                 type="text"
-                                placeholder="Search by child name, parent name, email or phone..."
+                                placeholder="Search by child name, admission no., parent name, email or phone..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -629,7 +640,7 @@ export default function AdminAdmission() {
                                     </td>
                                 </tr>
                             ) : (
-                                sortedAndFilteredAdmissions.map((admission) => (
+                                paginatedAdmissions.map((admission) => (
                                     <motion.tr
                                         key={admission.id}
                                         initial={{ opacity: 0 }}
@@ -702,7 +713,7 @@ export default function AdminAdmission() {
                                         <td>
                                             <button
                                                 className={styles.viewBtn}
-                                                onClick={() => openNotesModal(admission)}
+                                                onClick={() => openDetailsModal(admission)}
                                                 title="View Details"
                                             >
                                                 <FaEye /> View
@@ -714,6 +725,103 @@ export default function AdminAdmission() {
                         </tbody>
                     </table>
                 </div>
+
+                {/* ✨ PAGINATION SECTION ✨ */}
+                {sortedAndFilteredAdmissions.length > 0 && (
+                    <div className={styles.paginationSection}>
+                        <div className={styles.paginationInfo}>
+                            <p className={styles.paginationText}>
+                                Showing <strong>{startIndex + 1}</strong> to{' '}
+                                <strong>{Math.min(endIndex, sortedAndFilteredAdmissions.length)}</strong> of{' '}
+                                <strong>{sortedAndFilteredAdmissions.length}</strong> admissions
+                            </p>
+                        </div>
+
+                        <div className={styles.paginationControls}>
+                            {/* Items Per Page Selector */}
+                            <div className={styles.itemsPerPageSelector}>
+                                <label htmlFor="itemsPerPage">Items per page:</label>
+                                <select
+                                    id="itemsPerPage"
+                                    value={itemsPerPage}
+                                    onChange={(e) =>
+                                        handleItemsPerPageChange(Number(e.target.value) as ItemsPerPage)
+                                    }
+                                    className={styles.itemsPerPageSelect}
+                                >
+                                    <option value={20}>20</option>
+                                    <option value={50}>50</option>
+                                    <option value={100}>100</option>
+                                </select>
+                            </div>
+
+                            {/* Pagination Buttons */}
+                            <div className={styles.paginationButtons}>
+                                <motion.button
+                                    className={styles.paginationBtn}
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    whileHover={{ scale: currentPage === 1 ? 1 : 1.05 }}
+                                    whileTap={{ scale: currentPage === 1 ? 1 : 0.95 }}
+                                    title="Previous page"
+                                >
+                                    <FaChevronLeft /> Previous
+                                </motion.button>
+
+                                <div className={styles.pageNumbers}>
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                                        const showPage =
+                                            page === 1 ||
+                                            page === totalPages ||
+                                            (page >= currentPage - 1 && page <= currentPage + 1);
+
+                                        if (!showPage) {
+                                            if (page === currentPage - 2 || page === currentPage + 2) {
+                                                return (
+                                                    <span key={`ellipsis-${page}`} className={styles.ellipsis}>
+                                                        ...
+                                                    </span>
+                                                );
+                                            }
+                                            return null;
+                                        }
+
+                                        return (
+                                            <motion.button
+                                                key={page}
+                                                className={`${styles.pageBtn} ${page === currentPage ? styles.active : ''
+                                                    }`}
+                                                onClick={() => handlePageChange(page)}
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                            >
+                                                {page}
+                                            </motion.button>
+                                        );
+                                    })}
+                                </div>
+
+                                <motion.button
+                                    className={styles.paginationBtn}
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    whileHover={{ scale: currentPage === totalPages ? 1 : 1.05 }}
+                                    whileTap={{ scale: currentPage === totalPages ? 1 : 0.95 }}
+                                    title="Next page"
+                                >
+                                    Next <FaChevronRight />
+                                </motion.button>
+                            </div>
+
+                            {/* Page Info */}
+                            <div className={styles.pageInfo}>
+                                <p>
+                                    Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Notes Modal */}
@@ -723,14 +831,19 @@ export default function AdminAdmission() {
                 noteEntries={noteEntries}
                 newNoteText={newNoteText}
                 setNewNoteText={setNewNoteText}
-                isEditingNewNote={isEditingNewNote}
-                setIsEditingNewNote={setIsEditingNewNote}
                 onSaveNewNote={saveNewNote}
                 onDeleteNote={deleteNoteEntry}
-                admission={admissions.find(a => a.id === selectedAdmissionId)}
+                admission={admissions.find(a => a.id === selectedAdmissionIdForNotes)}
                 formatTimestamp={formatTimestamp}
                 savingNote={savingNote}
                 deletingNoteId={deletingNoteId}
+            />
+
+            {/* Details Modal */}
+            <DetailsModal
+                isOpen={detailsModalOpen}
+                onClose={closeDetailsModal}
+                admission={admissions.find(a => a.id === selectedAdmissionIdForDetails)}
                 onStatusChange={handleStatusChange}
                 onPreview={setPreviewModal}
                 statusUpdating={statusUpdating}
@@ -799,44 +912,33 @@ const StatusCardComponent = ({
     );
 };
 
+// ✨ NOTES MODAL COMPONENT ✨
 const NotesModal = ({
     isOpen,
     onClose,
     noteEntries,
     newNoteText,
     setNewNoteText,
-    isEditingNewNote,
-    setIsEditingNewNote,
     onSaveNewNote,
     onDeleteNote,
     admission,
     formatTimestamp,
     savingNote,
     deletingNoteId,
-    onStatusChange,
-    onPreview,
-    statusUpdating,
-    updatingId,
 }: {
     isOpen: boolean;
     onClose: () => void;
     noteEntries: NoteEntry[];
     newNoteText: string;
     setNewNoteText: (text: string) => void;
-    isEditingNewNote: boolean;
-    setIsEditingNewNote: (editing: boolean) => void;
     onSaveNewNote: () => void;
     onDeleteNote: (noteId: string) => void;
     admission?: Admission;
     formatTimestamp: (timestamp: string) => string;
     savingNote?: boolean;
     deletingNoteId?: string | null;
-    onStatusChange: (id: string, status: Admission['admission_status']) => void;
-    onPreview: (preview: { url: string; type: 'image' | 'pdf' | 'document'; name: string }) => void;
-    statusUpdating: boolean;
-    updatingId: string | null;
 }) => {
-    const isProcessing = savingNote || !!deletingNoteId || statusUpdating;
+    const isProcessing = savingNote || !!deletingNoteId;
     const childName = getChildName(admission || {} as Admission);
     const parentName = getParentName(admission || {} as Admission);
 
@@ -852,7 +954,7 @@ const NotesModal = ({
                         onClick={onClose}
                     />
                     <motion.div
-                        className={styles.modal}
+                        className={styles.notesModal}
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -860,7 +962,7 @@ const NotesModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2>📝 Admission Details & Notes</h2>
+                                <h2>📝 Internal Notes</h2>
                                 <p>{childName} • {parentName}</p>
                                 {noteEntries.length > 0 && (
                                     <p className={styles.notesCount}>
@@ -879,109 +981,6 @@ const NotesModal = ({
                         </div>
 
                         <div className={styles.modalContent}>
-                            {/* Details Section */}
-                            {admission && (
-                                <>
-                                    <div className={styles.detailsGrid}>
-                                        <DetailItem label="Child Name" value={childName} />
-                                        <DetailItem label="Date of Birth" value={admission.child_dob || 'N/A'} />
-                                        <DetailItem label="Gender" value={admission.child_gender || 'N/A'} />
-                                        <DetailItem label="Place of Birth" value={admission.child_place_of_birth || 'N/A'} />
-                                        <DetailItem label="Parent Name" value={parentName} />
-                                        <DetailItem label="Email" value={getParentEmail(admission)} />
-                                        <DetailItem label="Mobile" value={getParentMobile(admission)} />
-                                        <DetailItem label="Program" value={getProgram(admission)} />
-                                        <DetailItem label="Previous School" value={admission.previous_school || 'N/A'} />
-                                    </div>
-
-                                    <div className={styles.statusSection}>
-                                        <label className={styles.sectionLabel}>📊 Change Status</label>
-                                        <div className={styles.statusContainer}>
-                                            <select
-                                                value={getStatus(admission)}
-                                                onChange={(e) => onStatusChange(admission.id, e.target.value as Admission['admission_status'])}
-                                                className={styles.statusSelectModal}
-                                                disabled={isProcessing}
-                                            >
-                                                <option value="In Review">In Review</option>
-                                                <option value="Reviewed">Reviewed</option>
-                                                <option value="Interview Scheduled">Interview Scheduled</option>
-                                                <option value="Confirmed">Confirmed</option>
-                                                <option value="Rejected">Rejected</option>
-                                            </select>
-                                            {statusUpdating && (
-                                                <div className={styles.updatingIndicator}>
-                                                    <FaSpinner className={styles.spinnerIcon} />
-                                                    <span>Updating...</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className={styles.documentsSection}>
-                                        <label className={styles.sectionLabel}>📄 Documents</label>
-                                        <div className={styles.documentsList}>
-                                            {admission.photo_url && (
-                                                <DocumentListItem
-                                                    name="Child Photo"
-                                                    onPreview={() =>
-                                                        onPreview({
-                                                            url: admission.photo_url!,
-                                                            type: 'image',
-                                                            name: 'Child Photo',
-                                                        })
-                                                    }
-                                                    onDownload={admission.photo_url}
-                                                />
-                                            )}
-                                            {admission.birth_certificate_url && (
-                                                <DocumentListItem
-                                                    name="Birth Certificate"
-                                                    onPreview={() =>
-                                                        onPreview({
-                                                            url: admission.birth_certificate_url!,
-                                                            type: 'pdf',
-                                                            name: 'Birth Certificate',
-                                                        })
-                                                    }
-                                                    onDownload={admission.birth_certificate_url}
-                                                />
-                                            )}
-                                            {admission.aadhar_card_url && (
-                                                <DocumentListItem
-                                                    name="Aadhar Card"
-                                                    onPreview={() =>
-                                                        onPreview({
-                                                            url: admission.aadhar_card_url!,
-                                                            type: 'pdf',
-                                                            name: 'Aadhar Card',
-                                                        })
-                                                    }
-                                                    onDownload={admission.aadhar_card_url}
-                                                />
-                                            )}
-                                            {admission.parent_id_proof_url && (
-                                                <DocumentListItem
-                                                    name="Parent ID Proof"
-                                                    onPreview={() =>
-                                                        onPreview({
-                                                            url: admission.parent_id_proof_url!,
-                                                            type: 'pdf',
-                                                            name: "Parent's ID Proof",
-                                                        })
-                                                    }
-                                                    onDownload={admission.parent_id_proof_url}
-                                                />
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className={styles.notesDivider}>
-                                        <span>Internal Notes</span>
-                                    </div>
-                                </>
-                            )}
-
                             {/* Notes History Section */}
                             {noteEntries.length > 0 && (
                                 <div className={styles.notesHistory}>
@@ -1007,10 +1006,7 @@ const NotesModal = ({
                                                         <motion.button
                                                             type="button"
                                                             className={styles.deleteNoteBtn}
-                                                            onClick={() => {
-                                                                console.log('🗑️ Delete clicked for note:', entry.id);
-                                                                onDeleteNote(entry.id);
-                                                            }}
+                                                            onClick={() => onDeleteNote(entry.id)}
                                                             whileHover={{ scale: 1.05 }}
                                                             whileTap={{ scale: 0.95 }}
                                                             title="Delete note"
@@ -1023,6 +1019,7 @@ const NotesModal = ({
                                                             )}
                                                         </motion.button>
                                                     </div>
+                                                    <div className={styles.notesModalLining}></div>
                                                     <div className={styles.noteEntryContent}>
                                                         <p>{entry.text}</p>
                                                     </div>
@@ -1043,7 +1040,7 @@ const NotesModal = ({
                             {/* New Note Input Section */}
                             <div className={styles.newNoteSection}>
                                 <h3 className={styles.newNoteTitle}>
-                                    {isEditingNewNote ? '✍️ Write New Note' : '➕ Add New Note'}
+                                    ➕ Add New Note
                                 </h3>
                                 <textarea
                                     value={newNoteText}
@@ -1051,7 +1048,6 @@ const NotesModal = ({
                                     placeholder="Write your internal notes here... e.g., 'Follow up on interview' or 'Additional documents required'"
                                     className={styles.noteTextarea}
                                     rows={6}
-                                    onFocus={() => setIsEditingNewNote(true)}
                                     disabled={isProcessing}
                                 />
                             </div>
@@ -1078,10 +1074,182 @@ const NotesModal = ({
                                     </>
                                 ) : (
                                     <>
-                                        <FaCheck /> Save New Note
+                                        <FaCheck /> Save Note
                                     </>
                                 )}
                             </motion.button>
+                        </div>
+                    </motion.div>
+                </>
+            )}
+        </AnimatePresence>
+    );
+};
+
+// ✨ DETAILS MODAL COMPONENT ✨
+const DetailsModal = ({
+    isOpen,
+    onClose,
+    admission,
+    onStatusChange,
+    onPreview,
+    statusUpdating,
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+    admission?: Admission;
+    onStatusChange: (id: string, status: Admission['admission_status']) => void;
+    onPreview: (preview: { url: string; type: 'image' | 'pdf' | 'document'; name: string }) => void;
+    statusUpdating: boolean;
+    updatingId: string | null;
+}) => {
+    if (!admission) return null;
+
+    const childName = getChildName(admission);
+    const parentName = getParentName(admission);
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <>
+                    <motion.div
+                        className={styles.modalOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                    />
+                    <motion.div
+                        className={styles.detailsModal}
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    >
+                        <div className={styles.modalHeader}>
+                            <div>
+                                <h2>👤 Admission Details</h2>
+                                <p>{childName} • {parentName}</p>
+                            </div>
+                            <button
+                                className={styles.closeBtn}
+                                onClick={onClose}
+                                aria-label="Close"
+                                disabled={statusUpdating}
+                            >
+                                <FaTimes />
+                            </button>
+                        </div>
+
+                        <div className={styles.modalContent}>
+                            {/* Details Grid */}
+                            <div className={styles.detailsGrid}>
+                                <DetailItem label="Child Name" value={childName} />
+                                <DetailItem label="Date of Birth" value={admission.child_dob || 'N/A'} />
+                                <DetailItem label="Gender" value={admission.child_gender || 'N/A'} />
+                                <DetailItem label="Place of Birth" value={admission.child_place_of_birth || 'N/A'} />
+                                <DetailItem label="Parent Name" value={parentName} />
+                                <DetailItem label="Email" value={getParentEmail(admission)} />
+                                <DetailItem label="Mobile" value={getParentMobile(admission)} />
+                                <DetailItem label="Program" value={getProgram(admission)} />
+                                <DetailItem label="Previous School" value={admission.previous_school || 'N/A'} />
+                            </div>
+
+                            {/* Status Section */}
+                            <div className={styles.statusSection}>
+                                <label className={styles.sectionLabel}>📊 Status</label>
+                                <div className={styles.statusContainer}>
+                                    <select
+                                        value={getStatus(admission)}
+                                        onChange={(e) => onStatusChange(admission.id, e.target.value as Admission['admission_status'])}
+                                        className={styles.statusSelectModal}
+                                        disabled={statusUpdating}
+                                    >
+                                        <option value="In Review">In Review</option>
+                                        <option value="Reviewed">Reviewed</option>
+                                        <option value="Interview Scheduled">Interview Scheduled</option>
+                                        <option value="Confirmed">Confirmed</option>
+                                        <option value="Rejected">Rejected</option>
+                                    </select>
+                                    {statusUpdating && (
+                                        <div className={styles.updatingIndicator}>
+                                            <FaSpinner className={styles.spinnerIcon} />
+                                            <span>Updating...</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Documents Section */}
+                            <div className={styles.documentsSection}>
+                                <label className={styles.sectionLabel}>📄 Documents</label>
+                                <div className={styles.documentsList}>
+                                    {admission.photo_url ? (
+                                        <DocumentListItem
+                                            name="Child Photo"
+                                            onPreview={() =>
+                                                onPreview({
+                                                    url: admission.photo_url!,
+                                                    type: 'image',
+                                                    name: 'Child Photo',
+                                                })
+                                            }
+                                            onDownload={admission.photo_url}
+                                        />
+                                    ) : (
+                                        <p className={styles.noDocuments}>No photo uploaded</p>
+                                    )}
+                                    {admission.birth_certificate_url && (
+                                        <DocumentListItem
+                                            name="Birth Certificate"
+                                            onPreview={() =>
+                                                onPreview({
+                                                    url: admission.birth_certificate_url!,
+                                                    type: 'pdf',
+                                                    name: 'Birth Certificate',
+                                                })
+                                            }
+                                            onDownload={admission.birth_certificate_url}
+                                        />
+                                    )}
+                                    {admission.aadhar_card_url && (
+                                        <DocumentListItem
+                                            name="Aadhar Card"
+                                            onPreview={() =>
+                                                onPreview({
+                                                    url: admission.aadhar_card_url!,
+                                                    type: 'pdf',
+                                                    name: 'Aadhar Card',
+                                                })
+                                            }
+                                            onDownload={admission.aadhar_card_url}
+                                        />
+                                    )}
+                                    {admission.parent_id_proof_url && (
+                                        <DocumentListItem
+                                            name="Parent ID Proof"
+                                            onPreview={() =>
+                                                onPreview({
+                                                    url: admission.parent_id_proof_url!,
+                                                    type: 'pdf',
+                                                    name: "Parent's ID Proof",
+                                                })
+                                            }
+                                            onDownload={admission.parent_id_proof_url}
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className={styles.modalFooter}>
+                            <button
+                                className={styles.cancelBtn}
+                                onClick={onClose}
+                                disabled={statusUpdating}
+                            >
+                                <FaTimes /> Close
+                            </button>
                         </div>
                     </motion.div>
                 </>
@@ -1149,7 +1317,7 @@ const DocumentPreviewModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2>Document Preview</h2>
+                                <h2>📄 Document Preview</h2>
                                 <p>{preview.name}</p>
                             </div>
                             <button

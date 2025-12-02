@@ -390,6 +390,15 @@
   transform: translateY(-2px);
 }
 
+.formGroup:focus-within .icon {
+    color: var(--primary-yellow);
+    opacity: 1;
+}
+
+.formGroup:focus-within label {
+    color: var(--primary-yellow);
+}
+
 .formGroup textarea {
   resize: vertical;
   min-height: 120px;

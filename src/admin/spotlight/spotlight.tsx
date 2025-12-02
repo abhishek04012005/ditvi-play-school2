@@ -2,7 +2,24 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { FaTrash, FaHome, FaCheck, FaTimes, FaEye, FaEyeSlash, FaSpinner, FaPrint, FaExclamationTriangle } from 'react-icons/fa';
+import {
+    FaTrash,
+    FaHome,
+    FaCheck,
+    FaTimes,
+    FaEye,
+    FaEyeSlash,
+    FaSpinner,
+    FaPrint,
+    FaExclamationTriangle,
+    FaPlus,
+    FaSearch,
+    FaSort,
+    FaSortUp,
+    FaSortDown,
+    FaChevronLeft,
+    FaChevronRight,
+} from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
@@ -27,6 +44,20 @@ interface Spotlight {
     image_url: string;
     created_date: string;
 }
+
+interface StatusCard {
+    label: string;
+    count: number;
+    icon: React.ReactNode;
+    color: string;
+    bgColor: string;
+    type: 'weekly' | 'monthly' | 'yearly' | 'total';
+    id: string;
+}
+
+type SortField = 'created_date' | 'name' | 'award_type' | 'date';
+type SortOrder = 'asc' | 'desc';
+type ItemsPerPage = 20 | 50 | 100;
 
 const BUCKET = 'star-of-week-images';
 
@@ -60,13 +91,23 @@ const Spotlight = () => {
         message: '',
         award_type: 'weekly',
         is_show_on_home_page: false,
-        date: new Date().toISOString().split('T')[0] // Add date field
+        date: new Date().toISOString().split('T')[0]
     });
 
     // Spotlight list management
     const [spotlights, setSpotlights] = useState<Spotlight[]>([]);
     const [spotlightsLoading, setSpotlightsLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState<'all' | 'weekly' | 'monthly' | 'yearly'>('all');
+    const [sortField, setSortField] = useState<SortField>('created_date');
+    const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+
+    // ✨ PAGINATION STATE
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState<ItemsPerPage>(20);
+
+    // Modal states
+    const [showCreateModal, setShowCreateModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedForDelete, setSelectedForDelete] = useState<Spotlight | null>(null);
     const [showHomepageModal, setShowHomepageModal] = useState(false);
@@ -74,7 +115,7 @@ const Spotlight = () => {
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [homepageLoading, setHomepageLoading] = useState(false);
 
-    // ✨ CONFLICT MODAL STATE - When trying to add to homepage when one already exists GLOBALLY ✨
+    // ✨ CONFLICT MODAL STATE
     const [showConflictModal, setShowConflictModal] = useState(false);
     const [conflictData, setConflictData] = useState<{
         newCard: Spotlight | null;
@@ -85,6 +126,7 @@ const Spotlight = () => {
     // Print modal state
     const [showPrintModal, setShowPrintModal] = useState(false);
     const [selectedForPrint, setSelectedForPrint] = useState<Spotlight | null>(null);
+    const [pageLoading, setPageLoading] = useState(true);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -124,9 +166,19 @@ const Spotlight = () => {
 
     useEffect(() => {
         if (isMounted) {
-            fetchSpotlights();
+            const initializePage = async () => {
+                setPageLoading(true);
+                await fetchSpotlights();
+                setPageLoading(false);
+            };
+            initializePage();
         }
     }, [isMounted, fetchSpotlights]);
+
+    // ✨ RESET TO PAGE 1 WHEN FILTER/SEARCH CHANGES
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, filterType]);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -148,6 +200,19 @@ const Spotlight = () => {
             setImagePreview(reader.result as string);
         };
         reader.readAsDataURL(file);
+    };
+
+    const resetForm = () => {
+        setFormData({
+            name: '',
+            message: '',
+            award_type: 'weekly',
+            is_show_on_home_page: false,
+            date: new Date().toISOString().split('T')[0]
+        });
+        setImageFile(null);
+        setImagePreview(null);
+        if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -197,7 +262,7 @@ const Spotlight = () => {
                     award_type: formData.award_type,
                     is_show_on_home_page: formData.is_show_on_home_page,
                     image_url: imagePath,
-                    date: formData.date, // Use the selected date
+                    date: formData.date,
                     like_count: 0
                 }
             ]);
@@ -209,16 +274,8 @@ const Spotlight = () => {
             }
 
             toast.success('Spotlight created successfully!');
-            setFormData({
-                name: '',
-                message: '',
-                award_type: 'weekly',
-                is_show_on_home_page: false,
-                date: new Date().toISOString().split('T')[0]
-            });
-            setImageFile(null);
-            setImagePreview(null);
-            if (fileInputRef.current) fileInputRef.current.value = '';
+            resetForm();
+            setShowCreateModal(false);
             await fetchSpotlights();
         } catch (err) {
             console.error('Submit error:', err);
@@ -265,20 +322,17 @@ const Spotlight = () => {
         }
     };
 
-    // ✨ HANDLE HOMEPAGE BUTTON CLICK - Check for GLOBAL conflicts (only ONE homepage badge across ALL types) ✨
+    // ✨ HANDLE HOMEPAGE BUTTON CLICK
     const handleHomepageClick = (spotlight: Spotlight) => {
-        // If already on homepage, just show regular toggle modal to remove it
         if (spotlight.is_show_on_home_page) {
             setSelectedForHomepage(spotlight);
             setShowHomepageModal(true);
             return;
         }
 
-        // ✨ Find if ANY card has homepage badge (not just same type) ✨
         const existingHomepageCard = spotlights.find((s) => s.is_show_on_home_page);
 
         if (existingHomepageCard) {
-            // ✨ CONFLICT DETECTED - Another card ALREADY has homepage badge ✨
             console.log('⚠️ CONFLICT: Another card already on homepage');
             setConflictData({
                 newCard: spotlight,
@@ -286,20 +340,18 @@ const Spotlight = () => {
             });
             setShowConflictModal(true);
         } else {
-            // ✨ NO CONFLICT - Show regular modal to add ✨
             setSelectedForHomepage(spotlight);
             setShowHomepageModal(true);
         }
     };
 
-    // ✨ HANDLE CONFLICT RESOLUTION - Replace existing card with new one ✨
+    // ✨ HANDLE CONFLICT RESOLUTION
     const handleReplaceHomepageCard = async () => {
         if (!conflictData.newCard || !conflictData.existingCard) return;
 
         try {
             setConflictLoading(true);
 
-            // Remove homepage badge from existing card
             const { error: removeError } = await supabase
                 .from('awards')
                 .update({ is_show_on_home_page: false })
@@ -307,7 +359,6 @@ const Spotlight = () => {
 
             if (removeError) throw removeError;
 
-            // Add homepage badge to new card
             const { error: addError } = await supabase
                 .from('awards')
                 .update({ is_show_on_home_page: true })
@@ -329,7 +380,6 @@ const Spotlight = () => {
         }
     };
 
-    // ✨ HANDLE CONFLICT CANCELLATION ✨
     const handleCancelConflict = () => {
         setShowConflictModal(false);
         setConflictData({ newCard: null, existingCard: null });
@@ -344,7 +394,6 @@ const Spotlight = () => {
 
             const newValue = !selectedForHomepage.is_show_on_home_page;
 
-            // If setting to true, remove homepage badge from ALL other spotlights first
             if (newValue) {
                 const { error: updateError } = await supabase
                     .from('awards')
@@ -354,7 +403,6 @@ const Spotlight = () => {
                 if (updateError) throw updateError;
             }
 
-            // Update current spotlight
             const { error } = await supabase
                 .from('awards')
                 .update({ is_show_on_home_page: newValue })
@@ -380,347 +428,652 @@ const Spotlight = () => {
         }
     };
 
-    // Filter spotlights
-    const filteredSpotlights =
-        filterType === 'all'
-            ? spotlights
-            : spotlights.filter((a) => a.award_type === filterType);
+    // ✨ SORTING LOGIC
+    const handleSort = (field: SortField) => {
+        if (sortField === field) {
+            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortField(field);
+            setSortOrder('asc');
+        }
+        setCurrentPage(1);
+    };
+
+    const getSortIcon = (field: SortField) => {
+        if (sortField !== field) return <FaSort />;
+        return sortOrder === 'asc' ? <FaSortUp /> : <FaSortDown />;
+    };
+
+    // ✨ FILTERED AND SORTED DATA
+    const sortedAndFilteredSpotlights = spotlights
+        .filter(spotlight => {
+            const name = spotlight.name.toLowerCase();
+            const message = spotlight.message.toLowerCase();
+
+            const matchesSearch =
+                name.includes(searchTerm.toLowerCase()) ||
+                message.includes(searchTerm.toLowerCase());
+
+            const matchesFilter = filterType === 'all' || spotlight.award_type === filterType;
+
+            return matchesSearch && matchesFilter;
+        })
+        .sort((a, b) => {
+            let aVal: any, bVal: any;
+
+            if (sortField === 'name') {
+                aVal = a.name;
+                bVal = b.name;
+            } else if (sortField === 'award_type') {
+                aVal = a.award_type;
+                bVal = b.award_type;
+            } else if (sortField === 'date') {
+                aVal = new Date(a.date).getTime();
+                bVal = new Date(b.date).getTime();
+            } else {
+                aVal = new Date(a.created_date).getTime();
+                bVal = new Date(b.created_date).getTime();
+            }
+
+            if (typeof aVal === 'string') {
+                return sortOrder === 'asc'
+                    ? aVal.localeCompare(bVal)
+                    : bVal.localeCompare(aVal);
+            }
+
+            return sortOrder === 'asc' ? aVal - bVal : bVal - aVal;
+        });
+
+    // ✨ PAGINATION LOGIC
+    const totalPages = Math.ceil(sortedAndFilteredSpotlights.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedSpotlights = sortedAndFilteredSpotlights.slice(startIndex, endIndex);
+
+    // Status cards data
+    const statusCounts = {
+        total: spotlights.length,
+        'weekly': spotlights.filter((s) => s.award_type === 'weekly').length,
+        'monthly': spotlights.filter((s) => s.award_type === 'monthly').length,
+        'yearly': spotlights.filter((s) => s.award_type === 'yearly').length,
+    };
+
+    const statusCards: StatusCard[] = [
+        {
+            label: 'Total Spotlights',
+            count: statusCounts.total,
+            icon: <FaHome />,
+            color: '#6a4c93',
+            bgColor: '#f3e8ff',
+            type: 'total',
+            id: 'total',
+        },
+        {
+            label: 'Weekly Stars',
+            count: statusCounts['weekly'],
+            icon: <FaCheck />,
+            color: '#3b82f6',
+            bgColor: '#eff6ff',
+            type: 'weekly',
+            id: 'weekly',
+        },
+        {
+            label: 'Monthly Stars',
+            count: statusCounts['monthly'],
+            icon: <FaCheck />,
+            color: '#f59e0b',
+            bgColor: '#fffbf0',
+            type: 'monthly',
+            id: 'monthly',
+        },
+        {
+            label: 'Yearly Stars',
+            count: statusCounts['yearly'],
+            icon: <FaCheck />,
+            color: '#10b981',
+            bgColor: '#f0fdf4',
+            type: 'yearly',
+            id: 'yearly',
+        },
+    ];
+
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+        },
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+    };
+
+    // ✨ HANDLE ITEMS PER PAGE CHANGE
+    const handleItemsPerPageChange = (value: ItemsPerPage) => {
+        setItemsPerPage(value);
+        setCurrentPage(1);
+    };
+
+    // ✨ HANDLE PAGE CHANGE
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+            const tableElement = document.querySelector(`.${styles.tableWrapper}`);
+            if (tableElement) {
+                tableElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    };
 
     // Don't render until mounted on client
     if (!isMounted) {
         return <Loader isVisible={true} message="Loading Spotlight..." fullScreen={true} />;
     }
 
-    if (spotlightsLoading || loading || homepageLoading) {
+    if (pageLoading) {
         return <Loader isVisible={true} message="Loading..." fullScreen={true} />;
     }
+
+    const getTodayDate = (): string => {
+        return new Date().toISOString().split('T')[0];
+    };
 
     return (
         <div className={styles.staroftheweek}>
             <HeadingTitle text='Spotlight Dashboard' />
+
+            {/* ✨ STATUS CARDS ✨ */}
+            <motion.div
+                className={styles.statusCardsSection}
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+            >
+                {statusCards.map((card) => (
+                    <motion.div key={card.id} variants={itemVariants}>
+                        <StatusCardComponent
+                            card={card}
+                            filter={filterType}
+                            setFilter={setFilterType}
+                        />
+                    </motion.div>
+                ))}
+            </motion.div>
+
             <div className={styles.adminContainer}>
-                {/* Create Spotlight Form */}
-                <motion.div
-                    className={styles.formSection}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.1 }}
-                >
-                    <h2>✨ Create New Spotlight</h2>
-                    <form onSubmit={handleSubmit} className={styles.form}>
-                        <div className={styles.formRow}>
-                            {/* Image Upload */}
-                            <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-                                <label htmlFor="image">Student Photo *</label>
-                                <div className={styles.imageUploadWrapper}>
-                                    <input
-                                        ref={fileInputRef}
-                                        type="file"
-                                        id="image"
-                                        accept="image/*"
-                                        onChange={handleImageChange}
-                                        className={styles.fileInput}
-                                    />
-                                    <label htmlFor="image" className={styles.fileLabel}>
-                                        {imagePreview ? (
-                                            <div className={styles.imagePreviewContainer}>
-                                                <Image
-                                                    src={imagePreview}
-                                                    alt="Preview"
-                                                    width={150}
-                                                    height={150}
-                                                    className={styles.previewImage}
-                                                />
-                                                <span>Click to change image</span>
-                                            </div>
-                                        ) : (
-                                            <div className={styles.uploadPlaceholder}>
-                                                <span>📷 Upload Image</span>
-                                                <small>Max 5MB</small>
-                                            </div>
-                                        )}
-                                    </label>
+                {/* Dashboard Section */}
+                <div className={styles.dashboard}>
+                    <div className={styles.header}>
+                        <div className={styles.headerLeft}>
+                            <h2>📊 Spotlights Management</h2>
+                        </div>
+                        <motion.button
+                            className={styles.createBtn}
+                            onClick={() => setShowCreateModal(true)}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <FaPlus /> Create Spotlight
+                        </motion.button>
+                    </div>
+
+                    {/* Search and Filter Controls */}
+                    <div className={styles.controls}>
+                        <div className={styles.searchBar}>
+                            <FaSearch className={styles.searchIcon} />
+                            <input
+                                type="text"
+                                placeholder="Search by name or message..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+                        <select
+                            value={filterType}
+                            onChange={(e) => setFilterType(e.target.value as any)}
+                            className={styles.filterSelect}
+                        >
+                            <option value="all">All Types</option>
+                            <option value="weekly">⭐ Weekly</option>
+                            <option value="monthly">✨ Monthly</option>
+                            <option value="yearly">🏆 Yearly</option>
+                        </select>
+                    </div>
+
+                    {/* Table */}
+                    <div className={styles.tableWrapper}>
+                        <table className={styles.table}>
+                            <thead>
+                                <tr>
+                                    <th>Photo</th>
+                                    <th onClick={() => handleSort('name')}>
+                                        Student Name {getSortIcon('name')}
+                                    </th>
+                                    <th onClick={() => handleSort('date')}>
+                                        Spotlight Date {getSortIcon('date')}
+                                    </th>
+                                    <th onClick={() => handleSort('award_type')}>
+                                        Type {getSortIcon('award_type')}
+                                    </th>
+                                    <th>Message</th>
+                                    <th>Likes</th>
+                                    <th>Homepage</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {spotlightsLoading ? (
+                                    <tr>
+                                        <td colSpan={8} className={styles.loading}>
+                                            <FaSpinner className={styles.loadingIcon} /> Loading spotlights...
+                                        </td>
+                                    </tr>
+                                ) : sortedAndFilteredSpotlights.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={8} className={styles.noResults}>
+                                            No spotlights found
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    paginatedSpotlights.map((spotlight) => (
+                                        <motion.tr
+                                            key={spotlight.id}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ duration: 0.3 }}
+                                        >
+                                            <td>
+                                                <div className={styles.photoCell}>
+                                                    <Image
+                                                        src={spotlight.image_url}
+                                                        alt={spotlight.name}
+                                                        width={50}
+                                                        height={50}
+                                                        className={styles.photo}
+                                                        unoptimized
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span className={styles.studentName}>{spotlight.name}</span>
+                                            </td>
+                                            <td>
+                                                {new Date(spotlight.date).toLocaleDateString('en-US', {
+                                                    day: '2-digit',
+                                                    month: 'short',
+                                                    year: 'numeric',
+                                                })}
+                                            </td>
+                                            <td>
+                                                <span className={styles.badge} data-type={spotlight.award_type}>
+                                                    {spotlight.award_type === 'weekly'
+                                                        ? '⭐ Weekly'
+                                                        : spotlight.award_type === 'monthly'
+                                                            ? '✨ Monthly'
+                                                            : '🏆 Yearly'}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span className={styles.message}>
+                                                    {spotlight.message.substring(0, 50)}...
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span className={styles.likes}>❤️ {spotlight.like_count}</span>
+                                            </td>
+                                            <td>
+                                                <motion.button
+                                                    type="button"
+                                                    className={`${styles.homepageToggleBtn} ${spotlight.is_show_on_home_page ? styles.active : ''
+                                                        }`}
+                                                    onClick={() => handleHomepageClick(spotlight)}
+                                                    whileHover={{ scale: 1.1 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    title={
+                                                        spotlight.is_show_on_home_page
+                                                            ? 'Remove from homepage'
+                                                            : 'Add to homepage'
+                                                    }
+                                                >
+                                                    {spotlight.is_show_on_home_page ? (
+                                                        <FaEye />
+                                                    ) : (
+                                                        <FaEyeSlash />
+                                                    )}
+                                                </motion.button>
+                                            </td>
+                                            <td>
+                                                <div className={styles.actionButtons}>
+                                                    <motion.button
+                                                        type="button"
+                                                        className={`${styles.actionBtn} ${styles.printBtn}`}
+                                                        onClick={() => {
+                                                            setSelectedForPrint(spotlight);
+                                                            setShowPrintModal(true);
+                                                        }}
+                                                        whileHover={{ scale: 1.1 }}
+                                                        whileTap={{ scale: 0.95 }}
+                                                        title="Print certificate"
+                                                    >
+                                                        <FaPrint />
+                                                    </motion.button>
+
+                                                    <motion.button
+                                                        type="button"
+                                                        className={`${styles.actionBtn} ${styles.deleteBtn}`}
+                                                        onClick={() => {
+                                                            setSelectedForDelete(spotlight);
+                                                            setShowDeleteModal(true);
+                                                        }}
+                                                        whileHover={{ scale: 1.1 }}
+                                                        whileTap={{ scale: 0.95 }}
+                                                        title="Delete spotlight"
+                                                    >
+                                                        <FaTrash />
+                                                    </motion.button>
+                                                </div>
+                                            </td>
+                                        </motion.tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* ✨ PAGINATION SECTION ✨ */}
+                    {sortedAndFilteredSpotlights.length > 0 && (
+                        <div className={styles.paginationSection}>
+                            <div className={styles.paginationInfo}>
+                                <p className={styles.paginationText}>
+                                    Showing <strong>{startIndex + 1}</strong> to{' '}
+                                    <strong>{Math.min(endIndex, sortedAndFilteredSpotlights.length)}</strong> of{' '}
+                                    <strong>{sortedAndFilteredSpotlights.length}</strong> spotlights
+                                </p>
+                            </div>
+
+                            <div className={styles.paginationControls}>
+                                {/* Items Per Page Selector */}
+                                <div className={styles.itemsPerPageSelector}>
+                                    <label htmlFor="itemsPerPage">Items per page:</label>
+                                    <select
+                                        id="itemsPerPage"
+                                        value={itemsPerPage}
+                                        onChange={(e) =>
+                                            handleItemsPerPageChange(Number(e.target.value) as ItemsPerPage)
+                                        }
+                                        className={styles.itemsPerPageSelect}
+                                    >
+                                        <option value={20}>20</option>
+                                        <option value={50}>50</option>
+                                        <option value={100}>100</option>
+                                    </select>
+                                </div>
+
+                                {/* Pagination Buttons */}
+                                <div className={styles.paginationButtons}>
+                                    <motion.button
+                                        className={styles.paginationBtn}
+                                        onClick={() => handlePageChange(currentPage - 1)}
+                                        disabled={currentPage === 1}
+                                        whileHover={{ scale: currentPage === 1 ? 1 : 1.05 }}
+                                        whileTap={{ scale: currentPage === 1 ? 1 : 0.95 }}
+                                        title="Previous page"
+                                    >
+                                        <FaChevronLeft /> Previous
+                                    </motion.button>
+
+                                    <div className={styles.pageNumbers}>
+                                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                                            const showPage =
+                                                page === 1 ||
+                                                page === totalPages ||
+                                                (page >= currentPage - 1 && page <= currentPage + 1);
+
+                                            if (!showPage) {
+                                                if (page === currentPage - 2 || page === currentPage + 2) {
+                                                    return (
+                                                        <span key={`ellipsis-${page}`} className={styles.ellipsis}>
+                                                            ...
+                                                        </span>
+                                                    );
+                                                }
+                                                return null;
+                                            }
+
+                                            return (
+                                                <motion.button
+                                                    key={page}
+                                                    className={`${styles.pageBtn} ${page === currentPage ? styles.active : ''
+                                                        }`}
+                                                    onClick={() => handlePageChange(page)}
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                >
+                                                    {page}
+                                                </motion.button>
+                                            );
+                                        })}
+                                    </div>
+
+                                    <motion.button
+                                        className={styles.paginationBtn}
+                                        onClick={() => handlePageChange(currentPage + 1)}
+                                        disabled={currentPage === totalPages}
+                                        whileHover={{ scale: currentPage === totalPages ? 1 : 1.05 }}
+                                        whileTap={{ scale: currentPage === totalPages ? 1 : 0.95 }}
+                                        title="Next page"
+                                    >
+                                        Next <FaChevronRight />
+                                    </motion.button>
+                                </div>
+
+                                {/* Page Info */}
+                                <div className={styles.pageInfo}>
+                                    <p>
+                                        Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+                                    </p>
                                 </div>
                             </div>
                         </div>
+                    )}
+                </div>
+            </div>
 
-                        <div className={styles.formRow}>
-                            {/* Student Name */}
-                            <div className={styles.formGroup}>
-                                <label htmlFor="name">Student Name *</label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    value={formData.name}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, name: e.target.value })
-                                    }
-                                    placeholder="Enter student name"
-                                    disabled={loading}
-                                />
-                            </div>
-
-                            {/* Spotlight Date */}
-                            <div className={styles.formGroup}>
-                                <label htmlFor="spotlightDate">Spotlight Date *</label>
-                                <input
-                                    type="date"
-                                    id="spotlightDate"
-                                    value={formData.date}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, date: e.target.value })
-                                    }
-                                    disabled={loading}
-                                    className={styles.dateInput}
-                                />
-                            </div>
-
-                            {/* Spotlight Type */}
-                            <div className={styles.formGroup}>
-                                <label htmlFor="award_type">Spotlight Type *</label>
-                                <select
-                                    id="award_type"
-                                    value={formData.award_type}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, award_type: e.target.value as any })
-                                    }
-                                    className={styles.selectInput}
+            {/* ✨ CREATE SPOTLIGHT MODAL ✨ */}
+            <AnimatePresence>
+                {showCreateModal && (
+                    <motion.div
+                        className={styles.modalOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setShowCreateModal(false)}
+                    >
+                        <motion.div
+                            className={styles.createModal}
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className={styles.createModalHeader}>
+                                <div>
+                                    <h2>✨ Create New Spotlight</h2>
+                                    <p>Add a new student achievement to the spotlight</p>
+                                </div>
+                                <button
+                                    className={styles.closeBtn}
+                                    onClick={() => setShowCreateModal(false)}
                                     disabled={loading}
                                 >
-                                    <option value="weekly">Star of the Week</option>
-                                    <option value="monthly">Star of the Month</option>
-                                    <option value="yearly">Star of the Year</option>
-                                </select>
+                                    <FaTimes />
+                                </button>
                             </div>
-                        </div>
 
-                        <div className={styles.formRow}>
-                            {/* Achievement Message */}
-                            <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-                                <label htmlFor="message">Achievement Message *</label>
-                                <textarea
-                                    id="message"
-                                    value={formData.message}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, message: e.target.value })
-                                    }
-                                    placeholder="Describe why this student deserves the spotlight..."
-                                    rows={4}
-                                    disabled={loading}
-                                />
-                            </div>
-                        </div>
+                            <form onSubmit={handleSubmit} className={styles.createForm}>
+                                <div className={styles.modalContent}>
+                                    {/* Image Upload */}
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="image">Student Photo *</label>
+                                        <div className={styles.imageUploadWrapper}>
+                                            <input
+                                                ref={fileInputRef}
+                                                type="file"
+                                                id="image"
+                                                accept="image/*"
+                                                onChange={handleImageChange}
+                                                className={styles.fileInput}
+                                            />
+                                            <label htmlFor="image" className={styles.fileLabel}>
+                                                {imagePreview ? (
+                                                    <div className={styles.imagePreviewContainer}>
+                                                        <Image
+                                                            src={imagePreview}
+                                                            alt="Preview"
+                                                            width={150}
+                                                            height={150}
+                                                            className={styles.previewImage}
+                                                        />
+                                                        <span>Click to change image</span>
+                                                    </div>
+                                                ) : (
+                                                    <div className={styles.uploadPlaceholder}>
+                                                        <span>📷 Upload Image</span>
+                                                        <small>Max 5MB</small>
+                                                    </div>
+                                                )}
+                                            </label>
+                                        </div>
+                                    </div>
 
-                        <div className={styles.formRow}>
-                            {/* Homepage Checkbox */}
-                            <div className={styles.formGroup}>
-                                <label htmlFor="homepage" className={styles.checkboxLabel}>
-                                    <input
-                                        type="checkbox"
-                                        id="homepage"
-                                        checked={formData.is_show_on_home_page}
-                                        onChange={(e) =>
-                                            setFormData({
-                                                ...formData,
-                                                is_show_on_home_page: e.target.checked
-                                            })
-                                        }
-                                        disabled={loading}
-                                    />
-                                    <span>Show on Homepage</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        {/* Submit Button */}
-                        <motion.button
-                            type="submit"
-                            className={styles.submitButton}
-                            disabled={loading}
-                            whileHover={{ scale: loading ? 1 : 1.02 }}
-                            whileTap={{ scale: loading ? 1 : 0.98 }}
-                        >
-                            {loading ? (
-                                <>
-                                    <FaSpinner className={styles.spinnerIcon} />
-                                    Creating...
-                                </>
-                            ) : (
-                                'Create Spotlight'
-                            )}
-                        </motion.button>
-                    </form>
-                </motion.div>
-
-                {/* Spotlights List Section */}
-                <motion.div
-                    className={styles.spotlightsSection}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                >
-                    <div className={styles.sectionHeader}>
-                        <h2>📜 All Spotlight ({spotlights.length})</h2>
-                    </div>
-
-                    {/* Filter Buttons */}
-                    <div className={styles.filterButtons}>
-                        {(['all', 'weekly', 'monthly', 'yearly'] as const).map((type) => (
-                            <motion.button
-                                key={type}
-                                type="button"
-                                className={`${styles.filterButton} ${filterType === type ? styles.active : ''
-                                    }`}
-                                onClick={() => setFilterType(type)}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                            >
-                                {type === 'all'
-                                    ? '🎯 All'
-                                    : type === 'weekly'
-                                        ? '⭐ Weekly'
-                                        : type === 'monthly'
-                                            ? '✨ Monthly'
-                                            : '🏆 Yearly'}
-                                <span className={styles.count}>
-                                    ({type === 'all'
-                                        ? spotlights.length
-                                        : spotlights.filter((a) => a.award_type === type).length}
-                                    )
-                                </span>
-                            </motion.button>
-                        ))}
-                    </div>
-
-                    {/* Spotlights Grid */}
-                    {spotlightsLoading ? (
-                        <Loader />
-                    ) : filteredSpotlights.length === 0 ? (
-                        <div className={styles.emptyState}>
-                            <p>😴 No Spotlight found</p>
-                        </div>
-                    ) : (
-                        <motion.div
-                            className={styles.spotlightsGrid}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ staggerChildren: 0.1 }}
-                        >
-                            <AnimatePresence>
-                                {filteredSpotlights.map((spotlight) => (
-                                    <motion.div
-                                        key={spotlight.id}
-                                        className={styles.spotlightCard}
-                                        initial={{ opacity: 0, scale: 0.9 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0, scale: 0.9 }}
-                                        whileHover={{ y: -8 }}
-                                    >
-                                        {/* Badge for homepage */}
-                                        {spotlight.is_show_on_home_page && (
-                                            <motion.div
-                                                className={styles.homePageBadge}
-                                                animate={{ scale: [1, 1.05, 1] }}
-                                                transition={{ duration: 2, repeat: Infinity }}
-                                            >
-                                                <FaHome /> Homepage
-                                            </motion.div>
-                                        )}
-
-                                        {/* Image */}
-                                        <div className={styles.cardImage}>
-                                            <Image
-                                                src={spotlight.image_url}
-                                                alt={spotlight.name}
-                                                width={280}
-                                                height={220}
-                                                className={styles.image}
-                                                unoptimized
+                                    {/* Form Grid */}
+                                    <div className={styles.formGrid}>
+                                        {/* Student Name */}
+                                        <div className={styles.formGroup}>
+                                            <label htmlFor="name">Student Name *</label>
+                                            <input
+                                                type="text"
+                                                id="name"
+                                                value={formData.name}
+                                                onChange={(e) =>
+                                                    setFormData({ ...formData, name: e.target.value })
+                                                }
+                                                placeholder="Enter student name"
+                                                disabled={loading}
                                             />
                                         </div>
 
-                                        {/* Card Content */}
-                                        <div className={styles.cardContent}>
-                                            <h3>{spotlight.name}</h3>
-                                            <div className={styles.spotlightMeta}>
-                                                <span className={styles.type}>
-                                                    {spotlight.award_type === 'weekly'
-                                                        ? '🌟 Weekly'
-                                                        : spotlight.award_type === 'monthly'
-                                                            ? '⭐ Monthly'
-                                                            : '✨ Yearly'}
-                                                </span>
-                                                <span className={styles.likes}>
-                                                    ❤️ {spotlight.like_count}
-                                                </span>
-                                            </div>
-                                            <p className={styles.message}>{spotlight.message}</p>
-                                            <p className={styles.date}>
-                                                {new Date(spotlight.date).toLocaleDateString()}
-                                            </p>
-                                        </div>
-
-                                        {/* Card Actions */}
-                                        <div className={styles.cardActions}>
-                                            <motion.button
-                                                type="button"
-                                                className={`${styles.actionBtn} ${styles.printBtn}`}
-                                                onClick={() => {
-                                                    setSelectedForPrint(spotlight);
-                                                    setShowPrintModal(true);
-                                                }}
-                                                whileHover={{ scale: 1.1 }}
-                                                whileTap={{ scale: 0.95 }}
-                                                title="Print certificate"
-                                            >
-                                                <FaPrint />
-                                            </motion.button>
-
-                                            <motion.button
-                                                type="button"
-                                                className={`${styles.actionBtn} ${styles.homepageBtn} ${spotlight.is_show_on_home_page ? styles.active : ''
-                                                    }`}
-                                                onClick={() => handleHomepageClick(spotlight)}
-                                                whileHover={{ scale: 1.1 }}
-                                                whileTap={{ scale: 0.95 }}
-                                                title={
-                                                    spotlight.is_show_on_home_page
-                                                        ? 'Remove from homepage'
-                                                        : 'Add to homepage'
+                                        {/* Spotlight Date */}
+                                        <div className={styles.formGroup}>
+                                            <label htmlFor="spotlightDate">Spotlight Date *</label>
+                                            <input
+                                                type="date"
+                                                id="spotlightDate"
+                                                value={formData.date}
+                                                onChange={(e) =>
+                                                    setFormData({ ...formData, date: e.target.value })
                                                 }
-                                            >
-                                                {spotlight.is_show_on_home_page ? (
-                                                    <FaEye />
-                                                ) : (
-                                                    <FaEyeSlash />
-                                                )}
-                                            </motion.button>
-
-                                            <motion.button
-                                                type="button"
-                                                className={`${styles.actionBtn} ${styles.deleteBtn}`}
-                                                onClick={() => {
-                                                    setSelectedForDelete(spotlight);
-                                                    setShowDeleteModal(true);
-                                                }}
-                                                whileHover={{ scale: 1.1 }}
-                                                whileTap={{ scale: 0.95 }}
-                                                title="Delete spotlight"
-                                            >
-                                                <FaTrash />
-                                            </motion.button>
+                                                disabled={loading}
+                                                className={styles.dateInput}
+                                                max={getTodayDate()}
+                                            />
                                         </div>
-                                    </motion.div>
-                                ))}
-                            </AnimatePresence>
+
+                                        {/* Spotlight Type */}
+                                        <div className={styles.formGroup}>
+                                            <label htmlFor="award_type">Spotlight Type *</label>
+                                            <select
+                                                id="award_type"
+                                                value={formData.award_type}
+                                                onChange={(e) =>
+                                                    setFormData({ ...formData, award_type: e.target.value as any })
+                                                }
+                                                className={styles.selectInput}
+                                                disabled={loading}
+                                            >
+                                                <option value="weekly">⭐ Star of the Week</option>
+                                                <option value="monthly">✨ Star of the Month</option>
+                                                <option value="yearly">🏆 Star of the Year</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    {/* Achievement Message */}
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="message">Achievement Message *</label>
+                                        <textarea
+                                            id="message"
+                                            value={formData.message}
+                                            onChange={(e) =>
+                                                setFormData({ ...formData, message: e.target.value })
+                                            }
+                                            placeholder="Describe why this student deserves the spotlight..."
+                                            rows={4}
+                                            disabled={loading}
+                                        />
+                                    </div>
+
+                                    {/* Homepage Checkbox */}
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="homepage" className={styles.checkboxLabel}>
+                                            <input
+                                                type="checkbox"
+                                                id="homepage"
+                                                checked={formData.is_show_on_home_page}
+                                                onChange={(e) =>
+                                                    setFormData({
+                                                        ...formData,
+                                                        is_show_on_home_page: e.target.checked
+                                                    })
+                                                }
+                                                disabled={loading}
+                                            />
+                                            <span>Show on Homepage</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                {/* Modal Actions */}
+                                <div className={styles.createModalFooter}>
+                                    <motion.button
+                                        type="button"
+                                        className={styles.cancelBtn}
+                                        onClick={() => {
+                                            setShowCreateModal(false);
+                                            resetForm();
+                                        }}
+                                        disabled={loading}
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        Cancel
+                                    </motion.button>
+                                    <motion.button
+                                        type="submit"
+                                        className={styles.submitButton}
+                                        disabled={loading}
+                                        whileHover={{ scale: loading ? 1 : 1.02 }}
+                                        whileTap={{ scale: loading ? 1 : 0.98 }}
+                                    >
+                                        {loading ? (
+                                            <Loader isVisible={true} message="Creating..." fullScreen={false} />
+                                        ) : (
+                                            <>
+                                                <FaCheck /> Create Spotlight
+                                            </>
+                                        )}
+                                    </motion.button>
+                                </div>
+                            </form>
                         </motion.div>
-                    )}
-                </motion.div>
-            </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Print Certificate Modal */}
             <AnimatePresence>
-                {showPrintModal && (
+                {showPrintModal && selectedForPrint && (
                     <PrintCard
                         award={selectedForPrint}
                         isOpen={showPrintModal}
@@ -793,7 +1146,7 @@ const Spotlight = () => {
                 )}
             </AnimatePresence>
 
-            {/* ✨ CONFLICT MODAL - ONLY ONE HOMEPAGE BADGE ALLOWED GLOBALLY ✨ */}
+            {/* ✨ CONFLICT MODAL ✨ */}
             <AnimatePresence>
                 {showConflictModal && conflictData.newCard && conflictData.existingCard && (
                     <motion.div
@@ -986,6 +1339,58 @@ const Spotlight = () => {
                 )}
             </AnimatePresence>
         </div>
+    );
+};
+
+const StatusCardComponent = ({
+    card,
+    filter,
+    setFilter,
+}: {
+    card: StatusCard;
+    filter: string;
+    setFilter: (filter: any) => void;
+}) => {
+    return (
+        <motion.div
+            className={`${styles.statusCard}`}
+            whileHover={{ translateY: -6, boxShadow: '0 12px 24px rgba(0,0,0,0.1)' }}
+            onClick={() => setFilter(card.type === 'total' ? 'all' : card.type)}
+            style={{ cursor: 'pointer' }}
+        >
+            <div
+                className={styles.statusCardBg}
+                style={{ backgroundColor: card.bgColor }}
+            ></div>
+            <div className={styles.statusCardContent}>
+                <div className={styles.statusCardHeader}>
+                    <div
+                        className={styles.statusCardIcon}
+                        style={{ color: card.color, backgroundColor: card.bgColor }}
+                    >
+                        {card.icon}
+                    </div>
+                    {card.type !== 'total' && (
+                        <div
+                            className={styles.statusCardDot}
+                            style={{ backgroundColor: card.color }}
+                        ></div>
+                    )}
+                </div>
+                <div className={styles.statusCardBody}>
+                    <motion.div
+                        className={styles.statusCardCount}
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.2, type: 'spring', stiffness: 100 }}
+                        style={{ color: card.color }}
+                    >
+                        {card.count}
+                    </motion.div>
+                    <p className={styles.statusCardLabel}>{card.label}</p>
+                </div>
+            </div>
+        </motion.div>
     );
 };
 

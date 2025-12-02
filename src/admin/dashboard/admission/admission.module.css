@@ -1,8 +1,5 @@
 /* ==================== CSS VARIABLES ==================== */
 :root {
-    --primary-yellow: #ffbf00;
-    --primary-purple: #6a4c93;
-    --secondary-purple: #8662b0;
     --white: #ffffff;
     --black: #333333;
     --text-gray: #666666;
@@ -12,9 +9,9 @@
     --success: #10b981;
     --error: #ef4444;
     --warning: #ffbf00;
+    --info: #3b82f6;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 
 /* ==================== Dashboard Wrapper ==================== */
 .dashboardWrapper {
@@ -112,11 +109,13 @@
 }
 
 @keyframes pulse {
+
     0%,
     100% {
         opacity: 1;
         transform: scale(1);
     }
+
     50% {
         opacity: 0.7;
         transform: scale(1.2);
@@ -350,7 +349,7 @@
 }
 
 .phoneLink:hover {
-    background: var(--secondary-purple);
+    background: var(--primary-purple);
     transform: scale(1.1);
     box-shadow: 0 4px 12px rgba(106, 76, 147, 0.3);
 }
@@ -378,6 +377,8 @@
     transition: var(--transition);
     box-shadow: 0 2px 8px rgba(37, 211, 102, 0.2);
     cursor: pointer;
+    border: none;
+    padding: 0;
 }
 
 .whatsappLink:hover {
@@ -388,105 +389,6 @@
 
 .whatsappLink:active {
     transform: scale(0.95);
-}
-
-/* ==================== Status Badge ==================== */
-.status {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    text-transform: capitalize;
-    letter-spacing: 0.3px;
-    border: 1px solid;
-    background: var(--white);
-    transition: var(--transition);
-}
-
-.status.in-review {
-    color: #3b82f6;
-    background: rgba(59, 130, 246, 0.1);
-    border-color: #3b82f6;
-}
-
-.status.reviewed {
-    color: #f59e0b;
-    background: rgba(245, 158, 11, 0.1);
-    border-color: #f59e0b;
-}
-
-.status.interview-scheduled {
-    color: #8b5cf6;
-    background: rgba(139, 92, 246, 0.1);
-    border-color: #8b5cf6;
-}
-
-.status.confirmed {
-    color: var(--success);
-    background: rgba(16, 185, 129, 0.1);
-    border-color: var(--success);
-}
-
-.status.rejected {
-    color: #dc2626;
-    background: rgba(220, 38, 38, 0.1);
-    border-color: #dc2626;
-}
-
-/* ==================== Status Select ==================== */
-.statusSelect {
-    padding: 0.6rem 1rem;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    background: var(--white);
-    color: var(--black);
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: var(--transition);
-    font-family: 'Verdana', sans-serif;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236a4c93' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.6rem center;
-    padding-right: 2rem;
-}
-
-.statusSelect:hover {
-    border-color: var(--primary-purple);
-    box-shadow: 0 2px 8px rgba(106, 76, 147, 0.1);
-}
-
-.statusSelect:focus {
-    outline: none;
-    border-color: var(--primary-purple);
-    box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
-}
-
-/* ==================== Loading & No Results ==================== */
-.loading,
-.noResults {
-    text-align: center;
-    padding: 3rem 1.5rem !important;
-    color: var(--text-gray);
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-}
-
-.loadingIcon {
-    animation: spin 1s linear infinite;
-    color: var(--primary-purple);
-    font-size: 1.2rem;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
 }
 
 /* ==================== Notes Button ==================== */
@@ -531,22 +433,30 @@
 
 .notesIndicator {
     position: absolute;
-    width: 8px;
-    height: 8px;
+    width: 20px;
+    height: 20px;
     background: var(--warning);
     border-radius: 50%;
-    top: -2px;
-    right: -2px;
+    top: -8px;
+    right: -8px;
     box-shadow: 0 0 0 2px var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--white);
     animation: pulse-indicator 2s ease-in-out infinite;
 }
 
 @keyframes pulse-indicator {
+
     0%,
     100% {
         opacity: 1;
         transform: scale(1);
     }
+
     50% {
         opacity: 0.6;
         transform: scale(1.3);
@@ -569,6 +479,7 @@
     cursor: pointer;
     transition: var(--transition);
     text-decoration: none;
+    font-family: 'Verdana', sans-serif;
 }
 
 .viewBtn:hover {
@@ -581,38 +492,192 @@
     transform: translateY(0);
 }
 
+/* ==================== Loading & No Results ==================== */
+.loading,
+.noResults {
+    text-align: center;
+    padding: 3rem 1.5rem !important;
+    color: var(--text-gray);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.loadingIcon {
+    animation: spin 1s linear infinite;
+    color: var(--primary-purple);
+    font-size: 1.2rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==================== Status Dropdown ==================== */
+.statusDropdown {
+    padding: 0.6rem 0.8rem;
+    border-radius: 0.375rem;
+    border: 2px solid var(--border-color);
+    background-color: var(--white);
+    color: var(--black);
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    min-width: 140px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.25rem;
+    padding-right: 2.5rem;
+}
+
+.statusDropdown:hover:not(:disabled) {
+    border-color: var(--primary-purple);
+    box-shadow: 0 2px 8px rgba(106, 76, 147, 0.2);
+}
+
+.statusDropdown:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1), 0 2px 8px rgba(106, 76, 147, 0.2);
+}
+
+.statusDropdown:active:not(:disabled) {
+    border-color: #1e40af;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15), 0 2px 8px rgba(30, 64, 175, 0.3);
+}
+
+.statusDropdown:disabled {
+    background-color: var(--bg-light);
+    color: var(--text-light);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.statusDropdown option {
+    padding: 0.75rem;
+    background-color: var(--white);
+    color: var(--black);
+    font-weight: 500;
+}
+
+.statusDropdown option:checked {
+    background: linear-gradient(var(--info), var(--info));
+    color: var(--white);
+}
+
+.statusDropdown option[value="In Review"] {
+    background-color: #eff6ff;
+    color: var(--info);
+}
+
+.statusDropdown option[value="In Review"]:checked {
+    background: linear-gradient(var(--info), var(--info));
+    color: var(--white);
+}
+
+.statusDropdown option[value="Reviewed"] {
+    background-color: #fffbf0;
+    color: var(--warning);
+}
+
+.statusDropdown option[value="Reviewed"]:checked {
+    background: linear-gradient(var(--warning), var(--warning));
+    color: var(--white);
+}
+
+.statusDropdown option[value="Interview Scheduled"] {
+    background-color: #faf5ff;
+    color: #8b5cf6;
+}
+
+.statusDropdown option[value="Interview Scheduled"]:checked {
+    background: linear-gradient(#8b5cf6, #8b5cf6);
+    color: var(--white);
+}
+
+.statusDropdown option[value="Confirmed"] {
+    background-color: #f0fdf4;
+    color: var(--success);
+}
+
+.statusDropdown option[value="Confirmed"]:checked {
+    background: linear-gradient(var(--success), var(--success));
+    color: var(--white);
+}
+
+.statusDropdown option[value="Rejected"] {
+    background-color: #fef2f2;
+    color: #dc2626;
+}
+
+.statusDropdown option[value="Rejected"]:checked {
+    background: linear-gradient(#dc2626, #dc2626);
+    color: var(--white);
+}
+
+.statusSpinner {
+    margin-left: 0.5rem;
+    animation: spin 1s linear infinite;
+    vertical-align: middle;
+    color: var(--primary-purple);
+}
+
 /* ==================== Modal Overlay ==================== */
 .modalOverlay {
-    position: relative;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);
     z-index: 999;
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: center;
     padding: 1rem;
 }
 
-.modalOverlay.active {
-    display: flex;
-}
-
 /* ==================== Modal ==================== */
-.modal {
+.notesModal,
+.detailsModal {
     position: fixed;
-    top: 10%;
-    left: 30%;
+    top: 15%;
+    left: 33%;
+    transform: translate(-50%, -50%);
     background: var(--white);
     border-radius: 16px;
     padding: 0;
     width: 100%;
-    max-width: 700px;
+    max-width: 650px;
+    max-height: 85vh;
+    overflow: hidden;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--white);
+    border-radius: 16px;
+    padding: 0;
+    width: 100%;
+    max-width: 600px;
     max-height: 90vh;
     overflow: hidden;
     z-index: 1000;
@@ -620,19 +685,6 @@
     flex-direction: column;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     border: 1px solid var(--border-color);
-    margin: auto;
-    animation: modalSlideIn 0.3s ease-out;
-}
-
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95) translateY(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
 }
 
 /* ==================== Modal Header ==================== */
@@ -660,11 +712,14 @@
     font-weight: 600;
 }
 
-.lastUpdated {
+.notesCount {
     font-size: 0.8rem !important;
-    color: var(--text-light) !important;
+    color: var(--primary-purple) !important;
     margin-top: 0.5rem !important;
-    font-style: italic;
+    font-weight: 600 !important;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
 }
 
 .closeBtn {
@@ -682,12 +737,16 @@
     border-radius: 8px;
     transition: var(--transition);
     flex-shrink: 0;
-    margin-left: auto;
 }
 
-.closeBtn:hover {
+.closeBtn:hover:not(:disabled) {
     background: rgba(106, 76, 147, 0.1);
     color: var(--primary-purple);
+}
+
+.closeBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 /* ==================== Modal Content ==================== */
@@ -702,7 +761,7 @@
 }
 
 .modalContent::-webkit-scrollbar-track {
-    background: var(--bg-light);
+    background: transparent;
 }
 
 .modalContent::-webkit-scrollbar-thumb {
@@ -765,51 +824,129 @@
     background: var(--bg-light);
     border-radius: 10px;
     border: 1px solid var(--border-color);
+    border-left: 4px solid var(--info);
 }
 
-.statusSection .statusSelect {
-    width: 100%;
+.statusContainer {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
-/* ==================== Notes Section ==================== */
-.notesSection {
-    margin-bottom: 2rem;
-    padding: 1rem;
-    background: var(--bg-light);
-    border-radius: 10px;
-    border: 1px solid var(--border-color);
-}
-
-.noteTextarea {
-    width: 100%;
-    padding: 1rem;
+.statusSelectModal {
+    flex: 1;
+    min-width: 150px;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
     border: 2px solid var(--border-color);
-    border-radius: 12px;
-    font-family: 'Verdana', sans-serif;
-    font-size: 1rem;
+    background-color: var(--white);
     color: var(--black);
-    resize: vertical;
-    transition: var(--transition);
-    background: var(--white);
-    line-height: 1.6;
-    box-sizing: border-box;
-    min-height: 150px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.25rem;
+    padding-right: 2.5rem;
 }
 
-.noteTextarea::placeholder {
-    color: var(--text-light);
+.statusSelectModal:hover:not(:disabled) {
+    border-color: var(--primary-purple);
+    box-shadow: 0 2px 8px rgba(106, 76, 147, 0.2);
 }
 
-.noteTextarea:focus {
+.statusSelectModal:focus {
     outline: none;
     border-color: var(--primary-purple);
-    box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
+    box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1), 0 2px 8px rgba(106, 76, 147, 0.2);
 }
 
-.noteTextarea:disabled {
-    background: var(--bg-light);
+.statusSelectModal:disabled {
+    background-color: var(--bg-light);
+    color: var(--text-light);
     cursor: not-allowed;
     opacity: 0.6;
+}
+
+.statusSelectModal option {
+    padding: 0.75rem;
+    background-color: var(--white);
+    color: var(--black);
+    font-weight: 500;
+}
+
+.statusSelectModal option:checked {
+    background: linear-gradient(var(--info), var(--info));
+    color: var(--white);
+}
+
+.statusSelectModal option[value="In Review"] {
+    background-color: #eff6ff;
+    color: var(--info);
+}
+
+.statusSelectModal option[value="In Review"]:checked {
+    background: linear-gradient(var(--info), var(--info));
+    color: var(--white);
+}
+
+.statusSelectModal option[value="Reviewed"] {
+    background-color: #fffbf0;
+    color: var(--warning);
+}
+
+.statusSelectModal option[value="Reviewed"]:checked {
+    background: linear-gradient(var(--warning), var(--warning));
+    color: var(--white);
+}
+
+.statusSelectModal option[value="Interview Scheduled"] {
+    background-color: #faf5ff;
+    color: #8b5cf6;
+}
+
+.statusSelectModal option[value="Interview Scheduled"]:checked {
+    background: linear-gradient(#8b5cf6, #8b5cf6);
+    color: var(--white);
+}
+
+.statusSelectModal option[value="Confirmed"] {
+    background-color: #f0fdf4;
+    color: var(--success);
+}
+
+.statusSelectModal option[value="Confirmed"]:checked {
+    background: linear-gradient(var(--success), var(--success));
+    color: var(--white);
+}
+
+.statusSelectModal option[value="Rejected"] {
+    background-color: #fef2f2;
+    color: #dc2626;
+}
+
+.statusSelectModal option[value="Rejected"]:checked {
+    background: linear-gradient(#dc2626, #dc2626);
+    color: var(--white);
+}
+
+.updatingIndicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-gray);
+    white-space: nowrap;
+}
+
+.updatingIndicator span {
+    font-weight: 500;
 }
 
 /* ==================== Documents Section ==================== */
@@ -879,6 +1016,12 @@
     transform: scale(1.05);
 }
 
+.noDocuments {
+    color: var(--text-light);
+    font-style: italic;
+    margin: 0;
+}
+
 /* ==================== Modal Footer ==================== */
 .modalFooter {
     display: flex;
@@ -912,9 +1055,14 @@
     border: 2px solid var(--border-color);
 }
 
-.cancelBtn:hover {
+.cancelBtn:hover:not(:disabled) {
     background: rgba(106, 76, 147, 0.2);
     border-color: var(--primary-purple);
+}
+
+.cancelBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .saveBtn {
@@ -924,9 +1072,13 @@
 }
 
 .saveBtn:hover:not(:disabled) {
-    background: var(--secondary-purple);
+    background: var(--primary-purple);
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(106, 76, 147, 0.35);
+}
+
+.saveBtn:active:not(:disabled) {
+    transform: translateY(0);
 }
 
 .saveBtn:disabled {
@@ -934,9 +1086,26 @@
     cursor: not-allowed;
 }
 
-.spinner {
-    display: inline-block;
-    animation: spin 0.8s linear infinite;
+.downloadLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.8rem 1.6rem;
+    background: linear-gradient(90deg, var(--primary-purple), var(--primary-purple));
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.25);
+}
+
+.downloadLink:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(106, 76, 147, 0.35);
 }
 
 /* ==================== Preview Content ==================== */
@@ -947,6 +1116,7 @@
     justify-content: center;
     min-height: 400px;
     background: var(--bg-light);
+    flex: 1;
 }
 
 .previewImage {
@@ -970,36 +1140,218 @@
     font-weight: 600;
 }
 
-.downloadLink {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.8rem 1.6rem;
-    background: linear-gradient(90deg, var(--primary-purple), var(--secondary-purple));
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: var(--transition);
-    text-decoration: none;
-    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.25);
+/* ==================== NOTES HISTORY SECTION ==================== */
+.notesHistory {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px dashed var(--border-color);
 }
 
-.downloadLink:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(106, 76, 147, 0.35);
+.notesHistoryTitle {
+    margin: 0 0 1.25rem 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary-purple);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.notesHistoryTitle svg {
+    font-size: 1.1rem;
+    animation: slideInRotate 0.4s ease-out;
+}
+
+@keyframes slideInRotate {
+    from {
+        opacity: 0;
+        transform: translateX(-10px) rotate(-20deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) rotate(0deg);
+    }
+}
+
+.notesList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* ==================== NOTE ENTRY CARD ==================== */
+.noteEntry {
+    background: linear-gradient(135deg, rgba(243, 232, 255, 0.5), rgba(255, 251, 240, 0.3));
+    border: 2px solid var(--border-color);
+    border-left: 4px solid var(--primary-purple);
+    border-radius: 10px;
+    padding: 1.25rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.noteEntry:hover {
+    border-color: var(--primary-purple);
+    box-shadow: 0 6px 16px rgba(106, 76, 147, 0.12);
+    background: linear-gradient(135deg, rgba(243, 232, 255, 0.7), rgba(255, 251, 240, 0.5));
+}
+
+.noteEntryHeader {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.noteNumber {
+    display: inline-block;
+    background: var(--primary-purple);
+    color: var(--white);
+    padding: 0.35rem 0.7rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.noteTimestamp {
+    font-size: 0.85rem;
+    color: var(--text-gray);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.deleteNoteBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error);
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.deleteNoteBtn:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.2);
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+}
+
+.deleteNoteBtn:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.deleteNoteBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.noteEntryContent {
+    margin: 0;
+}
+
+.noteEntryContent p {
+    margin: 0;
+    padding: 0;
+    font-size: 0.95rem;
+    color: var(--black);
+    line-height: 1.6;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+/* ==================== NOTES DIVIDER ==================== */
+.notesDivider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    color: var(--text-light);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.notesDivider::before,
+.notesDivider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+}
+
+/* ==================== NEW NOTE SECTION ==================== */
+.newNoteSection {
+    margin-bottom: 0;
+}
+
+.newNoteTitle {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary-purple);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.noteTextarea {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-family: 'Verdana', sans-serif;
+    font-size: 1rem;
+    color: var(--black);
+    resize: vertical;
+    transition: var(--transition);
+    background: var(--white);
+    line-height: 1.6;
+    box-sizing: border-box;
+    min-height: 120px;
+}
+
+.noteTextarea::placeholder {
+    color: var(--text-light);
+}
+
+.noteTextarea:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
+    background: linear-gradient(135deg, rgba(243, 232, 255, 0.2), rgba(255, 251, 240, 0.1));
+}
+
+.noteTextarea:disabled {
+    background: var(--bg-light);
+    cursor: not-allowed;
+    opacity: 0.6;
+    border-color: var(--border-color);
+}
+
+.spinnerIcon {
+    animation: spin 1s linear infinite;
 }
 
 /* ==================== Responsive Design ==================== */
-
-@media (max-width: 1400px) {
-    .modal {
-        left: 25%;
-        max-width: 600px;
-    }
-}
 
 @media (max-width: 1200px) {
     .statusCardsSection {
@@ -1056,8 +1408,8 @@
         grid-template-columns: 1fr;
     }
 
-    .modal {
-        left: 15%;
+    .notesModal,
+    .detailsModal {
         max-width: 600px;
     }
 }
@@ -1124,20 +1476,19 @@
         font-size: 0.75rem;
     }
 
-    .status {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.75rem;
+    .detailsGrid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
     }
 
-    .statusSelect {
-        padding: 0.5rem 0.8rem;
-        font-size: 0.85rem;
+    .detailItem {
+        padding: 0.75rem;
     }
 
-    .modal {
-        left:0;
-        width: 100%;
-        /* max-width: 600px; */
+    .notesModal,
+    .detailsModal {
+        width: 95%;
+        max-width: none;
         max-height: 95vh;
     }
 
@@ -1163,15 +1514,6 @@
         margin-top: 0;
     }
 
-    .detailsGrid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .detailItem {
-        padding: 0.75rem;
-    }
-
     .noteTextarea {
         font-size: 1rem;
         padding: 0.8rem;
@@ -1187,6 +1529,40 @@
     .downloadLink {
         padding: 0.7rem 1.2rem;
         font-size: 0.9rem;
+    }
+
+    .contactLinks {
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+
+    .phoneLink {
+        width: 36px;
+        height: 36px;
+    }
+
+    .whatsappLink {
+        width: 36px;
+        height: 36px;
+    }
+
+    .documentItem {
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .documentName {
+        font-size: 0.8rem;
+    }
+
+    .docBtn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.75rem;
+    }
+
+    .previewIframe {
+        height: 300px;
     }
 }
 
@@ -1249,23 +1625,35 @@
         font-size: 0.7rem;
     }
 
-    .status {
-        padding: 0.35rem 0.7rem;
-        font-size: 0.7rem;
+    .notesBtn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
     }
 
-    .statusSelect {
-        padding: 0.5rem 0.7rem;
+    .viewBtn {
+        padding: 0.5rem 0.8rem;
         font-size: 0.8rem;
-        padding-right: 1.8rem;
+        gap: 0.4rem;
     }
 
-    .modal {
+    .statusDropdown {
+        min-width: 100px;
+        font-size: 0.75rem;
+        padding: 0.4rem 2rem 0.4rem 0.4rem;
+    }
+
+    .notesModal,
+    .detailsModal {
         width: 95vw;
         max-height: 90vh;
         max-width: 100%;
         border-radius: 20px 20px 0 0;
         bottom: 0;
+        top: auto;
+        left: auto;
+        right: auto;
+        transform: none;
     }
 
     .modalOverlay {
@@ -1352,6 +1740,55 @@
     .previewIframe {
         height: 300px;
     }
+
+    .notesHistory {
+        margin-bottom: 1.25rem;
+        padding-bottom: 1.25rem;
+    }
+
+    .notesHistoryTitle {
+        font-size: 0.9rem;
+        gap: 0.5rem;
+    }
+
+    .noteEntry {
+        padding: 0.9rem;
+        border-left-width: 3px;
+    }
+
+    .noteEntryHeader {
+        gap: 0.5rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .noteNumber {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    .noteTimestamp {
+        font-size: 0.75rem;
+    }
+
+    .deleteNoteBtn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.75rem;
+    }
+
+    .noteEntryContent p {
+        font-size: 0.9rem;
+    }
+
+    .notesDivider {
+        margin: 1.25rem 0;
+        font-size: 0.8rem;
+    }
+
+    .newNoteTitle {
+        font-size: 0.9rem;
+        margin-bottom: 0.75rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1407,27 +1844,41 @@
         padding: 0.5rem 0.6rem;
     }
 
-    .status {
-        padding: 0.3rem 0.6rem;
-        font-size: 0.65rem;
-    }
-
-    .statusSelect {
-        padding: 0.4rem 0.6rem;
-        font-size: 0.75rem;
-        padding-right: 1.6rem;
-    }
-
     .loading,
     .noResults {
         padding: 2rem 1rem !important;
         font-size: 0.85rem;
     }
 
-    .modal {
-        position: fixed;
+    .notesBtn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+
+    .notesIndicator {
+        width: 18px;
+        height: 18px;
+        font-size: 0.65rem;
+    }
+
+    .viewBtn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.75rem;
+        gap: 0.3rem;
+    }
+
+    .statusDropdown {
+        min-width: 90px;
+        font-size: 0.7rem;
+        padding: 0.35rem 1.8rem 0.35rem 0.35rem;
+    }
+
+    .notesModal,
+    .detailsModal {
+        top: 10%;
         width: 100vw;
-        max-height: 100vh;
+        max-height: 80vh;
         border-radius: 20px 20px 0 0;
         left: 0;
     }
@@ -1536,456 +1987,7 @@
     .previewIframe {
         height: 250px;
     }
-}
 
-/* ==================== Accessibility ==================== */
-@media (prefers-reduced-motion: reduce) {
-    .statusCardDot,
-    .notesIndicator,
-    .modal {
-        animation: none;
-    }
-}
-
-@media (prefers-contrast: more) {
-    .table th {
-        border: 2px solid var(--primary-purple);
-    }
-
-    .status,
-    .statusSelect {
-        border-width: 2px;
-    }
-
-    .modal {
-        border-width: 2px;
-    }
-}
-
-/* ==================== Focus States ==================== */
-.notesBtn:focus,
-.closeBtn:focus,
-.cancelBtn:focus,
-.saveBtn:focus,
-.docBtn:focus {
-    outline: 3px solid var(--primary-yellow);
-    outline-offset: 2px;
-}
-
-.noteTextarea:focus-visible {
-    outline: none;
-}
-
-.searchBar input:focus-visible,
-.filterSelect:focus-visible,
-.statusSelect:focus-visible {
-    outline: none;
-}
-
-/* ==================== Print Styles ==================== */
-@media print {
-    .modalOverlay,
-    .modal {
-        display: none !important;
-    }
-
-    .notesBtn,
-    .viewBtn {
-        display: none;
-    }
-
-    .dashboard {
-        box-shadow: none;
-    }
-
-    .tableWrapper {
-        border: 1px solid var(--border-color);
-    }
-}
-
-/* ==================== NOTES HISTORY SECTION ==================== */
-.notesHistory {
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
-    border-bottom: 2px dashed var(--border-color);
-}
-
-.notesHistoryTitle {
-    margin: 0 0 1.25rem 0;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--primary-purple);
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.notesHistoryTitle svg {
-    font-size: 1.1rem;
-    animation: slideInRotate 0.4s ease-out;
-}
-
-@keyframes slideInRotate {
-    from {
-        opacity: 0;
-        transform: translateX(-10px) rotate(-20deg);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0) rotate(0deg);
-    }
-}
-
-.notesList {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-/* ==================== NOTE ENTRY CARD ==================== */
-.noteEntry {
-    background: linear-gradient(135deg, rgba(243, 232, 255, 0.5), rgba(255, 251, 240, 0.3));
-    border: 2px solid var(--border-color);
-    border-left: 4px solid var(--primary-purple);
-    border-radius: 10px;
-    padding: 1.25rem;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.noteEntry:hover {
-    border-color: var(--primary-purple);
-    box-shadow: 0 6px 16px rgba(106, 76, 147, 0.12);
-    background: linear-gradient(135deg, rgba(243, 232, 255, 0.7), rgba(255, 251, 240, 0.5));
-}
-
-.noteEntry:hover::before {
-    opacity: 1;
-}
-
-.noteEntryHeader {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.8rem;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-
-.noteNumber {
-    display: inline-block;
-    background: var(--primary-purple);
-    color: var(--white);
-    padding: 0.35rem 0.7rem;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-
-.noteTimestamp {
-    font-size: 0.85rem;
-    color: var(--text-gray);
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-}
-
-.deleteNoteBtn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--error);
-    border: none;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    padding: 0;
-}
-
-.deleteNoteBtn:hover {
-    background: rgba(239, 68, 68, 0.2);
-    transform: scale(1.1);
-    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
-}
-
-.deleteNoteBtn:active {
-    transform: scale(0.95);
-}
-
-.noteEntryContent {
-    margin: 0;
-}
-
-.noteEntryContent p {
-    margin: 0;
-    padding: 0;
-    font-size: 0.95rem;
-    color: var(--black);
-    line-height: 1.6;
-    word-break: break-word;
-    white-space: pre-wrap;
-}
-
-/* ==================== NOTES DIVIDER ==================== */
-.notesDivider {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin: 1.5rem 0;
-    color: var(--text-light);
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.notesDivider::before,
-.notesDivider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border-color), transparent);
-}
-
-/* ==================== NEW NOTE SECTION ==================== */
-.newNoteSection {
-    margin-bottom: 0;
-}
-
-.newNoteTitle {
-    margin: 0 0 1rem 0;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--primary-purple);
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.noteTextarea {
-    width: 100%;
-    padding: 1rem;
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    font-family: 'Verdana', sans-serif;
-    font-size: 1rem;
-    color: var(--black);
-    resize: vertical;
-    transition: all 0.3s ease;
-    background: var(--white);
-    line-height: 1.6;
-    box-sizing: border-box;
-    min-height: 120px;
-}
-
-.noteTextarea::placeholder {
-    color: var(--text-light);
-}
-
-.noteTextarea:focus {
-    outline: none;
-    border-color: var(--primary-purple);
-    box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
-    background: linear-gradient(135deg, rgba(243, 232, 255, 0.2), rgba(255, 251, 240, 0.1));
-}
-
-.noteTextarea:disabled {
-    background: var(--bg-light);
-    cursor: not-allowed;
-    opacity: 0.6;
-    border-color: var(--border-color);
-}
-
-/* ==================== NOTES COUNT ==================== */
-.notesCount {
-    margin: 0.5rem 0 0 0 !important;
-    font-size: 0.85rem !important;
-    color: var(--primary-purple) !important;
-    font-weight: 600 !important;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-}
-
-.notesCount svg {
-    font-size: 0.9rem;
-}
-
-/* ==================== NOTES INDICATOR IN TABLE ==================== */
-.notesIndicator {
-    position: absolute;
-    min-width: 20px;
-    height: 20px;
-    background: var(--warning);
-    color: var(--white);
-    border-radius: 50%;
-    top: -8px;
-    right: -8px;
-    box-shadow: 0 0 0 2px var(--white), 0 2px 6px rgba(255, 191, 0, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.65rem;
-    font-weight: 700;
-    animation: pulse-indicator 2s ease-in-out infinite;
-}
-
-/* ==================== MODAL UPDATES ==================== */
-.modal {
-    display: flex;
-    flex-direction: column;
-    max-height: 85vh;
-}
-
-.modalContent {
-    flex: 1;
-    overflow-y: auto;
-    padding: 2rem;
-}
-
-.modalContent::-webkit-scrollbar {
-    width: 6px;
-}
-
-.modalContent::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.modalContent::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 3px;
-}
-
-.modalContent::-webkit-scrollbar-thumb:hover {
-    background: var(--text-light);
-}
-
-/* ==================== RESPONSIVE - TABLET ==================== */
-@media (max-width: 1024px) {
-    .modal {
-        left: auto !important;
-        top: auto !important;
-        max-height: 90vh;
-    }
-
-    .notesHistory {
-        margin-bottom: 1.5rem;
-        padding-bottom: 1.5rem;
-    }
-
-    .noteEntry {
-        padding: 1rem;
-    }
-
-    .noteEntryHeader {
-        gap: 0.75rem;
-    }
-
-    .noteTimestamp {
-        font-size: 0.8rem;
-    }
-
-    .newNoteSection {
-        margin-bottom: 0;
-    }
-
-    .noteTextarea {
-        min-height: 100px;
-        font-size: 0.95rem;
-    }
-}
-
-/* ==================== RESPONSIVE - MOBILE ==================== */
-@media (max-width: 768px) {
-    .notesHistory {
-        margin-bottom: 1.25rem;
-        padding-bottom: 1.25rem;
-    }
-
-    .notesHistoryTitle {
-        font-size: 0.9rem;
-        gap: 0.5rem;
-    }
-
-    .noteEntry {
-        padding: 0.9rem;
-        border-left-width: 3px;
-    }
-
-    .noteEntryHeader {
-        gap: 0.5rem;
-        margin-bottom: 0.6rem;
-    }
-
-    .noteNumber {
-        font-size: 0.7rem;
-        padding: 0.3rem 0.6rem;
-    }
-
-    .noteTimestamp {
-        font-size: 0.75rem;
-    }
-
-    .deleteNoteBtn {
-        width: 28px;
-        height: 28px;
-        font-size: 0.75rem;
-    }
-
-    .noteEntryContent p {
-        font-size: 0.9rem;
-    }
-
-    .notesDivider {
-        margin: 1.25rem 0;
-        font-size: 0.8rem;
-    }
-
-    .newNoteTitle {
-        font-size: 0.9rem;
-        margin-bottom: 0.75rem;
-    }
-
-    .noteTextarea {
-        min-height: 100px;
-        font-size: 0.9rem;
-        padding: 0.8rem;
-    }
-
-    .modal {
-        max-height: 95vh;
-    }
-
-    .modalHeader {
-        padding: 1.25rem;
-    }
-
-    .modalHeader h2 {
-        font-size: 1.15rem;
-    }
-
-    .modalContent {
-        padding: 1.5rem;
-    }
-
-    .modalFooter {
-        padding: 1.25rem;
-    }
-}
-
-@media (max-width: 480px) {
     .notesHistory {
         margin-bottom: 1rem;
         padding-bottom: 1rem;
@@ -2033,503 +2035,437 @@
     .newNoteTitle {
         font-size: 0.85rem;
     }
-
-    .noteTextarea {
-        min-height: 90px;
-        font-size: 0.85rem;
-        padding: 0.75rem;
-    }
-
-    .modal {
-        width: 95%;
-        max-height: 95vh;
-    }
-
-    .modalHeader {
-        padding: 1rem;
-    }
-
-    .modalHeader h2 {
-        font-size: 1rem;
-    }
-
-    .modalContent {
-        padding: 1rem;
-    }
-
-    .modalFooter {
-        padding: 1rem;
-        gap: 0.5rem;
-    }
-
-    .cancelBtn,
-    .saveBtn {
-        padding: 0.65rem 1rem;
-        font-size: 0.85rem;
-    }
 }
 
-/* ==================== Status Dropdown Styling ==================== */
-
-/* Table Status Dropdown */
-.statusDropdown {
-    padding: 0.6rem 0.8rem;
-    border-radius: 0.375rem;
-    border: 2px solid #e5e7eb;
-    background-color: white;
-    color: #1f2937;
-    font-weight: 600;
-    font-size: 0.85rem;
-    transition: all 0.2s ease;
-    font-family: inherit;
-    min-width: 140px;
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    background-size: 1.25rem;
-    padding-right: 2.5rem;
-}
-
-.statusDropdown:hover:not(:disabled) {
-    border-color: #3b82f6;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
-}
-
-.statusDropdown:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 2px 8px rgba(59, 130, 246, 0.2);
-}
-
-.statusDropdown:active:not(:disabled) {
-    border-color: #1e40af;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15), 0 2px 8px rgba(30, 64, 175, 0.3);
-}
-
-.statusDropdown:disabled {
-    background-color: #f3f4f6;
-    color: #9ca3af;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-.statusDropdown option {
-    padding: 0.75rem;
-    background-color: white;
-    color: #1f2937;
-    font-weight: 500;
-}
-
-.statusDropdown option:checked {
-    background: linear-gradient(#3b82f6, #3b82f6);
-    background-color: #3b82f6;
-    color: white;
-}
-
-.statusDropdown option[value="In Review"] {
-    background-color: #eff6ff;
-    color: #3b82f6;
-}
-
-.statusDropdown option[value="In Review"]:checked {
-    background: linear-gradient(#3b82f6, #3b82f6);
-    color: white;
-}
-
-.statusDropdown option[value="Reviewed"] {
-    background-color: #fffbf0;
-    color: #f59e0b;
-}
-
-.statusDropdown option[value="Reviewed"]:checked {
-    background: linear-gradient(#f59e0b, #f59e0b);
-    color: white;
-}
-
-.statusDropdown option[value="Interview Scheduled"] {
-    background-color: #faf5ff;
-    color: #8b5cf6;
-}
-
-.statusDropdown option[value="Interview Scheduled"]:checked {
-    background: linear-gradient(#8b5cf6, #8b5cf6);
-    color: white;
-}
-
-.statusDropdown option[value="Confirmed"] {
-    background-color: #f0fdf4;
-    color: #10b981;
-}
-
-.statusDropdown option[value="Confirmed"]:checked {
-    background: linear-gradient(#10b981, #10b981);
-    color: white;
-}
-
-.statusDropdown option[value="Rejected"] {
-    background-color: #fef2f2;
-    color: #ef4444;
-}
-
-.statusDropdown option[value="Rejected"]:checked {
-    background: linear-gradient(#ef4444, #ef4444);
-    color: white;
-}
-
-/* Modal Status Select */
-.statusSelectModal {
-    flex: 1;
-    min-width: 150px;
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    border: 2px solid #e5e7eb;
-    background-color: white;
-    color: #1f2937;
-    font-size: 0.95rem;
-    font-weight: 500;
-    font-family: inherit;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    background-size: 1.25rem;
-    padding-right: 2.5rem;
-}
-
-.statusSelectModal:hover:not(:disabled) {
-    border-color: #3b82f6;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
-}
-
-.statusSelectModal:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 2px 8px rgba(59, 130, 246, 0.2);
-}
-
-.statusSelectModal:disabled {
-    background-color: #f3f4f6;
-    color: #9ca3af;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-.statusSelectModal option {
-    padding: 0.75rem;
-    background-color: white;
-    color: #1f2937;
-    font-weight: 500;
-}
-
-.statusSelectModal option:checked {
-    background: linear-gradient(#3b82f6, #3b82f6);
-    background-color: #3b82f6;
-    color: white;
-}
-
-.statusSelectModal option[value="In Review"] {
-    background-color: #eff6ff;
-    color: #3b82f6;
-}
-
-.statusSelectModal option[value="In Review"]:checked {
-    background: linear-gradient(#3b82f6, #3b82f6);
-    color: white;
-}
-
-.statusSelectModal option[value="Reviewed"] {
-    background-color: #fffbf0;
-    color: #f59e0b;
-}
-
-.statusSelectModal option[value="Reviewed"]:checked {
-    background: linear-gradient(#f59e0b, #f59e0b);
-    color: white;
-}
-
-.statusSelectModal option[value="Interview Scheduled"] {
-    background-color: #faf5ff;
-    color: #8b5cf6;
-}
-
-.statusSelectModal option[value="Interview Scheduled"]:checked {
-    background: linear-gradient(#8b5cf6, #8b5cf6);
-    color: white;
-}
-
-.statusSelectModal option[value="Confirmed"] {
-    background-color: #f0fdf4;
-    color: #10b981;
-}
-
-.statusSelectModal option[value="Confirmed"]:checked {
-    background: linear-gradient(#10b981, #10b981);
-    color: white;
-}
-
-.statusSelectModal option[value="Rejected"] {
-    background-color: #fef2f2;
-    color: #ef4444;
-}
-
-.statusSelectModal option[value="Rejected"]:checked {
-    background: linear-gradient(#ef4444, #ef4444);
-    color: white;
-}
-
-/* Filter Select */
-.filterSelect {
-    padding: 0.625rem 0.875rem;
-    border: 2px solid #e5e7eb;
-    border-radius: 0.375rem;
-    background-color: white;
-    color: #1f2937;
-    font-weight: 500;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-family: inherit;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    background-size: 1.25rem;
-    padding-right: 2.5rem;
-}
-
-.filterSelect:hover {
-    border-color: #3b82f6;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
-}
-
-.filterSelect:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 2px 8px rgba(59, 130, 246, 0.2);
-}
-
-.filterSelect option {
-    padding: 0.5rem;
-    background-color: white;
-    color: #1f2937;
-}
-
-/* Status Section Container */
-.statusSection {
-    padding: 1rem;
-    background: #f9fafb;
-    border-radius: 0.5rem;
-    margin: 1rem 0;
-    border-left: 4px solid #3b82f6;
-}
-
-.statusSection:hover {
-    background: #f0f1f3;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.sectionLabel {
-    display: block;
-    margin-bottom: 0.75rem;
-    font-weight: 600;
-    color: #1f2937;
-    font-size: 0.95rem;
-}
-
-/* Status Container */
-.statusContainer {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-/* Updating Indicator */
-.updatingIndicator {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    color: #666;
-    white-space: nowrap;
-}
-
-.updatingIndicator span {
-    font-weight: 500;
-}
-
-/* Status Spinner */
-.statusSpinner {
-    margin-left: 0.5rem;
-    animation: spin 1s linear infinite;
-    vertical-align: middle;
-    color: #3b82f6;
-}
-
-/* Spinner animation */
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.spinnerIcon {
-    animation: spin 1s linear infinite;
-}
-
-.loadingIcon {
-    animation: spin 1s linear infinite;
-    margin-right: 0.5rem;
-}
-
-/* Responsive adjustments for tablet */
-@media (max-width: 1024px) {
-    .statusDropdown,
-    .statusSelectModal {
-        min-width: 130px;
-        font-size: 0.82rem;
-        padding: 0.55rem 2.25rem 0.55rem 0.6rem;
-    }
-
-    .statusDropdown option,
-    .statusSelectModal option {
-        padding: 0.65rem;
-        font-size: 0.85rem;
-    }
-}
-
-/* Responsive adjustments for mobile */
-@media (max-width: 768px) {
-    .statusDropdown,
-    .statusSelectModal {
-        min-width: 120px;
-        font-size: 0.8rem;
-        padding: 0.5rem 2.25rem 0.5rem 0.5rem;
-    }
-
-    .statusDropdown option,
-    .statusSelectModal option {
-        padding: 0.6rem;
-        font-size: 0.8rem;
-    }
-
-    .filterSelect {
-        font-size: 0.8rem;
-        padding: 0.5rem 2.25rem 0.5rem 0.5rem;
-    }
-
-    .statusContainer {
-        gap: 0.5rem;
-    }
-
-    .updatingIndicator {
-        font-size: 0.8rem;
-    }
-}
-
-/* Responsive adjustments for small mobile */
-@media (max-width: 640px) {
-    .statusDropdown,
-    .statusSelectModal {
-        min-width: 100px;
-        font-size: 0.75rem;
-        padding: 0.4rem 2rem 0.4rem 0.4rem;
-    }
-
-    .statusDropdown option,
-    .statusSelectModal option {
-        padding: 0.5rem;
-        font-size: 0.75rem;
-    }
-
-    .filterSelect {
-        font-size: 0.75rem;
-        padding: 0.4rem 2rem 0.4rem 0.4rem;
-    }
-
-    .statusContainer {
-        gap: 0.25rem;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .updatingIndicator {
-        font-size: 0.75rem;
-    }
-}
-
-/* Responsive adjustments for extra small mobile */
-@media (max-width: 480px) {
-    .statusDropdown,
-    .statusSelectModal {
-        min-width: 90px;
-        font-size: 0.7rem;
-        padding: 0.35rem 1.8rem 0.35rem 0.35rem;
-    }
-
-    .statusDropdown option,
-    .statusSelectModal option {
-        padding: 0.45rem;
-        font-size: 0.7rem;
-    }
-
-    .filterSelect {
-        font-size: 0.7rem;
-        padding: 0.35rem 1.8rem 0.35rem 0.35rem;
-    }
-
-    .statusContainer {
-        gap: 0.2rem;
-    }
-
-    .updatingIndicator {
-        font-size: 0.7rem;
-    }
-}
-
-/* Accessibility */
-.statusDropdown:focus-visible,
-.statusSelectModal:focus-visible,
-.filterSelect:focus-visible {
-    outline: 2px solid #3b82f6;
+/* ==================== Focus States ==================== */
+.notesBtn:focus-visible,
+.closeBtn:focus-visible,
+.cancelBtn:focus-visible,
+.saveBtn:focus-visible,
+.viewBtn:focus-visible,
+.docBtn:focus-visible {
+    outline: 3px solid var(--primary-yellow);
     outline-offset: 2px;
 }
 
-.statusDropdown:disabled,
-.statusSelectModal:disabled,
-.filterSelect:disabled {
-    pointer-events: none;
+.noteTextarea:focus-visible {
+    outline: none;
 }
 
-/* Print styles */
-@media print {
-    .statusDropdown,
-    .statusSelectModal,
-    .filterSelect {
-        border: 1px solid #000;
-        background: none;
+.searchBar input:focus-visible,
+.filterSelect:focus-visible,
+.statusDropdown:focus-visible,
+.statusSelectModal:focus-visible {
+    outline: none;
+}
+
+/* ==================== PAGINATION SECTION ==================== */
+.paginationSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+    border-top: 2px solid var(--border-color);
+    background: linear-gradient(135deg, #f9f7ff 0%, #fafbfc 100%);
+    border-radius: 0 0 16px 16px;
+}
+
+.paginationInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.paginationText {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.paginationText strong {
+    color: var(--primary-purple);
+    font-weight: 700;
+}
+
+.paginationControls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+/* ==================== ITEMS PER PAGE SELECTOR ==================== */
+.itemsPerPageSelector {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.itemsPerPageSelector label {
+    color: var(--text-gray);
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.itemsPerPageSelect {
+    padding: 0.65rem 1.25rem;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--white);
+    color: var(--primary-purple);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Verdana', sans-serif;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath fill='%236a4c93' d='M7 10.5L1 4.5h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    padding-right: 2.5rem;
+    min-width: 100px;
+}
+
+.itemsPerPageSelect:hover {
+    border-color: var(--primary-purple);
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.1);
+    background-color: rgba(243, 232, 255, 0.5);
+}
+
+.itemsPerPageSelect:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
+}
+
+/* ==================== PAGINATION BUTTONS CONTAINER ==================== */
+.paginationButtons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.paginationBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.7rem 1.4rem;
+    background: var(--primary-purple);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.2);
+    font-family: 'Verdana', sans-serif;
+}
+
+.paginationBtn:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(106, 76, 147, 0.3);
+}
+
+.paginationBtn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.paginationBtn:disabled {
+    background: var(--border-color);
+    color: var(--text-light);
+    cursor: not-allowed;
+    opacity: 0.6;
+    box-shadow: none;
+}
+
+/* ==================== PAGE NUMBERS ==================== */
+.pageNumbers {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pageBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--white);
+    color: var(--primary-purple);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    padding: 0;
+    font-family: 'Verdana', sans-serif;
+}
+
+.pageBtn:hover:not(.active) {
+    border-color: var(--primary-purple);
+    background: rgba(243, 232, 255, 0.5);
+    box-shadow: 0 2px 8px rgba(106, 76, 147, 0.1);
+}
+
+.pageBtn:active:not(.active) {
+    transform: scale(0.95);
+}
+
+.pageBtn.active {
+    background: var(--primary-purple);
+    color: var(--white);
+    border-color: var(--primary-purple);
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.25);
+}
+
+.ellipsis {
+    color: var(--text-light);
+    padding: 0 0.5rem;
+    font-weight: 600;
+    user-select: none;
+}
+
+/* ==================== PAGE INFO ==================== */
+.pageInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 150px;
+}
+
+.pageInfo p {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-align: center;
+}
+
+.pageInfo strong {
+    color: var(--primary-purple);
+    font-weight: 700;
+}
+
+/* ==================== RESPONSIVE - TABLET 1024px ==================== */
+@media (max-width: 1024px) {
+    .paginationSection {
+        padding: 1.5rem;
+        gap: 1.25rem;
     }
 
-    .statusDropdown option,
-    .statusSelectModal option,
-    .filterSelect option {
-        background: white;
-        color: black;
+    .paginationControls {
+        gap: 1.25rem;
+        flex-direction: column;
+        align-items: stretch;
     }
 
-    .statusSpinner,
-    .spinnerIcon,
-    .loadingIcon {
-        display: none;
+    .itemsPerPageSelector {
+        justify-content: center;
     }
+
+    .paginationButtons {
+        justify-content: center;
+    }
+
+    .pageInfo {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .paginationSection {
+        padding: 1.25rem;
+        gap: 1rem;
+    }
+
+    .paginationText {
+        font-size: 0.9rem;
+    }
+
+    .paginationControls {
+        gap: 1rem;
+        flex-direction: column;
+    }
+
+    .itemsPerPageSelector {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .itemsPerPageSelect {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .paginationButtons {
+        width: 100%;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .pageBtn {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+    }
+
+    .paginationBtn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+    .pageInfo {
+        width: 100%;
+    }
+
+    .pageInfo p {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .paginationSection {
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+
+    .paginationText {
+        font-size: 0.85rem;
+    }
+
+    .paginationControls {
+        gap: 0.75rem;
+    }
+
+    .itemsPerPageSelector {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+    }
+
+    .itemsPerPageSelector label {
+        font-size: 0.85rem;
+        white-space: normal;
+    }
+
+    .itemsPerPageSelect {
+        width: 100%;
+    }
+
+    .paginationButtons {
+        width: 100%;
+        gap: 0.4rem;
+    }
+
+    .pageBtn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+
+    .paginationBtn {
+        padding: 0.55rem 1rem;
+        font-size: 0.85rem;
+        gap: 0.4rem;
+    }
+
+    .paginationBtn svg {
+        font-size: 0.8rem;
+    }
+
+    .ellipsis {
+        padding: 0 0.3rem;
+        font-size: 0.9rem;
+    }
+
+    .pageInfo p {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .paginationSection {
+        padding: 0.75rem;
+        gap: 0.5rem;
+    }
+
+    .paginationText {
+        font-size: 0.8rem;
+    }
+
+    .paginationControls {
+        gap: 0.5rem;
+    }
+
+    .itemsPerPageSelector {
+        width: 100%;
+        gap: 0.4rem;
+    }
+
+    .itemsPerPageSelector label {
+        font-size: 0.8rem;
+    }
+
+    .itemsPerPageSelect {
+        width: 100%;
+        font-size: 0.85rem;
+    }
+
+    .paginationButtons {
+        width: 100%;
+        gap: 0.3rem;
+    }
+
+    .pageBtn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.75rem;
+    }
+
+    .paginationBtn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+        gap: 0.3rem;
+    }
+
+    .paginationBtn svg {
+        font-size: 0.75rem;
+    }
+
+    .ellipsis {
+        padding: 0 0.2rem;
+        font-size: 0.85rem;
+    }
+
+    .pageInfo {
+        min-width: auto;
+    }
+
+    .pageInfo p {
+        font-size: 0.8rem;
+    }
+}
+
+.notesModalLining {
+    height: 2px;
+    width: 100%;
+    background-color: var(--primary-purple);
+    border-radius: 16px;
+    margin-bottom: 1rem;
 }
