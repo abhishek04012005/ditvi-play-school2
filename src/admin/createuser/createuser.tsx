@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { FaUser, FaLock, FaEye, FaEyeSlash, FaArrowLeft } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { supabase } from '@/lib/supabase';
+import { hashPassword } from '@/lib/passwordEncryption';
 import styles from './createuser.module.css';
 import Loader from '@/custom/loader/loader';
 
@@ -96,6 +97,14 @@ export default function CreateUser() {
     setLoading(true);
 
     try {
+      // Get salt from environment
+      const salt = process.env.NEXT_PUBLIC_PASSWORD_SALT || process.env.PASSWORD_SALT;
+      if (!salt) {
+        toast.error('Security configuration error. Please contact administrator.');
+        console.error('PASSWORD_SALT not configured');
+        return;
+      }
+
       // Check if username already exists
       const { data: existingUser, error: checkError } = await supabase
         .from('users')
@@ -108,12 +117,15 @@ export default function CreateUser() {
         return;
       }
 
+      // Hash password before storing
+      const hashedPassword = hashPassword(formData.password, salt);
+
       // Create new user
       const { error: createError } = await supabase
         .from('users')
         .insert([{
           username: formData.username,
-          password: formData.password,
+          password: hashedPassword,
           role_id: parseInt(formData.roleId),
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaUser, FaLock, FaEye, FaEyeSlash, FaArrowLeft, FaTrash, FaKey, FaTimes, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { supabase } from '@/lib/supabase';
+import { hashPassword } from '@/lib/passwordEncryption';
 import styles from './manageuser.module.css';
 import Loader from '@/custom/loader/loader';
 
@@ -130,6 +131,14 @@ export default function ManageUser() {
     setLoading(true);
 
     try {
+      // Get salt from environment
+      const salt = process.env.NEXT_PUBLIC_PASSWORD_SALT || process.env.PASSWORD_SALT;
+      if (!salt) {
+        toast.error('Security configuration error. Please contact administrator.');
+        console.error('PASSWORD_SALT not configured');
+        return;
+      }
+
       // Check if username already exists
       const { data: existingUser, error: checkError } = await supabase
         .from('users')
@@ -142,12 +151,15 @@ export default function ManageUser() {
         return;
       }
 
+      // Hash password before storing
+      const hashedPassword = hashPassword(formData.password, salt);
+
       // Create new user
       const { error: createError } = await supabase
         .from('users')
         .insert([{
           username: formData.username,
-          password: formData.password,
+          password: hashedPassword,
           role_id: parseInt(formData.roleId),
           is_active: true,
           created_at: new Date().toISOString(),
@@ -198,9 +210,20 @@ export default function ManageUser() {
     setLoading(true);
 
     try {
+      // Get salt from environment
+      const salt = process.env.NEXT_PUBLIC_PASSWORD_SALT || process.env.PASSWORD_SALT;
+      if (!salt) {
+        toast.error('Security configuration error. Please contact administrator.');
+        console.error('PASSWORD_SALT not configured');
+        return;
+      }
+
+      // Hash new password
+      const hashedPassword = hashPassword(resetPasswordData.newPassword, salt);
+
       const { error: updateError } = await supabase
         .from('users')
-        .update({ password: resetPasswordData.newPassword, updated_at: new Date().toISOString() })
+        .update({ password: hashedPassword, updated_at: new Date().toISOString() })
         .eq('id', selectedUser.id);
 
       if (updateError) {

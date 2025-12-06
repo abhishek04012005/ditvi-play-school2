@@ -64,9 +64,11 @@ const AdminNavbar = () => {
 
     const isActive = (href?: string) => href && pathname === href;
 
-    // Role and session info: read from localStorage so we can disable links for tele-caller (role_id = 2)
+    // Initialize state with null/empty to match server-side render
     const [adminRoleId, setAdminRoleId] = useState<number | null>(null);
     const [adminUsername, setAdminUsername] = useState<string>('');
+
+    // Update state only after component mounts (client-side only)
     useEffect(() => {
         try {
             const v = localStorage.getItem('adminRoleId');
@@ -79,20 +81,7 @@ const AdminNavbar = () => {
         } catch (e) {
             // ignore
         }
-    }, []);
-
-    const effectiveRole = adminRoleId ?? (() => {
-        try {
-            const v = localStorage.getItem('adminRoleId');
-            if (v !== null) {
-                const n = parseInt(v, 10);
-                return isNaN(n) ? null : n;
-            }
-        } catch (e) {
-            // ignore
-        }
-        return null;
-    })();
+    }, [pathname]);
 
     const handleLogout = async () => {
         setLoading(true);
@@ -191,7 +180,7 @@ const AdminNavbar = () => {
                                     </>
                                 ) : (
                                     // If tele-caller (role_id === 2), disable all except Admission Dashboard
-                                    (effectiveRole === 2 && item.href !== '/admin/dashboard/admission') ? (
+                                    (adminRoleId === 2 && item.href !== '/admin/dashboard/admission') ? (
                                         <div className={`${styles.navLink} ${styles.inactive}`}>
                                             {item.label}
                                             {item.badge && (
@@ -257,7 +246,7 @@ const AdminNavbar = () => {
                                             >
                                                 <FaCog /> Change Password
                                             </Link>
-                                            {effectiveRole === 0 && (
+                                            {adminRoleId === 0 && (
                                                 <Link
                                                     href="/admin/manage-user"
                                                     className={styles.profileMenuItem}

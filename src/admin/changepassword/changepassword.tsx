@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { FaLock, FaEye, FaEyeSlash, FaArrowLeft } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { supabase } from '@/lib/supabase';
+import { hashPassword, verifyPassword } from '@/lib/passwordEncryption';
 import styles from './changepassword.module.css';
 import Loader from '@/custom/loader/loader';
 
@@ -49,23 +50,41 @@ export default function ChangePassword() {
         return;
       }
 
-      // Verify current password
-      const { data: adminData, error: verifyError } = await supabase
+      // Get salt from environment
+      const salt = process.env.NEXT_PUBLIC_PASSWORD_SALT || process.env.PASSWORD_SALT;
+      if (!salt) {
+        toast.error('Security configuration error. Please contact administrator.');
+        console.error('PASSWORD_SALT not configured');
+        return;
+      }
+
+      // Fetch current user data
+      const { data: adminData, error: fetchError } = await supabase
         .from('users')
         .select()
         .eq('username', adminUsername)
-        .eq('password', formData.currentPassword)
         .single();
 
-      if (verifyError || !adminData) {
+      if (fetchError || !adminData) {
+        toast.error('User not found');
+        return;
+      }
+
+      // Verify current password using hash comparison
+      const isCurrentPasswordValid = verifyPassword(formData.currentPassword, adminData.password, salt);
+      
+      if (!isCurrentPasswordValid) {
         toast.error('Current password is incorrect');
         return;
       }
 
+      // Hash new password
+      const hashedNewPassword = hashPassword(formData.newPassword, salt);
+
       // Update password in database
       const { error: updateError } = await supabase
         .from('users')
-        .update({ password: formData.newPassword })
+        .update({ password: hashedNewPassword })
         .eq('username', adminUsername);
 
       if (updateError) {
