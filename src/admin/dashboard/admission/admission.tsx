@@ -29,6 +29,7 @@ import styles from './admission.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
 import { DownloadModal } from '../download/DownloadData';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 
 
 
@@ -1065,7 +1066,7 @@ const NotesModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2>📝 Internal Notes</h2>
+                                <h2><EditNoteIcon/> Internal Notes</h2>
                                 <p>{childName} • {parentName}</p>
                                 {noteEntries.length > 0 && (
                                     <p className={styles.notesCount}>

@@ -28,6 +28,7 @@ import styles from './contact.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
 import { DownloadModal } from '../download/DownloadData';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 
 
 interface NoteEntry {
@@ -316,7 +317,7 @@ const ContactDashboard = () => {
 
             const updatedNotes = [...noteEntries, newEntry];
 
-            console.log('📝 Saving notes to JSONB:', updatedNotes);
+            console.log('Saving notes to JSONB:', updatedNotes);
 
             const { data, error } = await supabase
                 .from('contacts')
@@ -823,7 +824,7 @@ const NotesModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2>📝 Notes for {contact?.name}</h2>
+                                <h2><EditNoteIcon/> Notes for {contact?.name}</h2>
                                 <p>{contact?.email} • {contact?.phone}</p>
                                 {noteEntries.length > 0 && (
                                     <p className={styles.notesCount}>

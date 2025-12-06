@@ -28,6 +28,8 @@ import styles from './enquiry.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
 import { DownloadModal } from '../download/DownloadData';
+import EditNoteIcon from '@mui/icons-material/EditNote';
+
 
 
 interface NoteEntry {
@@ -254,7 +256,7 @@ const EnquiryDashboard = () => {
             transition: { staggerChildren: 0.08, delayChildren: 0.1 },
         },
     };
-enquiries
+    enquiries
     const itemVariants = {
         hidden: { opacity: 0, y: 20 },
         visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
@@ -321,7 +323,7 @@ enquiries
 
             const updatedNotes = [...noteEntries, newEntry];
 
-            console.log('📝 Saving notes to JSONB:', updatedNotes);
+            console.log('Saving notes to JSONB:', updatedNotes);
 
             const { data, error } = await supabase
                 .from('enquiries')
@@ -816,7 +818,7 @@ const NotesModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2>📝 Notes for {enquiry?.child_name}</h2>
+                                <h2><EditNoteIcon />Notes for {enquiry?.child_name}</h2>
                                 <p>{enquiry?.parent_name} • {enquiry?.phone}</p>
                                 {noteEntries.length > 0 && (
                                     <p className={styles.notesCount}>
