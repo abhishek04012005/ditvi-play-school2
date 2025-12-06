@@ -11,7 +11,7 @@ import schoolDetails from '@/json/schooldetails';
 interface Award {
   id: string;
   name: string;
-  award_type: 'weekly' | 'monthly' | 'yearly';
+  award_type: string;
   message: string;
   date: string;
   is_show_on_home_page: boolean;
@@ -35,19 +35,19 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
 
   if (!isOpen || !award) return null;
 
-  const awardTypeLabels = {
+  const awardTypeLabels: { [key: string]: string } = {
     weekly: 'Star of the Week',
     monthly: 'Star of the Month',
     yearly: 'Star of the Year'
   };
 
-  const awardIcons = {
+  const awardIcons: { [key: string]: string } = {
     weekly: '⭐',
     monthly: '🌟',
     yearly: '✨'
   };
 
-  const awardColors = {
+  const awardColors: { [key: string]: any } = {
     weekly: { primary: '#FFD700', gradient: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' },
     monthly: { primary: '#C0C0C0', gradient: 'linear-gradient(135deg, #C0C0C0 0%, #808080 100%)' },
     yearly: { primary: '#CD7F32', gradient: 'linear-gradient(135deg, #CD7F32 0%, #8B4513 100%)' }

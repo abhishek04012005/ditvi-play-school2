@@ -36,7 +36,7 @@ const PrintCard = dynamic(() => import('./printcard/printcard'), {
 interface Spotlight {
     id: string;
     name: string;
-    award_type: 'weekly' | 'monthly' | 'yearly';
+    award_type: string;
     message: string;
     date: string;
     is_show_on_home_page: boolean;
@@ -45,13 +45,23 @@ interface Spotlight {
     created_date: string;
 }
 
+interface CustomSpotlightType {
+    id: string;
+    name: string;
+    emoji: string;
+    color: string;
+    description: string;
+    created_date: string;
+    isDefault?: boolean; // Mark if it's a built-in default type
+}
+
 interface StatusCard {
     label: string;
     count: number;
     icon: React.ReactNode;
     color: string;
     bgColor: string;
-    type: 'weekly' | 'monthly' | 'yearly' | 'total';
+    type: string;
     id: string;
 }
 
@@ -60,6 +70,37 @@ type SortOrder = 'asc' | 'desc';
 type ItemsPerPage = 20 | 50 | 100;
 
 const BUCKET = 'star-of-week-images';
+
+// Default built-in spotlight types
+const DEFAULT_SPOTLIGHT_TYPES: CustomSpotlightType[] = [
+    {
+        id: 'weekly',
+        name: 'Star of the Week',
+        emoji: '⭐',
+        color: '#3b82f6',
+        description: 'Weekly excellence',
+        created_date: new Date().toISOString(),
+        isDefault: true
+    },
+    {
+        id: 'monthly',
+        name: 'Star of the Month',
+        emoji: '✨',
+        color: '#f59e0b',
+        description: 'Monthly achievement',
+        created_date: new Date().toISOString(),
+        isDefault: true
+    },
+    {
+        id: 'yearly',
+        name: 'Star of the Year',
+        emoji: '🏆',
+        color: '#10b981',
+        description: 'Yearly accomplishment',
+        created_date: new Date().toISOString(),
+        isDefault: true
+    }
+];
 
 const buildPublicUrl = (pathOrUrl?: string) => {
     if (!pathOrUrl) return '/assets/default-avatar.png';
@@ -98,9 +139,19 @@ const Spotlight = () => {
     const [spotlights, setSpotlights] = useState<Spotlight[]>([]);
     const [spotlightsLoading, setSpotlightsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [filterType, setFilterType] = useState<'all' | 'weekly' | 'monthly' | 'yearly'>('all');
+    const [filterType, setFilterType] = useState<string>('all');
     const [sortField, setSortField] = useState<SortField>('created_date');
     const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+
+    // Custom spotlight types management
+    const [customTypes, setCustomTypes] = useState<CustomSpotlightType[]>([]);
+    const [typesLoading, setTypesLoading] = useState(true);
+    const [showTypesModal, setShowTypesModal] = useState(false);
+    const [newType, setNewType] = useState({ name: '', emoji: '⭐', color: '#6a4c93', description: '' });
+    const [typeFormLoading, setTypeFormLoading] = useState(false);
+    const [showDeleteTypeModal, setShowDeleteTypeModal] = useState(false);
+    const [selectedTypeToDelete, setSelectedTypeToDelete] = useState<CustomSpotlightType | null>(null);
+    const [typeDeleteLoading, setTypeDeleteLoading] = useState(false);
 
     // ✨ PAGINATION STATE
     const [currentPage, setCurrentPage] = useState(1);
@@ -135,18 +186,52 @@ const Spotlight = () => {
         setIsMounted(true);
     }, []);
 
+    // Fetch custom spotlight types and combine with defaults
+    const fetchCustomTypes = useCallback(async () => {
+        try {
+            setTypesLoading(true);
+            let customTypesData: CustomSpotlightType[] = [];
+
+            // Try to fetch custom types from database
+            const { data, error } = await supabase
+                .from('spotlight_types')
+                .select('*')
+                .order('created_date', { ascending: true });
+
+            if (error) {
+                if ('code' in error && error.code !== 'PGRST116') {
+                    // Only log non-table-not-found errors
+                    console.warn('Fetch custom types error:', error.message || String(error));
+                }
+                customTypesData = [];
+            } else {
+                customTypesData = data || [];
+            }
+
+            // Combine defaults with custom types
+            const allTypes = [...DEFAULT_SPOTLIGHT_TYPES, ...customTypesData];
+            setCustomTypes(allTypes);
+        } catch (err) {
+            console.warn('fetchCustomTypes error:', err instanceof Error ? err.message : String(err));
+            setCustomTypes(DEFAULT_SPOTLIGHT_TYPES);
+        } finally {
+            setTypesLoading(false);
+        }
+    }, []);
+
     // Fetch all spotlights
     const fetchSpotlights = useCallback(async () => {
         try {
             setSpotlightsLoading(true);
             const { data, error } = await supabase
                 .from('awards')
-                .select('*')
+                .select('id, name, message, award_type, is_show_on_home_page, image_url, date, like_count, created_date')
                 .order('created_date', { ascending: false });
 
             if (error) {
-                console.error('Fetch error:', error);
-                toast.error('Failed to fetch spotlights');
+                const errorMsg = error.message || String(error);
+                console.warn('Fetch spotlights error:', errorMsg);
+                toast.error('Failed to fetch spotlights: ' + errorMsg);
                 setSpotlights([]);
                 return;
             }
@@ -157,8 +242,9 @@ const Spotlight = () => {
             }));
             setSpotlights(processed);
         } catch (err) {
-            console.error('fetchSpotlights error:', err);
-            toast.error('Error fetching spotlights');
+            const errorMsg = err instanceof Error ? err.message : String(err);
+            console.warn('fetchSpotlights error:', errorMsg);
+            toast.error('Error fetching spotlights: ' + errorMsg);
         } finally {
             setSpotlightsLoading(false);
         }
@@ -168,12 +254,12 @@ const Spotlight = () => {
         if (isMounted) {
             const initializePage = async () => {
                 setPageLoading(true);
-                await fetchSpotlights();
+                await Promise.all([fetchCustomTypes(), fetchSpotlights()]);
                 setPageLoading(false);
             };
             initializePage();
         }
-    }, [isMounted, fetchSpotlights]);
+    }, [isMounted, fetchSpotlights, fetchCustomTypes]);
 
     // ✨ RESET TO PAGE 1 WHEN FILTER/SEARCH CHANGES
     useEffect(() => {
@@ -206,13 +292,95 @@ const Spotlight = () => {
         setFormData({
             name: '',
             message: '',
-            award_type: 'weekly',
+            award_type: customTypes.length > 0 ? customTypes[0].id : 'weekly',
             is_show_on_home_page: false,
             date: new Date().toISOString().split('T')[0]
         });
         setImageFile(null);
         setImagePreview(null);
         if (fileInputRef.current) fileInputRef.current.value = '';
+    };
+
+    // Add custom spotlight type
+    const handleAddType = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!newType.name.trim()) {
+            toast.error('Please enter spotlight type name');
+            return;
+        }
+
+        try {
+            setTypeFormLoading(true);
+            const { data, error } = await supabase
+                .from('spotlight_types')
+                .insert([{
+                    name: newType.name,
+                    emoji: newType.emoji,
+                    color: newType.color,
+                    description: newType.description
+                }])
+                .select();
+
+            if (error) {
+                console.warn('Insert type error:', error.message || String(error));
+                toast.error('Failed to create spotlight type');
+                return;
+            }
+
+            toast.success('Spotlight type created successfully!');
+            setNewType({ name: '', emoji: '⭐', color: '#6a4c93', description: '' });
+            await fetchCustomTypes();
+        } catch (err) {
+            console.warn('Add type error:', err instanceof Error ? err.message : String(err));
+            toast.error('Error creating spotlight type');
+        } finally {
+            setTypeFormLoading(false);
+        }
+    };
+
+    // Delete custom spotlight type
+    const handleDeleteType = async () => {
+        if (!selectedTypeToDelete) return;
+
+        // Prevent deletion of default types
+        if (selectedTypeToDelete.isDefault) {
+            toast.error('Cannot delete built-in spotlight types');
+            setShowDeleteTypeModal(false);
+            return;
+        }
+
+        // Check if type is in use
+        const isInUse = spotlights.some(s => s.award_type === selectedTypeToDelete.id);
+        if (isInUse) {
+            toast.error('Cannot delete type that has associated spotlights');
+            setShowDeleteTypeModal(false);
+            return;
+        }
+
+        try {
+            setTypeDeleteLoading(true);
+            const { error } = await supabase
+                .from('spotlight_types')
+                .delete()
+                .eq('id', selectedTypeToDelete.id);
+
+            if (error) {
+                console.warn('Delete type error:', error.message || String(error));
+                toast.error('Failed to delete spotlight type');
+                return;
+            }
+
+            toast.success('Spotlight type deleted successfully!');
+            setShowDeleteTypeModal(false);
+            setSelectedTypeToDelete(null);
+            await fetchCustomTypes();
+        } catch (err) {
+            console.warn('Delete type error:', err instanceof Error ? err.message : String(err));
+            toast.error('Error deleting spotlight type');
+        } finally {
+            setTypeDeleteLoading(false);
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -228,6 +396,10 @@ const Spotlight = () => {
         }
         if (!formData.message.trim()) {
             toast.error('Please enter achievement message');
+            return;
+        }
+        if (!formData.award_type) {
+            toast.error('Please select a spotlight type');
             return;
         }
         if (!imageFile && !imagePreview) {
@@ -247,11 +419,20 @@ const Spotlight = () => {
                     .upload(fileName, imageFile);
 
                 if (uploadError) {
-                    console.error('Upload error:', uploadError);
-                    toast.error('Failed to upload image');
+                    const errorMsg = uploadError.message || String(uploadError);
+                    console.warn('Upload error:', errorMsg);
+                    toast.error('Failed to upload image: ' + errorMsg);
                     return;
                 }
                 imagePath = fileName;
+            }
+
+            // Validate award_type exists in customTypes
+            const selectedType = customTypes.find(t => t.id === formData.award_type);
+            if (!selectedType) {
+                toast.error('Selected spotlight type is invalid');
+                console.warn('Invalid award_type:', formData.award_type, 'Available types:', customTypes.map(t => t.id));
+                return;
             }
 
             // Insert spotlight with date
@@ -263,13 +444,19 @@ const Spotlight = () => {
                     is_show_on_home_page: formData.is_show_on_home_page,
                     image_url: imagePath,
                     date: formData.date,
-                    like_count: 0
+                    like_count: 0,
+                    created_date: new Date().toISOString()
                 }
             ]);
 
             if (insertError) {
-                console.error('Insert error:', insertError);
-                toast.error('Failed to create spotlight');
+                const errorMsg = insertError.message || insertError.details || String(insertError);
+                console.warn('Insert error:', errorMsg);
+                console.warn('Insert data:', {
+                    award_type: formData.award_type,
+                    availableTypes: customTypes.map(t => ({ id: t.id, name: t.name }))
+                });
+                toast.error('Failed to create spotlight: ' + errorMsg);
                 return;
             }
 
@@ -278,7 +465,7 @@ const Spotlight = () => {
             setShowCreateModal(false);
             await fetchSpotlights();
         } catch (err) {
-            console.error('Submit error:', err);
+            console.warn('Submit error:', err instanceof Error ? err.message : String(err));
             toast.error('Error creating spotlight');
         } finally {
             setLoading(false);
@@ -493,9 +680,9 @@ const Spotlight = () => {
     // Status cards data
     const statusCounts = {
         total: spotlights.length,
-        'weekly': spotlights.filter((s) => s.award_type === 'weekly').length,
-        'monthly': spotlights.filter((s) => s.award_type === 'monthly').length,
-        'yearly': spotlights.filter((s) => s.award_type === 'yearly').length,
+        ...customTypes.reduce((acc, type) => (
+            { ...acc, [type.id]: spotlights.filter((s) => s.award_type === type.id).length }
+        ), {})
     };
 
     const statusCards: StatusCard[] = [
@@ -508,33 +695,15 @@ const Spotlight = () => {
             type: 'total',
             id: 'total',
         },
-        {
-            label: 'Weekly Stars',
-            count: statusCounts['weekly'],
-            icon: <FaCheck />,
-            color: '#3b82f6',
-            bgColor: '#eff6ff',
-            type: 'weekly',
-            id: 'weekly',
-        },
-        {
-            label: 'Monthly Stars',
-            count: statusCounts['monthly'],
-            icon: <FaCheck />,
-            color: '#f59e0b',
-            bgColor: '#fffbf0',
-            type: 'monthly',
-            id: 'monthly',
-        },
-        {
-            label: 'Yearly Stars',
-            count: statusCounts['yearly'],
-            icon: <FaCheck />,
-            color: '#10b981',
-            bgColor: '#f0fdf4',
-            type: 'yearly',
-            id: 'yearly',
-        },
+        ...customTypes.map(type => ({
+            label: `${type.emoji} ${type.name}`,
+            count: (statusCounts as any)[type.id] || 0,
+            icon: <span>{type.emoji}</span>,
+            color: type.color,
+            bgColor: `${type.color}15`,
+            type: type.id,
+            id: type.id,
+        }))
     ];
 
     const containerVariants = {
@@ -609,14 +778,16 @@ const Spotlight = () => {
                         <div className={styles.headerLeft}>
                             <h2>📊 Spotlights Management</h2>
                         </div>
-                        <motion.button
-                            className={styles.createBtn}
-                            onClick={() => setShowCreateModal(true)}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            <FaPlus /> Create Spotlight
-                        </motion.button>
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                            <motion.button
+                                className={styles.createBtn}
+                                onClick={() => setShowCreateModal(true)}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                <FaPlus /> Create Spotlight
+                            </motion.button>
+                        </div>
                     </div>
 
                     {/* Search and Filter Controls */}
@@ -632,13 +803,13 @@ const Spotlight = () => {
                         </div>
                         <select
                             value={filterType}
-                            onChange={(e) => setFilterType(e.target.value as any)}
+                            onChange={(e) => setFilterType(e.target.value)}
                             className={styles.filterSelect}
                         >
                             <option value="all">All Types</option>
-                            <option value="weekly">⭐ Weekly</option>
-                            <option value="monthly">✨ Monthly</option>
-                            <option value="yearly">🏆 Yearly</option>
+                            {customTypes.map(type => (
+                                <option key={type.id} value={type.id}>{type.emoji} {type.name}</option>
+                            ))}
                         </select>
                     </div>
 
@@ -707,13 +878,14 @@ const Spotlight = () => {
                                                 })}
                                             </td>
                                             <td>
-                                                <span className={styles.badge} data-type={spotlight.award_type}>
-                                                    {spotlight.award_type === 'weekly'
-                                                        ? '⭐ Weekly'
-                                                        : spotlight.award_type === 'monthly'
-                                                            ? '✨ Monthly'
-                                                            : '🏆 Yearly'}
-                                                </span>
+                                                {(() => {
+                                                    const type = customTypes.find(t => t.id === spotlight.award_type);
+                                                    return (
+                                                        <span className={styles.badge} data-type={spotlight.award_type} style={{ color: type?.color, borderColor: type?.color }}>
+                                                            {type ? `${type.emoji} ${type.name}` : spotlight.award_type}
+                                                        </span>
+                                                    );
+                                                })()}
                                             </td>
                                             <td>
                                                 <span className={styles.message}>
@@ -912,6 +1084,21 @@ const Spotlight = () => {
                                 </button>
                             </div>
 
+                            {/* Manage Custom Types Button */}
+                            <div style={{ padding: '0 2rem', paddingTop: '1rem', borderBottom: '1px solid #e5e5e5', paddingBottom: '1rem' }}>
+                                <motion.button
+                                    type="button"
+                                    className={styles.createBtn}
+                                    onClick={() => setShowTypesModal(true)}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    title="Manage custom spotlight types"
+                                    style={{ width: '100%', justifyContent: 'center' }}
+                                >
+                                    ⚙️ Manage Spotlight Types
+                                </motion.button>
+                            </div>
+
                             <form onSubmit={handleSubmit} className={styles.createForm}>
                                 <div className={styles.modalContent}>
                                     {/* Image Upload */}
@@ -983,20 +1170,59 @@ const Spotlight = () => {
 
                                         {/* Spotlight Type */}
                                         <div className={styles.formGroup}>
-                                            <label htmlFor="award_type">Spotlight Type *</label>
+                                            <label htmlFor="award_type">
+                                                Spotlight Type * 
+                                                <span style={{ fontSize: '0.75rem', color: '#666', marginLeft: '0.5rem', fontWeight: 'normal' }}>
+                                                    ({customTypes.length} available)
+                                                </span>
+                                            </label>
                                             <select
                                                 id="award_type"
                                                 value={formData.award_type}
                                                 onChange={(e) =>
-                                                    setFormData({ ...formData, award_type: e.target.value as any })
+                                                    setFormData({ ...formData, award_type: e.target.value })
                                                 }
                                                 className={styles.selectInput}
-                                                disabled={loading}
+                                                disabled={loading || customTypes.length === 0}
+                                                style={{
+                                                    borderColor: customTypes.find(t => t.id === formData.award_type)?.color || '#e5e5e5',
+                                                    borderWidth: '2px'
+                                                }}
                                             >
-                                                <option value="weekly">⭐ Star of the Week</option>
-                                                <option value="monthly">✨ Star of the Month</option>
-                                                <option value="yearly">🏆 Star of the Year</option>
+                                                <option value="">-- Select a spotlight type --</option>
+                                                {customTypes.map(type => (
+                                                    <option key={type.id} value={type.id}>
+                                                        {type.emoji} {type.name}
+                                                        {type.isDefault ? ' (Built-in)' : ' (Custom)'}
+                                                    </option>
+                                                ))}
                                             </select>
+                                            {formData.award_type && (
+                                                <div style={{
+                                                    marginTop: '0.75rem',
+                                                    padding: '0.75rem 1rem',
+                                                    borderRadius: '8px',
+                                                    backgroundColor: `${customTypes.find(t => t.id === formData.award_type)?.color}15`,
+                                                    border: `2px solid ${customTypes.find(t => t.id === formData.award_type)?.color}`,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.5rem'
+                                                }}>
+                                                    <span style={{ fontSize: '1.5rem' }}>
+                                                        {customTypes.find(t => t.id === formData.award_type)?.emoji}
+                                                    </span>
+                                                    <div>
+                                                        <div style={{ fontWeight: '700', color: customTypes.find(t => t.id === formData.award_type)?.color }}>
+                                                            {customTypes.find(t => t.id === formData.award_type)?.name}
+                                                        </div>
+                                                        {customTypes.find(t => t.id === formData.award_type)?.description && (
+                                                            <div style={{ fontSize: '0.85rem', color: '#666', marginTop: '0.25rem' }}>
+                                                                {customTypes.find(t => t.id === formData.award_type)?.description}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
@@ -1057,7 +1283,9 @@ const Spotlight = () => {
                                         whileTap={{ scale: loading ? 1 : 0.98 }}
                                     >
                                         {loading ? (
-                                            <Loader isVisible={true} message="Creating..." fullScreen={false} />
+                                           <>
+                                           Creating <FaSpinner className={styles.spinnerIcon} />
+                                           </>
                                         ) : (
                                             <>
                                                 <FaCheck /> Create Spotlight
@@ -1330,6 +1558,242 @@ const Spotlight = () => {
                                                     Add
                                                 </>
                                             )}
+                                        </>
+                                    )}
+                                </motion.button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* ✨ MANAGE CUSTOM SPOTLIGHT TYPES MODAL ✨ */}
+            <AnimatePresence>
+                {showTypesModal && (
+                    <motion.div
+                        className={styles.modalOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setShowTypesModal(false)}
+                    >
+                        <motion.div
+                            className={styles.createModal}
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className={styles.createModalHeader}>
+                                <div>
+                                    <h2>⚙️ Manage Spotlight Types</h2>
+                                    <p>Create and manage custom spotlight types like "Best Reader", etc.</p>
+                                </div>
+                                <button
+                                    className={styles.closeBtn}
+                                    onClick={() => setShowTypesModal(false)}
+                                    disabled={typeFormLoading}
+                                >
+                                    <FaTimes />
+                                </button>
+                            </div>
+
+                            <div className={styles.modalContent}>
+                                {/* Add New Type Form */}
+                                <form onSubmit={handleAddType}>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="typeName">Type Name *</label>
+                                        <input
+                                            type="text"
+                                            id="typeName"
+                                            value={newType.name}
+                                            onChange={(e) =>
+                                                setNewType({ ...newType, name: e.target.value })
+                                            }
+                                            placeholder="e.g., Best Reader, Top Performer"
+                                            disabled={typeFormLoading}
+                                        />
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="typeEmoji">Emoji *</label>
+                                        <input
+                                            type="text"
+                                            id="typeEmoji"
+                                            value={newType.emoji}
+                                            onChange={(e) =>
+                                                setNewType({ ...newType, emoji: e.target.value.substring(0, 2) })
+                                            }
+                                            placeholder="🎓"
+                                            maxLength={2}
+                                            disabled={typeFormLoading}
+                                        />
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="typeColor">Color *</label>
+                                        <input
+                                            type="color"
+                                            id="typeColor"
+                                            value={newType.color}
+                                            onChange={(e) =>
+                                                setNewType({ ...newType, color: e.target.value })
+                                            }
+                                            disabled={typeFormLoading}
+                                            style={{ height: '45px', cursor: 'pointer' }}
+                                        />
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="typeDescription">Description</label>
+                                        <input
+                                            type="text"
+                                            id="typeDescription"
+                                            value={newType.description}
+                                            onChange={(e) =>
+                                                setNewType({ ...newType, description: e.target.value })
+                                            }
+                                            placeholder="Brief description (optional)"
+                                            disabled={typeFormLoading}
+                                        />
+                                    </div>
+
+                                    <motion.button
+                                        type="submit"
+                                        className={styles.submitButton}
+                                        disabled={typeFormLoading}
+                                        whileHover={{ scale: typeFormLoading ? 1 : 1.02 }}
+                                        whileTap={{ scale: typeFormLoading ? 1 : 0.98 }}
+                                    >
+                                        {typeFormLoading ? (
+                                            <>
+                                                <FaSpinner className={styles.spinnerIcon} />
+                                                Adding...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <FaPlus /> Add Type
+                                            </>
+                                        )}
+                                    </motion.button>
+                                </form>
+
+                                {/* Existing Types List */}
+                                <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #e5e5e5' }}>
+                                    <h3 style={{ marginBottom: '1rem', color: '#6a4c93' }}>📋 Existing Types</h3>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                        {customTypes.map(type => (
+                                            <div
+                                                key={type.id}
+                                                style={{
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center',
+                                                    padding: '1rem',
+                                                    borderRadius: '10px',
+                                                    backgroundColor: `${type.color}10`,
+                                                    border: `2px solid ${type.color}`,
+                                                }}
+                                            >
+                                                <div>
+                                                    <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#333' }}>
+                                                        {type.emoji} {type.name}
+                                                    </div>
+                                                    {type.description && (
+                                                        <div style={{ fontSize: '0.85rem', color: '#666', marginTop: '0.25rem' }}>
+                                                            {type.description}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <motion.button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        if (!type.isDefault) {
+                                                            setSelectedTypeToDelete(type);
+                                                            setShowDeleteTypeModal(true);
+                                                        }
+                                                    }}
+                                                    style={{
+                                                        padding: '0.5rem 1rem',
+                                                        backgroundColor: type.isDefault ? '#ccc' : '#ef4444',
+                                                        color: type.isDefault ? '#666' : 'white',
+                                                        border: 'none',
+                                                        borderRadius: '8px',
+                                                        cursor: type.isDefault ? 'not-allowed' : 'pointer',
+                                                        fontWeight: 'bold',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '0.5rem',
+                                                        opacity: type.isDefault ? 0.6 : 1,
+                                                    }}
+                                                    whileHover={{ scale: type.isDefault ? 1 : 1.05 }}
+                                                    whileTap={{ scale: type.isDefault ? 1 : 0.95 }}
+                                                    title={type.isDefault ? 'Built-in types cannot be deleted' : 'Delete this custom type'}
+                                                >
+                                                    {type.isDefault ? '🔒 Built-in' : <>
+                                                        <FaTrash /> Delete
+                                                    </>}
+                                                </motion.button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Delete Type Confirmation Modal */}
+            <AnimatePresence>
+                {showDeleteTypeModal && selectedTypeToDelete && (
+                    <motion.div
+                        className={styles.modalOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setShowDeleteTypeModal(false)}
+                    >
+                        <motion.div
+                            className={styles.modal}
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className={styles.modalHeader}>
+                                <FaTrash className={styles.warningIcon} />
+                                <h3>Delete Spotlight Type?</h3>
+                            </div>
+                            <p className={styles.modalBody}>
+                                Are you sure you want to delete <strong>{selectedTypeToDelete.name}</strong>? This action cannot be undone.
+                            </p>
+                            <div className={styles.modalActions}>
+                                <motion.button
+                                    type="button"
+                                    className={`${styles.modalBtn} ${styles.cancelBtn}`}
+                                    onClick={() => setShowDeleteTypeModal(false)}
+                                    disabled={typeDeleteLoading}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    Cancel
+                                </motion.button>
+                                <motion.button
+                                    type="button"
+                                    className={`${styles.modalBtn} ${styles.confirmBtn}`}
+                                    onClick={handleDeleteType}
+                                    disabled={typeDeleteLoading}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    {typeDeleteLoading ? (
+                                        <>
+                                            <FaSpinner className={styles.spinnerIcon} />
+                                            Deleting...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <FaTrash />
+                                            Delete
                                         </>
                                     )}
                                 </motion.button>
