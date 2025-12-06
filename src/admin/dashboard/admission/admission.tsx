@@ -22,6 +22,7 @@ import {
     FaTrash,
     FaChevronLeft,
     FaChevronRight,
+    FaPencilAlt,
 } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
@@ -564,14 +565,124 @@ export default function AdminAdmission() {
     };
 
     // ✨ DETAILS MODAL FUNCTIONS ✨
+    const [editMode, setEditMode] = useState(false);
+    const [editingData, setEditingData] = useState<Partial<Admission> | null>(null);
+    const [savingEdit, setSavingEdit] = useState(false);
+    const [uploadedFileNames, setUploadedFileNames] = useState<{ [key: string]: string }>({});
+
     const openDetailsModal = (admission: Admission) => {
         setSelectedAdmissionIdForDetails(admission.id);
+        setEditingData(admission);
+        setEditMode(false);
+        setUploadedFileNames({});
         setDetailsModalOpen(true);
     };
 
     const closeDetailsModal = () => {
         setDetailsModalOpen(false);
         setSelectedAdmissionIdForDetails(null);
+        setEditMode(false);
+        setEditingData(null);
+        setUploadedFileNames({});
+    };
+
+    const handleSaveEdit = async () => {
+        if (!editingData || !selectedAdmissionIdForDetails) return;
+
+        try {
+            setSavingEdit(true);
+            
+            // Prepare update object
+            const updateData: any = {
+                child_name: editingData.child_name,
+                child_dob: editingData.child_dob,
+                child_gender: editingData.child_gender,
+                child_place_of_birth: editingData.child_place_of_birth,
+                parent_name: editingData.parent_name,
+                parent_email: editingData.parent_email,
+                program_name: editingData.program_name,
+                previous_school: editingData.previous_school,
+            };
+
+            // Handle file uploads
+            const fileInputs = [
+                { inputId: 'photo_upload', dbField: 'photo_url', bucket: 'admission-documents', type: 'image' },
+                { inputId: 'birth_cert_upload', dbField: 'birth_certificate_url', bucket: 'admission-documents', type: 'document' },
+                { inputId: 'aadhar_upload', dbField: 'aadhar_card_url', bucket: 'admission-documents', type: 'document' },
+                { inputId: 'parent_id_upload', dbField: 'parent_id_proof_url', bucket: 'admission-documents', type: 'document' },
+            ];
+
+            for (const fileInput of fileInputs) {
+                const input = document.getElementById(fileInput.inputId) as HTMLInputElement;
+                if (input?.files?.length) {
+                    const file = input.files[0];
+                    
+                    // Validate file size (max 5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        toast.error(`File size must be less than 5MB for ${fileInput.inputId}`);
+                        return;
+                    }
+
+                    // Upload to Supabase Storage
+                    const fileName = `${selectedAdmissionIdForDetails}/${fileInput.inputId}_${Date.now()}`;
+                    const { error: uploadError, data: uploadData } = await supabase.storage
+                        .from('star-of-week-images')
+                        .upload(fileName, file, {
+                            cacheControl: '3600',
+                            upsert: false,
+                        });
+
+                    if (uploadError) {
+                        console.error(`Upload error for ${fileInput.inputId}:`, uploadError);
+                        toast.error(`Failed to upload ${fileInput.inputId}`);
+                        return;
+                    }
+
+                    // Get public URL
+                    const { data: publicUrlData } = supabase.storage
+                        .from('star-of-week-images')
+                        .getPublicUrl(fileName);
+
+                    if (publicUrlData?.publicUrl) {
+                        updateData[fileInput.dbField] = publicUrlData.publicUrl;
+                    }
+                }
+            }
+
+            // Update admission record with new data and file URLs
+            const { error } = await supabase
+                .from('admission')
+                .update(updateData)
+                .eq('id', selectedAdmissionIdForDetails)
+                .select();
+
+            if (error) {
+                console.error('❌ Update error:', error);
+                toast.error(`Failed to save: ${error.message}`);
+                return;
+            }
+
+            // Update local state
+            setAdmissions((prev) =>
+                prev.map((adm) =>
+                    adm.id === selectedAdmissionIdForDetails ? { ...adm, ...updateData } : adm
+                )
+            );
+
+            // Clear file inputs
+            fileInputs.forEach(fi => {
+                const input = document.getElementById(fi.inputId) as HTMLInputElement;
+                if (input) input.value = '';
+            });
+
+            setEditMode(false);
+            toast.success('✅ Details and documents updated successfully!');
+        } catch (error: any) {
+            console.error('❌ Error:', error);
+            toast.error(`Error: ${error?.message || 'Failed to save'}`);
+        } finally {
+            setSavingEdit(false);
+        }
     };
 
     const formatTimestamp = (timestamp: string) => {
@@ -927,6 +1038,14 @@ export default function AdminAdmission() {
                 onPreview={setPreviewModal}
                 statusUpdating={statusUpdating}
                 updatingId={updatingId}
+                editMode={editMode}
+                setEditMode={setEditMode}
+                editingData={editingData}
+                setEditingData={setEditingData}
+                onSaveEdit={handleSaveEdit}
+                savingEdit={savingEdit}
+                uploadedFileNames={uploadedFileNames}
+                setUploadedFileNames={setUploadedFileNames}
             />
 
             {/* Document Preview Modal */}
@@ -1199,6 +1318,14 @@ const DetailsModal = ({
     onStatusChange,
     onPreview,
     statusUpdating,
+    editMode,
+    setEditMode,
+    editingData,
+    setEditingData,
+    onSaveEdit,
+    savingEdit,
+    uploadedFileNames,
+    setUploadedFileNames,
 }: {
     isOpen: boolean;
     onClose: () => void;
@@ -1207,6 +1334,14 @@ const DetailsModal = ({
     onPreview: (preview: { url: string; type: 'image' | 'pdf' | 'document'; name: string }) => void;
     statusUpdating: boolean;
     updatingId: string | null;
+    editMode: boolean;
+    setEditMode: (mode: boolean) => void;
+    editingData: Partial<Admission> | null;
+    setEditingData: (data: Partial<Admission> | null) => void;
+    onSaveEdit: () => Promise<void>;
+    savingEdit: boolean;
+    uploadedFileNames: { [key: string]: string };
+    setUploadedFileNames: (files: { [key: string]: string }) => void;
 }) => {
     if (!admission) return null;
 
@@ -1233,31 +1368,162 @@ const DetailsModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2>👤 Admission Details</h2>
+                                <h2>👤 Admission Details {editMode && <span style={{fontSize: '0.75em'}}>• EDIT MODE</span>}</h2>
                                 <p>{childName} • {parentName}</p>
                             </div>
-                            <button
-                                className={styles.closeBtn}
-                                onClick={onClose}
-                                aria-label="Close"
-                                disabled={statusUpdating}
-                            >
-                                <FaTimes />
-                            </button>
+                            <div className={styles.headerButtons}>
+                                {!editMode ? (
+                                    <motion.button
+                                        className={styles.editBtn}
+                                        onClick={() => setEditMode(true)}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        title="Edit admission details"
+                                    >
+                                        <FaPencilAlt /> Edit
+                                    </motion.button>
+                                ) : (
+                                    <>
+                                        <motion.button
+                                            className={styles.saveBtn}
+                                            onClick={onSaveEdit}
+                                            disabled={savingEdit}
+                                            whileHover={{ scale: savingEdit ? 1 : 1.05 }}
+                                            whileTap={{ scale: savingEdit ? 1 : 0.95 }}
+                                        >
+                                            {savingEdit ? (
+                                                <>
+                                                    <FaSpinner className={styles.loadingIcon} /> Saving...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <FaCheck /> Save
+                                                </>
+                                            )}
+                                        </motion.button>
+                                        <motion.button
+                                            className={styles.cancelBtn}
+                                            onClick={() => setEditMode(false)}
+                                            disabled={savingEdit}
+                                            whileHover={{ scale: savingEdit ? 1 : 1.05 }}
+                                            whileTap={{ scale: savingEdit ? 1 : 0.95 }}
+                                        >
+                                            <FaTimes /> Cancel
+                                        </motion.button>
+                                    </>
+                                )}
+                                <button
+                                    className={styles.closeBtn}
+                                    onClick={onClose}
+                                    aria-label="Close"
+                                    disabled={statusUpdating || savingEdit}
+                                >
+                                    <FaTimes />
+                                </button>
+                            </div>
                         </div>
 
                         <div className={styles.modalContent}>
                             {/* Details Grid */}
                             <div className={styles.detailsGrid}>
-                                <DetailItem label="Child Name" value={childName} />
-                                <DetailItem label="Date of Birth" value={admission.child_dob || 'N/A'} />
-                                <DetailItem label="Gender" value={admission.child_gender || 'N/A'} />
-                                <DetailItem label="Place of Birth" value={admission.child_place_of_birth || 'N/A'} />
-                                <DetailItem label="Parent Name" value={parentName} />
-                                <DetailItem label="Email" value={getParentEmail(admission)} />
-                                <DetailItem label="Mobile" value={getParentMobile(admission)} />
-                                <DetailItem label="Program" value={getProgram(admission)} />
-                                <DetailItem label="Previous School" value={admission.previous_school || 'N/A'} />
+                                {editMode && editingData ? (
+                                    <>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Child Name</span>
+                                            <input
+                                                type="text"
+                                                value={editingData.child_name || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, child_name: e.target.value })}
+                                                className={styles.editInput}
+                                                placeholder="Child name"
+                                            />
+                                        </div>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Date of Birth</span>
+                                            <input
+                                                type="date"
+                                                value={editingData.child_dob || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, child_dob: e.target.value })}
+                                                className={styles.editInput}
+                                            />
+                                        </div>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Gender</span>
+                                            <select
+                                                value={editingData.child_gender || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, child_gender: e.target.value })}
+                                                className={styles.editInput}
+                                            >
+                                                <option value="">Select Gender</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Place of Birth</span>
+                                            <input
+                                                type="text"
+                                                value={editingData.child_place_of_birth || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, child_place_of_birth: e.target.value })}
+                                                className={styles.editInput}
+                                                placeholder="Place of birth"
+                                            />
+                                        </div>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Parent Name</span>
+                                            <input
+                                                type="text"
+                                                value={editingData.parent_name || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, parent_name: e.target.value })}
+                                                className={styles.editInput}
+                                                placeholder="Parent name"
+                                            />
+                                        </div>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Email</span>
+                                            <input
+                                                type="email"
+                                                value={editingData.parent_email || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, parent_email: e.target.value })}
+                                                className={styles.editInput}
+                                                placeholder="Email address"
+                                            />
+                                        </div>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Program</span>
+                                            <input
+                                                type="text"
+                                                value={editingData.program_name || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, program_name: e.target.value })}
+                                                className={styles.editInput}
+                                                placeholder="Program"
+                                            />
+                                        </div>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Previous School</span>
+                                            <input
+                                                type="text"
+                                                value={editingData.previous_school || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, previous_school: e.target.value })}
+                                                className={styles.editInput}
+                                                placeholder="Previous school"
+                                            />
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <DetailItem label="Child Name" value={childName} />
+                                        <DetailItem label="Date of Birth" value={admission.child_dob || 'N/A'} />
+                                        <DetailItem label="Gender" value={admission.child_gender || 'N/A'} />
+                                        <DetailItem label="Place of Birth" value={admission.child_place_of_birth || 'N/A'} />
+                                        <DetailItem label="Parent Name" value={parentName} />
+                                        <DetailItem label="Email" value={getParentEmail(admission)} />
+                                        <DetailItem label="Mobile" value={getParentMobile(admission)} />
+                                        <DetailItem label="Program" value={getProgram(admission)} />
+                                        <DetailItem label="Previous School" value={admission.previous_school || 'N/A'} />
+                                    </>
+                                )}
                             </div>
 
                             {/* Status Section */}
@@ -1288,62 +1554,187 @@ const DetailsModal = ({
                             {/* Documents Section */}
                             <div className={styles.documentsSection}>
                                 <label className={styles.sectionLabel}>📄 Documents</label>
-                                <div className={styles.documentsList}>
-                                    {admission.photo_url ? (
-                                        <DocumentListItem
-                                            name="Child Photo"
-                                            onPreview={() =>
-                                                onPreview({
-                                                    url: admission.photo_url!,
-                                                    type: 'image',
-                                                    name: 'Child Photo',
-                                                })
-                                            }
-                                            onDownload={admission.photo_url}
-                                        />
-                                    ) : (
-                                        <p className={styles.noDocuments}>No photo uploaded</p>
-                                    )}
-                                    {admission.birth_certificate_url && (
-                                        <DocumentListItem
-                                            name="Birth Certificate"
-                                            onPreview={() =>
-                                                onPreview({
-                                                    url: admission.birth_certificate_url!,
-                                                    type: 'pdf',
-                                                    name: 'Birth Certificate',
-                                                })
-                                            }
-                                            onDownload={admission.birth_certificate_url}
-                                        />
-                                    )}
-                                    {admission.aadhar_card_url && (
-                                        <DocumentListItem
-                                            name="Aadhar Card"
-                                            onPreview={() =>
-                                                onPreview({
-                                                    url: admission.aadhar_card_url!,
-                                                    type: 'pdf',
-                                                    name: 'Aadhar Card',
-                                                })
-                                            }
-                                            onDownload={admission.aadhar_card_url}
-                                        />
-                                    )}
-                                    {admission.parent_id_proof_url && (
-                                        <DocumentListItem
-                                            name="Parent ID Proof"
-                                            onPreview={() =>
-                                                onPreview({
-                                                    url: admission.parent_id_proof_url!,
-                                                    type: 'pdf',
-                                                    name: "Parent's ID Proof",
-                                                })
-                                            }
-                                            onDownload={admission.parent_id_proof_url}
-                                        />
-                                    )}
-                                </div>
+                                
+                                {editMode ? (
+                                    <div className={styles.documentUploadSection}>
+                                        <div className={styles.documentUploadItem}>
+                                            <span className={styles.documentUploadLabel}>Child Photo</span>
+                                            <div className={styles.uploadInputWrapper}>
+                                                <input
+                                                    type="file"
+                                                    id="photo_upload"
+                                                    accept="image/*"
+                                                    className={styles.fileInput}
+                                                    disabled={savingEdit}
+                                                    onChange={(e) => {
+                                                        const fileName = e.target.files?.[0]?.name || '';
+                                                        setUploadedFileNames({ ...uploadedFileNames, photo_upload: fileName });
+                                                    }}
+                                                />
+                                                <label htmlFor="photo_upload" className={styles.uploadLabel}>
+                                                    📷 Upload Photo
+                                                </label>
+                                            </div>
+                                            {uploadedFileNames.photo_upload && (
+                                                <span style={{ fontSize: '0.85rem', color: 'var(--primary-purple)', fontWeight: '600' }}>
+                                                    ✅ Selected: {uploadedFileNames.photo_upload}
+                                                </span>
+                                            )}
+                                            {admission.photo_url && !uploadedFileNames.photo_upload && (
+                                                <a href={admission.photo_url} target="_blank" rel="noopener noreferrer" className={styles.currentDocLink}>
+                                                    View Current Photo
+                                                </a>
+                                            )}
+                                        </div>
+
+                                        <div className={styles.documentUploadItem}>
+                                            <span className={styles.documentUploadLabel}>Birth Certificate</span>
+                                            <div className={styles.uploadInputWrapper}>
+                                                <input
+                                                    type="file"
+                                                    id="birth_cert_upload"
+                                                    accept=".pdf,.jpg,.jpeg,.png"
+                                                    className={styles.fileInput}
+                                                    disabled={savingEdit}
+                                                    onChange={(e) => {
+                                                        const fileName = e.target.files?.[0]?.name || '';
+                                                        setUploadedFileNames({ ...uploadedFileNames, birth_cert_upload: fileName });
+                                                    }}
+                                                />
+                                                <label htmlFor="birth_cert_upload" className={styles.uploadLabel}>
+                                                    📄 Upload Certificate
+                                                </label>
+                                            </div>
+                                            {uploadedFileNames.birth_cert_upload && (
+                                                <span style={{ fontSize: '0.85rem', color: 'var(--primary-purple)', fontWeight: '600' }}>
+                                                    ✅ Selected: {uploadedFileNames.birth_cert_upload}
+                                                </span>
+                                            )}
+                                            {admission.birth_certificate_url && !uploadedFileNames.birth_cert_upload && (
+                                                <a href={admission.birth_certificate_url} target="_blank" rel="noopener noreferrer" className={styles.currentDocLink}>
+                                                    View Current Document
+                                                </a>
+                                            )}
+                                        </div>
+
+                                        <div className={styles.documentUploadItem}>
+                                            <span className={styles.documentUploadLabel}>Aadhar Card</span>
+                                            <div className={styles.uploadInputWrapper}>
+                                                <input
+                                                    type="file"
+                                                    id="aadhar_upload"
+                                                    accept=".pdf,.jpg,.jpeg,.png"
+                                                    className={styles.fileInput}
+                                                    disabled={savingEdit}
+                                                    onChange={(e) => {
+                                                        const fileName = e.target.files?.[0]?.name || '';
+                                                        setUploadedFileNames({ ...uploadedFileNames, aadhar_upload: fileName });
+                                                    }}
+                                                />
+                                                <label htmlFor="aadhar_upload" className={styles.uploadLabel}>
+                                                    🆔 Upload Aadhar
+                                                </label>
+                                            </div>
+                                            {uploadedFileNames.aadhar_upload && (
+                                                <span style={{ fontSize: '0.85rem', color: 'var(--primary-purple)', fontWeight: '600' }}>
+                                                    ✅ Selected: {uploadedFileNames.aadhar_upload}
+                                                </span>
+                                            )}
+                                            {admission.aadhar_card_url && !uploadedFileNames.aadhar_upload && (
+                                                <a href={admission.aadhar_card_url} target="_blank" rel="noopener noreferrer" className={styles.currentDocLink}>
+                                                    View Current Document
+                                                </a>
+                                            )}
+                                        </div>
+
+                                        <div className={styles.documentUploadItem}>
+                                            <span className={styles.documentUploadLabel}>Parent ID Proof</span>
+                                            <div className={styles.uploadInputWrapper}>
+                                                <input
+                                                    type="file"
+                                                    id="parent_id_upload"
+                                                    accept=".pdf,.jpg,.jpeg,.png"
+                                                    className={styles.fileInput}
+                                                    disabled={savingEdit}
+                                                    onChange={(e) => {
+                                                        const fileName = e.target.files?.[0]?.name || '';
+                                                        setUploadedFileNames({ ...uploadedFileNames, parent_id_upload: fileName });
+                                                    }}
+                                                />
+                                                <label htmlFor="parent_id_upload" className={styles.uploadLabel}>
+                                                    🪳 Upload ID Proof
+                                                </label>
+                                            </div>
+                                            {uploadedFileNames.parent_id_upload && (
+                                                <span style={{ fontSize: '0.85rem', color: 'var(--primary-purple)', fontWeight: '600' }}>
+                                                    ✅ Selected: {uploadedFileNames.parent_id_upload}
+                                                </span>
+                                            )}
+                                            {admission.parent_id_proof_url && !uploadedFileNames.parent_id_upload && (
+                                                <a href={admission.parent_id_proof_url} target="_blank" rel="noopener noreferrer" className={styles.currentDocLink}>
+                                                    View Current Document
+                                                </a>
+                                            )}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className={styles.documentsList}>
+                                        {admission.photo_url ? (
+                                            <DocumentListItem
+                                                name="Child Photo"
+                                                onPreview={() =>
+                                                    onPreview({
+                                                        url: admission.photo_url!,
+                                                        type: 'image',
+                                                        name: 'Child Photo',
+                                                    })
+                                                }
+                                                onDownload={admission.photo_url}
+                                            />
+                                        ) : (
+                                            <p className={styles.noDocuments}>No photo uploaded</p>
+                                        )}
+                                        {admission.birth_certificate_url && (
+                                            <DocumentListItem
+                                                name="Birth Certificate"
+                                                onPreview={() =>
+                                                    onPreview({
+                                                        url: admission.birth_certificate_url!,
+                                                        type: 'pdf',
+                                                        name: 'Birth Certificate',
+                                                    })
+                                                }
+                                                onDownload={admission.birth_certificate_url}
+                                            />
+                                        )}
+                                        {admission.aadhar_card_url && (
+                                            <DocumentListItem
+                                                name="Aadhar Card"
+                                                onPreview={() =>
+                                                    onPreview({
+                                                        url: admission.aadhar_card_url!,
+                                                        type: 'pdf',
+                                                        name: 'Aadhar Card',
+                                                    })
+                                                }
+                                                onDownload={admission.aadhar_card_url}
+                                            />
+                                        )}
+                                        {admission.parent_id_proof_url && (
+                                            <DocumentListItem
+                                                name="Parent ID Proof"
+                                                onPreview={() =>
+                                                    onPreview({
+                                                        url: admission.parent_id_proof_url!,
+                                                        type: 'pdf',
+                                                        name: "Parent's ID Proof",
+                                                    })
+                                                }
+                                                onDownload={admission.parent_id_proof_url}
+                                            />
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
 
