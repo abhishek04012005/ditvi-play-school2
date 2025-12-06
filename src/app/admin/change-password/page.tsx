@@ -1,8 +1,8 @@
 'use client';
-import AdminAdmission from '@/admin/dashboard/admission/admission';
+import ChangePassword from '@/admin/changepassword/changepassword';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 
-export default function AdminAdmissionPage() {
+export default function ChangePasswordPage() {
   const { isAuthenticated, loading } = useAdminAuth();
 
   // Show loader or wait for auth check to complete
@@ -15,5 +15,5 @@ export default function AdminAdmissionPage() {
     return null;
   }
 
-  return <AdminAdmission />;
+  return <ChangePassword />;
 }

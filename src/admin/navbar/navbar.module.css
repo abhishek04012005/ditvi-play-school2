@@ -97,6 +97,15 @@
     font-weight: 600;
 }
 
+/* Inactive/disabled nav link for roles with limited access (e.g., tele-caller) */
+.navLink.inactive {
+    color: #bdbdbd;
+    background-color: transparent;
+    cursor: not-allowed;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
 .badge {
     display: inline-flex;
     align-items: center;

@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
@@ -9,6 +9,7 @@ import {
     FaSignOutAlt,
     FaUserCircle,
     FaChevronDown,
+    FaUsers,
 } from 'react-icons/fa';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
@@ -63,10 +64,36 @@ const AdminNavbar = () => {
 
     const isActive = (href?: string) => href && pathname === href;
 
+    // Initialize state with null/empty to match server-side render
+    const [adminRoleId, setAdminRoleId] = useState<number | null>(null);
+    const [adminUsername, setAdminUsername] = useState<string>('');
+
+    // Update state only after component mounts (client-side only)
+    useEffect(() => {
+        try {
+            const v = localStorage.getItem('adminRoleId');
+            if (v !== null) {
+                const n = parseInt(v, 10);
+                if (!isNaN(n)) setAdminRoleId(n);
+            }
+            const name = localStorage.getItem('adminUsername');
+            if (name) setAdminUsername(name);
+        } catch (e) {
+            // ignore
+        }
+    }, [pathname]);
+
     const handleLogout = async () => {
         setLoading(true);
         try {
-            console.log('Logging out...');
+            try {
+                localStorage.removeItem('adminUsername');
+                localStorage.removeItem('adminRoleId');
+                localStorage.removeItem('adminEmail');
+                localStorage.removeItem('isAdminLoggedIn');
+            } catch (e) {
+                // ignore
+            }
             window.location.href = '/admin/login';
         } catch (error) {
             console.error('Logout error:', error);
@@ -75,24 +102,12 @@ const AdminNavbar = () => {
         }
     };
 
-
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-    };
-
-    const toggleSubmenu = (label: string) => {
-        setOpenSubmenu(openSubmenu === label ? null : label);
-    };
+    const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+    const toggleSubmenu = (label: string) => setOpenSubmenu(openSubmenu === label ? null : label);
 
     // Only render navbar if in admin section AND not on hidden pages
-    if (!isAdminPath) {
-        return null;
-    }
-
-    if (loading) {
-        return <Loader isVisible={true} message="Logging out..." fullScreen={true} />;
-    }
-
+    if (!isAdminPath) return null;
+    if (loading) return <Loader isVisible={true} message="Logging out..." fullScreen={true} />;
 
     return (
         <>
@@ -123,8 +138,7 @@ const AdminNavbar = () => {
                                         >
                                             {item.label}
                                             <FaChevronDown
-                                                className={`${styles.dropdownIcon} ${openSubmenu === item.label ? styles.rotated : ''
-                                                    }`}
+                                                className={`${styles.dropdownIcon} ${openSubmenu === item.label ? styles.rotated : ''}`}
                                             />
                                         </button>
 
@@ -134,8 +148,7 @@ const AdminNavbar = () => {
                                                 <Link
                                                     key={subitem.label}
                                                     href={subitem.href || '#'}
-                                                    className={`${styles.submenuItem} ${isActive(subitem.href) ? styles.active : ''
-                                                        }`}
+                                                    className={`${styles.submenuItem} ${isActive(subitem.href) ? styles.active : ''}`}
                                                 >
                                                     {subitem.label}
                                                 </Link>
@@ -155,8 +168,7 @@ const AdminNavbar = () => {
                                                         <Link
                                                             key={subitem.label}
                                                             href={subitem.href || '#'}
-                                                            className={`${styles.submenuItem} ${isActive(subitem.href) ? styles.active : ''
-                                                                }`}
+                                                            className={`${styles.submenuItem} ${isActive(subitem.href) ? styles.active : ''}`}
                                                             onClick={() => setIsMenuOpen(false)}
                                                         >
                                                             {subitem.label}
@@ -167,17 +179,26 @@ const AdminNavbar = () => {
                                         </AnimatePresence>
                                     </>
                                 ) : (
-                                    <Link
-                                        href={item.href || '#'}
-                                        className={`${styles.navLink} ${isActive(item.href) ? styles.active : ''
-                                            }`}
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
-                                        {item.label}
-                                        {item.badge && (
-                                            <span className={styles.badge}>{item.badge}</span>
-                                        )}
-                                    </Link>
+                                    // If tele-caller (role_id === 2), disable all except Admission Dashboard
+                                    (adminRoleId === 2 && item.href !== '/admin/dashboard/admission') ? (
+                                        <div className={`${styles.navLink} ${styles.inactive}`}>
+                                            {item.label}
+                                            {item.badge && (
+                                                <span className={styles.badge}>{item.badge}</span>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <Link
+                                            href={item.href || '#'}
+                                            className={`${styles.navLink} ${isActive(item.href) ? styles.active : ''}`}
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            {item.label}
+                                            {item.badge && (
+                                                <span className={styles.badge}>{item.badge}</span>
+                                            )}
+                                        </Link>
+                                    )
                                 )}
                             </div>
                         ))}
@@ -207,8 +228,7 @@ const AdminNavbar = () => {
                                         exit={{ opacity: 0, y: -10 }}
                                     >
                                         <div className={styles.profileHeader}>
-                                            <h4>Admin User</h4>
-                                            <p>admin@ditvi.com</p>
+                                            <h4>{adminUsername || 'Admin User'}</h4>
                                         </div>
 
                                         <div className={styles.profileMenuItems}>
@@ -220,12 +240,21 @@ const AdminNavbar = () => {
                                                 <FaUserCircle /> My Profile
                                             </Link>
                                             <Link
-                                                href="/admin/settings"
+                                                href="/admin/change-password"
                                                 className={styles.profileMenuItem}
                                                 onClick={() => setIsProfileOpen(false)}
                                             >
                                                 <FaCog /> Change Password
                                             </Link>
+                                            {adminRoleId === 0 && (
+                                                <Link
+                                                    href="/admin/manage-user"
+                                                    className={styles.profileMenuItem}
+                                                    onClick={() => setIsProfileOpen(false)}
+                                                >
+                                                    <FaUsers /> Manage Users
+                                                </Link>
+                                            )}
                                         </div>
 
                                         <div className={styles.divider}></div>
@@ -263,4 +292,4 @@ const AdminNavbar = () => {
     );
 };
 
-export default AdminNavbar;
+export default AdminNavbar

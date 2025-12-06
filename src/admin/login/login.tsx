@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { supabase } from '@/lib/supabase';
+import { verifyPassword } from '@/lib/passwordEncryption';
 import styles from './login.module.css';
 import schoolDetails from '@/json/schooldetails';
 import Loader from '@/custom/loader/loader';
@@ -23,20 +24,46 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase
-        .from('admins')
+      // Fetch user by username
+      const { data: userData, error: fetchError } = await supabase
+        .from('users')
         .select()
         .eq('username', formData.username)
-        .eq('password', formData.password)
         .single();
 
-      if (error || !data) {
+      if (fetchError || !userData) {
+        toast.error('Invalid credentials');
+        setFormData({ username: '', password: '' });
+        return;
+      }
+
+      // Check if user is active
+      if (!userData.is_active) {
+        toast.error('User account is inactive. Please contact administrator.');
+        setFormData({ username: '', password: '' });
+        return;
+      }
+
+      // Verify password using SHA-256 with salt
+      const salt = process.env.NEXT_PUBLIC_PASSWORD_SALT || process.env.PASSWORD_SALT;
+      if (!salt) {
+        toast.error('Security configuration error. Please contact administrator.');
+        console.error('PASSWORD_SALT not configured');
+        return;
+      }
+
+      const isPasswordValid = verifyPassword(formData.password, userData.password, salt);
+      
+      if (!isPasswordValid) {
         toast.error('Invalid credentials');
         setFormData({ username: '', password: '' });
         return;
       }
 
       localStorage.setItem('isAdminLoggedIn', 'true');
+      localStorage.setItem('adminUsername', formData.username);
+      localStorage.setItem('adminRoleId', userData.role_id.toString());
+      localStorage.setItem('adminEmail', userData.email || '');
       toast.success('Login successful!');
       setFormData({ username: '', password: '' });
       router.push('/admin/dashboard');
