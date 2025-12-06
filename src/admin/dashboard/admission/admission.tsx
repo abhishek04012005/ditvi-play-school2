@@ -37,6 +37,7 @@ interface NoteEntry {
     text: string;
     timestamp: string;
     id: string;
+    userName?: string;
 }
 
 interface Admission {
@@ -476,10 +477,14 @@ export default function AdminAdmission() {
         try {
             setSavingNote(true);
 
+            // Get username from localStorage
+            const userName = localStorage.getItem('adminUsername') || 'Unknown User';
+
             const newEntry: NoteEntry = {
                 id: Date.now().toString(),
                 text: newNoteText.trim(),
                 timestamp: new Date().toISOString(),
+                userName: userName,
             };
 
             const updatedNotes = [...noteEntries, newEntry];
@@ -916,6 +921,7 @@ export default function AdminAdmission() {
                 formatTimestamp={formatTimestamp}
                 savingNote={savingNote}
                 deletingNoteId={deletingNoteId}
+                canDeleteNotes={parseInt(localStorage.getItem('adminRoleId') || '-1') === 0}
             />
 
             {/* Details Modal */}
@@ -1029,6 +1035,7 @@ const NotesModal = ({
     formatTimestamp,
     savingNote,
     deletingNoteId,
+    canDeleteNotes,
 }: {
     isOpen: boolean;
     onClose: () => void;
@@ -1041,6 +1048,7 @@ const NotesModal = ({
     formatTimestamp: (timestamp: string) => string;
     savingNote?: boolean;
     deletingNoteId?: string | null;
+    canDeleteNotes?: boolean;
 }) => {
     const isProcessing = savingNote || !!deletingNoteId;
     const childName = getChildName(admission || {} as Admission);
@@ -1104,24 +1112,29 @@ const NotesModal = ({
                                                 >
                                                     <div className={styles.noteEntryHeader}>
                                                         <span className={styles.noteNumber}>Note #{index + 1}</span>
+                                                        <span className={styles.noteUser}>
+                                                            👤 {entry.userName || 'Unknown User'}
+                                                        </span>
                                                         <span className={styles.noteTimestamp}>
                                                             🕒 {formatTimestamp(entry.timestamp)}
                                                         </span>
-                                                        <motion.button
-                                                            type="button"
-                                                            className={styles.deleteNoteBtn}
-                                                            onClick={() => onDeleteNote(entry.id)}
-                                                            whileHover={{ scale: 1.05 }}
-                                                            whileTap={{ scale: 0.95 }}
-                                                            title="Delete note"
-                                                            disabled={!!deletingNoteId}
-                                                        >
-                                                            {deletingNoteId === entry.id ? (
-                                                                <FaSpinner className={styles.spinnerIcon} />
-                                                            ) : (
-                                                                <FaTrash />
-                                                            )}
-                                                        </motion.button>
+                                                        {canDeleteNotes && (
+                                                            <motion.button
+                                                                type="button"
+                                                                className={styles.deleteNoteBtn}
+                                                                onClick={() => onDeleteNote(entry.id)}
+                                                                whileHover={{ scale: 1.05 }}
+                                                                whileTap={{ scale: 0.95 }}
+                                                                title="Delete note"
+                                                                disabled={!!deletingNoteId}
+                                                            >
+                                                                {deletingNoteId === entry.id ? (
+                                                                    <FaSpinner className={styles.spinnerIcon} />
+                                                                ) : (
+                                                                    <FaTrash />
+                                                                )}
+                                                            </motion.button>
+                                                        )}
                                                     </div>
                                                     <div className={styles.notesModalLining}></div>
                                                     <div className={styles.noteEntryContent}>
