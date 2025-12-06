@@ -101,6 +101,7 @@ export default function ManageUser() {
       const { data, error } = await supabase
         .from('users')
         .select('id, username, role_id, is_active, created_at')
+        .neq('role_id', 0)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -339,7 +340,6 @@ export default function ManageUser() {
               <thead>
                 <tr>
                   <th>Username</th>
-                  <th>Email</th>
                   <th>Role</th>
                   <th>Status</th>
                   <th>Created</th>
@@ -358,7 +358,6 @@ export default function ManageUser() {
                       <FaUser className={styles.userIcon} />
                       {user.username}
                     </td>
-                    <td>{user.email || '-'}</td>
                     <td>
                       <span className={styles.roleBadge}>
                         {getRoleName(user.role_id)}
