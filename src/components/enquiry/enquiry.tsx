@@ -12,13 +12,9 @@ import HeadingTitle from '../heading/headingtitle';
 import LineArt from '@/custom/lineart/lineart';
 import AirplanemodeActiveOutlinedIcon from '@mui/icons-material/AirplanemodeActiveOutlined';
 import Loader from '@/custom/loader/loader';
+import { schoolDetails } from '@/json/schooldetails';
 
-const programs = [
-    "Play Group (1.5 - 2.5 years)",
-    "Nursery (2.5 - 3.5 years)",
-    "Junior KG (3.5 - 4.5 years)",
-    "Senior KG (4.5 - 5.5 years)"
-];
+
 
 const Enquiry = () => {
     const [loading, setLoading] = useState(false);
@@ -43,6 +39,9 @@ const Enquiry = () => {
         childName: '',
         program: ''
     });
+
+    const programs = schoolDetails.programs.map(p => p.name);
+
 
     const validatePhone = (phone: string): boolean => {
         const phoneRegex = /^[6-9]\d{9}$/;
@@ -209,15 +208,15 @@ const Enquiry = () => {
         }
     };
 
-      if (loading) {
-    return (
-      <Loader
-        isVisible={true}
-        message="Submitting your application..."
-        fullScreen={true}
-      />
-    );
-  }
+    if (loading) {
+        return (
+            <Loader
+                isVisible={true}
+                message="Submitting your application..."
+                fullScreen={true}
+            />
+        );
+    }
 
     return (
         <section className={styles.enquiry}>
@@ -286,7 +285,7 @@ const Enquiry = () => {
                     className={styles.headerSection}
                 >
                     <HeadingTitle text="Admission Enquiry" />
-               
+
                 </motion.div>
 
                 <motion.div

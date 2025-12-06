@@ -28,6 +28,11 @@ export interface SchoolDetails {
         name: string;
         designation: string;
     };
+    programs: {
+        name: string;
+        icon?: string;
+        description?: string;
+    }[];
 }
 
 export const schoolDetails: SchoolDetails = {
@@ -56,7 +61,25 @@ export const schoolDetails: SchoolDetails = {
     director: {
         name: "Abhinav Sharma",
         designation: "Founder & Director"
-    }
+    },
+    programs: [
+        {
+            name: "Play Group",
+            description: "Age: 1.5 - 2.5 years"
+        },
+        {
+            name: "Nursery",
+            description: "Age: 2.5 - 3.5 years"
+        },
+        {
+            name: "Junior KG",
+            description: "Age: 3.5 - 4.5 years"
+        },
+        {
+            name: "Senior KG",
+            description: "Age: 4.5 - 5.5 years"
+        }
+    ]
 };
 
 export default schoolDetails;
