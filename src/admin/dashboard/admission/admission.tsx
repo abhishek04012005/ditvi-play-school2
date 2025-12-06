@@ -64,6 +64,7 @@ interface Admission {
     previous_school?: string;
     previousSchool?: string;
     admission_status: 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected';
+    admission_source?: 'enquiry' | 'social_media' | 'web' | 'offline';
     notes?: NoteEntry[] | null;
     created_at: string;
     photo_url?: string | null;
@@ -138,6 +139,18 @@ const getProgram = (admission: Admission): string => {
 const getStatus = (admission: Admission): Admission['admission_status'] => {
     return admission.admission_status || 'In Review';
 };
+
+const getAdmissionSource = (admission: Admission): string => {
+    const sourceMap: { [key: string]: string } = {
+        'enquiry': '📞 Enquiry',
+        'social_media': '📱 Social Media',
+        'web': '🌐 Web',
+        'offline': '🏢 Offline'
+    };
+    const source = admission.admission_source || 'enquiry';
+    return sourceMap[source] || 'Unknown';
+};
+
 
 export default function AdminAdmission() {
     const [admissions, setAdmissions] = useState<Admission[]>([]);
@@ -227,6 +240,34 @@ export default function AdminAdmission() {
             const admissionDate = new Date(admission.created_at);
             return admissionDate >= startDate && admissionDate <= endDate;
         });
+    };
+
+    const handleSourceChange = async (id: string, newSource: string) => {
+        try {
+            const typedSource = newSource as 'enquiry' | 'social_media' | 'web' | 'offline';
+            const { data, error } = await supabase
+                .from('admission')
+                .update({ admission_source: typedSource })
+                .eq('id', id)
+                .select();
+
+            if (error) {
+                console.error('❌ Supabase error:', error);
+                toast.error(`Failed: ${error.message || 'Unknown error'}`);
+                return;
+            }
+
+            setAdmissions((prev) =>
+                prev.map((adm) =>
+                    adm.id === id ? { ...adm, admission_source: typedSource } : adm
+                )
+            );
+
+            toast.success(`✅ Source changed to ${newSource}`);
+        } catch (error: any) {
+            console.error('❌ Error:', error);
+            toast.error(`Error: ${error?.message || 'Unknown error'}`);
+        }
     };
 
     const handleSort = (field: SortField) => {
@@ -643,6 +684,7 @@ export default function AdminAdmission() {
                                 <th onClick={() => handleSort('program_name')}>
                                     Program {getSortIcon('program_name')}
                                 </th>
+                                <th>Source</th>
                                 <th>Notes</th>
                                 <th onClick={() => handleSort('admission_status')}>
                                     Status {getSortIcon('admission_status')}
@@ -703,6 +745,18 @@ export default function AdminAdmission() {
                                             </div>
                                         </td>
                                         <td>{getProgram(admission)}</td>
+                                        <td>
+                                            <select
+                                                value={admission.admission_source || 'enquiry'}
+                                                onChange={(e) => handleSourceChange(admission.id, e.target.value)}
+                                                className={styles.sourceDropdown}
+                                            >
+                                                <option value="enquiry">Enquiry</option>
+                                                <option value="social_media">Social Media</option>
+                                                <option value="web">Web</option>
+                                                <option value="offline">Offline</option>
+                                            </select>
+                                        </td>
                                         <td>
                                             <button
                                                 className={`${styles.notesBtn} ${admission.notes && admission.notes.length > 0 ? styles.hasNotes : ''}`}
