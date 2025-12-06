@@ -37,6 +37,13 @@ export default function AdminLogin() {
         return;
       }
 
+      // Check if user is active
+      if (!userData.is_active) {
+        toast.error('User account is inactive. Please contact administrator.');
+        setFormData({ username: '', password: '' });
+        return;
+      }
+
       // Verify password using SHA-256 with salt
       const salt = process.env.NEXT_PUBLIC_PASSWORD_SALT || process.env.PASSWORD_SALT;
       if (!salt) {

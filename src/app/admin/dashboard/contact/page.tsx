@@ -1,4 +1,5 @@
 'use client';
+import { useEffect } from 'react';
 import ContactDashboard from "@/admin/dashboard/contact/contact";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useRouter } from "next/navigation";
@@ -8,10 +9,11 @@ export default function enquiryPage() {
     const { isAuthenticated, adminRoleId, loading } = useAdminAuth();
 
     // Tele-caller (role_id = 2) cannot access contact dashboard; redirect them
-    if (!loading && isAuthenticated && adminRoleId === 2) {
-        router.push('/admin/dashboard/admission');
-        return null;
-    }
+    useEffect(() => {
+        if (!loading && isAuthenticated && adminRoleId === 2) {
+            router.push('/admin/dashboard/admission');
+        }
+    }, [loading, isAuthenticated, adminRoleId, router]);
 
     // Show loader or wait for auth check to complete
     if (loading) {
@@ -20,6 +22,11 @@ export default function enquiryPage() {
 
     // If not authenticated, useAdminAuth will handle redirect; don't render
     if (!isAuthenticated) {
+        return null;
+    }
+
+    // Don't render while redirecting role_id = 2
+    if (adminRoleId === 2) {
         return null;
     }
 

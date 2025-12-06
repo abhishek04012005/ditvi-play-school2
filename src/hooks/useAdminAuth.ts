@@ -12,7 +12,6 @@ const ROLE_ACCESS_MAP: Record<number, string[]> = {
         '/admin/dashboard/enquiry',
         '/admin/dashboard/contact',
         '/admin/dashboard/spotlight',
-        '/admin/create-user',
         '/admin/manage-user',
         '/admin/change-password',
     ], // super-admin: all access
