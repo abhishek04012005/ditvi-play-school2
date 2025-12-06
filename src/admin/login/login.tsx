@@ -24,7 +24,7 @@ export default function AdminLogin() {
 
     try {
       const { data, error } = await supabase
-        .from('admins')
+        .from('users')
         .select()
         .eq('username', formData.username)
         .eq('password', formData.password)
@@ -37,6 +37,9 @@ export default function AdminLogin() {
       }
 
       localStorage.setItem('isAdminLoggedIn', 'true');
+      localStorage.setItem('adminUsername', formData.username);
+      localStorage.setItem('adminRoleId', data.role_id.toString());
+      localStorage.setItem('adminEmail', data.email || '');
       toast.success('Login successful!');
       setFormData({ username: '', password: '' });
       router.push('/admin/dashboard');
