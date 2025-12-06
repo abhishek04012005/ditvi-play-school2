@@ -2,9 +2,10 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaTimes, FaStar, FaHeart, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaTimes, FaStar, FaHeart, FaChevronLeft, FaChevronRight, FaShare } from 'react-icons/fa';
 import { IoGridOutline } from 'react-icons/io5';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ShareModal } from '@/components/modals/ShareModal';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
 import { Navigation, Autoplay, Pagination } from 'swiper/modules';
@@ -78,6 +79,10 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
     // ✨ LIKE CONFETTI STATE ✨
     const [likeConfetti, setLikeConfetti] = useState(false);
     const [likeConfettiKey, setLikeConfettiKey] = useState(0);
+
+    // ✨ SHARE MODAL STATE ✨
+    const [showShareModal, setShowShareModal] = useState(false);
+    const [shareAward, setShareAward] = useState<Award | null>(null);
 
     // like state maps for fast UI updates
     const [likedMap, setLikedMap] = useState<Record<string, boolean>>({});
@@ -306,6 +311,12 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
         }
     };
 
+    // ✨ OPEN SHARE MODAL ✨
+    const handleOpenShareModal = (award: Award) => {
+        setShareAward(award);
+        setShowShareModal(true);
+    };
+
     // Award Card Component
     const AwardCard = ({ award, isSlider = false }: { award: Award; isSlider?: boolean }) => (
         <motion.div
@@ -373,6 +384,16 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                             <FaHeart />
                         </motion.span>
                         <span className={styles.likeCount}>{likesMap[award.id] ?? award.like_count ?? 0}</span>
+                    </motion.button>
+                    <motion.button
+                        className={styles.shareButton}
+                        onClick={() => handleOpenShareModal(award)}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        title="Share this achievement"
+                        aria-label="Share award"
+                    >
+                        <FaShare />
                     </motion.button>
                     <motion.button
                         className={styles.viewButton}
@@ -791,6 +812,19 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                         </motion.div>
                     )}
                 </AnimatePresence>
+
+                {/* ✨ SHARE MODAL - HOMEPAGE ✨ */}
+                <ShareModal
+                    isOpen={showShareModal}
+                    onClose={() => setShowShareModal(false)}
+                    award={shareAward || {
+                        id: '',
+                        name: '',
+                        message: '',
+                        image_url: '',
+                    }}
+                    baseUrl={typeof window !== 'undefined' ? window.location.origin : 'https://apollokids.com'}
+                />
             </>
         );
     }
@@ -1000,6 +1034,19 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* ✨ SHARE MODAL ✨ */}
+            <ShareModal
+                isOpen={showShareModal}
+                onClose={() => setShowShareModal(false)}
+                award={shareAward || {
+                    id: '',
+                    name: '',
+                    message: '',
+                    image_url: '',
+                }}
+                baseUrl={typeof window !== 'undefined' ? window.location.origin : 'https://apollokids.com'}
+            />
         </>
     );
 };
