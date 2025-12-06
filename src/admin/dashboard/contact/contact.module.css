@@ -2112,3 +2112,23 @@
     border-radius: 16px;
     margin-bottom: 1rem;
 }
+
+.downloadBtn {
+    padding: 0.7rem 1.4rem;
+    background: var(--primary-purple);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.2);
+    font-family: 'Verdana', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+}

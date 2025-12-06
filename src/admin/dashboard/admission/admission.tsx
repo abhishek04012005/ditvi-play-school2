@@ -28,6 +28,9 @@ import toast from 'react-hot-toast';
 import styles from './admission.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
+import { DownloadModal } from '../download/DownloadData';
+
+
 
 interface NoteEntry {
     text: string;
@@ -82,6 +85,8 @@ interface StatusCard {
 type SortField = 'created_at' | 'child_name' | 'admission_status' | 'program_name';
 type SortOrder = 'asc' | 'desc';
 type ItemsPerPage = 20 | 50 | 100;
+
+
 
 const getGoogleDriveURL = (url: string, type: 'image' | 'pdf' | 'document') => {
     if (!url) return url;
@@ -162,6 +167,9 @@ export default function AdminAdmission() {
     const [statusUpdating, setStatusUpdating] = useState(false);
     const [updatingId, setUpdatingId] = useState<string | null>(null);
 
+    const [downloadModalOpen, setDownloadModalOpen] = useState(false);
+
+
     useEffect(() => {
         const initializePage = async () => {
             setPageLoading(true);
@@ -212,6 +220,13 @@ export default function AdminAdmission() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleAdmissionDownload = (startDate: Date, endDate: Date) => {
+        return admissions.filter((admission) => {
+            const admissionDate = new Date(admission.created_at);
+            return admissionDate >= startDate && admissionDate <= endDate;
+        });
     };
 
     const handleSort = (field: SortField) => {
@@ -588,6 +603,15 @@ export default function AdminAdmission() {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
+                        <motion.button
+                            className={styles.downloadBtn}
+                            onClick={() => setDownloadModalOpen(true)}
+                            title="Download admission data"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <FaDownload /> Download Data
+                        </motion.button>
                         <select
                             value={filter}
                             onChange={(e) => setFilter(e.target.value as any)}
@@ -856,6 +880,31 @@ export default function AdminAdmission() {
                 onClose={() => setPreviewModal(null)}
                 preview={previewModal}
             />
+
+            <DownloadModal
+                isOpen={downloadModalOpen}
+                onClose={() => setDownloadModalOpen(false)}
+                data={admissions}
+                columns={[
+                    { key: 'admission_number', label: 'Admission Number' },
+                    { key: 'created_at', label: 'Date' },
+                    { key: 'child_name', label: 'Child Name' },
+                    { key: 'child_dob', label: 'Date of Birth' },
+                    { key: 'child_gender', label: 'Gender' },
+                    { key: 'child_place_of_birth', label: 'Place of Birth' },
+                    { key: 'parent_name', label: 'Parent Name' },
+                    { key: 'parent_email', label: 'Email' },
+                    { key: 'parent_mobile_number', label: 'Mobile' },
+                    { key: 'program_name', label: 'Program' },
+                    { key: 'previous_school', label: 'Previous School' },
+                    { key: 'admission_status', label: 'Status' },
+                ]}
+                fileName="Admissions_Export"
+                defaultMonths="6"
+                onDateRangeChange={handleAdmissionDownload}
+                title="Download Admissions Data"
+                description="Select a date range and format to download your admission records"
+            />
         </div>
     );
 }
@@ -1080,6 +1129,7 @@ const NotesModal = ({
                             </motion.button>
                         </div>
                     </motion.div>
+
                 </>
             )}
         </AnimatePresence>

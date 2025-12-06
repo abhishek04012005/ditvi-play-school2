@@ -8,6 +8,7 @@
   --text-gray: #666666;
   --text-purple: #4b2e83;
   --primary-font: Verdana;
+  --primary-yellow-rgba: rgba(255, 191, 0, 0.1);
 }
 
 @media (prefers-color-scheme: dark) {
