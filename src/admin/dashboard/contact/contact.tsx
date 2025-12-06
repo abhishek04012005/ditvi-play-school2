@@ -20,12 +20,16 @@ import {
     FaTrash,
     FaChevronLeft,
     FaChevronRight,
+    FaDownload
 } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
 import styles from './contact.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
+import { DownloadModal } from '../download/DownloadData';
+import EditNoteIcon from '@mui/icons-material/EditNote';
+
 
 interface NoteEntry {
     text: string;
@@ -76,6 +80,9 @@ const ContactDashboard = () => {
     // ✨ PAGINATION STATE ✨
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState<ItemsPerPage>(20);
+
+    const [downloadModalOpen, setDownloadModalOpen] = useState(false);
+
 
     useEffect(() => {
         fetchContacts();
@@ -128,6 +135,13 @@ const ContactDashboard = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleContactDownload = (startDate: Date, endDate: Date) => {
+        return contacts.filter((contacts) => {
+            const admissionDate = new Date(contacts.created_at);
+            return admissionDate >= startDate && admissionDate <= endDate;
+        });
     };
 
     const handleSort = (field: SortField) => {
@@ -303,7 +317,7 @@ const ContactDashboard = () => {
 
             const updatedNotes = [...noteEntries, newEntry];
 
-            console.log('📝 Saving notes to JSONB:', updatedNotes);
+            console.log('Saving notes to JSONB:', updatedNotes);
 
             const { data, error } = await supabase
                 .from('contacts')
@@ -472,6 +486,15 @@ const ContactDashboard = () => {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
+                        <motion.button
+                            className={styles.downloadBtn}
+                            onClick={() => setDownloadModalOpen(true)}
+                            title="Download admission data"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <FaDownload /> Download Data
+                        </motion.button>
                         <select
                             value={filter}
                             onChange={(e) => setFilter(e.target.value as any)}
@@ -724,6 +747,25 @@ const ContactDashboard = () => {
                 savingNote={savingNote}
                 deletingNoteId={deletingNoteId}
             />
+
+            <DownloadModal
+                isOpen={downloadModalOpen}
+                onClose={() => setDownloadModalOpen(false)}
+                data={contacts}
+                columns={[
+                    { key: 'created_at', label: 'Date' },
+                    { key: 'name', label: 'Name' },
+                    { key: 'email', label: 'Email' },
+                    { key: 'phone', label: 'Phone' },
+                    { key: 'message', label: 'message' },
+                    { key: 'status', label: 'Status' },
+                ]}
+                fileName="Contact_Export"
+                defaultMonths="6"
+                onDateRangeChange={handleContactDownload}
+                title="Download Contact Data"
+                description="Select a date range and format to download your admission records"
+            />
         </div>
     );
 };
@@ -782,7 +824,7 @@ const NotesModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2>📝 Notes for {contact?.name}</h2>
+                                <h2><EditNoteIcon/> Notes for {contact?.name}</h2>
                                 <p>{contact?.email} • {contact?.phone}</p>
                                 {noteEntries.length > 0 && (
                                     <p className={styles.notesCount}>

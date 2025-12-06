@@ -20,12 +20,17 @@ import {
     FaTrash,
     FaChevronLeft,
     FaChevronRight,
+    FaDownload
 } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
 import styles from './enquiry.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
+import { DownloadModal } from '../download/DownloadData';
+import EditNoteIcon from '@mui/icons-material/EditNote';
+
+
 
 interface NoteEntry {
     text: string;
@@ -76,6 +81,9 @@ const EnquiryDashboard = () => {
     // ✨ PAGINATION STATE ✨
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState<ItemsPerPage>(20);
+
+    const [downloadModalOpen, setDownloadModalOpen] = useState(false);
+
 
     useEffect(() => {
         fetchEnquiries();
@@ -130,6 +138,13 @@ const EnquiryDashboard = () => {
         }
     };
 
+    const handleEnquiryDownload = (startDate: Date, endDate: Date) => {
+        return enquiries.filter((enquiries) => {
+            const admissionDate = new Date(enquiries.created_at);
+            return admissionDate >= startDate && admissionDate <= endDate;
+        });
+    };
+
     const handleSort = (field: SortField) => {
         if (sortField === field) {
             setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -163,10 +178,10 @@ const EnquiryDashboard = () => {
                     ? new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
                     : new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
             }
-            
+
             const aValue = (a[sortField] ?? '').toString();
             const bValue = (b[sortField] ?? '').toString();
-            
+
             return sortOrder === 'asc'
                 ? aValue.localeCompare(bValue)
                 : bValue.localeCompare(aValue);
@@ -241,7 +256,7 @@ const EnquiryDashboard = () => {
             transition: { staggerChildren: 0.08, delayChildren: 0.1 },
         },
     };
-
+    enquiries
     const itemVariants = {
         hidden: { opacity: 0, y: 20 },
         visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
@@ -308,7 +323,7 @@ const EnquiryDashboard = () => {
 
             const updatedNotes = [...noteEntries, newEntry];
 
-            console.log('📝 Saving notes to JSONB:', updatedNotes);
+            console.log('Saving notes to JSONB:', updatedNotes);
 
             const { data, error } = await supabase
                 .from('enquiries')
@@ -476,6 +491,15 @@ const EnquiryDashboard = () => {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
+                        <motion.button
+                            className={styles.downloadBtn}
+                            onClick={() => setDownloadModalOpen(true)}
+                            title="Download admission data"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <FaDownload /> Download Data
+                        </motion.button>
                         <select
                             value={filter}
                             onChange={(e) => setFilter(e.target.value as any)}
@@ -669,9 +693,8 @@ const EnquiryDashboard = () => {
                                         return (
                                             <motion.button
                                                 key={page}
-                                                className={`${styles.pageBtn} ${
-                                                    page === currentPage ? styles.active : ''
-                                                }`}
+                                                className={`${styles.pageBtn} ${page === currentPage ? styles.active : ''
+                                                    }`}
                                                 onClick={() => handlePageChange(page)}
                                                 whileHover={{ scale: 1.05 }}
                                                 whileTap={{ scale: 0.95 }}
@@ -720,6 +743,25 @@ const EnquiryDashboard = () => {
                 formatTimestamp={formatTimestamp}
                 savingNote={savingNote}
                 deletingNoteId={deletingNoteId}
+            />
+
+            <DownloadModal
+                isOpen={downloadModalOpen}
+                onClose={() => setDownloadModalOpen(false)}
+                data={enquiries}
+                columns={[
+                    { key: 'created_at', label: 'Date' },
+                    { key: 'child_name', label: 'Child Name' },
+                    { key: 'parent_name', label: 'Parent Name' },
+                    { key: 'phone', label: 'Phone' },
+                    { key: 'program', label: 'Program' },
+                    { key: 'status', label: 'Status' },
+                ]}
+                fileName="Enquiry_Export"
+                defaultMonths="6"
+                onDateRangeChange={handleEnquiryDownload}
+                title="Download Enquiry Data"
+                description="Select a date range and format to download your admission records"
             />
         </div>
     );
@@ -776,7 +818,7 @@ const NotesModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2>📝 Notes for {enquiry?.child_name}</h2>
+                                <h2><EditNoteIcon />Notes for {enquiry?.child_name}</h2>
                                 <p>{enquiry?.parent_name} • {enquiry?.phone}</p>
                                 {noteEntries.length > 0 && (
                                     <p className={styles.notesCount}>

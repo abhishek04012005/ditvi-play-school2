@@ -30,6 +30,7 @@ import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import { schoolDetails } from "@/json/schooldetails";
 import Loader from "@/custom/loader/loader";
 
+
 interface FormData {
   child_name: string;
   child_dob: string;
@@ -56,12 +57,12 @@ interface SubmissionResult {
   program_name: string;
 }
 
-const programs = [
-  { value: "playgroup", label: "Play Group" },
-  { value: "nursery", label: "Nursery" },
-  { value: "kg1", label: "KG - 1" },
-  { value: "kg2", label: "KG - 2" },
-];
+// const programs = [
+//   { value: "playgroup", label: "Play Group" },
+//   { value: "nursery", label: "Nursery" },
+//   { value: "kg1", label: "KG - 1" },
+//   { value: "kg2", label: "KG - 2" },
+// ];
 
 export default function AdmissionForm() {
   const [step, setStep] = useState(1);
@@ -120,6 +121,8 @@ export default function AdmissionForm() {
   });
 
   const pdfRef = useRef<HTMLDivElement>(null);
+
+  const programs = schoolDetails.programs.map(p => p.name);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -852,22 +855,22 @@ export default function AdmissionForm() {
                         <div className={styles.formGroup}>
                           <label>Select Program *</label>
                           <div className={styles.radioGroup}>
-                            {programs.map((p) => (
-                              <div className={styles.radioItem} key={p.value}>
+                            {programs.map((program) => (
+                              <div className={styles.radioItem} key={program}>
                                 <input
                                   type="radio"
-                                  id={`program_${p.value}`}
+                                  id={`program_${program}`}
                                   name="program_name"
-                                  value={p.value}
-                                  checked={formData.program_name === p.value}
+                                  value={program}
+                                  checked={formData.program_name === program}
                                   onChange={handleInputChange}
                                   className={styles.radioInput}
                                 />
                                 <label
-                                  htmlFor={`program_${p.value}`}
+                                  htmlFor={`program_${program}`}
                                   className={styles.radioLabel}
                                 >
-                                  {p.label}
+                                  {program}
                                 </label>
                               </div>
                             ))}
@@ -1126,7 +1129,7 @@ function FileUploadField({
           </div>
         ) : (
           <div className={styles.uploadPlaceholder}>
-            <span><FaFile className={styles.fileColor}/> Click to upload file</span>
+            <span><FaFile className={styles.fileColor} /> Click to upload file</span>
             <small>Max 10MB • JPG, PNG, PDF</small>
           </div>
         )}

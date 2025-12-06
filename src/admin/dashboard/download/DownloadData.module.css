@@ -1,0 +1,540 @@
+/* ==================== Modal Overlay ==================== */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+/* ==================== Modal ==================== */
+.downloadModal {
+    position: fixed;
+    top: 10%;
+    left: 33%;
+    transform: translate(-50%, -50%);
+    background: #ffffff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow: hidden;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--text-grey);
+}
+
+/* ==================== Modal Header ==================== */
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 2rem;
+    border-bottom: 1px solid #e5e5e5;
+    background: linear-gradient(135deg, #f9f7ff 0%, #fafbfc 100%);
+}
+
+.modalHeader h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary-purple);
+    letter-spacing: -0.3px;
+}
+
+.modalHeader p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666666;
+    font-weight: 600;
+}
+
+.closeBtn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #999999;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+}
+
+.closeBtn:hover:not(:disabled) {
+    background: rgba(106, 76, 147, 0.1);
+    color: var(--primary-purple);
+}
+
+.closeBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ==================== Modal Content ==================== */
+.modalContent {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.modalContent::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modalContent::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modalContent::-webkit-scrollbar-thumb {
+    background: #e5e5e5;
+    border-radius: 3px;
+}
+
+.modalContent::-webkit-scrollbar-thumb:hover {
+    background: #999999;
+}
+
+/* ==================== Section ==================== */
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: #f9f9f9;
+    border-radius: 12px;
+    border: 1px solid #e5e5e5;
+}
+
+.sectionLabel {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--primary-purple);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+.sectionLabel svg {
+    font-size: 1.1rem;
+}
+
+/* ==================== Date Range Buttons ==================== */
+.dateRangeButtons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem;
+}
+
+.dateBtn {
+    padding: 0.75rem 1.2rem;
+    border: 2px solid #e5e5e5;
+    background: #ffffff;
+    color: #666666;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Verdana', sans-serif;
+}
+
+.dateBtn:hover:not(:disabled) {
+    border-color: var(--primary-purple);
+    background: rgba(243, 232, 255, 0.5);
+    color: var(--primary-purple);
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.1);
+}
+
+.dateBtn:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.dateBtn.active {
+    background: var(--primary-purple);
+    color: #ffffff;
+    border-color: var(--primary-purple);
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.25);
+}
+
+.dateBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ==================== Custom Date Inputs ==================== */
+.customDateInputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 1rem;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+}
+
+.dateInputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.dateInputGroup label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #333333;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.dateInput {
+    padding: 0.75rem 1rem;
+    border: 2px solid #e5e5e5;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: 'Verdana', sans-serif;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dateInput:hover:not(:disabled) {
+    border-color: var(--primary-purple);
+}
+
+.dateInput:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
+}
+
+.dateInput:disabled {
+    background: #f9f9f9;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* ==================== Date Range Summary ==================== */
+.dateRangeSummary {
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(106, 76, 147, 0.1), rgba(255, 191, 0, 0.05));
+    border-left: 4px solid var(--primary-purple);
+    border-radius: 8px;
+}
+
+.dateRangeSummary p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #333333;
+    font-weight: 600;
+}
+
+/* ==================== Format Buttons ==================== */
+.formatButtons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.formatBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 1rem;
+    border: 2px solid #e5e5e5;
+    background: #ffffff;
+    color: #666666;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Verdana', sans-serif;
+}
+
+.formatBtn:hover:not(:disabled) {
+    border-color: var(--primary-purple);
+    background: rgba(243, 232, 255, 0.5);
+    color: var(--primary-purple);
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.1);
+}
+
+.formatBtn:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.formatBtn.active {
+    background: var(--primary-purple);
+    color: #ffffff;
+    border-color: var(--primary-purple);
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.25);
+}
+
+.formatBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.formatBtn svg {
+    font-size: 1.1rem;
+}
+
+/* ==================== Info Box ==================== */
+.infoBox {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    background: linear-gradient(135deg,
+            #ffffff 0%,
+            var(--primary-yellow-rgba) 100%);
+    border: 2px solid var(--primary-yellow);
+    border-radius: 12px;
+    border-left: 4px solid var(--primary-yellow);
+}
+
+.infoText {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #333333;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.infoText svg {
+    color: var(--primary-purple);
+}
+
+.infoText strong {
+    color: var(--primary-purple);
+    font-weight: 700;
+}
+
+/* ==================== Modal Footer ==================== */
+.modalFooter {
+    display: flex;
+    gap: 1rem;
+    padding: 2rem;
+    border-top: 1px solid #e5e5e5;
+    background: #f9f9f9;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.cancelBtn,
+.downloadBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.8rem 1.6rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Verdana', sans-serif;
+}
+
+.cancelBtn {
+    background: rgba(106, 76, 147, 0.1);
+    color: var(--primary-purple);
+    border: 2px solid #e5e5e5;
+}
+
+.cancelBtn:hover:not(:disabled) {
+    background: rgba(106, 76, 147, 0.2);
+    border-color: var(--primary-purple);
+}
+
+.cancelBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.downloadBtn {
+    background: var(--primary-purple);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.25);
+}
+
+.downloadBtn:hover:not(:disabled) {
+    background: var(--primary-purple);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(106, 76, 147, 0.35);
+}
+
+.downloadBtn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.downloadBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 1140px) {
+    .downloadModal {
+        left: 20%;
+    }
+}
+
+@media (max-width: 768px) {
+    .downloadModal {
+        max-width: 100%;
+        max-height: 90vh;
+        left: 0;
+    }
+
+    .modalHeader {
+        padding: 1.5rem;
+    }
+
+    .modalHeader h2 {
+        font-size: 1.2rem;
+    }
+
+    .modalContent {
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+
+    .dateRangeButtons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .customDateInputs {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .formatButtons {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .modalFooter {
+        padding: 1.5rem;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .cancelBtn,
+    .downloadBtn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .downloadModal {
+        width: 100vw;
+        max-height: 90vh;
+        border-radius: 20px 20px 0 0;
+        top: 5%;
+        transform: none;
+    }
+
+    .modalHeader {
+        padding: 1.25rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .modalHeader h2 {
+        font-size: 1.1rem;
+    }
+
+    .closeBtn {
+        position: absolute;
+        top: 1.25rem;
+        right: 1.25rem;
+        width: 36px;
+        height: 36px;
+    }
+
+    .modalContent {
+        padding: 1.25rem;
+        gap: 1.25rem;
+    }
+
+    .section {
+        padding: 1rem;
+    }
+
+    .dateRangeButtons {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .dateBtn {
+        font-size: 0.85rem;
+    }
+
+    .formatButtons {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .formatBtn {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .modalFooter {
+        padding: 1.25rem;
+        flex-direction: column-reverse;
+    }
+
+    .cancelBtn,
+    .downloadBtn {
+        width: 100%;
+        padding: 0.75rem 1.2rem;
+    }
+}
+
+.selectedRange {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.95rem;
+    color: #333333;
+    font-weight: 600;
+}
+
+.selectedRange svg {
+    color: var(--primary-purple);
+}

@@ -9,13 +9,8 @@ import SubmitModal from '../../../custom/popup/popup';
 import styles from './enquirypopup.module.css';
 import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined';
 import Loader from '@/custom/loader/loader';
+import { schoolDetails } from '@/json/schooldetails';
 
-const programs = [
-    "Play Group (1.5 - 2.5 years)",
-    "Nursery (2.5 - 3.5 years)",
-    "Junior KG (3.5 - 4.5 years)",
-    "Senior KG (4.5 - 5.5 years)"
-];
 
 interface EnquiryPopupProps {
     delay?: number;
@@ -51,6 +46,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
         childName: '',
         program: ''
     });
+    const programs = schoolDetails.programs.map(p => p.name);
 
     // Show popup after delay on page load
     useEffect(() => {
@@ -62,6 +58,8 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
             return () => clearTimeout(timer);
         }
     }, [delay, popupDismissed]);
+
+
 
     const validatePhone = (phone: string): boolean => {
         const phoneRegex = /^[6-9]\d{9}$/;

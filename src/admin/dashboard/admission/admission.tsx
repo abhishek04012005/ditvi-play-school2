@@ -28,6 +28,10 @@ import toast from 'react-hot-toast';
 import styles from './admission.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
+import { DownloadModal } from '../download/DownloadData';
+import EditNoteIcon from '@mui/icons-material/EditNote';
+
+
 
 interface NoteEntry {
     text: string;
@@ -61,6 +65,7 @@ interface Admission {
     previous_school?: string;
     previousSchool?: string;
     admission_status: 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected';
+    admission_source?: 'enquiry' | 'social_media' | 'web' | 'offline';
     notes?: NoteEntry[] | null;
     created_at: string;
     photo_url?: string | null;
@@ -82,6 +87,8 @@ interface StatusCard {
 type SortField = 'created_at' | 'child_name' | 'admission_status' | 'program_name';
 type SortOrder = 'asc' | 'desc';
 type ItemsPerPage = 20 | 50 | 100;
+
+
 
 const getGoogleDriveURL = (url: string, type: 'image' | 'pdf' | 'document') => {
     if (!url) return url;
@@ -134,6 +141,18 @@ const getStatus = (admission: Admission): Admission['admission_status'] => {
     return admission.admission_status || 'In Review';
 };
 
+const getAdmissionSource = (admission: Admission): string => {
+    const sourceMap: { [key: string]: string } = {
+        'enquiry': '📞 Enquiry',
+        'social_media': '📱 Social Media',
+        'web': '🌐 Web',
+        'offline': '🏢 Offline'
+    };
+    const source = admission.admission_source || 'enquiry';
+    return sourceMap[source] || 'Unknown';
+};
+
+
 export default function AdminAdmission() {
     const [admissions, setAdmissions] = useState<Admission[]>([]);
     const [loading, setLoading] = useState(true);
@@ -161,6 +180,9 @@ export default function AdminAdmission() {
     const [previewModal, setPreviewModal] = useState<{ url: string; type: 'image' | 'pdf' | 'document'; name: string } | null>(null);
     const [statusUpdating, setStatusUpdating] = useState(false);
     const [updatingId, setUpdatingId] = useState<string | null>(null);
+
+    const [downloadModalOpen, setDownloadModalOpen] = useState(false);
+
 
     useEffect(() => {
         const initializePage = async () => {
@@ -211,6 +233,41 @@ export default function AdminAdmission() {
             toast.error('Failed to fetch admissions');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleAdmissionDownload = (startDate: Date, endDate: Date) => {
+        return admissions.filter((admission) => {
+            const admissionDate = new Date(admission.created_at);
+            return admissionDate >= startDate && admissionDate <= endDate;
+        });
+    };
+
+    const handleSourceChange = async (id: string, newSource: string) => {
+        try {
+            const typedSource = newSource as 'enquiry' | 'social_media' | 'web' | 'offline';
+            const { data, error } = await supabase
+                .from('admission')
+                .update({ admission_source: typedSource })
+                .eq('id', id)
+                .select();
+
+            if (error) {
+                console.error('❌ Supabase error:', error);
+                toast.error(`Failed: ${error.message || 'Unknown error'}`);
+                return;
+            }
+
+            setAdmissions((prev) =>
+                prev.map((adm) =>
+                    adm.id === id ? { ...adm, admission_source: typedSource } : adm
+                )
+            );
+
+            toast.success(`✅ Source changed to ${newSource}`);
+        } catch (error: any) {
+            console.error('❌ Error:', error);
+            toast.error(`Error: ${error?.message || 'Unknown error'}`);
         }
     };
 
@@ -588,6 +645,15 @@ export default function AdminAdmission() {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
+                        <motion.button
+                            className={styles.downloadBtn}
+                            onClick={() => setDownloadModalOpen(true)}
+                            title="Download admission data"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <FaDownload /> Download Data
+                        </motion.button>
                         <select
                             value={filter}
                             onChange={(e) => setFilter(e.target.value as any)}
@@ -619,6 +685,7 @@ export default function AdminAdmission() {
                                 <th onClick={() => handleSort('program_name')}>
                                     Program {getSortIcon('program_name')}
                                 </th>
+                                <th>Source</th>
                                 <th>Notes</th>
                                 <th onClick={() => handleSort('admission_status')}>
                                     Status {getSortIcon('admission_status')}
@@ -679,6 +746,18 @@ export default function AdminAdmission() {
                                             </div>
                                         </td>
                                         <td>{getProgram(admission)}</td>
+                                        <td>
+                                            <select
+                                                value={admission.admission_source || 'enquiry'}
+                                                onChange={(e) => handleSourceChange(admission.id, e.target.value)}
+                                                className={styles.sourceDropdown}
+                                            >
+                                                <option value="enquiry">Enquiry</option>
+                                                <option value="social_media">Social Media</option>
+                                                <option value="web">Web</option>
+                                                <option value="offline">Offline</option>
+                                            </select>
+                                        </td>
                                         <td>
                                             <button
                                                 className={`${styles.notesBtn} ${admission.notes && admission.notes.length > 0 ? styles.hasNotes : ''}`}
@@ -856,6 +935,31 @@ export default function AdminAdmission() {
                 onClose={() => setPreviewModal(null)}
                 preview={previewModal}
             />
+
+            <DownloadModal
+                isOpen={downloadModalOpen}
+                onClose={() => setDownloadModalOpen(false)}
+                data={admissions}
+                columns={[
+                    { key: 'admission_number', label: 'Admission Number' },
+                    { key: 'created_at', label: 'Date' },
+                    { key: 'child_name', label: 'Child Name' },
+                    { key: 'child_dob', label: 'Date of Birth' },
+                    { key: 'child_gender', label: 'Gender' },
+                    { key: 'child_place_of_birth', label: 'Place of Birth' },
+                    { key: 'parent_name', label: 'Parent Name' },
+                    { key: 'parent_email', label: 'Email' },
+                    { key: 'parent_mobile_number', label: 'Mobile' },
+                    { key: 'program_name', label: 'Program' },
+                    { key: 'previous_school', label: 'Previous School' },
+                    { key: 'admission_status', label: 'Status' },
+                ]}
+                fileName="Admissions_Export"
+                defaultMonths="6"
+                onDateRangeChange={handleAdmissionDownload}
+                title="Download Admissions Data"
+                description="Select a date range and format to download your admission records"
+            />
         </div>
     );
 }
@@ -962,7 +1066,7 @@ const NotesModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2>📝 Internal Notes</h2>
+                                <h2><EditNoteIcon/> Internal Notes</h2>
                                 <p>{childName} • {parentName}</p>
                                 {noteEntries.length > 0 && (
                                     <p className={styles.notesCount}>
@@ -1080,6 +1184,7 @@ const NotesModal = ({
                             </motion.button>
                         </div>
                     </motion.div>
+
                 </>
             )}
         </AnimatePresence>
