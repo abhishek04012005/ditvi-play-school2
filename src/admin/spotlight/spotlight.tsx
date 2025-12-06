@@ -1309,6 +1309,7 @@ const Spotlight = () => {
                             setShowPrintModal(false);
                             setSelectedForPrint(null);
                         }}
+                        customTypes={customTypes}
                     />
                 )}
             </AnimatePresence>
