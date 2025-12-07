@@ -52,11 +52,13 @@ interface Admission {
     gender?: string;
     child_place_of_birth: string;
     placeOfBirth?: string;
+    child_blood_group?: string;
     parent_name?: string;
     parentFirstName?: string;
     parentLastName?: string;
     parent_first_name?: string;
     parent_last_name?: string;
+    parent_address?: string;
     parent_mobile_number?: string;
     parentMobile?: string;
     parent_email?: string;
@@ -591,18 +593,20 @@ export default function AdminAdmission() {
 
         try {
             setSavingEdit(true);
-            
+
             // Get current admission data to access old file URLs
             const currentAdmission = admissions.find(a => a.id === selectedAdmissionIdForDetails);
             const admissionNumber = currentAdmission?.admission_number?.toString() || selectedAdmissionIdForDetails;
-            
+
             // Prepare update object
             const updateData: any = {
                 child_name: editingData.child_name,
                 child_dob: editingData.child_dob,
                 child_gender: editingData.child_gender,
                 child_place_of_birth: editingData.child_place_of_birth,
+                child_blood_group: editingData.child_blood_group,
                 parent_name: editingData.parent_name,
+                parent_address: editingData.parent_address,
                 parent_email: editingData.parent_email,
                 program_name: editingData.program_name,
                 previous_school: editingData.previous_school,
@@ -620,7 +624,7 @@ export default function AdminAdmission() {
                 const input = document.getElementById(fileInput.inputId) as HTMLInputElement;
                 if (input?.files?.length) {
                     const file = input.files[0];
-                    
+
                     // Validate file size (max 10MB)
                     if (file.size > 10 * 1024 * 1024) {
                         toast.error(`File size must be less than 10MB for ${fileInput.inputId}`);
@@ -639,7 +643,7 @@ export default function AdminAdmission() {
                                     oldFileId = oldUrl.split('/d/')[1]?.split('/')[0];
                                 }
                             }
-                            
+
                             if (oldFileId) {
                                 // Call API to delete the old file
                                 await fetch('/api/upload-to-drive', {
@@ -684,7 +688,7 @@ export default function AdminAdmission() {
                             } else if (!fileId && driveUrl.includes('/d/')) {
                                 fileId = driveUrl.split('/d/')[1]?.split('/')[0];
                             }
-                            
+
                             // Store consistent download URL format
                             const consistentUrl = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : driveUrl;
                             updateData[fileInput.dbField] = consistentUrl;
@@ -842,6 +846,8 @@ export default function AdminAdmission() {
                                 <th onClick={() => handleSort('child_name')}>
                                     Child Name {getSortIcon('child_name')}
                                 </th>
+                                <th>Blood Group</th>
+                                <th>Address</th>
                                 <th>Parent</th>
                                 <th>Contact</th>
                                 <th onClick={() => handleSort('program_name')}>
@@ -885,6 +891,14 @@ export default function AdminAdmission() {
                                             })}
                                         </td>
                                         <td>{getChildName(admission)}</td>
+                                        <td>{admission.child_blood_group || 'N/A'}</td>
+                                        <td>
+                                            {admission.parent_address
+                                                ? admission.parent_address.length > 30
+                                                    ? admission.parent_address.slice(0, 30) + '...'
+                                                    : admission.parent_address
+                                                : 'N/A'}
+                                        </td>
                                         <td>{getParentName(admission)}</td>
                                         <td>
                                             <div className={styles.contactLinks}>
@@ -1236,7 +1250,7 @@ const NotesModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2><EditNoteIcon/> Internal Notes</h2>
+                                <h2><EditNoteIcon /> Internal Notes</h2>
                                 <p>{childName} • {parentName}</p>
                                 {noteEntries.length > 0 && (
                                     <p className={styles.notesCount}>
@@ -1419,7 +1433,7 @@ const DetailsModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2>👤 Admission Details {editMode && <span style={{fontSize: '0.75em'}}>• EDIT MODE</span>}</h2>
+                                <h2>👤 Admission Details {editMode && <span style={{ fontSize: '0.75em' }}>• EDIT MODE</span>}</h2>
                                 <p>{childName} • {parentName}</p>
                             </div>
                             <div className={styles.headerButtons}>
@@ -1522,6 +1536,24 @@ const DetailsModal = ({
                                             />
                                         </div>
                                         <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Blood Group</span>
+                                            <select
+                                                value={editingData.child_blood_group || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, child_blood_group: e.target.value })}
+                                                className={styles.editInput}
+                                            >
+                                                <option value="">-- Select Blood Group --</option>
+                                                <option value="O+">O+</option>
+                                                <option value="O-">O-</option>
+                                                <option value="A+">A+</option>
+                                                <option value="A-">A-</option>
+                                                <option value="B+">B+</option>
+                                                <option value="B-">B-</option>
+                                                <option value="AB+">AB+</option>
+                                                <option value="AB-">AB-</option>
+                                            </select>
+                                        </div>
+                                        <div className={styles.detailItem}>
                                             <span className={styles.detailLabel}>Parent Name</span>
                                             <input
                                                 type="text"
@@ -1529,6 +1561,17 @@ const DetailsModal = ({
                                                 onChange={(e) => setEditingData({ ...editingData, parent_name: e.target.value })}
                                                 className={styles.editInput}
                                                 placeholder="Parent name"
+                                            />
+                                        </div>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Address</span>
+                                            <textarea
+                                                value={editingData.parent_address || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, parent_address: e.target.value })}
+                                                className={styles.editInput}
+                                                placeholder="Complete address"
+                                                rows={3}
+                                                style={{ resize: 'vertical', minHeight: '80px' }}
                                             />
                                         </div>
                                         <div className={styles.detailItem}>
@@ -1568,7 +1611,9 @@ const DetailsModal = ({
                                         <DetailItem label="Date of Birth" value={admission.child_dob || 'N/A'} />
                                         <DetailItem label="Gender" value={admission.child_gender || 'N/A'} />
                                         <DetailItem label="Place of Birth" value={admission.child_place_of_birth || 'N/A'} />
+                                        <DetailItem label="Blood Group" value={admission.child_blood_group || 'N/A'} />
                                         <DetailItem label="Parent Name" value={parentName} />
+                                        <DetailItem label="Address" value={admission.parent_address || 'N/A'} />
                                         <DetailItem label="Email" value={getParentEmail(admission)} />
                                         <DetailItem label="Mobile" value={getParentMobile(admission)} />
                                         <DetailItem label="Program" value={getProgram(admission)} />
@@ -1605,7 +1650,7 @@ const DetailsModal = ({
                             {/* Documents Section */}
                             <div className={styles.documentsSection}>
                                 <label className={styles.sectionLabel}>📄 Documents</label>
-                                
+
                                 {editMode ? (
                                     <div className={styles.documentUploadSection}>
                                         <div className={styles.documentUploadItem}>
