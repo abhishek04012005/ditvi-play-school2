@@ -20,7 +20,8 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
 
     const file = formData.get('file') as File | null;
-    const field = (formData.get('field') as string) || 'file';
+    // Handle both 'field' and 'field_name' parameters for flexibility
+    const field = (formData.get('field_name') as string) || (formData.get('field') as string) || 'file';
     const admissionNumber = (formData.get('admissionNumber') as string) || '';
 
     if (!file) {
@@ -60,7 +61,7 @@ export async function POST(request: NextRequest) {
 
         if (searchResponse.data.files && searchResponse.data.files.length > 0) {
           folderId = searchResponse.data.files[0].id || undefined;
-          console.log(`Using existing folder for admission ${admissionNumber}: ${folderId}`);
+          console.log(`✅ Using existing folder for admission ${admissionNumber}: ${folderId}`);
         } else {
           // Create new folder for this admission number
           const folderMetadata = {
@@ -68,17 +69,26 @@ export async function POST(request: NextRequest) {
             mimeType: 'application/vnd.google-apps.folder',
           };
 
-          const folderResponse = await drive.files.create({
-            requestBody: folderMetadata,
-            fields: 'id',
-          });
+          try {
+            const folderResponse = await drive.files.create({
+              requestBody: folderMetadata,
+              fields: 'id',
+            });
 
-          folderId = folderResponse.data.id || undefined;
-          console.log(`Created new folder for admission ${admissionNumber}: ${folderId}`);
+            folderId = folderResponse.data.id || undefined;
+            if (folderId) {
+              console.log(`✅ Created new folder for admission ${admissionNumber}: ${folderId}`);
+            } else {
+              console.warn(`⚠️ Folder creation response missing ID for ${admissionNumber}`);
+            }
+          } catch (createErr) {
+            console.error(`❌ Failed to create folder for ${admissionNumber}:`, createErr);
+            throw new Error(`Could not create Google Drive folder for admission ${admissionNumber}`);
+          }
         }
       } catch (folderErr) {
-        console.error('Error managing folder:', folderErr);
-        // Continue with upload without folder
+        console.error(`❌ Error managing folder for ${admissionNumber}:`, folderErr);
+        throw folderErr;
       }
     }
 
@@ -196,8 +206,9 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('Error in /api/admission/upload-file:', error);
-    return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 });
+    console.error('❌ Error in /api/admission/upload-file:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to upload file';
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 

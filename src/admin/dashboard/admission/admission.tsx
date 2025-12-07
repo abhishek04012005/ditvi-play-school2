@@ -68,8 +68,9 @@ interface Admission {
     program?: string;
     previous_school?: string;
     previousSchool?: string;
-    admission_status: 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected';
+    admission_status: 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected' | 'Under Correction';
     admission_source?: 'enquiry' | 'social_media' | 'web' | 'offline';
+    remark?: string;
     notes?: NoteEntry[] | null;
     created_at: string;
     photo_url?: string | null;
@@ -84,7 +85,7 @@ interface StatusCard {
     icon: React.ReactNode;
     color: string;
     bgColor: string;
-    status: 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected';
+    status: 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected' | 'Under Correction';
     id: string;
 }
 
@@ -162,7 +163,7 @@ export default function AdminAdmission() {
     const [loading, setLoading] = useState(true);
     const [pageLoading, setPageLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [filter, setFilter] = useState<'all' | 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected'>('all');
+    const [filter, setFilter] = useState<'all' | 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected' | 'Under Correction'>('all');
     const [sortField, setSortField] = useState<SortField>('created_at');
     const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
@@ -335,6 +336,7 @@ export default function AdminAdmission() {
         'Interview Scheduled': admissions.filter((a) => getStatus(a) === 'Interview Scheduled').length,
         'Confirmed': admissions.filter((a) => getStatus(a) === 'Confirmed').length,
         'Rejected': admissions.filter((a) => getStatus(a) === 'Rejected').length,
+        'Under Correction': admissions.filter((a) => getStatus(a) === 'Under Correction').length,
     };
 
     const statusCards: StatusCard[] = [
@@ -391,6 +393,15 @@ export default function AdminAdmission() {
             bgColor: '#fef2f2',
             status: 'Rejected',
             id: 'rejected',
+        },
+        {
+            label: 'Under Correction',
+            count: statusCounts['Under Correction'],
+            icon: <FaPencilAlt />,
+            color: '#8b5cf6',
+            bgColor: '#faf5ff',
+            status: 'Under Correction',
+            id: 'under-correction',
         },
     ];
 
@@ -611,6 +622,7 @@ export default function AdminAdmission() {
                 parent_email: editingData.parent_email,
                 program_name: editingData.program_name,
                 previous_school: editingData.previous_school,
+                remark: editingData.remark,
             };
 
             // Handle file uploads
@@ -662,7 +674,7 @@ export default function AdminAdmission() {
                     // Upload new file to Google Drive with admission number as folder
                     const formData = new FormData();
                     formData.append('file', file);
-                    formData.append('field', fileInput.inputId);
+                    formData.append('field_name', fileInput.inputId);
                     formData.append('admissionNumber', admissionNumber.toString());
 
                     try {
@@ -832,6 +844,7 @@ export default function AdminAdmission() {
                             <option value="Interview Scheduled">Interview Scheduled</option>
                             <option value="Confirmed">Confirmed</option>
                             <option value="Rejected">Rejected</option>
+                            <option value="Under Correction">Under Correction</option>
                         </select>
                     </div>
                 </div>
@@ -959,6 +972,7 @@ export default function AdminAdmission() {
                                                 <option value="Interview Scheduled">Interview Scheduled</option>
                                                 <option value="Confirmed">Confirmed</option>
                                                 <option value="Rejected">Rejected</option>
+                                                <option value="Under Correction">Under Correction</option>
                                             </select>
                                             {updatingId === admission.id && (
                                                 <FaSpinner
@@ -1643,6 +1657,7 @@ const DetailsModal = ({
                                         <option value="Interview Scheduled">Interview Scheduled</option>
                                         <option value="Confirmed">Confirmed</option>
                                         <option value="Rejected">Rejected</option>
+                                        <option value="Under Correction">Under Correction</option>
                                     </select>
                                     {statusUpdating && (
                                         <div className={styles.updatingIndicator}>
@@ -1651,6 +1666,39 @@ const DetailsModal = ({
                                         </div>
                                     )}
                                 </div>
+
+                                {/* Remark Section - Show when status is "Under Correction" */}
+                                {editMode && getStatus(admission) === 'Under Correction' && (
+                                    <div style={{ marginTop: '1.5rem' }}>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: '600', color: 'var(--primary-purple)' }}>
+                                            📝 Remarks for Correction
+                                        </label>
+                                        <textarea
+                                            value={editingData?.remark || ''}
+                                            onChange={(e) => setEditingData({ ...editingData, remark: e.target.value })}
+                                            placeholder="Enter remarks about what needs to be corrected..."
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.85rem',
+                                                border: '2px solid rgba(106, 76, 147, 0.2)',
+                                                borderRadius: '8px',
+                                                fontSize: '0.95rem',
+                                                minHeight: '100px',
+                                                fontFamily: 'inherit',
+                                                resize: 'vertical',
+                                            }}
+                                            disabled={savingEdit}
+                                        />
+                                    </div>
+                                )}
+
+                                {/* Display Remark when not in edit mode */}
+                                {!editMode && admission.remark && getStatus(admission) === 'Under Correction' && (
+                                    <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%)', borderLeft: '4px solid var(--primary-yellow)', borderRadius: '8px' }}>
+                                        <strong style={{ color: 'var(--primary-purple)' }}>📝 Remarks:</strong>
+                                        <p style={{ margin: '0.5rem 0 0 0', color: 'var(--primary-purple)' }}>{admission.remark}</p>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Documents Section */}
