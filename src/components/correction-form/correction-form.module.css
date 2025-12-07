@@ -288,10 +288,13 @@
 }
 
 .submitBtn {
-  background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+  background: var(--primary-purple);
   color: var(--white);
   flex: 1;
   box-shadow: 0 10px 25px rgba(106, 76, 147, 0.25);
+  padding-block: 1rem;
+  border: 2px solid var(--primary-purple);
+  border-radius: 8px;
 }
 
 .submitBtn:hover:not(:disabled) {
@@ -314,6 +317,9 @@
   background: rgba(106, 76, 147, 0.1);
   color: var(--primary-purple);
   border: 2px solid var(--primary-purple);
+  padding-inline: 2rem;
+  border-radius: 8px;
+  padding-block: 1rem;
 }
 
 .cancelBtn:hover:not(:disabled) {

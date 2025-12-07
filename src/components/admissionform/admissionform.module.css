@@ -358,10 +358,7 @@
   opacity: 0.8;
 }
 
-.formGroup input[type="text"] {
-  /* text-indent: 1.5rem; */
 
-}
 
 /* Date input styling */
 .formGroup input[type="date"] {
