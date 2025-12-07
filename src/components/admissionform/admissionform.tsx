@@ -13,7 +13,8 @@ import {
   FaUser,
   FaPhone,
   FaSchool,
-  FaFile
+  FaFile,
+  FaMapMarkerAlt
 } from "react-icons/fa";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -29,6 +30,7 @@ import LineArt from "@/custom/lineart/lineart";
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import { schoolDetails } from "@/json/schooldetails";
 import Loader from "@/custom/loader/loader";
+import { MdBloodtype } from "react-icons/md";
 
 
 interface FormData {
@@ -36,7 +38,9 @@ interface FormData {
   child_dob: string;
   child_gender: string;
   child_place_of_birth: string;
+  child_blood_group: string;
   parent_name: string;
+  parent_address: string;
   parent_mobile_number: string;
   parent_email: string;
   program_name: string;
@@ -78,7 +82,9 @@ export default function AdmissionForm() {
     child_dob: "",
     child_gender: "",
     child_place_of_birth: "",
+    child_blood_group: "",
     parent_name: "",
+    parent_address: "",
     parent_mobile_number: "",
     parent_email: "",
     program_name: "",
@@ -125,7 +131,7 @@ export default function AdmissionForm() {
   const programs = schoolDetails.programs.map(p => p.name);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -246,6 +252,10 @@ export default function AdmissionForm() {
         errors.push("Parent name is required");
         fieldErrors.parent_name = "Parent name is required";
       }
+      if (!formData.parent_address.trim()) {
+        errors.push("Address is required");
+        fieldErrors.parent_address = "Address is required";
+      }
       if (!formData.parent_mobile_number.trim()) {
         errors.push("Mobile number is required");
         fieldErrors.parent_mobile_number = "Mobile number is required";
@@ -288,7 +298,11 @@ export default function AdmissionForm() {
         "child_place_of_birth",
         formData.child_place_of_birth
       );
+      if (formData.child_blood_group) {
+        formDataToSend.append("child_blood_group", formData.child_blood_group);
+      }
       formDataToSend.append("parent_name", formData.parent_name);
+      formDataToSend.append("parent_address", formData.parent_address);
       formDataToSend.append(
         "parent_mobile_number",
         formData.parent_mobile_number
@@ -769,6 +783,31 @@ export default function AdmissionForm() {
                           )}
                         </div>
                       </div>
+
+                      <div className={styles.formRow}>
+                        <div className={styles.formGroup}>
+                          <label>Blood Group (Optional)</label>
+                          <div className={styles.inputWrapper}>
+                            <MdBloodtype className={styles.icon} />
+                            <select
+                              name="child_blood_group"
+                              value={formData.child_blood_group}
+                              onChange={handleInputChange}
+                              className={styles.selectInput}
+                            >
+                              <option value="">-- Select Blood Group --</option>
+                              <option value="O+">O+</option>
+                              <option value="O-">O-</option>
+                              <option value="A+">A+</option>
+                              <option value="A-">A-</option>
+                              <option value="B+">B+</option>
+                              <option value="B-">B-</option>
+                              <option value="AB+">AB+</option>
+                              <option value="AB-">AB-</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
                     </motion.div>
                   )}
 
@@ -839,7 +878,28 @@ export default function AdmissionForm() {
                             />
                           </div>
                         </div>
+                        <div className={styles.formGroup}>
+                          <label>Address *</label>
+                          <div className={styles.inputWrapper}>
+                            <FaMapMarkerAlt className={styles.icon} />
+                            <textarea
+                              name="parent_address"
+                              value={formData.parent_address}
+                              onChange={handleInputChange}
+                              placeholder="Enter complete address (street, city, state, postal code)"
+                              rows={3}
+                              required
+                              className={styles.textarea}
+                            />
+                          </div>
+                          {errors.parent_address && (
+                            <p className={styles.errorMessage}>
+                              {errors.parent_address}
+                            </p>
+                          )}
+                        </div>
                       </div>
+
                     </motion.div>
                   )}
 

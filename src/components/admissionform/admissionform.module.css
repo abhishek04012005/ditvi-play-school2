@@ -335,7 +335,6 @@
 }
 
 .formGroup input,
-.formGroup select,
 .formGroup textarea {
   width: 100%;
   padding: 14px 16px;
@@ -391,17 +390,74 @@
 }
 
 .formGroup:focus-within .icon {
-    color: var(--primary-yellow);
-    opacity: 1;
+  color: var(--primary-yellow);
+  opacity: 1;
 }
 
 .formGroup:focus-within label {
-    color: var(--primary-yellow);
+  color: var(--primary-yellow);
 }
 
 .formGroup textarea {
   resize: vertical;
   min-height: 120px;
+}
+
+.textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid rgba(106, 76, 147, 0.12);
+  border-radius: 14px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(249, 247, 255, 0.95) 100%);
+  color: var(--primary-purple);
+  font-family: "Verdana", sans-serif;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.textarea::placeholder {
+  color: var(--text-gray);
+  opacity: 0.8;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--primary-purple);
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(243, 232, 255, 0.5) 100%);
+  box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
+}
+
+.selectInput {
+  width: 100%;
+  padding: 1rem 1.25rem 1rem 3.5rem;
+  border: 2px solid var(--primary-purple);
+  border-radius: 14px;
+  background: rgba(106, 76, 147, 0.03);
+  font-size: 1rem;
+  color: var(--primary-purple);
+  transition: all 0.3s ease;
+  font-family: inherit;
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath fill='%236a4c93' d='M7 10.5L1 4.5h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.25rem center;
+  background-color: rgba(106, 76, 147, 0.03);
+  padding-right: 3rem;
+}
+
+.selectInput:focus {
+  outline: none;
+  border-color: var(--primary-purple);
+  background: var(--primary-purple),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236a4c93' d='M6 9L1 4h10z'/%3E%3C/svg%3E") no-repeat right 1rem center;
+  box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
 }
 
 /* ==================== FORM GRID ==================== */
@@ -1947,3 +2003,4 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 2;
 }
+
