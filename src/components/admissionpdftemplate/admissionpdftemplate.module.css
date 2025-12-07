@@ -1,0 +1,415 @@
+/* ===== ROOT COLOR VARIABLES ===== */
+:root {
+  --color-primary: #6c4c93;
+  --color-text-dark: #333333;
+  --color-text-medium: #444444;
+  --color-text-light: #555555;
+  --color-text-lighter: #666666;
+  --color-text-lightest: #777777;
+  --color-text-white: #ffffff;
+  --color-bg-white: #ffffff;
+  --color-bg-light: #f9f9f9;
+  --color-bg-lighter: #f5f3f8;
+  --color-bg-consent: #faf8fc;
+  --color-border-light: #dddddd;
+  --color-border-dark: #333333;
+  --color-border-gray: #ddd;
+}
+
+/* ===== PDF Container - Single Page A4 ===== */
+.pdfContainer {
+  width: 21cm;
+  height: 29.7cm;
+  margin: 0;
+  padding: 0.5cm;
+  background-color: var(--color-bg-white);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--color-text-dark);
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  line-height: 1.2;
+  display: flex;
+  flex-direction: column;
+  page-break-after: always;
+}
+
+/* ===== Header Section ===== */
+.header {
+  padding-bottom: 0.3cm;
+  margin-bottom: 0.3cm;
+  border-bottom: 2.5px solid var(--color-primary);
+  flex-shrink: 0;
+}
+
+.headerTop {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5cm;
+  margin-bottom: 0.3cm;
+}
+
+.logo {
+  width: 1cm;
+  height: 1cm;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.childPhoto {
+  width: 1.2cm;
+  height: 1.2cm;
+  object-fit: cover;
+  border: 2px solid var(--color-primary);
+  border-radius: 0.1cm;
+  flex-shrink: 0;
+}
+
+.headerCenter {
+  flex-grow: 1;
+  text-align: center;
+}
+
+.schoolName {
+  font-size: 16pt;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+  line-height: 1.1;
+  letter-spacing: 0.3px;
+}
+
+.address {
+  font-size: 9pt;
+  color: var(--color-text-light);
+  margin: 0.1cm 0 0 0;
+  font-weight: 500;
+}
+
+.addressDetail {
+  font-size: 8pt;
+  color: var(--color-text-lighter);
+  margin: 0.05cm 0 0 0;
+}
+
+.contact {
+  font-size: 7.5pt;
+  color: var(--color-text-lightest);
+  margin: 0.05cm 0 0 0;
+}
+
+.dividerMain {
+  height: 1.5px;
+  background-color: var(--color-primary);
+  margin: 0.2cm 0;
+}
+
+.formTitle {
+  font-size: 14pt;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-align: center;
+  margin: 0.2cm 0;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+/* ===== Meta Section ===== */
+.metaSection {
+  margin-bottom: 0.35cm;
+  padding: 0.3cm;
+  background-color: var(--color-bg-lighter);
+  border-left: 3px solid var(--color-primary);
+  border-radius: 0.05cm;
+  flex-shrink: 0;
+}
+
+.metaRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5cm;
+}
+
+.metaItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metaLabel {
+  font-size: 8pt;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-transform: uppercase;
+}
+
+.metaValue {
+  font-size: 10pt;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.3px;
+}
+
+/* ===== Section ===== */
+.section {
+  margin-bottom: 0.35cm;
+  flex-shrink: 0;
+}
+
+.sectionTitle {
+  font-size: 9.5pt;
+  font-weight: 700;
+  color: var(--color-text-white);
+  background-color: var(--color-primary);
+  padding: 0.3cm 0.4cm;
+  margin: 0 0 0.25cm 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  border-radius: 0.05cm;
+  line-height: 1;
+}
+
+.sectionContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2cm;
+}
+
+/* ===== Field Row - Multi Column ===== */
+.fieldRow {
+  display: grid;
+  gap: 0.35cm;
+  width: 100%;
+}
+
+.col1 {
+  grid-template-columns: 1fr;
+}
+
+.col2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.col3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* ===== Field ===== */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15cm;
+}
+
+.fieldLabel {
+  font-size: 8pt;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.fieldValue {
+  font-size: 9.5pt;
+  color: var(--color-text-dark);
+  padding: 0.25cm 0.3cm;
+  background-color: var(--color-bg-light);
+  border: 0.75px solid var(--color-border-light);
+  border-radius: 0.05cm;
+  min-height: 0.5cm;
+  display: flex;
+  align-items: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.2;
+}
+
+/* ===== Consent Box ===== */
+.consentBox {
+  background-color: var(--color-bg-consent);
+  border: 1px solid var(--color-primary);
+  border-radius: 0.05cm;
+  padding: 0.3cm;
+  margin: 0.2cm 0;
+}
+
+.consentText {
+  font-size: 8pt;
+  color: var(--color-text-medium);
+  line-height: 1.4;
+  margin: 0;
+  text-align: justify;
+}
+
+/* ===== Signature Section ===== */
+.signatureSection {
+  margin-bottom: 0.5cm;
+  flex-shrink: 0;
+}
+
+.signatureBoxContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.4cm;
+  margin-top: 0.25cm;
+}
+
+.signatureBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15cm;
+  border: 1.2px solid var(--color-primary);
+  border-radius: 0.05cm;
+  padding: 0.3cm;
+  min-height: 1.8cm;
+  justify-content: space-between;
+}
+
+.signatureSpace {
+  width: 100%;
+  flex-grow: 1;
+  border-bottom: 0.8px solid var(--color-border-dark);
+  margin-bottom: 0.1cm;
+}
+
+.signatureName {
+  font-size: 7.5pt;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  margin-bottom: 0.05cm;
+}
+
+.signatureLabel {
+  font-size: 7.5pt;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  margin: 0;
+  line-height: 1;
+}
+
+.dateFieldSmall {
+  font-size: 7pt;
+  color: var(--color-text-lighter);
+  text-align: center;
+  margin: 0.05cm 0 0 0;
+  line-height: 1;
+}
+
+/* ===== Footer Section ===== */
+.footerSection {
+  margin-top: auto;
+  padding-top: 0.25cm;
+  border-top: 1px solid var(--color-border-light);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0.5cm;
+}
+
+.footerContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.3cm;
+  flex-wrap: wrap;
+}
+
+.footerItem {
+  font-size: 6.5pt;
+  color: var(--color-text-lighter);
+  margin: 0;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* ===== Print Styles ===== */
+@page {
+  margin: 0;
+  padding: 0;
+  size: A4;
+}
+
+@media print {
+  html,
+  body {
+    width: 21cm;
+    height: 29.7cm;
+    margin: 0;
+    padding: 0;
+    background: none;
+  }
+
+  .pdfContainer {
+    width: 21cm;
+    height: 29.7cm;
+    margin: 0 auto;
+    padding: 0.5cm;
+    box-shadow: none;
+    page-break-after: always;
+    page-break-inside: avoid;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-bg-white);
+  }
+
+  .pdfContainer * {
+    page-break-inside: avoid;
+  }
+
+  .header,
+  .metaSection,
+  .section,
+  .signatureSection,
+  .footerSection {
+    page-break-inside: avoid;
+  }
+
+  .footerSection {
+    position: relative;
+    margin-top: auto;
+  }
+
+  body::before {
+    content: '';
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background: white;
+  }
+}
+
+/* ===== Screen Display Styles ===== */
+@media screen {
+  html,
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 1.5cm 0;
+    background-color: #f0f0f0;
+  }
+
+  .pdfContainer {
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--color-border-gray);
+    flex-shrink: 0;
+  }
+}

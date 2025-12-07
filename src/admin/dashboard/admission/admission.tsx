@@ -32,7 +32,9 @@ import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
 import { DownloadModal } from '../download/DownloadData';
 import EditNoteIcon from '@mui/icons-material/EditNote';
-import { generateAdmissionPDF } from '../../../lib/admissionPdfGenerator';
+import AdmissionPDFTemplate from '@/components/admissionpdftemplate/admissionpdftemplate';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 
 
@@ -1123,16 +1125,67 @@ export default function AdminAdmission() {
                 setUploadedFileNames={setUploadedFileNames}
                 onPdfPreview={async (adm) => {
                     try {
-                        const doc = await generateAdmissionPDF(adm, false);
-                        if (doc) {
-                            const pdfUrl = doc.output('dataurlstring');
-                            setPdfPreviewUrl(pdfUrl);
-                            setPreviewAdmission(adm);
-                            setPdfPreviewOpen(true);
-                        }
+                        setPreviewAdmission(adm);
+                        setPdfPreviewOpen(true);
+                        // Wait for the template to render in the DOM
+                        setTimeout(async () => {
+                            try {
+                                const templateId = `admission-pdf-template-${adm.id}`;
+                                const element = document.getElementById(templateId);
+                                if (!element) throw new Error('Template element not found');
+
+                                const originalDisplay = element.style.display;
+                                element.style.display = 'block';
+
+                                const canvas = await html2canvas(element, {
+                                    scale: 2,
+                                    useCORS: true,
+                                    allowTaint: true,
+                                    logging: false,
+                                    backgroundColor: '#ffffff',
+                                    width: element.offsetWidth,
+                                    height: element.offsetHeight,
+                                });
+
+                                element.style.display = originalDisplay;
+
+                                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                                const pdf = new jsPDF({
+                                    orientation: 'portrait',
+                                    unit: 'mm',
+                                    format: 'a4',
+                                });
+
+                                const pdfWidth = pdf.internal.pageSize.getWidth();
+                                const pdfHeight = pdf.internal.pageSize.getHeight();
+                                const imgWidth = pdfWidth;
+                                let imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+                                if (!isFinite(imgHeight) || imgHeight <= 0) {
+                                    imgHeight = pdfHeight;
+                                }
+
+                                pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+
+                                let position = imgHeight;
+                                while (position > pdfHeight) {
+                                    pdf.addPage();
+                                    position -= pdfHeight;
+                                    pdf.addImage(imgData, 'JPEG', 0, -position, imgWidth, imgHeight);
+                                }
+
+                                const pdfUrl = pdf.output('dataurlstring');
+                                if (pdfUrl) {
+                                    setPdfPreviewUrl(pdfUrl);
+                                }
+                            } catch (error) {
+                                console.error('Error generating PDF preview:', error);
+                                toast.error('Failed to generate PDF preview');
+                            }
+                        }, 300);
                     } catch (error) {
-                        console.error('Error generating PDF:', error);
-                        toast.error('Failed to generate PDF preview');
+                        console.error('Error opening PDF preview:', error);
+                        toast.error('Failed to open PDF preview');
                     }
                 }}
             />
@@ -1918,6 +1971,13 @@ const DetailsModal = ({
                             </div>
                         </div>
 
+                        {/* Hidden Template for PDF Generation - Used for both preview and download */}
+                        <div style={{ display: 'none' }}>
+                            <div id={`admission-pdf-template-${admission.id}`}>
+                                <AdmissionPDFTemplate admission={admission} />
+                            </div>
+                        </div>
+
                         <div className={styles.modalFooter}>
                             <button
                                 className={styles.cancelBtn}
@@ -2059,10 +2119,118 @@ const PDFPreviewModal = ({
     pdfUrl: string | null;
     admission: Admission | null;
 }) => {
-    if (!pdfUrl || !admission) return null;
+    if (!admission) return null;
 
     const childName = getChildName(admission);
     const fileName = `Admission_${childName.replace(/\s+/g, '_')}_${admission.admission_number}.pdf`;
+
+    const handleGeneratePreview = async () => {
+        try {
+            const templateId = `admission-pdf-preview-template-${admission.id}`;
+            const element = document.getElementById(templateId);
+            if (!element) throw new Error('Template element not found');
+
+            const originalDisplay = element.style.display;
+            element.style.display = 'block';
+
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                logging: false,
+                backgroundColor: '#ffffff',
+                width: element.offsetWidth,
+                height: element.offsetHeight,
+            });
+
+            element.style.display = originalDisplay;
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4',
+            });
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const imgWidth = pdfWidth;
+            let imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            if (!isFinite(imgHeight) || imgHeight <= 0) {
+                imgHeight = pdfHeight;
+            }
+
+            pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+
+            let position = imgHeight;
+            while (position > pdfHeight) {
+                pdf.addPage();
+                position -= pdfHeight;
+                pdf.addImage(imgData, 'JPEG', 0, -position, imgWidth, imgHeight);
+            }
+
+            return pdf.output('dataurlstring');
+        } catch (error) {
+            console.error('Error generating preview:', error);
+            toast.error('Failed to generate PDF preview');
+            return null;
+        }
+    };
+
+    const handleDownload = async () => {
+        try {
+            const templateId = `admission-pdf-preview-template-${admission.id}`;
+            const element = document.getElementById(templateId);
+            if (!element) throw new Error('Template element not found');
+
+            const originalDisplay = element.style.display;
+            element.style.display = 'block';
+
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                logging: false,
+                backgroundColor: '#ffffff',
+                width: element.offsetWidth,
+                height: element.offsetHeight,
+            });
+
+            element.style.display = originalDisplay;
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4',
+            });
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const imgWidth = pdfWidth;
+            let imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            if (!isFinite(imgHeight) || imgHeight <= 0) {
+                imgHeight = pdfHeight;
+            }
+
+            pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+
+            let position = imgHeight;
+            while (position > pdfHeight) {
+                pdf.addPage();
+                position -= pdfHeight;
+                pdf.addImage(imgData, 'JPEG', 0, -position, imgWidth, imgHeight);
+            }
+
+            pdf.save(fileName);
+            toast.success('PDF downloaded successfully!');
+        } catch (error) {
+            console.error('Download error:', error);
+            toast.error('Failed to download PDF');
+        }
+    };
 
     return (
         <AnimatePresence>
@@ -2096,24 +2264,42 @@ const PDFPreviewModal = ({
                             </button>
                         </div>
 
-                        <div className={styles.pdfPreviewContainer}>
-                            <iframe
-                                src={pdfUrl}
-                                title="PDF Preview"
-                                className={styles.pdfFrame}
-                            />
+                        {/* <div className={styles.pdfPreviewContainer}>
+                            {pdfUrl ? (
+                                <iframe
+                                    src={pdfUrl}
+                                    title="PDF Preview"
+                                    className={styles.pdfFrame}
+                                />
+                            ) : (
+                                <div style={{ 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center', 
+                                    height: '100%',
+                                    color: '#999'
+                                }}>
+                                    <p>Loading preview...</p>
+                                </div>
+                            )}
+                        </div> */}
+
+                        {/* Hidden Template for PDF Generation */}
+                        <div style={{ display: 'block' }}>
+                            <div id={`admission-pdf-preview-template-${admission.id}`}>
+                                <AdmissionPDFTemplate admission={admission} />
+                            </div>
                         </div>
 
                         <div className={styles.modalFooter}>
-                            <motion.a
-                                href={pdfUrl}
-                                download={fileName}
+                            <motion.button
+                                onClick={handleDownload}
                                 className={styles.downloadLink}
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
                                 <FaDownload /> Download PDF
-                            </motion.a>
+                            </motion.button>
                             <motion.button
                                 className={styles.cancelBtn}
                                 onClick={onClose}
