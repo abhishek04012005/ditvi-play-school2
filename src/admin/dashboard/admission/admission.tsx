@@ -858,11 +858,9 @@ export default function AdminAdmission() {
                                     Date {getSortIcon('created_at')}
                                 </th>
                                 <th onClick={() => handleSort('child_name')}>
-                                    Child Name {getSortIcon('child_name')}
+                                    Student's Name {getSortIcon('child_name')}
                                 </th>
-                                <th>Blood Group</th>
-                                <th>Address</th>
-                                <th>Parent</th>
+                                <th>Parent's Name</th>
                                 <th>Contact</th>
                                 <th onClick={() => handleSort('program_name')}>
                                     Program {getSortIcon('program_name')}
@@ -905,14 +903,7 @@ export default function AdminAdmission() {
                                             })}
                                         </td>
                                         <td>{getChildName(admission)}</td>
-                                        <td>{admission.child_blood_group || 'N/A'}</td>
-                                        <td>
-                                            {admission.parent_address
-                                                ? admission.parent_address.length > 30
-                                                    ? admission.parent_address.slice(0, 30) + '...'
-                                                    : admission.parent_address
-                                                : 'N/A'}
-                                        </td>
+                                        
                                         <td>{getParentName(admission)}</td>
                                         <td>
                                             <div className={styles.contactLinks}>
