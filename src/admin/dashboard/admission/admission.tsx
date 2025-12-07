@@ -32,6 +32,7 @@ import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
 import { DownloadModal } from '../download/DownloadData';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import { generateAdmissionPDF } from '../../../lib/admissionPdfGenerator';
 
 
 
@@ -187,6 +188,9 @@ export default function AdminAdmission() {
     const [updatingId, setUpdatingId] = useState<string | null>(null);
 
     const [downloadModalOpen, setDownloadModalOpen] = useState(false);
+    const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false);
+    const [pdfPreviewUrl, setPdfPreviewUrl] = useState<string | null>(null);
+    const [previewAdmission, setPreviewAdmission] = useState<Admission | null>(null);
 
 
     useEffect(() => {
@@ -1117,6 +1121,20 @@ export default function AdminAdmission() {
                 savingEdit={savingEdit}
                 uploadedFileNames={uploadedFileNames}
                 setUploadedFileNames={setUploadedFileNames}
+                onPdfPreview={async (adm) => {
+                    try {
+                        const doc = await generateAdmissionPDF(adm, false);
+                        if (doc) {
+                            const pdfUrl = doc.output('dataurlstring');
+                            setPdfPreviewUrl(pdfUrl);
+                            setPreviewAdmission(adm);
+                            setPdfPreviewOpen(true);
+                        }
+                    } catch (error) {
+                        console.error('Error generating PDF:', error);
+                        toast.error('Failed to generate PDF preview');
+                    }
+                }}
             />
 
             {/* Document Preview Modal */}
@@ -1124,6 +1142,14 @@ export default function AdminAdmission() {
                 isOpen={previewModal !== null}
                 onClose={() => setPreviewModal(null)}
                 preview={previewModal}
+            />
+
+            {/* PDF Form Preview Modal */}
+            <PDFPreviewModal
+                isOpen={pdfPreviewOpen}
+                onClose={() => setPdfPreviewOpen(false)}
+                pdfUrl={pdfPreviewUrl}
+                admission={previewAdmission}
             />
 
             <DownloadModal
@@ -1397,6 +1423,7 @@ const DetailsModal = ({
     savingEdit,
     uploadedFileNames,
     setUploadedFileNames,
+    onPdfPreview,
 }: {
     isOpen: boolean;
     onClose: () => void;
@@ -1413,6 +1440,7 @@ const DetailsModal = ({
     savingEdit: boolean;
     uploadedFileNames: { [key: string]: string };
     setUploadedFileNames: (files: { [key: string]: string }) => void;
+    onPdfPreview: (admission: Admission) => void;
 }) => {
     if (!admission) return null;
 
@@ -1444,15 +1472,26 @@ const DetailsModal = ({
                             </div>
                             <div className={styles.headerButtons}>
                                 {!editMode ? (
-                                    <motion.button
-                                        className={styles.editBtn}
-                                        onClick={() => setEditMode(true)}
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        title="Edit admission details"
-                                    >
-                                        <FaPencilAlt /> Edit
-                                    </motion.button>
+                                    <>
+                                        <motion.button
+                                            className={styles.downloadBtn}
+                                            onClick={() => onPdfPreview(admission)}
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            title="Preview and download admission form"
+                                        >
+                                            <FaDownload /> Form PDF
+                                        </motion.button>
+                                        <motion.button
+                                            className={styles.editBtn}
+                                            onClick={() => setEditMode(true)}
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            title="Edit admission details"
+                                        >
+                                            <FaPencilAlt /> Edit
+                                        </motion.button>
+                                    </>
                                 ) : (
                                     <>
                                         <motion.button
@@ -2000,6 +2039,89 @@ const DocumentPreviewModal = ({
                             <button className={styles.cancelBtn} onClick={onClose}>
                                 <FaTimes /> Close
                             </button>
+                        </div>
+                    </motion.div>
+                </>
+            )}
+        </AnimatePresence>
+    );
+};
+
+// ✨ PDF PREVIEW MODAL COMPONENT ✨
+const PDFPreviewModal = ({
+    isOpen,
+    onClose,
+    pdfUrl,
+    admission,
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+    pdfUrl: string | null;
+    admission: Admission | null;
+}) => {
+    if (!pdfUrl || !admission) return null;
+
+    const childName = getChildName(admission);
+    const fileName = `Admission_${childName.replace(/\s+/g, '_')}_${admission.admission_number}.pdf`;
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <>
+                    <motion.div
+                        className={styles.modalOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                    />
+                    <motion.div
+                        className={styles.pdfPreviewModal}
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    >
+                        <div className={styles.modalHeader}>
+                            <div>
+                                <h2>📄 Admission Form Preview</h2>
+                                <p>{childName} • Admission #{admission.admission_number}</p>
+                            </div>
+                            <button
+                                className={styles.closeBtn}
+                                onClick={onClose}
+                                aria-label="Close"
+                            >
+                                <FaTimes />
+                            </button>
+                        </div>
+
+                        <div className={styles.pdfPreviewContainer}>
+                            <iframe
+                                src={pdfUrl}
+                                title="PDF Preview"
+                                className={styles.pdfFrame}
+                            />
+                        </div>
+
+                        <div className={styles.modalFooter}>
+                            <motion.a
+                                href={pdfUrl}
+                                download={fileName}
+                                className={styles.downloadLink}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                <FaDownload /> Download PDF
+                            </motion.a>
+                            <motion.button
+                                className={styles.cancelBtn}
+                                onClick={onClose}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                <FaTimes /> Close
+                            </motion.button>
                         </div>
                     </motion.div>
                 </>
