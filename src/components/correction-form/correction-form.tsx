@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { FaFilePdf, FaImage, FaFileAlt, FaTimes, FaSpinner, FaUpload, FaArrowLeft } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaFilePdf, FaImage, FaFileAlt, FaTimes, FaSpinner, FaUpload, FaArrowLeft, FaEye, FaDownload } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import styles from './correction-form.module.css';
 import { schoolDetails } from '@/json/schooldetails';
@@ -41,6 +41,7 @@ export default function CorrectionForm({
     const [files, setFiles] = useState<FileUpload[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [previewModal, setPreviewModal] = useState<{ url: string; type: 'image' | 'pdf' | 'document'; name: string } | null>(null);
 
     // Available document fields
     const documentFields = [
@@ -88,6 +89,31 @@ export default function CorrectionForm({
 
     const removeFile = (field: string) => {
         setFiles((prev) => prev.filter((f) => f.field !== field));
+    };
+
+    const getGoogleDriveURL = (url: string, type: 'image' | 'pdf' | 'document') => {
+        if (!url) return url;
+
+        let fileId = '';
+
+        if (url.includes('id=')) {
+            fileId = url.split('id=')[1]?.split('&')[0];
+        } else if (url.includes('/d/')) {
+            fileId = url.split('/d/')[1]?.split('/')[0];
+        } else if (url.includes('drive.google.com')) {
+            const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+            if (match) fileId = match[1];
+        }
+
+        if (!fileId) return url;
+
+        if (type === 'image') {
+            return `/api/proxy-drive-file?id=${fileId}&type=view`;
+        } else if (type === 'pdf') {
+            return `https://drive.google.com/file/d/${fileId}/preview`;
+        }
+
+        return `https://drive.google.com/uc?export=download&id=${fileId}`;
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -420,9 +446,52 @@ export default function CorrectionForm({
                         <div className={styles.documentGrid}>
                             {documentFields.map((doc) => {
                                 const uploadedFile = files.find((f) => f.field === doc.field);
+                                const dbField = `${doc.field}_url` as keyof typeof currentData;
+                                const existingUrl = currentData[dbField];
+                                const fileTypeKey = `${doc.field}_url`;
+
                                 return (
                                     <div key={doc.field} className={styles.documentItem}>
                                         <label className={styles.documentLabel}>{doc.label}</label>
+
+                                        {/* Show existing document if available */}
+                                        {existingUrl && !uploadedFile?.file && (
+                                            <div className={styles.existingDocument}>
+                                                <div className={styles.existingDocumentInfo}>
+                                                    <FaFileAlt className={styles.existingDocIcon} />
+                                                    <span className={styles.existingDocLabel}>Current Document</span>
+                                                </div>
+                                                <div className={styles.existingDocumentActions}>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setPreviewModal({
+                                                            url: existingUrl,
+                                                            type: doc.field === 'photo' ? 'image' : 'pdf',
+                                                            name: doc.label
+                                                        })}
+                                                        className={styles.previewBtn}
+                                                        title="Preview document"
+                                                    >
+                                                        <FaEye />
+                                                    </button>
+                                                    <a
+                                                        href={getGoogleDriveURL(existingUrl, 'document')}
+                                                        download
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className={styles.downloadBtn}
+                                                        title="Download document"
+                                                    >
+                                                        <FaDownload />
+                                                    </a>
+                                                </div>
+                                                <div className={styles.replaceHint}>
+                                                    <p>Select a new file below to replace</p>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* New file upload or selected file */}
                                         {uploadedFile?.file ? (
                                             <div style={{ marginBottom: '0.75rem' }}>
                                                 <div className={styles.fileName}>✓ {uploadedFile.file.name}</div>
@@ -449,7 +518,7 @@ export default function CorrectionForm({
                                                     htmlFor={`file-${doc.field}`}
                                                     className={styles.uploadLabel}
                                                 >
-                                                    <FaUpload /> Click to upload
+                                                    <FaUpload /> {existingUrl ? 'Click to replace' : 'Click to upload'}
                                                 </label>
                                             </>
                                         )}
@@ -458,6 +527,14 @@ export default function CorrectionForm({
                             })}
                         </div>
                     </motion.div>
+
+                    {/* Document Preview Modal */}
+                    <DocumentPreviewModal
+                        isOpen={previewModal !== null}
+                        onClose={() => setPreviewModal(null)}
+                        preview={previewModal}
+                        getGoogleDriveURL={getGoogleDriveURL}
+                    />
 
                     {/* Action Buttons */}
                     <div className={styles.actionButtons}>
@@ -499,3 +576,91 @@ export default function CorrectionForm({
         </div>
     );
 }
+
+// Document Preview Modal Component
+const DocumentPreviewModal = ({
+    isOpen,
+    onClose,
+    preview,
+    getGoogleDriveURL,
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+    preview: { url: string; type: 'image' | 'pdf' | 'document'; name: string } | null;
+    getGoogleDriveURL: (url: string, type: 'image' | 'pdf' | 'document') => string;
+}) => {
+    if (!preview) return null;
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <>
+                    <motion.div
+                        className={styles.modalOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                    />
+                    <motion.div
+                        className={styles.modal}
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    >
+                        <div className={styles.modalHeader}>
+                            <div>
+                                <h2>📄 Document Preview</h2>
+                                <p>{preview.name}</p>
+                            </div>
+                            <button
+                                className={styles.closeBtn}
+                                onClick={onClose}
+                                aria-label="Close"
+                            >
+                                <FaTimes />
+                            </button>
+                        </div>
+
+                        <div className={styles.previewContent}>
+                            {preview.type === 'image' ? (
+                                <img
+                                    src={getGoogleDriveURL(preview.url, 'image')}
+                                    alt={preview.name}
+                                    className={styles.previewImage}
+                                    onError={() => toast.error('Failed to load image preview')}
+                                />
+                            ) : preview.type === 'pdf' ? (
+                                <iframe
+                                    src={getGoogleDriveURL(preview.url, 'pdf')}
+                                    title="PDF Preview"
+                                    className={styles.previewIframe}
+                                />
+                            ) : (
+                                <div className={styles.previewPlaceholder}>
+                                    <p>Unable to preview this document type.</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className={styles.modalFooter}>
+                            <a
+                                href={getGoogleDriveURL(preview.url, 'document')}
+                                download
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={styles.downloadLink}
+                            >
+                                <FaDownload /> Download
+                            </a>
+                            <button className={styles.cancelBtn} onClick={onClose}>
+                                <FaTimes /> Close
+                            </button>
+                        </div>
+                    </motion.div>
+                </>
+            )}
+        </AnimatePresence>
+    );
+};
