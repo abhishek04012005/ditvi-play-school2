@@ -25,6 +25,7 @@ import {
     FaPencilAlt,
 } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
+import { schoolDetails } from '@/json/schooldetails';
 import toast from 'react-hot-toast';
 import styles from './admission.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
@@ -1586,13 +1587,18 @@ const DetailsModal = ({
                                         </div>
                                         <div className={styles.detailItem}>
                                             <span className={styles.detailLabel}>Program</span>
-                                            <input
-                                                type="text"
+                                            <select
                                                 value={editingData.program_name || ''}
                                                 onChange={(e) => setEditingData({ ...editingData, program_name: e.target.value })}
                                                 className={styles.editInput}
-                                                placeholder="Program"
-                                            />
+                                            >
+                                                <option value="">-- Select Program --</option>
+                                                {schoolDetails.programs.map((program) => (
+                                                    <option key={program.name} value={program.name}>
+                                                        {program.name}
+                                                    </option>
+                                                ))}
+                                            </select>
                                         </div>
                                         <div className={styles.detailItem}>
                                             <span className={styles.detailLabel}>Previous School</span>
