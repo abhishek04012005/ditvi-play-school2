@@ -592,6 +592,10 @@ export default function AdminAdmission() {
         try {
             setSavingEdit(true);
             
+            // Get current admission data to access old file URLs
+            const currentAdmission = admissions.find(a => a.id === selectedAdmissionIdForDetails);
+            const admissionNumber = currentAdmission?.admission_number?.toString() || selectedAdmissionIdForDetails;
+            
             // Prepare update object
             const updateData: any = {
                 child_name: editingData.child_name,
@@ -606,10 +610,10 @@ export default function AdminAdmission() {
 
             // Handle file uploads
             const fileInputs = [
-                { inputId: 'photo_upload', dbField: 'photo_url', bucket: 'admission-documents', type: 'image' },
-                { inputId: 'birth_cert_upload', dbField: 'birth_certificate_url', bucket: 'admission-documents', type: 'document' },
-                { inputId: 'aadhar_upload', dbField: 'aadhar_card_url', bucket: 'admission-documents', type: 'document' },
-                { inputId: 'parent_id_upload', dbField: 'parent_id_proof_url', bucket: 'admission-documents', type: 'document' },
+                { inputId: 'photo_upload', dbField: 'photo_url', oldField: 'photo_url', type: 'image' },
+                { inputId: 'birth_cert_upload', dbField: 'birth_certificate_url', oldField: 'birth_certificate_url', type: 'document' },
+                { inputId: 'aadhar_upload', dbField: 'aadhar_card_url', oldField: 'aadhar_card_url', type: 'document' },
+                { inputId: 'parent_id_upload', dbField: 'parent_id_proof_url', oldField: 'parent_id_proof_url', type: 'document' },
             ];
 
             for (const fileInput of fileInputs) {
@@ -617,34 +621,81 @@ export default function AdminAdmission() {
                 if (input?.files?.length) {
                     const file = input.files[0];
                     
-                    // Validate file size (max 5MB)
-                    if (file.size > 5 * 1024 * 1024) {
-                        toast.error(`File size must be less than 5MB for ${fileInput.inputId}`);
+                    // Validate file size (max 10MB)
+                    if (file.size > 10 * 1024 * 1024) {
+                        toast.error(`File size must be less than 10MB for ${fileInput.inputId}`);
                         return;
                     }
 
-                    // Upload to Supabase Storage
-                    const fileName = `${selectedAdmissionIdForDetails}/${fileInput.inputId}_${Date.now()}`;
-                    const { error: uploadError, data: uploadData } = await supabase.storage
-                        .from('star-of-week-images')
-                        .upload(fileName, file, {
-                            cacheControl: '3600',
-                            upsert: false,
+                    // Delete old file from Google Drive if it exists
+                    const oldUrl = currentAdmission?.[fileInput.oldField as keyof Admission];
+                    if (oldUrl) {
+                        try {
+                            let oldFileId = '';
+                            if (typeof oldUrl === 'string') {
+                                if (oldUrl.includes('id=')) {
+                                    oldFileId = oldUrl.split('id=')[1]?.split('&')[0];
+                                } else if (oldUrl.includes('/d/')) {
+                                    oldFileId = oldUrl.split('/d/')[1]?.split('/')[0];
+                                }
+                            }
+                            
+                            if (oldFileId) {
+                                // Call API to delete the old file
+                                await fetch('/api/upload-to-drive', {
+                                    method: 'DELETE',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ fileId: oldFileId }),
+                                });
+                            }
+                        } catch (deleteError) {
+                            console.warn(`Could not delete old file for ${fileInput.inputId}:`, deleteError);
+                            // Continue with upload even if delete fails
+                        }
+                    }
+
+                    // Upload new file to Google Drive with admission number as folder
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('field', fileInput.inputId);
+                    formData.append('admissionNumber', admissionNumber.toString());
+
+                    try {
+                        const uploadResponse = await fetch('/api/admission/upload-file', {
+                            method: 'POST',
+                            body: formData,
                         });
 
-                    if (uploadError) {
+                        const uploadResult = await uploadResponse.json();
+
+                        if (!uploadResponse.ok) {
+                            console.error(`Upload error for ${fileInput.inputId}:`, uploadResult);
+                            toast.error(`Failed to upload ${fileInput.inputId}`);
+                            return;
+                        }
+
+                        // Get the Google Drive URL from the response
+                        const driveUrl = uploadResult?.data?.downloadUrl || uploadResult?.data?.driveLink || uploadResult?.data?.webViewLink;
+                        if (driveUrl) {
+                            // Extract file ID and construct consistent download URL
+                            let fileId = uploadResult?.data?.fileId || '';
+                            if (!fileId && driveUrl.includes('id=')) {
+                                fileId = driveUrl.split('id=')[1]?.split('&')[0];
+                            } else if (!fileId && driveUrl.includes('/d/')) {
+                                fileId = driveUrl.split('/d/')[1]?.split('/')[0];
+                            }
+                            
+                            // Store consistent download URL format
+                            const consistentUrl = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : driveUrl;
+                            updateData[fileInput.dbField] = consistentUrl;
+                        } else {
+                            toast.error(`No URL returned for ${fileInput.inputId}`);
+                            return;
+                        }
+                    } catch (uploadError) {
                         console.error(`Upload error for ${fileInput.inputId}:`, uploadError);
                         toast.error(`Failed to upload ${fileInput.inputId}`);
                         return;
-                    }
-
-                    // Get public URL
-                    const { data: publicUrlData } = supabase.storage
-                        .from('star-of-week-images')
-                        .getPublicUrl(fileName);
-
-                    if (publicUrlData?.publicUrl) {
-                        updateData[fileInput.dbField] = publicUrlData.publicUrl;
                     }
                 }
             }

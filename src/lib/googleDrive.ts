@@ -185,3 +185,116 @@ export const deleteFileFromDrive = async (fileId: string) => {
     throw error;
   }
 };
+
+/**
+ * Create or get a folder by name (admission number)
+ * 
+ * @param folderName - Name of the folder (admission number)
+ * @param parentFolderId - Optional: parent folder ID
+ * @returns Folder ID
+ */
+export const getOrCreateFolder = async (folderName: string, parentFolderId?: string): Promise<string> => {
+  try {
+    initializeGoogleAuth();
+    const drive = google.drive({ version: 'v3', auth: oauth2Client });
+    
+    // Search for existing folder
+    const query = `name='${folderName}' and mimeType='application/vnd.google-apps.folder' and trashed=false`;
+    const searchParams: any = { q: query, spaces: 'drive', fields: 'files(id, name)' };
+    
+    if (parentFolderId) {
+      searchParams.q += ` and '${parentFolderId}' in parents`;
+    }
+    
+    const searchResponse = await drive.files.list(searchParams);
+    
+    if (searchResponse.data.files && searchResponse.data.files.length > 0) {
+      console.log(`Folder found: ${folderName} (ID: ${searchResponse.data.files[0].id})`);
+      return searchResponse.data.files[0].id!;
+    }
+    
+    // Create new folder if not found
+    const folderMetadata: any = {
+      name: folderName,
+      mimeType: 'application/vnd.google-apps.folder',
+    };
+    
+    if (parentFolderId) {
+      folderMetadata.parents = [parentFolderId];
+    }
+    
+    const createResponse = await drive.files.create({
+      requestBody: folderMetadata,
+      fields: 'id',
+    });
+    
+    const folderId = createResponse.data.id;
+    console.log(`Folder created: ${folderName} (ID: ${folderId})`);
+    return folderId!;
+  } catch (error) {
+    console.error('Error creating/getting folder:', error);
+    throw error;
+  }
+};
+
+/**
+ * Move file to a specific folder
+ * 
+ * @param fileId - Google Drive file ID
+ * @param folderId - Target folder ID
+ */
+export const moveFileToFolder = async (fileId: string, folderId: string): Promise<void> => {
+  try {
+    initializeGoogleAuth();
+    const drive = google.drive({ version: 'v3', auth: oauth2Client });
+    
+    // Get current parents
+    const fileResponse = await drive.files.get({
+      fileId,
+      fields: 'parents',
+    });
+    
+    const previousParents = fileResponse.data.parents?.join(',') || '';
+    
+    // Move file to new folder
+    await drive.files.update({
+      fileId,
+      addParents: folderId,
+      removeParents: previousParents,
+      fields: 'id, parents',
+    });
+    
+    console.log(`File moved successfully: ${fileId} to folder ${folderId}`);
+  } catch (error) {
+    console.error('Error moving file:', error);
+    throw error;
+  }
+};
+
+/**
+ * List files in a folder by type (get document URLs for a specific field)
+ * 
+ * @param folderId - Google Drive folder ID
+ * @param fileType - Type of file to search (e.g., 'photo', 'birth_certificate')
+ * @returns Array of file IDs matching the pattern
+ */
+export const listFilesByTypeInFolder = async (folderId: string, fileType: string): Promise<string[]> => {
+  try {
+    initializeGoogleAuth();
+    const drive = google.drive({ version: 'v3', auth: oauth2Client });
+    
+    const query = `'${folderId}' in parents and name contains '${fileType}' and trashed=false`;
+    
+    const response = await drive.files.list({
+      q: query,
+      spaces: 'drive',
+      fields: 'files(id, name)',
+    });
+    
+    return response.data.files?.map(file => file.id!).filter(Boolean) || [];
+  } catch (error) {
+    console.error('Error listing files in folder:', error);
+    throw error;
+  }
+};
+
