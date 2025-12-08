@@ -61,12 +61,7 @@ interface SubmissionResult {
   program_name: string;
 }
 
-// const programs = [
-//   { value: "playgroup", label: "Play Group" },
-//   { value: "nursery", label: "Nursery" },
-//   { value: "kg1", label: "KG - 1" },
-//   { value: "kg2", label: "KG - 2" },
-// ];
+
 
 export default function AdmissionForm() {
   const [step, setStep] = useState(1);
@@ -1280,7 +1275,7 @@ function AdmissionConfirmationSlip({
       <div className={styles.detailsGrid}>
         {/* Child Details */}
         <motion.div className={styles.detailSection} variants={itemVariants}>
-          <h3 className={styles.sectionTitle}>👶 Child Details</h3>
+          <h3 className={styles.sectionTitle}><EmojiPeople /> Child Details</h3>
           <div className={styles.detailRow}>
             <span className={styles.label}>Name</span>
             <span className={styles.value}>{data.child_name}</span>
@@ -1303,7 +1298,7 @@ function AdmissionConfirmationSlip({
 
         {/* Parent Details */}
         <motion.div className={styles.detailSection} variants={itemVariants}>
-          <h3 className={styles.sectionTitle}>👨‍👩‍👧 Parent Details</h3>
+          <h3 className={styles.sectionTitle}><FamilyRestroom /> Parent Details</h3>
           <div className={styles.detailRow}>
             <span className={styles.label}>Parent Name</span>
             <span className={styles.value}>{formData.parent_name}</span>
@@ -1324,7 +1319,7 @@ function AdmissionConfirmationSlip({
 
         {/* Program Details */}
         <motion.div className={styles.detailSection} variants={itemVariants}>
-          <h3 className={styles.sectionTitle}>🎓 Program Details</h3>
+          <h3 className={styles.sectionTitle}><SchoolOutlined /> Program Details</h3>
           <div className={styles.detailRow}>
             <span className={styles.label}>Applied Program</span>
             <span className={styles.value}>{data.program_name}</span>
@@ -1342,7 +1337,7 @@ function AdmissionConfirmationSlip({
         </motion.div>
         {/* Document Details */}
         <motion.div className={styles.detailSection} variants={itemVariants}>
-          <h3 className={styles.sectionTitle}>📄 Document Details</h3>
+          <h3 className={styles.sectionTitle}><DescriptionOutlined /> Document Details</h3>
           <div className={styles.detailRow}>
             <span className={styles.label}>Birth Certificate</span>
             <span

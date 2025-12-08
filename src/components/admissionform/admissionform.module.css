@@ -321,129 +321,96 @@
 
 /* ==================== FORM GROUP ==================== */
 .formGroup {
-  margin-bottom: 0;
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .formGroup label {
-  display: block;
-  font-weight: 700;
-  color: var(--primary-purple);
-  margin-bottom: 0.65rem;
-  font-size: 0.95rem;
-  letter-spacing: 0.5px;
-}
-
-.formGroup input,
-.formGroup textarea {
-  width: 100%;
-  padding: 12px 14px;
-  border: 2px solid rgba(106, 76, 147, 0.15);
-  border-radius: 10px;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.98);
-  color: var(--text-gray);
-  font-family: "Verdana", sans-serif;
-}
-
-.formGroup input::placeholder,
-.formGroup textarea::placeholder {
-  color: #bbb;
-  opacity: 1;
-}
-
-/* Date input styling */
-.formGroup input[type="date"] {
-  color: var(--text-gray);
-}
-
-.formGroup input[type="date"]::-webkit-calendar-picker-indicator {
-  border-radius: 4px;
-  padding: 2px;
-  background-color: var(--primary-purple);
-  cursor: pointer;
-}
-
-.formGroup input:focus,
-.formGroup select:focus,
-.formGroup textarea:focus {
-  outline: none;
-  border-color: var(--primary-purple);
-  background: rgba(255, 255, 255, 1);
-  box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
-  transform: none;
-}
-
-.formGroup:focus-within .icon {
-  color: var(--primary-yellow);
-  opacity: 1;
+    color: var(--primary-purple);
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
 }
 
 .formGroup:focus-within label {
-  color: var(--primary-purple);
+    color: var(--primary-yellow);
 }
 
-.formGroup textarea {
-  resize: vertical;
-  min-height: 100px;
-  max-height: 300px;
+/* Input Wrapper */
+.inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
-.textarea {
-  width: 100%;
-  padding: 12px 14px;
-  border: 2px solid rgba(106, 76, 147, 0.15);
-  border-radius: 10px;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.98);
-  color: var(--text-gray);
-  font-family: "Verdana", sans-serif;
-  resize: vertical;
-  min-height: 100px;
-  max-height: 300px;
+.icon {
+    position: absolute;
+    left: 1.25rem;
+    color: var(--primary-purple);
+    font-size: 1.1rem;
+    opacity: 0.6;
+    z-index: 2;
+    transition: all 0.3s ease;
+    pointer-events: none;
 }
 
-.textarea::placeholder {
-  color: #bbb;
-  opacity: 1;
+.inputWrapper input,
+.inputWrapper select,
+.inputWrapper textarea {
+    width: 100%;
+    padding: 1rem 1.25rem 1rem 3.5rem;
+    border: 2px solid var(--primary-purple);
+    border-radius: 14px;
+    background: rgba(106, 76, 147, 0.03);
+    font-size: 1rem;
+    color: var(--primary-purple);
+    transition: all 0.3s ease;
+    font-family: inherit;
 }
 
-.textarea:focus {
-  outline: none;
-  border-color: var(--primary-purple);
-  background: rgba(255, 255, 255, 1);
-  box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
+.inputWrapper select {
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath fill='%236a4c93' d='M7 10.5L1 4.5h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1.25rem center;
+    background-color: rgba(106, 76, 147, 0.03);
+    padding-right: 3rem;
 }
 
-.selectInput {
-  width: 100%;
-  padding: 12px 14px;
-  border: 2px solid rgba(106, 76, 147, 0.15);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.98);
-  font-size: 0.95rem;
-  color: var(--text-gray);
-  transition: all 0.3s ease;
-  font-family: inherit;
-  appearance: none;
+.inputWrapper input::placeholder {
+    color: var(--text-gray);
+    opacity: 0.6;
+}
+
+.inputWrapper input:focus,
+.inputWrapper select:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
+}
+
+.inputWrapper input:focus + .icon,
+.formGroup:focus-within .icon {
+    color: var(--primary-yellow);
+    opacity: 1;
+}
+
+.inputWrapper input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236a4c93' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 36px;
+  background-color: var(--primary-purple);
 }
 
-.selectInput:focus {
-  outline: none;
-  border-color: var(--primary-purple);
-  background-color: rgba(255, 255, 255, 1);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236a4c93' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
+
+.inputError {
+    border-color: #ef4444 !important;
+    background: rgba(239, 68, 68, 0.03) !important;
+}
+
+.inputError:focus {
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1) !important;
 }
 
 /* ==================== FORM GRID ==================== */
@@ -463,6 +430,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 1.75rem;
   align-items: flex-start;
+  margin-bottom: 1rem;
 }
 
 /* ==================== FILE UPLOAD FIELD ==================== */
