@@ -909,7 +909,7 @@ export default function AdminAdmission() {
                                             })}
                                         </td>
                                         <td>{getChildName(admission)}</td>
-                                        
+
                                         <td>{getParentName(admission)}</td>
                                         <td>
                                             <div className={styles.contactLinks}>
@@ -2264,28 +2264,7 @@ const PDFPreviewModal = ({
                             </button>
                         </div>
 
-                        {/* <div className={styles.pdfPreviewContainer}>
-                            {pdfUrl ? (
-                                <iframe
-                                    src={pdfUrl}
-                                    title="PDF Preview"
-                                    className={styles.pdfFrame}
-                                />
-                            ) : (
-                                <div style={{ 
-                                    display: 'flex', 
-                                    alignItems: 'center', 
-                                    justifyContent: 'center', 
-                                    height: '100%',
-                                    color: '#999'
-                                }}>
-                                    <p>Loading preview...</p>
-                                </div>
-                            )}
-                        </div> */}
-
-                        {/* Hidden Template for PDF Generation */}
-                        <div style={{ display: 'block' }}>
+                        <div>
                             <div id={`admission-pdf-preview-template-${admission.id}`}>
                                 <AdmissionPDFTemplate admission={admission} />
                             </div>

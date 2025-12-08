@@ -1362,19 +1362,18 @@
 .pdfPreviewModal {
     position: fixed;
     top: 10%;
-    left: 25%;
+    left: 33%;  
     transform: translate(-50%, -50%);
     background: var(--white);
     border-radius: 16px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     z-index: 1001;
-    max-width: 900px;
+    max-width: auto;
     max-height: 90vh;
     height: 90vh;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    width: 95%;
+    overflow: scroll;
 }
 
 .pdfPreviewContainer {
