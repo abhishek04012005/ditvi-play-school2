@@ -2,7 +2,7 @@
 
 .arBookReader {
     min-height: 100vh;
-    background: #f9f7ff;
+    background: rgba(106, 76, 147, 0.05);
     display: flex;
     flex-direction: column;
     transition: all 0.3s ease;
@@ -15,13 +15,13 @@
     right: 0;
     bottom: 0;
     z-index: 9999;
-    background: white;
+    background: var(--white);
 }
 
 /* Header */
 .readerHeader {
-    background: white;
-    border-bottom: 1px solid #e5e5e5;
+    background: var(--white);
+    border-bottom: 1px solid rgba(106, 76, 147, 0.1);
     padding: 1rem 2rem;
     display: flex;
     align-items: center;
@@ -31,12 +31,12 @@
 
 .backBtn {
     padding: 0.6rem 1.2rem;
-    background: #f5f5f5;
-    border: 2px solid #e5e5e5;
+    background: rgba(106, 76, 147, 0.05);
+    border: 2px solid rgba(106, 76, 147, 0.15);
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    color: #666;
+    color: var(--text-gray);
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -45,9 +45,9 @@
 }
 
 .backBtn:hover {
-    background: #efefef;
-    border-color: #6a4c93;
-    color: #6a4c93;
+    background: var(--primary-purple);
+    border-color: var(--primary-purple);
+    color: var(--white);
 }
 
 .bookTitle {
@@ -58,7 +58,7 @@
 .bookTitle h1 {
     margin: 0;
     font-size: 1.3rem;
-    color: #333;
+    color: var(--black);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -67,7 +67,7 @@
 .bookTitle p {
     margin: 0.25rem 0 0;
     font-size: 0.85rem;
-    color: #999;
+    color: rgba(102, 102, 102, 0.7);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -80,11 +80,11 @@
 
 .iconBtn {
     padding: 0.6rem;
-    background: #f5f5f5;
-    border: 2px solid #e5e5e5;
+    background: rgba(106, 76, 147, 0.05);
+    border: 2px solid rgba(106, 76, 147, 0.15);
     border-radius: 8px;
     cursor: pointer;
-    color: #666;
+    color: var(--text-gray);
     font-size: 1rem;
     transition: all 0.3s ease;
     display: flex;
@@ -93,9 +93,9 @@
 }
 
 .iconBtn:hover {
-    background: #6a4c93;
-    border-color: #6a4c93;
-    color: white;
+    background: var(--primary-purple);
+    border-color: var(--primary-purple);
+    color: var(--white);
 }
 
 /* Content Layout */
@@ -108,8 +108,8 @@
 }
 
 .sidebar {
-    background: white;
-    border-right: 1px solid #e5e5e5;
+    background: var(--white);
+    border-right: 1px solid rgba(106, 76, 147, 0.1);
     padding: 2rem 1.5rem;
     overflow-y: auto;
     max-height: calc(100vh - 80px);
@@ -125,7 +125,7 @@
 
 /* Book Card */
 .bookCard {
-    background: linear-gradient(135deg, #f9f7ff 0%, #fffbf0 100%);
+    background: linear-gradient(135deg, rgba(106, 76, 147, 0.08) 0%, var(--primary-yellow-rgba) 100%);
     border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 2rem;
@@ -147,7 +147,7 @@
     margin: 1rem 0;
     font-size: 0.9rem;
     font-weight: 600;
-    color: #666;
+    color: var(--text-gray);
 }
 
 .metaItem {
@@ -159,7 +159,7 @@
 .ageGroup,
 .author {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-gray);
     margin: 0.5rem 0;
 }
 
@@ -167,12 +167,12 @@
 .viewModeSelector {
     margin-bottom: 2rem;
     padding-bottom: 2rem;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .viewModeSelector h3 {
     font-size: 0.9rem;
-    color: #333;
+    color: var(--black);
     margin: 0 0 1rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -187,12 +187,12 @@
 
 .modeBtn {
     padding: 0.6rem;
-    background: #f5f5f5;
-    border: 2px solid #e5e5e5;
+    background: rgba(106, 76, 147, 0.05);
+    border: 2px solid rgba(106, 76, 147, 0.15);
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
-    color: #666;
+    color: var(--text-gray);
     font-size: 0.85rem;
     transition: all 0.3s ease;
     display: flex;
@@ -202,15 +202,15 @@
 }
 
 .modeBtn:hover {
-    border-color: #6a4c93;
-    color: #6a4c93;
-    background: #f9f7ff;
+    border-color: var(--primary-purple);
+    color: var(--primary-purple);
+    background: rgba(106, 76, 147, 0.05);
 }
 
 .modeBtn.active {
-    background: linear-gradient(135deg, #6a4c93 0%, #7e5fa1 100%);
-    border-color: #6a4c93;
-    color: white;
+    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+    border-color: var(--primary-purple);
+    color: var(--white);
 }
 
 /* Pages Navigator */
@@ -220,7 +220,7 @@
 
 .pageNavigator h3 {
     font-size: 0.9rem;
-    color: #333;
+    color: var(--black);
     margin: 0 0 1rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -237,8 +237,8 @@
 
 .pageThumb {
     padding: 0.75rem;
-    background: #f5f5f5;
-    border: 2px solid #e5e5e5;
+    background: rgba(249, 247, 255, 0.5);
+    border: 2px solid rgba(106, 76, 147, 0.1);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -246,14 +246,14 @@
 }
 
 .pageThumb:hover {
-    background: #f9f7ff;
-    border-color: #6a4c93;
+    background: rgba(106, 76, 147, 0.08);
+    border-color: var(--primary-purple);
 }
 
 .pageThumb.active {
-    background: linear-gradient(135deg, #6a4c93 0%, #7e5fa1 100%);
-    border-color: #6a4c93;
-    color: white;
+    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+    border-color: var(--primary-purple);
+    color: var(--white);
 }
 
 .pageNum {
@@ -278,7 +278,7 @@
 .pageContent {
     position: relative;
     margin-bottom: 2rem;
-    background: white;
+    background: var(--white);
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -308,7 +308,7 @@
 .modelPlaceholder,
 .arPlaceholder {
     text-align: center;
-    color: #666;
+    color: var(--text-gray);
 }
 
 .modelPlaceholder p,
@@ -322,7 +322,7 @@
 .arPlaceholder small {
     display: block;
     font-size: 0.8rem;
-    color: #999;
+    color: rgba(102, 102, 102, 0.7);
 }
 
 /* Page Info */
@@ -332,13 +332,13 @@
 
 .pageHeader h2 {
     font-size: 1.5rem;
-    color: #333;
+    color: var(--black);
     margin: 0 0 0.5rem;
 }
 
 .pageHeader p {
     font-size: 1rem;
-    color: #666;
+    color: var(--text-gray);
     line-height: 1.6;
     margin: 0;
 }
@@ -374,8 +374,8 @@
 /* Audio Button */
 .audioBtn {
     padding: 0.75rem 1.5rem;
-    background: linear-gradient(135deg, #6a4c93 0%, #7e5fa1 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+    color: var(--white);
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -406,13 +406,13 @@
     gap: 1rem;
     margin-top: auto;
     padding-top: 2rem;
-    border-top: 1px solid #e5e5e5;
+    border-top: 1px solid rgba(106, 76, 147, 0.1);
 }
 
 .navBtn {
     padding: 0.75rem 1.5rem;
-    background: linear-gradient(135deg, #6a4c93 0%, #7e5fa1 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+    color: var(--white);
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -432,15 +432,15 @@
 .navBtn.disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    background: #ccc;
+    background: rgba(102, 102, 102, 0.3);
 }
 
 .pageIndicator {
     font-weight: 700;
-    color: #666;
+    color: var(--text-gray);
     font-size: 0.95rem;
     padding: 0.5rem 1rem;
-    background: #f5f5f5;
+    background: rgba(106, 76, 147, 0.05);
     border-radius: 8px;
 }
 
@@ -452,7 +452,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    color: #666;
+    color: var(--text-gray);
     padding: 2rem;
 }
 
@@ -502,7 +502,7 @@
     .sidebar {
         max-height: none;
         border-right: none;
-        border-bottom: 1px solid #e5e5e5;
+        border-bottom: 1px solid rgba(106, 76, 147, 0.1);
         padding: 1.5rem 1rem;
         order: 2;
     }

@@ -305,7 +305,7 @@ const ARBooks: React.FC<ARBooksProps> = ({ isHomePage = false, featuredOnly = fa
                     <FaSearch className={styles.searchIcon} />
                     <input
                         type="text"
-                        placeholder="🔍 Search books by title or description..."
+                        placeholder="Search books by title or description..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className={styles.searchInput}

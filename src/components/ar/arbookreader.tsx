@@ -14,6 +14,7 @@ import {
     FaMobileAlt,
     FaExpand,
     FaCompress,
+    FaPrint,
 } from 'react-icons/fa';
 import styles from './arbookreader.module.css';
 import { ARBook } from '@/ar/types';
@@ -88,6 +89,17 @@ const ARBookReader: React.FC<ARBookReaderProps> = ({ bookId }) => {
                 </div>
 
                 <div className={styles.headerActions}>
+                    <Link href={`/ar-books/${bookId}/print`}>
+                        <motion.button
+                            className={styles.iconBtn}
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.95 }}
+                            title="Print Book"
+                        >
+                            <FaPrint />
+                        </motion.button>
+                    </Link>
+
                     <motion.button
                         className={styles.iconBtn}
                         onClick={() => setIsMuted(!isMuted)}
