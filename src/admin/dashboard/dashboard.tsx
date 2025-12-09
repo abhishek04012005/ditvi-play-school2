@@ -10,6 +10,9 @@ import {
     FaUserCheck,
     FaCalendarAlt,
     FaFilter,
+    FaGraduationCap,
+    FaStar,
+    FaCheck,
 } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
@@ -37,6 +40,23 @@ interface Enquiry {
     created_at: string;
 }
 
+interface Admission {
+    id: string;
+    child_name?: string;
+    child_first_name?: string;
+    program_name?: string;
+    admission_status: string;
+    created_at: string;
+}
+
+interface Spotlight {
+    id: string;
+    name: string;
+    award_type: string;
+    created_date: string;
+    is_show_on_home_page: boolean;
+}
+
 interface StatCard {
     title: string;
     value: number;
@@ -50,6 +70,8 @@ interface StatCard {
 const Dashboard = () => {
     const [contacts, setContacts] = useState<Contact[]>([]);
     const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
+    const [admissions, setAdmissions] = useState<Admission[]>([]);
+    const [spotlights, setSpotlights] = useState<Spotlight[]>([]);
     const [loading, setLoading] = useState(true);
     const [dateRange, setDateRange] = useState('month');
     const [selectedTab, setSelectedTab] = useState<'contacts' | 'enquiries'>('contacts');
@@ -69,9 +91,19 @@ const Dashboard = () => {
                 .from('enquiries')
                 .select('*')
                 .order('created_at', { ascending: false });
+            const { data: admissionData } = await supabase
+                .from('admission')
+                .select('*')
+                .order('created_at', { ascending: false });
+            const { data: spotlightData } = await supabase
+                .from('awards')
+                .select('*')
+                .order('created_date', { ascending: false });
 
             setContacts(contactData || []);
             setEnquiries(enquiryData || []);
+            setAdmissions(admissionData || []);
+            setSpotlights(spotlightData || []);
         } catch (error) {
             console.error('Error:', error);
             toast.error('Failed to load dashboard');
@@ -83,7 +115,10 @@ const Dashboard = () => {
     const getDateRangeData = (data: any[], days: number) => {
         const now = new Date();
         const pastDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
-        return data.filter((item) => new Date(item.created_at) >= pastDate);
+        return data.filter((item) => {
+            const itemDate = item.created_at || item.created_date;
+            return new Date(itemDate) >= pastDate;
+        });
     };
 
     const getDaysForRange = () => {
@@ -133,6 +168,37 @@ const Dashboard = () => {
                 : 0,
     };
 
+    const rangedAdmissions = getDateRangeData(admissions, getDaysForRange());
+    const admissionMetrics = {
+        total: rangedAdmissions.length,
+        pending: rangedAdmissions.filter((a) => a.admission_status === 'In Review' || a.admission_status === 'Reviewed').length,
+        approved: rangedAdmissions.filter((a) => a.admission_status === 'Confirmed').length,
+        rejected: rangedAdmissions.filter((a) => a.admission_status === 'Rejected').length,
+        approvalRate:
+            rangedAdmissions.length > 0
+                ? Math.round(
+                    ((rangedAdmissions.filter((a) => a.admission_status === 'Confirmed').length /
+                        rangedAdmissions.length) *
+                        100)
+                )
+                : 0,
+    };
+
+    const rangedSpotlights = getDateRangeData(spotlights, getDaysForRange());
+    const spotlightMetrics = {
+        total: rangedSpotlights.length,
+        published: rangedSpotlights.filter((s) => s.is_show_on_home_page).length,
+        unpublished: rangedSpotlights.filter((s) => !s.is_show_on_home_page).length,
+        publishRate:
+            rangedSpotlights.length > 0
+                ? Math.round(
+                    ((rangedSpotlights.filter((s) => s.is_show_on_home_page).length /
+                        rangedSpotlights.length) *
+                        100)
+                )
+                : 0,
+    };
+
     const statCards: StatCard[] = [
         {
             title: 'Total Contacts',
@@ -169,6 +235,42 @@ const Dashboard = () => {
             trend: { value: 3, isPositive: true },
             color: '#10b981',
             bgColor: '#f0fdf4',
+        },
+        {
+            title: 'Total Admissions',
+            value: admissionMetrics.total,
+            subtitle: `${admissionMetrics.approved} approved`,
+            icon: <FaGraduationCap />,
+            trend: { value: 6, isPositive: true },
+            color: '#3b82f6',
+            bgColor: '#eff6ff',
+        },
+        {
+            title: 'Approval Rate',
+            value: admissionMetrics.approvalRate,
+            subtitle: 'admissions approved',
+            icon: <FaCheck />,
+            trend: { value: 4, isPositive: true },
+            color: '#ec4899',
+            bgColor: '#fdf2f8',
+        },
+        {
+            title: 'Total Spotlights',
+            value: spotlightMetrics.total,
+            subtitle: `${spotlightMetrics.published} published`,
+            icon: <FaStar />,
+            trend: { value: 9, isPositive: true },
+            color: '#f59e0b',
+            bgColor: '#fffbf0',
+        },
+        {
+            title: 'Publish Rate',
+            value: spotlightMetrics.publishRate,
+            subtitle: 'spotlights published',
+            icon: <FaCheck />,
+            trend: { value: 2, isPositive: true },
+            color: '#8b5cf6',
+            bgColor: '#faf5ff',
         },
     ];
 
@@ -229,6 +331,140 @@ const Dashboard = () => {
                         <StatCardComponent card={card} />
                     </motion.div>
                 ))}
+            </motion.div>
+
+            {/* Data Summary Section */}
+            <motion.div 
+                className={styles.dataSummarySection}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+            >
+                <div className={styles.summaryHeader}>
+                    <h2>📊 Complete Data Summary</h2>
+                </div>
+                <div className={styles.summaryGrid}>
+                    {/* Total Records */}
+                    <motion.div 
+                        className={styles.summaryCard}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.25 }}
+                    >
+                        <div className={styles.summaryIcon}>📈</div>
+                        <div className={styles.summaryLabel}>Total Records</div>
+                        <div className={styles.summaryNumber}>
+                            {contactMetrics.total + enquiryMetrics.total + admissionMetrics.total + spotlightMetrics.total}
+                        </div>
+                        <div className={styles.summarySubtext}>All modules combined</div>
+                    </motion.div>
+
+                    {/* Contacts Module */}
+                    <motion.div 
+                        className={styles.summaryCard}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                    >
+                        <div className={styles.summaryIcon}>📧</div>
+                        <div className={styles.summaryLabel}>Contacts Module</div>
+                        <div className={styles.summaryNumber}>{contactMetrics.total}</div>
+                        <div className={styles.summarySubtext}>{contactMetrics.new} new</div>
+                    </motion.div>
+
+                    {/* Enquiries Module */}
+                    <motion.div 
+                        className={styles.summaryCard}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.35 }}
+                    >
+                        <div className={styles.summaryIcon}>👶</div>
+                        <div className={styles.summaryLabel}>Enquiries Module</div>
+                        <div className={styles.summaryNumber}>{enquiryMetrics.total}</div>
+                        <div className={styles.summarySubtext}>{enquiryMetrics.enrolled} enrolled</div>
+                    </motion.div>
+
+                    {/* Admissions Module */}
+                    <motion.div 
+                        className={styles.summaryCard}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }}
+                    >
+                        <div className={styles.summaryIcon}>🎓</div>
+                        <div className={styles.summaryLabel}>Admissions Module</div>
+                        <div className={styles.summaryNumber}>{admissionMetrics.total}</div>
+                        <div className={styles.summarySubtext}>{admissionMetrics.approved} approved</div>
+                    </motion.div>
+
+                    {/* Spotlight Module */}
+                    <motion.div 
+                        className={styles.summaryCard}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.45 }}
+                    >
+                        <div className={styles.summaryIcon}>⭐</div>
+                        <div className={styles.summaryLabel}>Spotlight Module</div>
+                        <div className={styles.summaryNumber}>{spotlightMetrics.total}</div>
+                        <div className={styles.summarySubtext}>{spotlightMetrics.published} published</div>
+                    </motion.div>
+
+                    {/* Contact Response Rate */}
+                    <motion.div 
+                        className={styles.summaryCard}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                    >
+                        <div className={styles.summaryIcon}>💬</div>
+                        <div className={styles.summaryLabel}>Response Rate</div>
+                        <div className={styles.summaryNumber}>{contactMetrics.responseRate}%</div>
+                        <div className={styles.summarySubtext}>Contacts replied</div>
+                    </motion.div>
+
+                    {/* Enquiry Conversion Rate */}
+                    <motion.div 
+                        className={styles.summaryCard}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.55 }}
+                    >
+                        <div className={styles.summaryIcon}>📊</div>
+                        <div className={styles.summaryLabel}>Conversion Rate</div>
+                        <div className={styles.summaryNumber}>{enquiryMetrics.conversionRate}%</div>
+                        <div className={styles.summarySubtext}>Enquiries to enrollment</div>
+                    </motion.div>
+
+                    {/* Admission Approval Rate */}
+                    <motion.div 
+                        className={styles.summaryCard}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.6 }}
+                    >
+                        <div className={styles.summaryIcon}>✅</div>
+                        <div className={styles.summaryLabel}>Approval Rate</div>
+                        <div className={styles.summaryNumber}>{admissionMetrics.approvalRate}%</div>
+                        <div className={styles.summarySubtext}>Admissions approved</div>
+                    </motion.div>
+
+                    {/* Pending Items */}
+                    <motion.div 
+                        className={styles.summaryCard}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.65 }}
+                    >
+                        <div className={styles.summaryIcon}>⏳</div>
+                        <div className={styles.summaryLabel}>Pending Items</div>
+                        <div className={styles.summaryNumber}>
+                            {contactMetrics.new + enquiryMetrics.new + admissionMetrics.pending}
+                        </div>
+                        <div className={styles.summarySubtext}>Awaiting action</div>
+                    </motion.div>
+                </div>
             </motion.div>
 
             {/* Analytics Section */}
@@ -379,6 +615,297 @@ const Dashboard = () => {
                                     transition={{ delay: 0.6, duration: 1 }}
                                     style={{ backgroundColor: '#10b981' }}
                                 ></motion.div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
+
+            {/* Dashboard Reporting Section */}
+            <motion.div
+                className={styles.reportingSection}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.6 }}
+            >
+                <div className={styles.reportingHeader}>
+                    <h2>📈 Dashboard Reporting</h2>
+                    <p>Key metrics across all modules</p>
+                </div>
+
+                <div className={styles.reportingGrid}>
+                    {/* Contact Status Distribution */}
+                    <div className={styles.reportingCard}>
+                        <h3>Contact Status Distribution</h3>
+                        <div className={styles.reportingMetrics}>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#8662b0' }}></span>
+                                    New
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: contactMetrics.total > 0 ? `${(contactMetrics.new / contactMetrics.total) * 100}%` : '0%',
+                                        backgroundColor: '#8662b0'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{contactMetrics.new}</div>
+                            </div>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#ffbf00' }}></span>
+                                    Replied
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: contactMetrics.total > 0 ? `${(contactMetrics.replied / contactMetrics.total) * 100}%` : '0%',
+                                        backgroundColor: '#ffbf00'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{contactMetrics.replied}</div>
+                            </div>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#10b981' }}></span>
+                                    Resolved
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: contactMetrics.total > 0 ? `${(contactMetrics.resolved / contactMetrics.total) * 100}%` : '0%',
+                                        backgroundColor: '#10b981'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{contactMetrics.resolved}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Enquiry Status Distribution */}
+                    <div className={styles.reportingCard}>
+                        <h3>Enquiry Status Distribution</h3>
+                        <div className={styles.reportingMetrics}>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#8662b0' }}></span>
+                                    New
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: enquiryMetrics.total > 0 ? `${(enquiryMetrics.new / enquiryMetrics.total) * 100}%` : '0%',
+                                        backgroundColor: '#8662b0'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{enquiryMetrics.new}</div>
+                            </div>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#ffbf00' }}></span>
+                                    Contacted
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: enquiryMetrics.total > 0 ? `${(enquiryMetrics.contacted / enquiryMetrics.total) * 100}%` : '0%',
+                                        backgroundColor: '#ffbf00'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{enquiryMetrics.contacted}</div>
+                            </div>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#10b981' }}></span>
+                                    Enrolled
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: enquiryMetrics.total > 0 ? `${(enquiryMetrics.enrolled / enquiryMetrics.total) * 100}%` : '0%',
+                                        backgroundColor: '#10b981'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{enquiryMetrics.enrolled}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Admission Status Distribution */}
+                    <div className={styles.reportingCard}>
+                        <h3>Admission Status Distribution</h3>
+                        <div className={styles.reportingMetrics}>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#f59e0b' }}></span>
+                                    Pending
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: admissionMetrics.total > 0 ? `${(admissionMetrics.pending / admissionMetrics.total) * 100}%` : '0%',
+                                        backgroundColor: '#f59e0b'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{admissionMetrics.pending}</div>
+                            </div>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#10b981' }}></span>
+                                    Approved
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: admissionMetrics.total > 0 ? `${(admissionMetrics.approved / admissionMetrics.total) * 100}%` : '0%',
+                                        backgroundColor: '#10b981'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{admissionMetrics.approved}</div>
+                            </div>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#ef4444' }}></span>
+                                    Rejected
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: admissionMetrics.total > 0 ? `${(admissionMetrics.rejected / admissionMetrics.total) * 100}%` : '0%',
+                                        backgroundColor: '#ef4444'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{admissionMetrics.rejected}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Spotlight Distribution */}
+                    <div className={styles.reportingCard}>
+                        <h3>Spotlight Publication Status</h3>
+                        <div className={styles.reportingMetrics}>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#10b981' }}></span>
+                                    Published
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: spotlightMetrics.total > 0 ? `${(spotlightMetrics.published / spotlightMetrics.total) * 100}%` : '0%',
+                                        backgroundColor: '#10b981'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{spotlightMetrics.published}</div>
+                            </div>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#ef4444' }}></span>
+                                    Unpublished
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: spotlightMetrics.total > 0 ? `${(spotlightMetrics.unpublished / spotlightMetrics.total) * 100}%` : '0%',
+                                        backgroundColor: '#ef4444'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{spotlightMetrics.unpublished}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Overall Metrics */}
+                    <div className={styles.reportingCard}>
+                        <h3>Overall Performance Metrics</h3>
+                        <div className={styles.reportingMetrics}>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#6a4c93' }}></span>
+                                    Avg Response Rate
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: `${contactMetrics.responseRate}%`,
+                                        backgroundColor: '#6a4c93'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{contactMetrics.responseRate}%</div>
+                            </div>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#10b981' }}></span>
+                                    Conversion Rate
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: `${enquiryMetrics.conversionRate}%`,
+                                        backgroundColor: '#10b981'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{enquiryMetrics.conversionRate}%</div>
+                            </div>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#ec4899' }}></span>
+                                    Approval Rate
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: `${admissionMetrics.approvalRate}%`,
+                                        backgroundColor: '#ec4899'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{admissionMetrics.approvalRate}%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Data Summary Metrics */}
+                    <div className={styles.reportingCard}>
+                        <h3>Module Records Summary</h3>
+                        <div className={styles.reportingMetrics}>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#3b82f6' }}></span>
+                                    Contacts
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: (contactMetrics.total / (contactMetrics.total + enquiryMetrics.total + admissionMetrics.total + spotlightMetrics.total) * 100) || 0,
+                                        backgroundColor: '#3b82f6'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{contactMetrics.total}</div>
+                            </div>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#f59e0b' }}></span>
+                                    Enquiries
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: (enquiryMetrics.total / (contactMetrics.total + enquiryMetrics.total + admissionMetrics.total + spotlightMetrics.total) * 100) || 0,
+                                        backgroundColor: '#f59e0b'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{enquiryMetrics.total}</div>
+                            </div>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#8b5cf6' }}></span>
+                                    Admissions
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: (admissionMetrics.total / (contactMetrics.total + enquiryMetrics.total + admissionMetrics.total + spotlightMetrics.total) * 100) || 0,
+                                        backgroundColor: '#8b5cf6'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{admissionMetrics.total}</div>
+                            </div>
+                            <div className={styles.metricItem}>
+                                <div className={styles.metricLabel}>
+                                    <span className={styles.statusDot} style={{ backgroundColor: '#ec4899' }}></span>
+                                    Spotlights
+                                </div>
+                                <div className={styles.metricBar}>
+                                    <div className={styles.metricBarFill} style={{
+                                        width: (spotlightMetrics.total / (contactMetrics.total + enquiryMetrics.total + admissionMetrics.total + spotlightMetrics.total) * 100) || 0,
+                                        backgroundColor: '#ec4899'
+                                    }}></div>
+                                </div>
+                                <div className={styles.metricValue}>{spotlightMetrics.total}</div>
                             </div>
                         </div>
                     </div>

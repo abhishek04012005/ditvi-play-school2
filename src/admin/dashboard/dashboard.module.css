@@ -1813,6 +1813,553 @@
   }
 }
 
+/* ==================== Data Summary Section ==================== */
+.dataSummarySection {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2.5rem;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 8px rgba(106, 76, 147, 0.08);
+  transition: var(--transition);
+}
+
+.dataSummarySection:hover {
+  box-shadow: 0 8px 24px rgba(106, 76, 147, 0.12);
+  border-color: #d4c5f9;
+}
+
+.summaryHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.summaryHeader h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--black);
+  letter-spacing: -0.3px;
+}
+
+.summaryHeader p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.summaryCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f9f7ff 0%, #fafbfc 100%);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.summaryCard:hover {
+  transform: translateY(-4px);
+  border-color: #8662b0;
+  background: linear-gradient(135deg, #f5f0ff 0%, #fafbfc 100%);
+  box-shadow: 0 8px 16px rgba(134, 98, 176, 0.15);
+}
+
+.summaryIcon {
+  font-size: 2rem;
+  color: #6a4c93;
+  margin-bottom: 0.75rem;
+}
+
+.summaryLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.summaryNumber {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #6a4c93;
+  margin-bottom: 0.25rem;
+}
+
+.summarySubtext {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+/* ==================== Responsive Breakpoints - Summary Section ==================== */
+
+@media (max-width: 1024px) {
+  .summaryGrid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .dataSummarySection {
+    padding: 1.5rem;
+  }
+
+  .summaryIcon {
+    font-size: 1.75rem;
+  }
+
+  .summaryNumber {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .summaryGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .dataSummarySection {
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .summaryHeader h2 {
+    font-size: 1.2rem;
+  }
+
+  .summaryCard {
+    padding: 1.25rem;
+  }
+
+  .summaryIcon {
+    font-size: 1.5rem;
+  }
+
+  .summaryNumber {
+    font-size: 1.75rem;
+  }
+
+  .summaryLabel {
+    font-size: 0.8rem;
+  }
+
+  .summarySubtext {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .summaryGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .dataSummarySection {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .summaryHeader h2 {
+    font-size: 1.1rem;
+  }
+
+  .summaryCard {
+    padding: 1rem;
+  }
+
+  .summaryIcon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .summaryNumber {
+    font-size: 1.5rem;
+  }
+
+  .summaryLabel {
+    font-size: 0.75rem;
+  }
+
+  .summarySubtext {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .summaryGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .dataSummarySection {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .summaryHeader h2 {
+    font-size: 1rem;
+  }
+
+  .summaryCard {
+    padding: 0.9rem;
+    border-radius: 10px;
+  }
+
+  .summaryIcon {
+    font-size: 1.5rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .summaryNumber {
+    font-size: 1.3rem;
+  }
+
+  .summaryLabel {
+    font-size: 0.7rem;
+  }
+
+  .summarySubtext {
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .summaryGrid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .dataSummarySection {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .summaryHeader h2 {
+    font-size: 0.95rem;
+  }
+
+  .summaryCard {
+    padding: 0.75rem;
+  }
+
+  .summaryIcon {
+    font-size: 1.3rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .summaryNumber {
+    font-size: 1.1rem;
+  }
+
+  .summaryLabel {
+    font-size: 0.65rem;
+  }
+
+  .summarySubtext {
+    font-size: 0.55rem;
+  }
+}
+
+/* ==================== Dashboard Reporting Section ==================== */
+.reportingSection {
+  margin-bottom: 2.5rem;
+}
+
+.reportingHeader {
+  margin-bottom: 2rem;
+}
+
+.reportingHeader h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--black);
+  letter-spacing: -0.3px;
+}
+
+.reportingHeader p {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.9rem;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.reportingGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.reportingCard {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 8px rgba(106, 76, 147, 0.08);
+  transition: var(--transition);
+}
+
+.reportingCard:hover {
+  box-shadow: 0 8px 24px rgba(106, 76, 147, 0.12);
+  border-color: #d4c5f9;
+  transform: translateY(-2px);
+}
+
+.reportingCard h3 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--black);
+  letter-spacing: -0.2px;
+}
+
+.reportingMetrics {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.metricItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.metricLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-gray);
+  justify-content: space-between;
+}
+
+.statusDot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.metricBar {
+  width: 100%;
+  height: 8px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.metricBarFill {
+  height: 100%;
+  transition: width 0.6s ease-in-out;
+  border-radius: 4px;
+}
+
+.metricValue {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-gray);
+  text-align: right;
+}
+
+/* ==================== Responsive Breakpoints - Reporting Section ==================== */
+
+@media (max-width: 1200px) {
+  .reportingGrid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.75rem;
+  }
+
+  .reportingCard {
+    padding: 1.75rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .reportingGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .reportingCard {
+    padding: 1.5rem;
+  }
+
+  .reportingCard h3 {
+    font-size: 1rem;
+  }
+
+  .metricLabel {
+    font-size: 0.85rem;
+  }
+
+  .metricValue {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .reportingGrid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .reportingCard {
+    padding: 1.25rem;
+  }
+
+  .reportingHeader h2 {
+    font-size: 1.2rem;
+  }
+
+  .reportingCard h3 {
+    font-size: 0.95rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .reportingMetrics {
+    gap: 1rem;
+  }
+
+  .metricItem {
+    gap: 0.5rem;
+  }
+
+  .metricLabel {
+    font-size: 0.8rem;
+  }
+
+  .metricBar {
+    height: 6px;
+  }
+
+  .metricValue {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .reportingCard {
+    padding: 1rem;
+  }
+
+  .reportingHeader h2 {
+    font-size: 1.1rem;
+  }
+
+  .reportingCard h3 {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .reportingMetrics {
+    gap: 0.85rem;
+  }
+
+  .metricLabel {
+    font-size: 0.75rem;
+  }
+
+  .metricBar {
+    height: 6px;
+  }
+
+  .metricValue {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .reportingGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .reportingCard {
+    padding: 0.9rem;
+    border-radius: 12px;
+  }
+
+  .reportingHeader h2 {
+    font-size: 1rem;
+  }
+
+  .reportingCard h3 {
+    font-size: 0.85rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .reportingMetrics {
+    gap: 0.75rem;
+  }
+
+  .metricLabel {
+    font-size: 0.7rem;
+  }
+
+  .metricBar {
+    height: 5px;
+  }
+
+  .metricValue {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .reportingCard {
+    padding: 0.75rem;
+  }
+
+  .reportingHeader h2 {
+    font-size: 0.95rem;
+  }
+
+  .reportingCard h3 {
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .reportingMetrics {
+    gap: 0.6rem;
+  }
+
+  .metricItem {
+    gap: 0.4rem;
+  }
+
+  .metricLabel {
+    font-size: 0.65rem;
+  }
+
+  .metricBar {
+    height: 4px;
+  }
+
+  .metricValue {
+    font-size: 0.6rem;
+  }
+}
+
 /* ==================== Accessibility ==================== */
 
 
