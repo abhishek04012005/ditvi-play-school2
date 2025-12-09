@@ -24,7 +24,7 @@
 
 .mainSection {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1.5fr;
+  grid-template-columns: 1.5fr 1fr 1fr 1.5fr;
   gap: 4rem;
   margin-bottom: 4rem;
 }
@@ -249,7 +249,7 @@
 .contactLink {
     display: flex;
     flex-direction: column;
-    color: var(--text-light);
+    /* color: var(--text-light); */
     text-decoration: none;
     font-size: 0.95rem;
     line-height: 1.5;
@@ -266,7 +266,7 @@
 .contactText {
     display: flex;
     flex-direction: column;
-    color: var(--text-light);
+    /* color: var(--text-light); */
     font-size: 0.95rem;
     line-height: 1.5;
     word-break: break-word;

@@ -210,7 +210,7 @@ const Dashboard = () => {
         }
     };
 
-    const rangedContacts = isCustomRangeActive 
+    const rangedContacts = isCustomRangeActive
         ? getCustomDateRangeData(contacts, customStartDate, customEndDate)
         : getDateRangeData(contacts, getDaysForRange());
     const rangedEnquiries = isCustomRangeActive
@@ -584,7 +584,7 @@ const Dashboard = () => {
             </motion.div>
 
             {/* Data Summary Section */}
-            <motion.div 
+            <motion.div
                 className={styles.dataSummarySection}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -595,7 +595,7 @@ const Dashboard = () => {
                 </div>
                 <div className={styles.summaryGrid}>
                     {/* Total Records */}
-                    <motion.div 
+                    <motion.div
                         className={styles.summaryCard}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -610,7 +610,7 @@ const Dashboard = () => {
                     </motion.div>
 
                     {/* Contacts Module */}
-                    <motion.div 
+                    <motion.div
                         className={styles.summaryCard}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -623,7 +623,7 @@ const Dashboard = () => {
                     </motion.div>
 
                     {/* Enquiries Module */}
-                    <motion.div 
+                    <motion.div
                         className={styles.summaryCard}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -636,7 +636,7 @@ const Dashboard = () => {
                     </motion.div>
 
                     {/* Admissions Module */}
-                    <motion.div 
+                    <motion.div
                         className={styles.summaryCard}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -649,7 +649,7 @@ const Dashboard = () => {
                     </motion.div>
 
                     {/* Spotlight Module */}
-                    <motion.div 
+                    <motion.div
                         className={styles.summaryCard}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -662,7 +662,7 @@ const Dashboard = () => {
                     </motion.div>
 
                     {/* Contact Response Rate */}
-                    <motion.div 
+                    <motion.div
                         className={styles.summaryCard}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -675,7 +675,7 @@ const Dashboard = () => {
                     </motion.div>
 
                     {/* Enquiry Conversion Rate */}
-                    <motion.div 
+                    <motion.div
                         className={styles.summaryCard}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -688,7 +688,7 @@ const Dashboard = () => {
                     </motion.div>
 
                     {/* Admission Approval Rate */}
-                    <motion.div 
+                    <motion.div
                         className={styles.summaryCard}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -701,7 +701,7 @@ const Dashboard = () => {
                     </motion.div>
 
                     {/* Pending Items */}
-                    <motion.div 
+                    <motion.div
                         className={styles.summaryCard}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
