@@ -116,19 +116,7 @@ const getGoogleDriveImageURL = (url: string): string => {
 };
 
 // Header Component
-const PDFHeader: React.FC<{ logoUrl: string | null; photoUrl?: string | null }> = ({ logoUrl, photoUrl }) => {
-    const [photoLoaded, setPhotoLoaded] = useState(false);
-    const [photoError, setPhotoError] = useState(false);
-
-    const convertedPhotoUrl = photoUrl ? getGoogleDriveImageURL(photoUrl) : null;
-
-    useEffect(() => {
-        if (convertedPhotoUrl) {
-            console.log('Loading child photo from converted URL:', convertedPhotoUrl);
-            console.log('Original photo URL:', photoUrl);
-        }
-    }, [convertedPhotoUrl, photoUrl]);
-
+const PDFHeader: React.FC<{ logoUrl: string | null }> = ({ logoUrl }) => {
     return (
         <div className={styles.header}>
             <div className={styles.headerTop}>
@@ -145,26 +133,8 @@ const PDFHeader: React.FC<{ logoUrl: string | null; photoUrl?: string | null }> 
                         Phone: {schoolDetails.contact.phone} | Email: {schoolDetails.contact.email}
                     </p>
                 </div>
-                {convertedPhotoUrl && !photoError && (
-                    <div className={styles.childPhotoContainer}>
-                        <img
-                            src={convertedPhotoUrl}
-                            alt="Child Photo"
-                            className={styles.childPhoto}
-                            onLoad={() => {
-                                console.log('✅ Child photo loaded successfully from:', convertedPhotoUrl);
-                                setPhotoLoaded(true);
-                            }}
-                            onError={(e) => {
-                                console.error('❌ Failed to load child photo');
-                                console.error('Converted URL:', convertedPhotoUrl);
-                                console.error('Original URL:', photoUrl);
-                                console.error('Error:', e);
-                                setPhotoError(true);
-                                (e.currentTarget as HTMLImageElement).style.display = 'none';
-                            }}
-                        />
-                    </div>
+                {logoUrl && (
+                    <img src={logoUrl} alt="School Logo" className={styles.logo} />
                 )}
             </div>
             <div className={styles.dividerMain}></div>
@@ -196,6 +166,40 @@ const Field: React.FC<{ label: string; value: string }> = ({ label, value }) => 
         <div className={styles.fieldValue}>{value || 'N/A'}</div>
     </div>
 );
+
+// Photo Field Component
+const PhotoField: React.FC<{ photoUrl?: string | null }> = ({ photoUrl }) => {
+    const [photoError, setPhotoError] = useState(false);
+    const convertedPhotoUrl = photoUrl ? getGoogleDriveImageURL(photoUrl) : null;
+
+    if (!convertedPhotoUrl || photoError) {
+        return null;
+    }
+
+    return (
+        <div className={styles.photoField}>
+            <label className={styles.fieldLabel}>Photo</label>
+            <div className={styles.childPhotoContainer}>
+                <img
+                    src={convertedPhotoUrl}
+                    alt="Child Photo"
+                    className={styles.childPhoto}
+                    onLoad={() => {
+                        console.log('✅ Child photo loaded successfully from:', convertedPhotoUrl);
+                    }}
+                    onError={(e) => {
+                        console.error('❌ Failed to load child photo');
+                        console.error('Converted URL:', convertedPhotoUrl);
+                        console.error('Original URL:', photoUrl);
+                        console.error('Error:', e);
+                        setPhotoError(true);
+                        (e.currentTarget as HTMLImageElement).style.display = 'none';
+                    }}
+                />
+            </div>
+        </div>
+    );
+};
 
 // Main Component
 const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, isPrinting = false }) => {
@@ -243,8 +247,8 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
 
     return (
         <div className={styles.pdfContainer}>
-            {/* Header with Logo and Child Photo */}
-            <PDFHeader logoUrl={logoUrl} photoUrl={photoUrl} />
+            {/* Header with Logo */}
+            <PDFHeader logoUrl={logoUrl} />
 
             {/* Admission Number & Date */}
             <div className={styles.metaSection}>
@@ -265,20 +269,32 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
             </div>
 
             {/* Child Information */}
-            <PDFSection title="1. CHILD INFORMATION">
-                <FieldRow columns={2}>
-                    <Field label="Child Name:" value={getChildName()} />
-                    <Field label="DOB:" value={formatDate(admission.child_dob)} />
-                </FieldRow>
-                <FieldRow columns={2}>
-                    <Field label="Gender:" value={admission.child_gender || 'N/A'} />
-                    <Field label="Place of Birth:" value={admission.child_place_of_birth || 'N/A'} />
-                </FieldRow>
-                <FieldRow columns={2}>
-                    <Field label="Blood Group:" value={admission.child_blood_group || 'N/A'} />
-                    <Field label="Age Group:" value={calculateAgeGroup(admission.child_dob)} />
-                </FieldRow>
-            </PDFSection>
+            <div className={styles.section}>
+                <h3 className={styles.sectionTitle}>1. CHILD INFORMATION</h3>
+                <div className={styles.childInfoContainer}>
+                    <div className={styles.childInfoContent}>
+                        <div className={styles.sectionContent}>
+                            <FieldRow columns={2}>
+                                <Field label="Child Name:" value={getChildName()} />
+                                <Field label="DOB:" value={formatDate(admission.child_dob)} />
+                            </FieldRow>
+                            <FieldRow columns={2}>
+                                <Field label="Gender:" value={admission.child_gender || 'N/A'} />
+                                <Field label="Place of Birth:" value={admission.child_place_of_birth || 'N/A'} />
+                            </FieldRow>
+                            <FieldRow columns={2}>
+                                <Field label="Blood Group:" value={admission.child_blood_group || 'N/A'} />
+                                <Field label="Age Group:" value={calculateAgeGroup(admission.child_dob)} />
+                            </FieldRow>
+                        </div>
+                    </div>
+                    <div className={styles.childPhotoWrapper}>
+                        {photoUrl && (
+                            <PhotoField photoUrl={photoUrl} />
+                        )}
+                    </div>
+                </div>
+            </div>
 
             {/* Parent Information */}
             <PDFSection title="2. PARENT/GUARDIAN INFORMATION">

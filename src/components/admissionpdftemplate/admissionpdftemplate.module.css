@@ -51,7 +51,7 @@ body {
     align-items: center;
     gap: 0.5cm;
     margin-bottom: 0.3cm;
-    justify-content: space-between;
+    justify-content: center;
 }
 
 .logo {
@@ -242,6 +242,30 @@ body {
     word-wrap: break-word;
     overflow-wrap: break-word;
     line-height: 1.2;
+}
+
+/* ===== Child Info Container (with floating photo) ===== */
+.childInfoContainer {
+    display: flex;
+    gap: 0.35cm;
+    align-items: flex-start;
+}
+
+.childInfoContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.childPhotoWrapper {
+    flex-shrink: 0;
+    width: 2.2cm;
+}
+
+.photoField {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15cm;
+    align-items: center;
 }
 
 /* ===== Consent Box ===== */
