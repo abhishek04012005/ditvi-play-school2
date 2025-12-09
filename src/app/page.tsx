@@ -7,6 +7,7 @@ import Gallery from "@/components/gallery/gallery";
 import Hero from "@/components/hero/hero";
 import Program from "@/components/program/program";
 import Testimonials from "@/components/testimonials/testimonials";
+import ARBooks from "@/components/ar/arbooks";
 import { galleryItems } from "@/json/gallery";
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default function Home() {
       <About />
       <Program />
       <Awards isHomePage={true} />
+      <ARBooks isHomePage={true} />
       <Gallery
         items={galleryItems}
         youtubeVideos={[]}
