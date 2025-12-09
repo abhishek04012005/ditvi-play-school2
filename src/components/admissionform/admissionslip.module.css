@@ -323,6 +323,66 @@ body {
     white-space: nowrap;
 }
 
+/* ===== INSTRUCTIONS LIST ===== */
+.instructionsList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.12cm;
+    margin-top: 0.1cm;
+}
+
+.instructionItem {
+    display: flex;
+    gap: 0.2cm;
+    align-items: flex-start;
+    font-size: 8pt;
+    color: var(--color-text-dark);
+    line-height: 1.3;
+}
+
+.instructionNumber {
+    flex-shrink: 0;
+    font-weight: 700;
+    color: var(--primary-purple);
+    margin-top: 0.05cm;
+}
+
+.instructionText {
+    flex: 1;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* ===== CONTACT GRID ===== */
+.contactGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3cm;
+    margin-top: 0.1cm;
+}
+
+.contactItem {
+    display: flex;
+    gap: 0.15cm;
+    align-items: center;
+}
+
+.contactLabel {
+    font-size: 7.5pt;
+    font-weight: 700;
+    color: var(--primary-purple);
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.15px;
+}
+
+.contactValue {
+    font-size: 8pt;
+    color: var(--color-text-dark);
+    word-break: break-word;
+    font-family: 'Courier New', monospace;
+}
+
 
 /* ===== RESPONSIVE DESIGN - TABLET (1024px and below) ===== */
 @media screen and (max-width: 1024px) {
@@ -407,6 +467,25 @@ body {
     .footerMeta {
         font-size: 9px;
         gap: 0.5rem;
+    }
+}
+
+/* ===== RESPONSIVE - TABLET INSTRUCTIONS/CONTACT ===== */
+@media screen and (max-width: 1024px) {
+    .instructionItem {
+        font-size: 11px;
+    }
+
+    .contactGrid {
+        gap: 0.5rem;
+    }
+
+    .contactLabel {
+        font-size: 10px;
+    }
+
+    .contactValue {
+        font-size: 11px;
     }
 }
 
@@ -573,6 +652,32 @@ body {
     }
 }
 
+/* ===== RESPONSIVE - MOBILE INSTRUCTIONS/CONTACT ===== */
+@media screen and (max-width: 768px) {
+    .instructionItem {
+        font-size: 9px;
+        gap: 0.15rem;
+        line-height: 1.25;
+    }
+
+    .instructionNumber {
+        margin-top: 0.02cm;
+    }
+
+    .contactGrid {
+        grid-template-columns: 1fr;
+        gap: 0.3rem;
+    }
+
+    .contactLabel {
+        font-size: 8px;
+    }
+
+    .contactValue {
+        font-size: 9px;
+    }
+}
+
 /* ===== RESPONSIVE DESIGN - SMALL MOBILE (480px and below) ===== */
 @media screen and (max-width: 480px) {
     .slipContainer {
@@ -723,6 +828,28 @@ body {
     }
 }
 
+/* ===== RESPONSIVE - SMALL MOBILE INSTRUCTIONS/CONTACT ===== */
+@media screen and (max-width: 480px) {
+    .instructionItem {
+        font-size: 8px;
+        gap: 0.1rem;
+        line-height: 1.2;
+    }
+
+    .contactGrid {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+    }
+
+    .contactLabel {
+        font-size: 7px;
+    }
+
+    .contactValue {
+        font-size: 8px;
+    }
+}
+
 /* ===== VERY SMALL DEVICES (< 360px) ===== */
 @media screen and (max-width: 360px) {
     .slipContainer {
@@ -785,6 +912,22 @@ body {
 
     .footerMeta {
         font-size: 6px;
+    }
+}
+
+/* ===== RESPONSIVE - VERY SMALL INSTRUCTIONS/CONTACT ===== */
+@media screen and (max-width: 360px) {
+    .instructionItem {
+        font-size: 7px;
+        line-height: 1.2;
+    }
+
+    .contactLabel {
+        font-size: 6.5px;
+    }
+
+    .contactValue {
+        font-size: 7px;
     }
 }
 

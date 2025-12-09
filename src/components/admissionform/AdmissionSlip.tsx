@@ -247,6 +247,44 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
                 </div>
             )}
 
+            {/* Important Instructions Section */}
+            <div className={slipStyles.section}>
+                <h3 className={slipStyles.sectionTitle}>5. IMPORTANT INSTRUCTIONS</h3>
+                <div className={slipStyles.instructionsList}>
+                    <div className={slipStyles.instructionItem}>
+                        <span className={slipStyles.instructionNumber}>•</span>
+                        <span className={slipStyles.instructionText}>Please keep this admission slip safe for future reference</span>
+                    </div>
+                    <div className={slipStyles.instructionItem}>
+                        <span className={slipStyles.instructionNumber}>•</span>
+                        <span className={slipStyles.instructionText}>A detailed admission confirmation will be sent to your registered email</span>
+                    </div>
+                    <div className={slipStyles.instructionItem}>
+                        <span className={slipStyles.instructionNumber}>•</span>
+                        <span className={slipStyles.instructionText}>All submitted documents must be original or self-attested copies</span>
+                    </div>
+                    <div className={slipStyles.instructionItem}>
+                        <span className={slipStyles.instructionNumber}>•</span>
+                        <span className={slipStyles.instructionText}>Contact the school office for any queries or clarifications</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Contact Information Section */}
+            <div className={slipStyles.section}>
+                <h3 className={slipStyles.sectionTitle}>6. SCHOOL CONTACT</h3>
+                <div className={slipStyles.contactGrid}>
+                    <div className={slipStyles.contactItem}>
+                        <span className={slipStyles.contactLabel}>Phone:</span>
+                        <span className={slipStyles.contactValue}>{schoolDetails.contact.phone}</span>
+                    </div>
+                    <div className={slipStyles.contactItem}>
+                        <span className={slipStyles.contactLabel}>Email:</span>
+                        <span className={slipStyles.contactValue}>{schoolDetails.contact.email}</span>
+                    </div>
+                </div>
+            </div>
+
             {/* Footer Section */}
             <div className={slipStyles.footerSection}>
                 <div className={slipStyles.footerContent}>
