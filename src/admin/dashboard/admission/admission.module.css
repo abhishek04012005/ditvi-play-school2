@@ -818,6 +818,7 @@
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
@@ -1342,14 +1343,13 @@
 
 .pdfPreviewModal {
     position: fixed;
-    top: 50%;
-    left: 50%;  
+    top: 10%;
+    left: 27%;
     transform: translate(-50%, -50%);
     background: var(--white);
     border-radius: 16px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     z-index: 1001;
-    width: 90%;
     max-width: 900px;
     max-height: 90vh;
     height: 90vh;
@@ -1507,12 +1507,11 @@
 @media (max-width: 480px) {
     .pdfPreviewModal {
         width: 100%;
-        max-width: 100%;
-        height: 75vh;
-        max-height: 75vh;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        max-height: 100vh;
+        height: 90vh;
+        top: 10;
+        left: 0;
+        right: auto;
         border-radius: 20px 20px 0 0;
         box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.2);
         overflow-y: auto;
@@ -1539,6 +1538,12 @@
         background: linear-gradient(180deg, #5a3c7a, #ffd700);
         box-shadow: 0 0 6px rgba(106, 76, 147, 0.3);
     }
+
+    .pdfPreviewContent {
+        overflow-x: scroll;
+    }
+
+
 }
 
 @media (max-width: 360px) {
@@ -1861,6 +1866,7 @@
 @media (max-width: 768px) {
     .dashboardWrapper {
         padding: 1rem;
+        padding-top: 6rem;
     }
 
     .pdfPreviewModal {
@@ -2020,6 +2026,8 @@
 @media (max-width: 640px) {
     .dashboardWrapper {
         padding: 0.75rem;
+        padding-top: 6rem;
+
     }
 
     .statusCardsSection {
@@ -2247,6 +2255,8 @@
 @media (max-width: 480px) {
     .dashboardWrapper {
         padding: 0.5rem;
+        padding-top: 6rem;
+
     }
 
     .statusCardsSection {

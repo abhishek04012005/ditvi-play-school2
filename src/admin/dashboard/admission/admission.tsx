@@ -2264,8 +2264,8 @@ const PDFPreviewModal = ({
                             </button>
                         </div>
 
-                        <div>
-                            <div id={`admission-pdf-preview-template-${admission.id}`}>
+                        <div  className={styles.pdfPreviewContent}>
+                            <div id={`admission-pdf-preview-template-${admission.id}`} className={styles.pdfPreviewContentInner}>
                                 <AdmissionPDFTemplate admission={admission} />
                             </div>
                         </div>
