@@ -136,43 +136,259 @@
 .dateRangeControl {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   background: var(--white);
-  padding: 0.75rem;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 2px 8px rgba(106, 76, 147, 0.05);
+  padding: 1rem 1.5rem;
+  border-radius: 14px;
+  border: 2px solid #e8dff5;
+  box-shadow: 0 4px 12px rgba(106, 76, 147, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dateRangeControl:hover {
+  border-color: #d4c5f9;
+  box-shadow: 0 8px 24px rgba(106, 76, 147, 0.12);
 }
 
 .controlIcon {
   color: var(--primary-purple);
-  font-size: 1.2rem;
-  opacity: 0.7;
+  font-size: 1.3rem;
+  opacity: 0.8;
 }
 
 .rangeBtn {
-  padding: 0.65rem 1.2rem;
-  border: none;
+  padding: 0.65rem 1rem;
+  border: 2px solid #e5e5e5;
   border-radius: 8px;
-  background: transparent;
+  background: #f9f9f9;
   color: var(--text-gray);
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 700;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
   font-family: 'Verdana', sans-serif;
+  letter-spacing: 0.3px;
 }
 
 .rangeBtn:hover {
-  background: var(--bg-light);
-  color: var(--black);
+  background: #f0f0f0;
+  color: var(--primary-purple);
+  border-color: #d4c5f9;
 }
 
 .rangeBtn.active {
-  background: var(--primary-purple);
+  background: linear-gradient(135deg, #6a4c93 0%, #7e5fa1 100%);
   color: var(--white);
+  border-color: #6a4c93;
   box-shadow: 0 4px 12px rgba(106, 76, 147, 0.3);
+}
+
+.rangeBtn.active:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(106, 76, 147, 0.4);
+}
+
+/* ==================== Header Responsive Design ==================== */
+
+@media (max-width: 1200px) {
+  .headerContent {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .pageTitle {
+    font-size: 2.2rem;
+  }
+
+  .dateRangeControl {
+    padding: 0.9rem 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  .rangeBtn {
+    padding: 0.6rem 0.9rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .headerContent {
+    gap: 1rem;
+  }
+
+  .pageTitle {
+    font-size: 2rem;
+  }
+
+  .pageSubtitle {
+    font-size: 0.9rem;
+  }
+
+  .dateRangeControl {
+    padding: 0.85rem 1rem;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .controlIcon {
+    font-size: 1.1rem;
+  }
+
+  .rangeBtn {
+    padding: 0.55rem 0.8rem;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  .pageTitle {
+    font-size: 1.8rem;
+  }
+
+  .pageSubtitle {
+    font-size: 0.85rem;
+  }
+
+  .headerControls {
+    width: 100%;
+  }
+
+  .dateRangeControl {
+    width: 100%;
+    padding: 1rem;
+    gap: 0.8rem;
+    justify-content: space-between;
+  }
+
+  .rangeBtn {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.75rem;
+    flex: 1;
+    text-align: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .pageTitle {
+    font-size: 1.6rem;
+  }
+
+  .pageSubtitle {
+    font-size: 0.8rem;
+  }
+
+  .dateRangeControl {
+    padding: 0.85rem;
+    gap: 0.6rem;
+  }
+
+  .controlIcon {
+    font-size: 1rem;
+  }
+
+  .rangeBtn {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageTitle {
+    font-size: 1.4rem;
+  }
+
+  .pageSubtitle {
+    font-size: 0.75rem;
+  }
+
+  .dateRangeControl {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+    padding: 0.75rem;
+  }
+
+  .rangeBtn {
+    padding: 0.5rem 0.5rem;
+    font-size: 0.65rem;
+  }
+}
+
+/* ==================== Custom Date Picker Modal ==================== */
+
+.customDatePickerOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.customDatePickerModal {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(106, 76, 147, 0.3);
+  border: 1px solid #e8dff5;
+}
+
+.customDatePickerModal h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--black);
+}
+
+.customDatePickerModal p {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.9rem;
+  color: var(--text-gray);
+}
+
+.customDatePickerModal input[type="date"] {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e5e5e5;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Verdana', sans-serif;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+  color: var(--black);
+}
+
+.customDatePickerModal input[type="date"]:hover {
+  border-color: #d4c5f9;
+}
+
+.customDatePickerModal input[type="date"]:focus {
+  outline: none;
+  border-color: #6a4c93;
+  box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
+}
+
+@media (max-width: 480px) {
+  .customDatePickerModal {
+    width: 95%;
+    padding: 1.5rem;
+    max-width: 100%;
+  }
 }
 
 /* ==================== Stats Grid ==================== */

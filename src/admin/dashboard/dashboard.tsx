@@ -75,6 +75,10 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [dateRange, setDateRange] = useState('month');
     const [selectedTab, setSelectedTab] = useState<'contacts' | 'enquiries'>('contacts');
+    const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
+    const [customStartDate, setCustomStartDate] = useState<string>('');
+    const [customEndDate, setCustomEndDate] = useState<string>('');
+    const [isCustomRangeActive, setIsCustomRangeActive] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -121,6 +125,39 @@ const Dashboard = () => {
         });
     };
 
+    const getCustomDateRangeData = (data: any[], startDate: string, endDate: string) => {
+        if (!startDate || !endDate) return data;
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        return data.filter((item) => {
+            const itemDate = new Date(item.created_at || item.created_date);
+            return itemDate >= start && itemDate <= end;
+        });
+    };
+
+    const handleApplyCustomDate = () => {
+        if (!customStartDate || !customEndDate) {
+            toast.error('Please select both start and end dates');
+            return;
+        }
+        if (new Date(customStartDate) > new Date(customEndDate)) {
+            toast.error('Start date must be before end date');
+            return;
+        }
+        setIsCustomRangeActive(true);
+        setShowCustomDatePicker(false);
+        toast.success('Custom date range applied');
+    };
+
+    const handleResetToDefault = () => {
+        setIsCustomRangeActive(false);
+        setCustomStartDate('');
+        setCustomEndDate('');
+        setDateRange('month');
+        toast.success('Reset to default date range');
+    };
+
     const getDaysForRange = () => {
         switch (dateRange) {
             case 'week':
@@ -134,8 +171,51 @@ const Dashboard = () => {
         }
     };
 
-    const rangedContacts = getDateRangeData(contacts, getDaysForRange());
-    const rangedEnquiries = getDateRangeData(enquiries, getDaysForRange());
+    const getDateRangeLabel = () => {
+        if (isCustomRangeActive && customStartDate && customEndDate) {
+            const formatDate = (dateStr: string) => {
+                return new Date(dateStr).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                });
+            };
+            return `${formatDate(customStartDate)} - ${formatDate(customEndDate)}`;
+        }
+        const now = new Date();
+        const pastDate = new Date(now.getTime() - getDaysForRange() * 24 * 60 * 60 * 1000);
+        const formatDate = (date: Date) => {
+            return date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+            });
+        };
+        return `${formatDate(pastDate)} - ${formatDate(now)}`;
+    };
+
+    const getRangeDescription = () => {
+        if (isCustomRangeActive) {
+            return 'Custom Date Range';
+        }
+        switch (dateRange) {
+            case 'week':
+                return 'Last 7 Days';
+            case 'month':
+                return 'Last 30 Days';
+            case 'year':
+                return 'Last 365 Days';
+            default:
+                return 'Last 30 Days';
+        }
+    };
+
+    const rangedContacts = isCustomRangeActive 
+        ? getCustomDateRangeData(contacts, customStartDate, customEndDate)
+        : getDateRangeData(contacts, getDaysForRange());
+    const rangedEnquiries = isCustomRangeActive
+        ? getCustomDateRangeData(enquiries, customStartDate, customEndDate)
+        : getDateRangeData(enquiries, getDaysForRange());
 
     const contactMetrics = {
         total: rangedContacts.length,
@@ -168,7 +248,9 @@ const Dashboard = () => {
                 : 0,
     };
 
-    const rangedAdmissions = getDateRangeData(admissions, getDaysForRange());
+    const rangedAdmissions = isCustomRangeActive
+        ? getCustomDateRangeData(admissions, customStartDate, customEndDate)
+        : getDateRangeData(admissions, getDaysForRange());
     const admissionMetrics = {
         total: rangedAdmissions.length,
         pending: rangedAdmissions.filter((a) => a.admission_status === 'In Review' || a.admission_status === 'Reviewed').length,
@@ -184,7 +266,9 @@ const Dashboard = () => {
                 : 0,
     };
 
-    const rangedSpotlights = getDateRangeData(spotlights, getDaysForRange());
+    const rangedSpotlights = isCustomRangeActive
+        ? getCustomDateRangeData(spotlights, customStartDate, customEndDate)
+        : getDateRangeData(spotlights, getDaysForRange());
     const spotlightMetrics = {
         total: rangedSpotlights.length,
         published: rangedSpotlights.filter((s) => s.is_show_on_home_page).length,
@@ -299,23 +383,189 @@ const Dashboard = () => {
                 transition={{ duration: 0.6 }}
             >
                 <div className={styles.headerContent}>
+                    <div>
+                        <h1 className={styles.pageTitle}>📊 Dashboard Overview</h1>
+                        <p className={styles.pageSubtitle}>
+                            Viewing data from <span style={{ fontWeight: '700', color: '#6a4c93' }}>{getDateRangeLabel()}</span>
+                        </p>
+                    </div>
                     <div className={styles.headerControls}>
                         <div className={styles.dateRangeControl}>
                             <FaCalendarAlt className={styles.controlIcon} />
-                            {['week', 'month', 'year'].map((range) => (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                                <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#999', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Date Range</span>
+                                <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#333' }}>{getRangeDescription()}</span>
+                            </div>
+                            <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem', paddingLeft: '1rem', borderLeft: '1px solid #e5e5e5' }}>
+                                {['week', 'month', 'year'].map((range) => (
+                                    <motion.button
+                                        key={range}
+                                        className={`${styles.rangeBtn} ${!isCustomRangeActive && dateRange === range ? styles.active : ''
+                                            }`}
+                                        onClick={() => {
+                                            setDateRange(range);
+                                            setIsCustomRangeActive(false);
+                                        }}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                    >
+                                        {range === 'week' ? '7D' : range === 'month' ? '30D' : '1Y'}
+                                    </motion.button>
+                                ))}
                                 <motion.button
-                                    key={range}
-                                    className={`${styles.rangeBtn} ${dateRange === range ? styles.active : ''
-                                        }`}
-                                    onClick={() => setDateRange(range)}
+                                    className={`${styles.rangeBtn} ${isCustomRangeActive ? styles.active : ''}`}
+                                    onClick={() => setShowCustomDatePicker(!showCustomDatePicker)}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
+                                    style={{
+                                        background: 'transparent',
+                                        border: '2px solid #e5e5e5',
+                                        marginLeft: '0.5rem',
+                                        paddingLeft: '0.8rem',
+                                        paddingRight: '0.8rem',
+                                        fontSize: '0.85rem'
+                                    }}
                                 >
-                                    {range === 'week' ? 'Last 7 Days' : range === 'month' ? 'Last 30 Days' : 'Last Year'}
+                                    📅 Custom
                                 </motion.button>
-                            ))}
+                            </div>
                         </div>
                     </div>
+
+                    {/* Custom Date Picker Modal */}
+                    <AnimatePresence>
+                        {showCustomDatePicker && (
+                            <motion.div
+                                className={styles.customDatePickerOverlay}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => setShowCustomDatePicker(false)}
+                            >
+                                <motion.div
+                                    className={styles.customDatePickerModal}
+                                    initial={{ scale: 0.95, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0.95, opacity: 0 }}
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <div style={{ marginBottom: '1.5rem' }}>
+                                        <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.1rem', fontWeight: '700', color: '#333' }}>
+                                            Select Custom Date Range
+                                        </h3>
+                                        <p style={{ margin: '0', fontSize: '0.85rem', color: '#666' }}>
+                                            Choose start and end dates for custom filtering
+                                        </p>
+                                    </div>
+
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
+                                        <div>
+                                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#666', marginBottom: '0.5rem' }}>
+                                                Start Date
+                                            </label>
+                                            <input
+                                                type="date"
+                                                value={customStartDate}
+                                                onChange={(e) => setCustomStartDate(e.target.value)}
+                                                max={new Date().toISOString().split('T')[0]}
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '0.75rem',
+                                                    border: '1px solid #e5e5e5',
+                                                    borderRadius: '8px',
+                                                    fontSize: '1rem',
+                                                    fontFamily: 'inherit',
+                                                    boxSizing: 'border-box'
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#666', marginBottom: '0.5rem' }}>
+                                                End Date
+                                            </label>
+                                            <input
+                                                type="date"
+                                                value={customEndDate}
+                                                onChange={(e) => setCustomEndDate(e.target.value)}
+                                                max={new Date().toISOString().split('T')[0]}
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '0.75rem',
+                                                    border: '1px solid #e5e5e5',
+                                                    borderRadius: '8px',
+                                                    fontSize: '1rem',
+                                                    fontFamily: 'inherit',
+                                                    boxSizing: 'border-box'
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+                                        <motion.button
+                                            onClick={() => setShowCustomDatePicker(false)}
+                                            style={{
+                                                padding: '0.65rem 1.5rem',
+                                                border: '1px solid #e5e5e5',
+                                                background: '#f9f9f9',
+                                                borderRadius: '8px',
+                                                cursor: 'pointer',
+                                                fontWeight: '600',
+                                                fontSize: '0.9rem',
+                                                color: '#666'
+                                            }}
+                                            whileHover={{ background: '#f0f0f0' }}
+                                            whileTap={{ scale: 0.95 }}
+                                        >
+                                            Cancel
+                                        </motion.button>
+                                        <motion.button
+                                            onClick={handleApplyCustomDate}
+                                            style={{
+                                                padding: '0.65rem 1.5rem',
+                                                background: 'linear-gradient(135deg, #6a4c93 0%, #7e5fa1 100%)',
+                                                border: 'none',
+                                                borderRadius: '8px',
+                                                cursor: 'pointer',
+                                                fontWeight: '600',
+                                                fontSize: '0.9rem',
+                                                color: '#fff'
+                                            }}
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                        >
+                                            Apply
+                                        </motion.button>
+                                    </div>
+
+                                    {isCustomRangeActive && (
+                                        <motion.button
+                                            onClick={handleResetToDefault}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            style={{
+                                                width: '100%',
+                                                marginTop: '1rem',
+                                                padding: '0.65rem',
+                                                background: '#fff9f0',
+                                                border: '1px solid #ffbf00',
+                                                borderRadius: '8px',
+                                                cursor: 'pointer',
+                                                fontWeight: '600',
+                                                fontSize: '0.85rem',
+                                                color: '#d97706'
+                                            }}
+                                            whileHover={{ background: '#fffbf0' }}
+                                            whileTap={{ scale: 0.95 }}
+                                        >
+                                            Reset to Default Range
+                                        </motion.button>
+                                    )}
+                                </motion.div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             </motion.div>
 
