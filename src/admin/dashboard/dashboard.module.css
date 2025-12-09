@@ -21,6 +21,43 @@
   background: linear-gradient(135deg, #f9f7ff 0%, #fafbfc 100%);
   padding: 2rem;
   font-family: 'Verdana', sans-serif;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .dashboard {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .dashboard {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1rem;
+    padding-top: 6rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard {
+    padding: 0.75rem;
+    padding-top: 6rem;
+
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard {
+    padding: 0.75rem;
+    padding-top: 6rem;
+
+  }
 }
 
 /* ==================== Loading State ==================== */
@@ -144,6 +181,46 @@
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1200px) {
+  .statsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .statsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
 }
 
 .statCardWrapper {
@@ -181,6 +258,35 @@
   flex-direction: column;
   gap: 1.5rem;
   height: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  .statCardContent {
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .statCardContent {
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .statCardContent {
+    padding: 1.25rem;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .statCardContent {
+    padding: 1.25rem;
+    gap: 0.75rem;
+  }
 }
 
 .statCardTop {
@@ -198,6 +304,39 @@
   font-size: 1.8rem;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.8);
+  flex-shrink: 0;
+}
+
+@media (max-width: 1024px) {
+  .statCardIcon {
+    width: 44px;
+    height: 44px;
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .statCardIcon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .statCardIcon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .statCardIcon {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
 }
 
 .trendBadge {
@@ -229,6 +368,30 @@
   margin-bottom: 0.5rem;
 }
 
+@media (max-width: 1024px) {
+  .statCardValue {
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .statCardValue {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .statCardValue {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .statCardValue {
+    font-size: 1.5rem;
+  }
+}
+
 .statCardTitle {
   margin: 0 0 0.25rem 0;
   font-size: 0.95rem;
@@ -247,12 +410,51 @@
 /* ==================== Analytics Section ==================== */
 .analyticsSection {
   margin-bottom: 2.5rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .analyticsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
   gap: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1200px) {
+  .analyticsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .analyticsGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .analyticsGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .analyticsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .analyticsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 }
 
 .analyticsCard {
@@ -262,6 +464,31 @@
   border: 1px solid var(--border-color);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   transition: var(--transition);
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  .analyticsCard {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .analyticsCard {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .analyticsCard {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .analyticsCard {
+    padding: 1.25rem;
+  }
 }
 
 .analyticsCard:hover {
@@ -375,6 +602,32 @@
   border: 1px solid var(--border-color);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   transition: var(--transition);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  .activitySection {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .activitySection {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .activitySection {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .activitySection {
+    padding: 1rem;
+  }
 }
 
 .activitySection:hover {
@@ -389,6 +642,34 @@
   margin-bottom: 2rem;
   flex-wrap: wrap;
   gap: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .activityHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .activityHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .activityHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+    gap: 1rem;
+  }
 }
 
 .activityTitle h2 {
@@ -412,6 +693,25 @@
   padding: 0.5rem;
   border-radius: 10px;
   border: 1px solid var(--border-color);
+  width: auto;
+}
+
+@media (max-width: 768px) {
+  .tabSwitch {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .tabSwitch {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabSwitch {
+    width: 100%;
+  }
 }
 
 .tab {
@@ -426,6 +726,32 @@
   transition: var(--transition);
   white-space: nowrap;
   font-family: 'Verdana', sans-serif;
+  flex: 1;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .tab {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .tab {
+    flex: 1;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tab {
+    flex: 1;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.75rem;
+  }
 }
 
 .tab:hover {
@@ -443,6 +769,26 @@
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--border-color) transparent;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .activityListWrapper {
+    max-height: 500px;
+  }
+}
+
+@media (max-width: 640px) {
+  .activityListWrapper {
+    max-height: 450px;
+  }
+}
+
+@media (max-width: 480px) {
+  .activityListWrapper {
+    max-height: 400px;
+  }
 }
 
 .activityListWrapper::-webkit-scrollbar {
@@ -476,6 +822,35 @@
   align-items: center;
   padding: 1rem;
   gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .activityItemContent {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .activityItemContent {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .activityItemContent {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.6rem;
+    gap: 0.5rem;
+  }
 }
 
 .activityItemWrapper:hover {
@@ -507,6 +882,30 @@
   font-family: 'Verdana', sans-serif;
 }
 
+@media (max-width: 768px) {
+  .activityAvatar {
+    width: 40px;
+    height: 40px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .activityAvatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .activityAvatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+}
+
 .activityInfo {
   min-width: 0;
   flex: 1;
@@ -520,6 +919,24 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+  .activityInfo h4 {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .activityInfo h4 {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .activityInfo h4 {
+    font-size: 0.8rem;
+  }
 }
 
 .activityInfo p {
@@ -539,6 +956,28 @@
   flex-shrink: 0;
 }
 
+@media (max-width: 768px) {
+  .activityItemRight {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 640px) {
+  .activityItemRight {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .activityItemRight {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+}
+
 .statusBadge {
   padding: 0.45rem 0.9rem;
   border-radius: 8px;
@@ -549,6 +988,27 @@
   border: 1px solid;
   white-space: nowrap;
   font-family: 'Verdana', sans-serif;
+}
+
+@media (max-width: 768px) {
+  .statusBadge {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .statusBadge {
+    font-size: 0.65rem;
+    padding: 0.3rem 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .statusBadge {
+    font-size: 0.6rem;
+    padding: 0.3rem 0.6rem;
+  }
 }
 
 .activityDate {
@@ -585,7 +1045,7 @@
 }
 
 /* ==================== Responsive Design ==================== */
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
   .dashboard {
     padding: 1.5rem;
   }
@@ -595,20 +1055,148 @@
   }
 
   .statsGrid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1.25rem;
     margin-bottom: 2rem;
+  }
+
+  .analyticsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .statCardContent {
+    padding: 1.75rem;
+    gap: 1.25rem;
+  }
+
+  .statCardIcon {
+    width: 44px;
+    height: 44px;
+    font-size: 1.6rem;
+  }
+
+  .statCardValue {
+    font-size: 2.2rem;
+  }
+
+  .analyticsCard {
+    padding: 1.75rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .dashboard {
+    padding: 1.5rem;
+  }
+
+  .pageTitle {
+    font-size: 1.9rem;
+  }
+
+  .pageSubtitle {
+    font-size: 0.95rem;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .statCardContent {
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+
+  .statCardIcon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.4rem;
+  }
+
+  .statCardValue {
+    font-size: 2rem;
+  }
+
+  .statCardTitle {
+    font-size: 0.95rem;
   }
 
   .analyticsGrid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
+
+  .analyticsCard {
+    padding: 1.5rem;
+  }
+
+  .cardHeader h3 {
+    font-size: 1.15rem;
+  }
+
+  .metricRow {
+    padding: 0.6rem 0;
+  }
+
+  .activitySection {
+    padding: 1.5rem;
+  }
+
+  .activityHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+
+  .activityTitle h2 {
+    font-size: 1.2rem;
+  }
+
+  .tabSwitch {
+    width: 100%;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .activityListWrapper {
+    max-height: 550px;
+  }
+
+  .activityItemContent {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .activityItemRight {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .activityAvatar {
+    width: 40px;
+    height: 40px;
+    font-size: 0.95rem;
+  }
+
+  .statusBadge {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.8rem;
+  }
 }
 
 @media (max-width: 768px) {
   .dashboard {
     padding: 1rem;
+    padding-top: 6rem;
+
   }
 
   .headerContent {
@@ -640,6 +1228,7 @@
   .statsGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
+    margin-bottom: 1.5rem;
   }
 
   .statCardContent {
@@ -657,12 +1246,43 @@
     font-size: 2rem;
   }
 
+  .statCardTitle {
+    font-size: 0.95rem;
+  }
+
+  .trendBadge {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .analyticsGrid {
+    gap: 1.5rem;
+  }
+
   .analyticsCard {
     padding: 1.5rem;
   }
 
   .cardHeader h3 {
     font-size: 1.1rem;
+  }
+
+  .metricRow {
+    padding: 0.5rem 0;
+  }
+
+  .metricLabel {
+    font-size: 0.85rem;
+    gap: 0.6rem;
+  }
+
+  .metricValue {
+    font-size: 1.2rem;
+  }
+
+  .progressLabel {
+    font-size: 0.85rem;
+    margin-bottom: 0.6rem;
   }
 
   .activitySection {
@@ -679,8 +1299,13 @@
     font-size: 1.2rem;
   }
 
+  .activityTitle p {
+    font-size: 0.85rem;
+  }
+
   .tabSwitch {
     width: 100%;
+    gap: 0.5rem;
   }
 
   .tab {
@@ -689,31 +1314,67 @@
     font-size: 0.85rem;
   }
 
+  .activityListWrapper {
+    max-height: 500px;
+  }
+
   .activityItemContent {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
     padding: 0.75rem;
-    gap: 0.75rem;
+    gap: 1rem;
   }
 
   .activityItemRight {
-    width: 100%;
-    justify-content: space-between;
+    width: auto;
+    justify-content: flex-end;
+  }
+
+  .activityAvatar {
+    width: 42px;
+    height: 42px;
+    font-size: 0.95rem;
+  }
+
+  .activityInfo h4 {
+    font-size: 0.9rem;
+  }
+
+  .activityInfo p {
+    font-size: 0.8rem;
+  }
+
+  .activityDate {
+    font-size: 0.8rem;
   }
 
   .statusBadge {
     font-size: 0.7rem;
     padding: 0.4rem 0.8rem;
   }
+
+  .emptyState {
+    padding: 2.5rem 2rem;
+  }
+
+  .emptyState svg {
+    font-size: 3rem;
+  }
+
+  .emptyState p {
+    font-size: 0.95rem;
+  }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .dashboard {
     padding: 0.75rem;
+    padding-top: 6rem;
+
   }
 
   .pageTitle {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
   }
 
   .pageSubtitle {
@@ -736,13 +1397,18 @@
   }
 
   .statsGrid {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .statCard {
+    min-height: 130px;
   }
 
   .statCardContent {
     padding: 1.25rem;
-    gap: 0.75rem;
+    gap: 0.8rem;
   }
 
   .statCardIcon {
@@ -764,8 +1430,8 @@
   }
 
   .trendBadge {
-    font-size: 0.75rem;
-    padding: 0.4rem 0.8rem;
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
   }
 
   .analyticsGrid {
@@ -798,6 +1464,10 @@
     margin-bottom: 0.5rem;
   }
 
+  .progressBar {
+    height: 6px;
+  }
+
   .activitySection {
     padding: 1rem;
   }
@@ -822,18 +1492,23 @@
   }
 
   .activityListWrapper {
-    max-height: 400px;
+    max-height: 420px;
+  }
+
+  .activityItemWrapper {
+    padding: 0.6rem 0.5rem;
   }
 
   .activityItemContent {
-    padding: 0.6rem;
-    gap: 0.5rem;
+    padding: 0.5rem;
+    gap: 0.6rem;
   }
 
   .activityAvatar {
     width: 36px;
     height: 36px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    min-width: 36px;
   }
 
   .activityInfo h4 {
@@ -866,10 +1541,283 @@
   }
 }
 
+@media (max-width: 480px) {
+  .dashboard {
+    padding: 0.75rem;
+    padding-top: 6rem;
+
+  }
+
+  .pageTitle {
+    font-size: 1.3rem;
+  }
+
+  .pageSubtitle {
+    font-size: 0.8rem;
+  }
+
+  .headerControls {
+    width: 100%;
+  }
+
+  .dateRangeControl {
+    width: 100%;
+    padding: 0.4rem;
+    gap: 0.4rem;
+  }
+
+  .rangeBtn {
+    padding: 0.45rem 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .statCard {
+    min-height: auto;
+  }
+
+  .statCardContent {
+    padding: 1.25rem;
+    gap: 0.75rem;
+  }
+
+  .statCardIcon {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .statCardValue {
+    font-size: 1.5rem;
+  }
+
+  .statCardTitle {
+    font-size: 0.85rem;
+  }
+
+  .statCardSubtitle {
+    font-size: 0.75rem;
+  }
+
+  .trendBadge {
+    font-size: 0.65rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .analyticsGrid {
+    gap: 0.75rem;
+  }
+
+  .analyticsCard {
+    padding: 1.25rem;
+  }
+
+  .cardHeader h3 {
+    font-size: 0.95rem;
+  }
+
+  .cardHeader p {
+    font-size: 0.75rem;
+  }
+
+  .metricRow {
+    padding: 0.4rem 0;
+  }
+
+  .metricLabel {
+    font-size: 0.75rem;
+    gap: 0.4rem;
+  }
+
+  .metricValue {
+    font-size: 1rem;
+  }
+
+  .progressLabel {
+    font-size: 0.75rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .progressBar {
+    height: 5px;
+  }
+
+  .activitySection {
+    padding: 1rem;
+  }
+
+  .activityTitle h2 {
+    font-size: 0.95rem;
+  }
+
+  .activityTitle p {
+    font-size: 0.75rem;
+  }
+
+  .tabSwitch {
+    width: 100%;
+    padding: 0.3rem;
+    gap: 0.3rem;
+  }
+
+  .tab {
+    padding: 0.45rem 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  .activityListWrapper {
+    max-height: 380px;
+  }
+
+  .activityItemWrapper {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .activityItemContent {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .activityItemRight {
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .activityAvatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+    min-width: 32px;
+  }
+
+  .activityInfo h4 {
+    font-size: 0.8rem;
+  }
+
+  .activityInfo p {
+    font-size: 0.7rem;
+  }
+
+  .activityDate {
+    font-size: 0.7rem;
+    white-space: nowrap;
+  }
+
+  .statusBadge {
+    font-size: 0.6rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .emptyState {
+    padding: 1.5rem;
+  }
+
+  .emptyState svg {
+    font-size: 2.2rem;
+  }
+
+  .emptyState p {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .dashboard {
+    padding: 0.5rem;
+    padding-top: 6rem;
+
+  }
+
+  .pageTitle {
+    font-size: 1.15rem;
+  }
+
+  .pageSubtitle {
+    font-size: 0.75rem;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .statCardContent {
+    padding: 1rem;
+    gap: 0.6rem;
+  }
+
+  .statCardIcon {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
+  }
+
+  .statCardValue {
+    font-size: 1.3rem;
+  }
+
+  .statCardTitle {
+    font-size: 0.8rem;
+  }
+
+  .analyticsCard {
+    padding: 1rem;
+  }
+
+  .cardHeader h3 {
+    font-size: 0.9rem;
+  }
+
+  .metricValue {
+    font-size: 0.95rem;
+  }
+
+  .activitySection {
+    padding: 0.75rem;
+  }
+
+  .activityTitle h2 {
+    font-size: 0.9rem;
+  }
+
+  .tab {
+    padding: 0.4rem 0.45rem;
+    font-size: 0.65rem;
+  }
+
+  .activityAvatar {
+    width: 28px;
+    height: 28px;
+    font-size: 0.7rem;
+  }
+
+  .activityInfo h4 {
+    font-size: 0.75rem;
+  }
+
+  .activityInfo p {
+    font-size: 0.65rem;
+  }
+
+  .statusBadge {
+    font-size: 0.55rem;
+    padding: 0.2rem 0.4rem;
+  }
+}
+
 /* ==================== Accessibility ==================== */
 
 
 @media (prefers-contrast: more) {
+
   .statCardInner,
   .analyticsCard,
   .activityItemWrapper,
