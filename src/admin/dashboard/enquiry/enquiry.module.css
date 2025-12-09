@@ -107,6 +107,7 @@
 }
 
 @keyframes pulse {
+
     0%,
     100% {
         opacity: 1;
@@ -542,6 +543,7 @@
 }
 
 @keyframes pulse-indicator {
+
     0%,
     100% {
         opacity: 1;
@@ -1059,6 +1061,7 @@
 @media (max-width: 768px) {
     .dashboardWrapper {
         padding: 1rem;
+        padding-top: 6rem;
     }
 
     .statusCardsSection {
@@ -1243,6 +1246,7 @@
 @media (max-width: 640px) {
     .dashboardWrapper {
         padding: 0.75rem;
+        padding-top: 6rem;
     }
 
     .statusCardsSection {
@@ -1434,6 +1438,7 @@
 @media (max-width: 480px) {
     .dashboardWrapper {
         padding: 0.5rem;
+        padding-top: 6rem;
     }
 
     .statusCardsSection {
@@ -1621,6 +1626,7 @@
 
 /* ==================== Accessibility ==================== */
 @media (prefers-reduced-motion: reduce) {
+
     .statusCardDot,
     .notesIndicator {
         animation: none;
@@ -1663,6 +1669,7 @@
 
 /* ==================== Print Styles ==================== */
 @media print {
+
     .modalOverlay,
     .modal {
         display: none !important;
@@ -2110,4 +2117,5 @@
     align-items: center;
     justify-content: center;
     gap: 0.6rem;
+
 }

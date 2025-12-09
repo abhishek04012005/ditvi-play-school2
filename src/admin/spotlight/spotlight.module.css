@@ -1589,6 +1589,7 @@
 @media (max-width: 768px) {
     .staroftheweek {
         padding: 1rem;
+        padding-top: 6rem;
     }
 
     .statusCardsSection {
@@ -1804,6 +1805,8 @@
 @media (max-width: 640px) {
     .staroftheweek {
         padding: 0.75rem;
+                padding-top: 6rem;
+
     }
 
     .statusCardsSection {

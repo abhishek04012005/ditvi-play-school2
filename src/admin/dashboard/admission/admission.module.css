@@ -1342,19 +1342,222 @@
 
 .pdfPreviewModal {
     position: fixed;
-    top: 10%;
-    left: 33%;  
+    top: 50%;
+    left: 50%;  
     transform: translate(-50%, -50%);
     background: var(--white);
     border-radius: 16px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     z-index: 1001;
-    max-width: auto;
+    width: 90%;
+    max-width: 900px;
     max-height: 90vh;
     height: 90vh;
     display: flex;
     flex-direction: column;
-    overflow: scroll;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid var(--border-color);
+}
+
+/* ==================== PDF PREVIEW SCROLLBAR - WEBKIT (Chrome, Safari, Edge) ==================== */
+.pdfPreviewModal::-webkit-scrollbar {
+    width: 10px;
+}
+
+.pdfPreviewModal::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, rgba(243, 232, 255, 0.3), rgba(255, 251, 240, 0.2));
+    border-radius: 10px;
+    margin: 10px 0;
+}
+
+.pdfPreviewModal::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #6a4c93, #ffc107);
+    border-radius: 10px;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 2px solid var(--white);
+    min-height: 40px;
+}
+
+.pdfPreviewModal::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #5a3c7a, #ffd700);
+    box-shadow: 0 0 12px rgba(106, 76, 147, 0.3), inset 0 0 8px rgba(0, 0, 0, 0.15);
+}
+
+.pdfPreviewModal::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(180deg, #6a4c93, #ffc107);
+    box-shadow: 0 0 16px rgba(106, 76, 147, 0.4), inset 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.pdfPreviewModal::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* ==================== PDF PREVIEW SCROLLBAR - FIREFOX ==================== */
+.pdfPreviewModal {
+    scrollbar-width: thin;
+    scrollbar-color: #6a4c93 rgba(243, 232, 255, 0.3);
+}
+
+/* ==================== RESPONSIVE PDF MODAL ==================== */
+@media (max-width: 1280px) {
+    .pdfPreviewModal {
+        width: 92%;
+        max-width: 850px;
+        height: 88vh;
+        max-height: 88vh;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar {
+        width: 9px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .pdfPreviewModal {
+        width: 93%;
+        max-width: 800px;
+        height: 85vh;
+        max-height: 85vh;
+        border-radius: 14px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-thumb {
+        border: 1.5px solid var(--white);
+        min-height: 35px;
+    }
+}
+
+@media (max-width: 768px) {
+    .pdfPreviewModal {
+        width: 95%;
+        max-width: 95%;
+        height: 80vh;
+        max-height: 80vh;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 16px 16px 0 0;
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.25);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar {
+        width: 7px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-track {
+        margin: 5px 0;
+        border-radius: 8px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-thumb {
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.08);
+        min-height: 30px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-thumb:hover {
+        border: 1px solid var(--white);
+        box-shadow: 0 0 10px rgba(106, 76, 147, 0.25), inset 0 0 6px rgba(0, 0, 0, 0.12);
+    }
+}
+
+@media (max-width: 640px) {
+    .pdfPreviewModal {
+        width: 98%;
+        max-width: 98%;
+        height: 78vh;
+        max-height: 78vh;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 18px 18px 0 0;
+        padding: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-track {
+        margin: 5px 0;
+        border-radius: 6px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-thumb {
+        border: none;
+        box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.1);
+        min-height: 25px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-thumb:hover {
+        box-shadow: 0 0 8px rgba(106, 76, 147, 0.2), inset 0 0 5px rgba(0, 0, 0, 0.15);
+    }
+}
+
+@media (max-width: 480px) {
+    .pdfPreviewModal {
+        width: 100%;
+        max-width: 100%;
+        height: 75vh;
+        max-height: 75vh;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 20px 20px 0 0;
+        box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.2);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-track {
+        margin: 3px 0;
+        border-radius: 5px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #6a4c93, #ffc107);
+        border-radius: 3px;
+        border: none;
+        min-height: 20px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #5a3c7a, #ffd700);
+        box-shadow: 0 0 6px rgba(106, 76, 147, 0.3);
+    }
+}
+
+@media (max-width: 360px) {
+    .pdfPreviewModal {
+        width: 100%;
+        max-width: 100%;
+        height: 70vh;
+        max-height: 70vh;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-thumb {
+        border-radius: 2px;
+        min-height: 15px;
+    }
 }
 
 .pdfPreviewContainer {
