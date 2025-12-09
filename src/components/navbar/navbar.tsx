@@ -21,6 +21,11 @@ const Navbar = () => {
     window.open(`https://wa.me/${schoolDetails.contact.whatsapp}`, '_blank'); // Replace with your WhatsApp number
   };
 
+  const handleAdmissionClick = () => {
+    // Reload the page when admission button is clicked
+    window.location.href = '/admission-form';
+  };
+
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About Us' },
@@ -69,9 +74,12 @@ const Navbar = () => {
               ))}
             </div>
 
-            <Link href="/admission-form" className={styles.enrollBtn}>
+            <button 
+              onClick={handleAdmissionClick}
+              className={styles.enrollBtn}
+            >
               Admission Now
-            </Link>
+            </button>
 
             <button
               className={styles.mobileMenuBtn}
