@@ -380,25 +380,52 @@ export default function AdmissionForm() {
     try {
       toast.loading("Generating PDF...");
 
+      // Add PDF export class to force A4 size on all devices
+      pdfRef.current.classList.add('pdfExport');
+
+      // Wait for class to be applied
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       const canvas = await html2canvas(pdfRef.current, {
         scale: 2,
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
+        width: 794, // A4 width at 96 DPI: 210mm = 794px
+        height: 1123, // A4 height at 96 DPI: 297mm = 1123px
+        windowHeight: 1123,
+        windowWidth: 794,
+        allowTaint: true,
+        onclone: (clonedDocument) => {
+          // Force A4 dimensions on cloned element
+          const clonedElement = clonedDocument.querySelector('[class*="slipContainer"]');
+          if (clonedElement) {
+            (clonedElement as HTMLElement).style.width = '794px';
+            (clonedElement as HTMLElement).style.height = '1123px';
+            (clonedElement as HTMLElement).style.maxWidth = '794px';
+            (clonedElement as HTMLElement).style.maxHeight = '1123px';
+            (clonedElement as HTMLElement).style.margin = '0';
+            (clonedElement as HTMLElement).style.padding = '19px'; // 0.5cm in px
+          }
+        },
       });
 
+      // Remove PDF export class
+      pdfRef.current.classList.remove('pdfExport');
+
+      // Create PDF with exact A4 dimensions (210mm x 297mm)
       const pdf = new jsPDF("p", "mm", "a4");
       const imgData = canvas.toDataURL("image/png");
-      const imgWidth = 210;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      
+      // Add image to fill entire A4 page (0,0 to 210mm,297mm)
+      pdf.addImage(imgData, "PNG", 0, 0, 210, 297);
       pdf.save(`Admission_${submissionResult?.admission_number}.pdf`);
 
       toast.dismiss();
       toast.success("PDF downloaded successfully!");
     } catch (error) {
       console.error("PDF generation error:", error);
+      pdfRef.current?.classList.remove('pdfExport');
       toast.dismiss();
       toast.error("Failed to generate PDF");
     }
@@ -558,6 +585,12 @@ export default function AdmissionForm() {
               <AdmissionSlip
                 data={submissionResult}
                 formData={formData}
+                documentStatus={{
+                  photo: fileMeta.photo?.downloadUrl ? 'uploaded' : fileUploadStatus.photo === 'uploading' ? 'pending' : 'notUploaded',
+                  birth_certificate: fileMeta.birth_certificate?.downloadUrl ? 'uploaded' : fileUploadStatus.birth_certificate === 'uploading' ? 'pending' : 'notUploaded',
+                  aadhar_card: fileMeta.aadhar_card?.downloadUrl ? 'uploaded' : fileUploadStatus.aadhar_card === 'uploading' ? 'pending' : 'notUploaded',
+                  parent_id_proof: fileMeta.parent_id_proof?.downloadUrl ? 'uploaded' : fileUploadStatus.parent_id_proof === 'uploading' ? 'pending' : 'notUploaded',
+                }}
               />
             </motion.div>
           </motion.div>

@@ -322,81 +322,81 @@
 
 /* ==================== FORM GROUP ==================== */
 .formGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .formGroup label {
-    color: var(--primary-purple);
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: color 0.3s ease;
+  color: var(--primary-purple);
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.3s ease;
 }
 
 .formGroup:focus-within label {
-    color: var(--primary-yellow);
+  color: var(--primary-yellow);
 }
 
 /* Input Wrapper */
 .inputWrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .icon {
-    position: absolute;
-    left: 1.25rem;
-    color: var(--primary-purple);
-    font-size: 1.1rem;
-    opacity: 0.6;
-    z-index: 2;
-    transition: all 0.3s ease;
-    pointer-events: none;
+  position: absolute;
+  left: 1.25rem;
+  color: var(--primary-purple);
+  font-size: 1.1rem;
+  opacity: 0.6;
+  z-index: 2;
+  transition: all 0.3s ease;
+  pointer-events: none;
 }
 
 .inputWrapper input,
 .inputWrapper select,
 .inputWrapper textarea {
-    width: 100%;
-    padding: 1rem 1.25rem 1rem 3.5rem;
-    border: 2px solid var(--primary-purple);
-    border-radius: 14px;
-    background: rgba(106, 76, 147, 0.03);
-    font-size: 1rem;
-    color: var(--primary-purple);
-    transition: all 0.3s ease;
-    font-family: inherit;
+  width: 100%;
+  padding: 1rem 1.25rem 1rem 3.5rem;
+  border: 2px solid var(--primary-purple);
+  border-radius: 14px;
+  background: rgba(106, 76, 147, 0.03);
+  font-size: 1rem;
+  color: var(--primary-purple);
+  transition: all 0.3s ease;
+  font-family: inherit;
 }
 
 .inputWrapper select {
-    appearance: none;
-    cursor: pointer;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath fill='%236a4c93' d='M7 10.5L1 4.5h12z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1.25rem center;
-    background-color: rgba(106, 76, 147, 0.03);
-    padding-right: 3rem;
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath fill='%236a4c93' d='M7 10.5L1 4.5h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.25rem center;
+  background-color: rgba(106, 76, 147, 0.03);
+  padding-right: 3rem;
 }
 
 .inputWrapper input::placeholder {
-    color: var(--text-gray);
-    opacity: 0.6;
+  color: var(--text-gray);
+  opacity: 0.6;
 }
 
 .inputWrapper input:focus,
 .inputWrapper select:focus {
-    outline: none;
-    border-color: var(--primary-purple);
-    background: var(--white);
-    box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
+  outline: none;
+  border-color: var(--primary-purple);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
 }
 
-.inputWrapper input:focus + .icon,
+.inputWrapper input:focus+.icon,
 .formGroup:focus-within .icon {
-    color: var(--primary-yellow);
-    opacity: 1;
+  color: var(--primary-yellow);
+  opacity: 1;
 }
 
 .inputWrapper input[type="date"]::-webkit-calendar-picker-indicator {
@@ -406,12 +406,12 @@
 
 
 .inputError {
-    border-color: #ef4444 !important;
-    background: rgba(239, 68, 68, 0.03) !important;
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.03) !important;
 }
 
 .inputError:focus {
-    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1) !important;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1) !important;
 }
 
 /* ==================== FORM GRID ==================== */
@@ -649,7 +649,7 @@
   padding: 1.25rem;
   box-shadow: 0 12px 40px rgba(106, 76, 147, 0.06);
   text-align: center;
-  max-width: 680px;
+  max-width: auto;
   border: 1px solid var(--border-color);
   animation: slideUp 0.4s ease-out;
   width: 100%;
@@ -685,7 +685,7 @@
 
 /* ==================== CONFIRMATION SLIP ==================== */
 .confirmationSlipContainer {
-  margin: 2rem 0;
+  overflow: auto;
 }
 
 .confirmationSlip {

@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import styles from './admissionform.module.css';
+import slipStyles from './admissionslip.module.css';
 import { schoolDetails } from '@/json/schooldetails';
+import { FaCheckCircle, FaClock, FaTimesCircle } from 'react-icons/fa';
 
 interface SubmissionResult {
     admission_number: string;
@@ -26,18 +26,18 @@ interface FormData {
     previous_school: string;
 }
 
+interface DocumentStatus {
+    photo: 'uploaded' | 'pending' | 'notUploaded';
+    birth_certificate: 'uploaded' | 'pending' | 'notUploaded';
+    aadhar_card: 'uploaded' | 'pending' | 'notUploaded';
+    parent_id_proof: 'uploaded' | 'pending' | 'notUploaded';
+}
+
 interface AdmissionSlipProps {
     data: SubmissionResult;
     formData: FormData;
+    documentStatus?: DocumentStatus;
 }
-
-// Utility function to mask contact number
-const maskContactNumber = (phoneNumber: string): string => {
-    if (!phoneNumber) return 'Not provided';
-    const cleaned = phoneNumber.replace(/\D/g, '');
-    if (cleaned.length < 4) return phoneNumber;
-    return 'XXXXXX' + cleaned.slice(-4);
-};
 
 // Format date function
 const formatDate = (dateString: string): string => {
@@ -54,189 +54,216 @@ const formatDate = (dateString: string): string => {
     }
 };
 
+// Get status icon for document
+const getDocumentStatusIcon = (status: 'uploaded' | 'pending' | 'notUploaded') => {
+    switch (status) {
+        case 'uploaded':
+            return <FaCheckCircle style={{ color: '#10b981' }} />;
+        case 'pending':
+            return <FaClock style={{ color: '#ffbf00' }} />;
+        case 'notUploaded':
+            return <FaTimesCircle style={{ color: '#ef4444' }} />;
+        default:
+            return null;
+    }
+};
+
+// Get status text for document
+const getDocumentStatusText = (status: 'uploaded' | 'pending' | 'notUploaded'): string => {
+    switch (status) {
+        case 'uploaded':
+            return 'Uploaded';
+        case 'pending':
+            return 'Pending';
+        case 'notUploaded':
+            return 'Not Uploaded';
+        default:
+            return 'Unknown';
+    }
+};
+
 // Main Component
-const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData }) => {
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1,
-            },
-        },
-    };
-
-    const itemVariants = {
-        hidden: { opacity: 0, y: 10 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.4 },
-        },
-    };
-
+const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentStatus }) => {
     const logoSrc = typeof schoolDetails.logo === 'string'
         ? schoolDetails.logo
         : (schoolDetails.logo as any)?.src;
 
+    const todayDate = formatDate(new Date().toISOString());
+
     return (
-        <motion.div
-            className={styles.slipContainer}
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-        >
-            {/* Professional Header Section */}
-            <motion.div className={styles.slipHeaderSection} variants={itemVariants}>
-                <div className={styles.slipHeaderTop}>
+        <div className={slipStyles.slipContainer}>
+            {/* Header Section */}
+            <div className={slipStyles.header}>
+                <div className={slipStyles.headerTop}>
                     {logoSrc && (
-                        <img src={logoSrc} alt="School Logo" className={styles.slipLogo} />
+                        <img src={logoSrc} alt="School Logo" className={slipStyles.logo} />
                     )}
-                    <div className={styles.slipHeaderCenter}>
-                        <h1 className={styles.slipSchoolName}>{schoolDetails.name}</h1>
-                        <p className={styles.slipSchoolAddress}>
-                            {schoolDetails.address.street}, {schoolDetails.address.city}
+                    <div className={slipStyles.headerCenter}>
+                        <h1 className={slipStyles.schoolName}>{schoolDetails.name}</h1>
+                        <p className={slipStyles.address}>{schoolDetails.address.street}</p>
+                        <p className={slipStyles.addressDetail}>
+                            {schoolDetails.address.city}, {schoolDetails.address.state} - {schoolDetails.address.pincode}
                         </p>
-                        <p className={styles.slipSchoolContact}>
-                            {schoolDetails.contact.phone} | {schoolDetails.contact.email}
+                        <p className={slipStyles.contact}>
+                            Phone: {schoolDetails.contact.phone} | Email: {schoolDetails.contact.email}
                         </p>
                     </div>
                     {logoSrc && (
-                        <img src={logoSrc} alt="School Logo" className={styles.slipLogo} />
+                        <img src={logoSrc} alt="School Logo" className={slipStyles.logo} />
                     )}
                 </div>
-                <div className={styles.slipHeaderDivider}></div>
-                <h2 className={styles.slipFormTitle}>ADMISSION CONFIRMATION SLIP</h2>
-                <div className={styles.slipHeaderDivider}></div>
-            </motion.div>
-
-            {/* Admission Number Box - Prominent Display */}
-            <motion.div className={styles.slipAdmissionBox} variants={itemVariants}>
-                <div className={styles.slipAdmissionBoxContent}>
-                    <span className={styles.slipAdmissionLabel}>Admission Number</span>
-                    <span className={styles.slipAdmissionNumber}>{data.admission_number}</span>
-                </div>
-            </motion.div>
-
-            {/* Details Grid - Professional 2-Column Layout */}
-            <div className={styles.slipDetailsGrid}>
-                {/* Child Information Section */}
-                <motion.div className={styles.slipDetailSection} variants={itemVariants}>
-                    <h3 className={styles.slipSectionTitle}>CHILD INFORMATION</h3>
-                    <div className={styles.slipDetailContent}>
-                        <div className={styles.slipDetailRow}>
-                            <span className={styles.slipDetailLabel}>Child Name</span>
-                            <span className={styles.slipDetailValue}>{data.child_name}</span>
-                        </div>
-                        <div className={styles.slipDetailRow}>
-                            <span className={styles.slipDetailLabel}>Date of Birth</span>
-                            <span className={styles.slipDetailValue}>{formatDate(formData.child_dob)}</span>
-                        </div>
-                        <div className={styles.slipDetailRow}>
-                            <span className={styles.slipDetailLabel}>Gender</span>
-                            <span className={styles.slipDetailValue}>{formData.child_gender || 'N/A'}</span>
-                        </div>
-                        <div className={styles.slipDetailRow}>
-                            <span className={styles.slipDetailLabel}>Place of Birth</span>
-                            <span className={styles.slipDetailValue}>{formData.child_place_of_birth || 'N/A'}</span>
-                        </div>
-                        <div className={styles.slipDetailRow}>
-                            <span className={styles.slipDetailLabel}>Blood Group</span>
-                            <span className={styles.slipDetailValue}>{formData.child_blood_group || 'N/A'}</span>
-                        </div>
-                    </div>
-                </motion.div>
-
-                {/* Parent Information Section */}
-                <motion.div className={styles.slipDetailSection} variants={itemVariants}>
-                    <h3 className={styles.slipSectionTitle}>PARENT INFORMATION</h3>
-                    <div className={styles.slipDetailContent}>
-                        <div className={styles.slipDetailRow}>
-                            <span className={styles.slipDetailLabel}>Parent Name</span>
-                            <span className={styles.slipDetailValue}>{formData.parent_name}</span>
-                        </div>
-                        <div className={styles.slipDetailRow}>
-                            <span className={styles.slipDetailLabel}>Mobile Number</span>
-                            <span className={styles.slipDetailValue}>{maskContactNumber(data.parent_mobile_number)}</span>
-                        </div>
-                        <div className={styles.slipDetailRow}>
-                            <span className={styles.slipDetailLabel}>Email</span>
-                            <span className={styles.slipDetailValue}>{formData.parent_email || 'Not provided'}</span>
-                        </div>
-                        <div className={styles.slipDetailRow}>
-                            <span className={styles.slipDetailLabel}>Address</span>
-                            <span className={styles.slipDetailValue}>{formData.parent_address || 'N/A'}</span>
-                        </div>
-                    </div>
-                </motion.div>
-
-                {/* Program Details Section */}
-                <motion.div className={styles.slipDetailSection} variants={itemVariants}>
-                    <h3 className={styles.slipSectionTitle}>PROGRAM DETAILS</h3>
-                    <div className={styles.slipDetailContent}>
-                        <div className={styles.slipDetailRow}>
-                            <span className={styles.slipDetailLabel}>Applied Program</span>
-                            <span className={styles.slipDetailValue}>
-                                <span className={styles.slipProgramBadge}>{data.program_name}</span>
-                            </span>
-                        </div>
-                        <div className={styles.slipDetailRow}>
-                            <span className={styles.slipDetailLabel}>Previous School</span>
-                            <span className={styles.slipDetailValue}>{formData.previous_school || 'N/A'}</span>
-                        </div>
-                        <div className={styles.slipDetailRow}>
-                            <span className={styles.slipDetailLabel}>Submission Date</span>
-                            <span className={styles.slipDetailValue}>
-                                {new Date().toLocaleDateString('en-IN', {
-                                    day: '2-digit',
-                                    month: 'short',
-                                    year: 'numeric',
-                                })}
-                            </span>
-                        </div>
-                        <div className={styles.slipDetailRow}>
-                            <span className={styles.slipDetailLabel}>Status</span>
-                            <span className={styles.slipDetailValue}>
-                                <span className={styles.slipStatusBadge}>Under Review</span>
-                            </span>
-                        </div>
-                    </div>
-                </motion.div>
-
-                {/* Important Notes Section */}
-                <motion.div className={styles.slipDetailSection} variants={itemVariants}>
-                    <h3 className={styles.slipSectionTitle}>IMPORTANT NOTES</h3>
-                    <div className={styles.slipNotesContent}>
-                        <ul className={styles.slipNotesList}>
-                            <li>Please keep this confirmation slip for your records</li>
-                            <li>We will review your application within 5-7 business days</li>
-                            <li>A confirmation call will be made to the provided contact number</li>
-                            <li>Required documents must be submitted as per school guidelines</li>
-                            <li>For queries, contact: {schoolDetails.contact.phone}</li>
-                        </ul>
-                    </div>
-                </motion.div>
+                <div className={slipStyles.dividerMain}></div>
+                <h2 className={slipStyles.formTitle}>ADMISSION CONFIRMATION SLIP</h2>
+                <div className={slipStyles.dividerMain}></div>
             </div>
 
+            {/* Meta Section - Admission Number */}
+            <div className={slipStyles.metaSection}>
+                <div className={slipStyles.metaRow}>
+                    <div className={slipStyles.metaItem}>
+                        <span className={slipStyles.metaLabel}>Admission No:</span>
+                        <span className={slipStyles.metaValue}>{data.admission_number}</span>
+                    </div>
+                    <div className={slipStyles.metaItem}>
+                        <span className={slipStyles.metaLabel}>Date:</span>
+                        <span className={slipStyles.metaValue}>{todayDate}</span>
+                    </div>
+                    <div className={slipStyles.metaItem}>
+                        <span className={slipStyles.metaLabel}>Status:</span>
+                        <span className={slipStyles.metaValue}>Under Review</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Child Information Section */}
+            <div className={slipStyles.section}>
+                <h3 className={slipStyles.sectionTitle}>1. CHILD INFORMATION</h3>
+                <div className={slipStyles.sectionContent}>
+                    <div className={slipStyles.fieldRow}>
+                        <div className={slipStyles.field}>
+                            <label className={slipStyles.fieldLabel}>Child Name:</label>
+                            <div className={slipStyles.fieldValue}>{data.child_name || 'N/A'}</div>
+                        </div>
+                        <div className={slipStyles.field}>
+                            <label className={slipStyles.fieldLabel}>Date of Birth:</label>
+                            <div className={slipStyles.fieldValue}>{formatDate(formData.child_dob)}</div>
+                        </div>
+                    </div>
+                    <div className={slipStyles.fieldRow}>
+                        <div className={slipStyles.field}>
+                            <label className={slipStyles.fieldLabel}>Gender:</label>
+                            <div className={slipStyles.fieldValue}>{formData.child_gender || 'N/A'}</div>
+                        </div>
+                        <div className={slipStyles.field}>
+                            <label className={slipStyles.fieldLabel}>Place of Birth:</label>
+                            <div className={slipStyles.fieldValue}>{formData.child_place_of_birth || 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Parent Information Section */}
+            <div className={slipStyles.section}>
+                <h3 className={slipStyles.sectionTitle}>2. PARENT/GUARDIAN INFORMATION</h3>
+                <div className={slipStyles.sectionContent}>
+                    <div className={slipStyles.fieldRow}>
+                        <div className={slipStyles.field}>
+                            <label className={slipStyles.fieldLabel}>Parent Name:</label>
+                            <div className={slipStyles.fieldValue}>{formData.parent_name || 'N/A'}</div>
+                        </div>
+                        <div className={slipStyles.field}>
+                            <label className={slipStyles.fieldLabel}>Mobile Number:</label>
+                            <div className={slipStyles.fieldValue}>{data.parent_mobile_number || 'N/A'}</div>
+                        </div>
+                    </div>
+                    <div className={`${slipStyles.fieldRow} ${slipStyles.fullWidth}`}>
+                        <div className={slipStyles.field}>
+                            <label className={slipStyles.fieldLabel}>Address:</label>
+                            <div className={slipStyles.fieldValue}>{formData.parent_address || 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Program Details Section */}
+            <div className={slipStyles.section}>
+                <h3 className={slipStyles.sectionTitle}>3. PROGRAM & ADMISSION DETAILS</h3>
+                <div className={slipStyles.sectionContent}>
+                    <div className={slipStyles.fieldRow}>
+                        <div className={slipStyles.field}>
+                            <label className={slipStyles.fieldLabel}>Program:</label>
+                            <div className={slipStyles.fieldValue}>{data.program_name || 'N/A'}</div>
+                        </div>
+                        <div className={slipStyles.field}>
+                            <label className={slipStyles.fieldLabel}>Previous School:</label>
+                            <div className={slipStyles.fieldValue}>{formData.previous_school || 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Document Status Section */}
+            {documentStatus && (
+                <div className={slipStyles.section}>
+                    <h3 className={slipStyles.sectionTitle}>4. DOCUMENT STATUS</h3>
+                    <div className={slipStyles.documentGrid}>
+                        <div className={slipStyles.documentItem}>
+                            <div className={slipStyles.documentIcon}>
+                                {getDocumentStatusIcon(documentStatus.photo)}
+                            </div>
+                            <div className={slipStyles.documentInfo}>
+                                <p className={slipStyles.documentName}>Photograph</p>
+                                <p className={slipStyles.documentStatus}>{getDocumentStatusText(documentStatus.photo)}</p>
+                            </div>
+                        </div>
+                        <div className={slipStyles.documentItem}>
+                            <div className={slipStyles.documentIcon}>
+                                {getDocumentStatusIcon(documentStatus.birth_certificate)}
+                            </div>
+                            <div className={slipStyles.documentInfo}>
+                                <p className={slipStyles.documentName}>Birth Certificate</p>
+                                <p className={slipStyles.documentStatus}>{getDocumentStatusText(documentStatus.birth_certificate)}</p>
+                            </div>
+                        </div>
+                        <div className={slipStyles.documentItem}>
+                            <div className={slipStyles.documentIcon}>
+                                {getDocumentStatusIcon(documentStatus.aadhar_card)}
+                            </div>
+                            <div className={slipStyles.documentInfo}>
+                                <p className={slipStyles.documentName}>Aadhar Card</p>
+                                <p className={slipStyles.documentStatus}>{getDocumentStatusText(documentStatus.aadhar_card)}</p>
+                            </div>
+                        </div>
+                        <div className={slipStyles.documentItem}>
+                            <div className={slipStyles.documentIcon}>
+                                {getDocumentStatusIcon(documentStatus.parent_id_proof)}
+                            </div>
+                            <div className={slipStyles.documentInfo}>
+                                <p className={slipStyles.documentName}>Parent ID Proof</p>
+                                <p className={slipStyles.documentStatus}>{getDocumentStatusText(documentStatus.parent_id_proof)}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Footer Section */}
-            <motion.div className={styles.slipFooterSection} variants={itemVariants}>
-                <div className={styles.slipFooterContent}>
-                    <p className={styles.slipFooterMessage}>
+            <div className={slipStyles.footerSection}>
+                <div className={slipStyles.footerContent}>
+                    <p className={slipStyles.footerMessage}>
                         Thank you for choosing {schoolDetails.name}. We look forward to welcoming{' '}
                         <strong>{data.child_name}</strong> to our school family.
                     </p>
-                    <div className={styles.slipFooterMeta}>
-                        <span className={styles.slipFooterItem}>Doc ID: {data.admission_number}</span>
-                        <span className={styles.slipFooterSeparator}>•</span>
-                        <span className={styles.slipFooterItem}>
-                            Generated: {new Date().toLocaleDateString('en-IN')}
-                        </span>
-                        <span className={styles.slipFooterSeparator}>•</span>
-                        <span className={styles.slipFooterItem}>Official Confirmation</span>
+                    <div className={slipStyles.footerMeta}>
+                        <span className={slipStyles.footerItem}>Doc ID: {data.admission_number}</span>
+                        <span className={slipStyles.footerItem}>•</span>
+                        <span className={slipStyles.footerItem}>Generated: {todayDate}</span>
+                        <span className={slipStyles.footerItem}>•</span>
+                        <span className={slipStyles.footerItem}>Official Confirmation</span>
                     </div>
                 </div>
-            </motion.div>
-        </motion.div>
+            </div>
+        </div>
     );
 };
 
