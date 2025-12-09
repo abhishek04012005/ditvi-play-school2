@@ -82,6 +82,14 @@ const getDocumentStatusText = (status: 'uploaded' | 'pending' | 'notUploaded'): 
     }
 };
 
+// Mask mobile number - hide first 6 digits, show only last 4 digits
+const maskMobileNumber = (phoneNumber: string): string => {
+    if (!phoneNumber) return 'N/A';
+    const cleaned = phoneNumber.replace(/\D/g, '');
+    if (cleaned.length < 4) return phoneNumber;
+    return 'XXXXXX' + cleaned.substring(cleaned.length - 4);
+};
+
 // Main Component
 const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentStatus }) => {
     const logoSrc = typeof schoolDetails.logo === 'string'
@@ -173,7 +181,7 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
                         </div>
                         <div className={slipStyles.field}>
                             <label className={slipStyles.fieldLabel}>Mobile Number:</label>
-                            <div className={slipStyles.fieldValue}>{data.parent_mobile_number || 'N/A'}</div>
+                            <div className={slipStyles.fieldValue}>{maskMobileNumber(data.parent_mobile_number)}</div>
                         </div>
                     </div>
                     <div className={`${slipStyles.fieldRow} ${slipStyles.fullWidth}`}>
