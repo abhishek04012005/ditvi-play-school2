@@ -17,8 +17,8 @@ import {
     FaChevronRight,
 } from 'react-icons/fa';
 import styles from './document-dashboard.module.css';
-import dashboardStyles from '../dashboard.module.css';
 import Loader from '@/custom/loader/loader';
+import HeadingTitle from '@/components/heading/headingtitle';
 
 interface Document {
     id: string;
@@ -31,7 +31,7 @@ interface Document {
 interface StatusCard {
     label: string;
     count: number;
-    icon: string;
+    icon: React.ReactNode;
     color: string;
     bgColor: string;
     id: string;
@@ -58,12 +58,7 @@ const DocumentDashboard = () => {
     useEffect(() => {
         const r = localStorage.getItem('adminRoleId');
         if (r) setRoleId(parseInt(r, 10));
-        const initializePage = async () => {
-            setLoading(true);
-            await fetchDocuments();
-            setLoading(false);
-        };
-        initializePage();
+        fetchDocuments();
     }, []);
 
     useEffect(() => {
@@ -72,8 +67,22 @@ const DocumentDashboard = () => {
 
     const canManage = roleId === 0 || roleId === 1;
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+        },
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+    };
+
     const fetchDocuments = async () => {
         try {
+            setLoading(true);
             const res = await fetch('/api/public/downloads');
             const json = await res.json();
             if (json?.success) setDocuments(json.data || []);
@@ -81,6 +90,9 @@ const DocumentDashboard = () => {
         } catch (err) {
             console.error(err);
             toast.error('Failed to load documents');
+            setDocuments([]);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -137,6 +149,11 @@ const DocumentDashboard = () => {
         }
     };
 
+    const getSortIcon = (field: SortField) => {
+        if (sortField !== field) return <FaSort />;
+        return sortOrder === 'asc' ? <FaSortUp /> : <FaSortDown />;
+    };
+
     const handleSort = (field: SortField) => {
         if (sortField === field) {
             setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -145,11 +162,6 @@ const DocumentDashboard = () => {
             setSortOrder('asc');
         }
         setCurrentPage(1);
-    };
-
-    const getSortIcon = (field: SortField) => {
-        if (sortField !== field) return <FaSort />;
-        return sortOrder === 'asc' ? <FaSortUp /> : <FaSortDown />;
     };
 
     const sortedAndFilteredDocuments = documents
@@ -177,95 +189,293 @@ const DocumentDashboard = () => {
         {
             label: 'Total Documents',
             count: documents.length,
-            icon: '📁',
-            color: 'var(--primary-purple)',
+            icon: <FaFile />,
+            color: '#6a4c93',
             bgColor: '#f3e8ff',
             id: 'total',
         },
         {
             label: 'This Week',
             count: documents.filter(d => new Date(d.uploaded_at).getTime() >= weekAgo).length,
-            icon: '🕒',
+            icon: <FaDownload />,
             color: '#3b82f6',
             bgColor: '#eff6ff',
             id: 'week',
         },
         {
-            label: 'Last Uploaded',
+            label: 'Recent',
             count: documents.length > 0 ? 1 : 0,
-            icon: '📌',
+            icon: <FaEye />,
             color: '#10b981',
             bgColor: '#ecfdf5',
             id: 'recent',
         },
     ];
 
+    const handleItemsPerPageChange = (value: ItemsPerPage) => {
+        setItemsPerPage(value);
+        setCurrentPage(1);
+    };
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+            const tableElement = document.querySelector(`.${styles.tableWrapper}`);
+            if (tableElement) {
+                tableElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    };
+
+    if (loading) {
+        return <Loader isVisible={true} message="Loading Document Dashboard..." fullScreen={true} />;
+    }
+
     if (!canManage) {
         return <Loader isVisible={true} fullScreen={true} message="Checking permissions..." />;
     }
 
-    if (loading) {
-        return <Loader isVisible={true} fullScreen={true} message="Loading dashboard..." />;
-    }
-
     return (
-        <div className={dashboardStyles.dashboard}>
-            {/* Header */}
-            <div className={dashboardStyles.headerSection}>
-                <div className={dashboardStyles.headerContent}>
-                    <div>
-                        <h1 className={dashboardStyles.pageTitle}>Documents</h1>
-                        <p className={dashboardStyles.pageSubtitle}>Manage school documents and resources</p>
-                    </div>
-                    <div className={dashboardStyles.headerControls}>
-                        <button className={dashboardStyles.rangeBtn} onClick={() => fetchDocuments()}>
-                            Refresh
-                        </button>
-                    </div>
-                </div>
-            </div>
+        <div className={styles.dashboardWrapper}>
+            <HeadingTitle text='Document Dashboard' />
 
-            {/* Status Cards */}
-            <div className={dashboardStyles.statusCardsSection}>
-                {statusCards.map((card, index) => (
-                    <motion.div
-                        key={card.id}
-                        className={dashboardStyles.statusCard}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3, delay: index * 0.1 }}
-                    >
-                        <div className={dashboardStyles.statusCardContent}>
-                            <div className={dashboardStyles.statusCardHeader}>
-                                <div className={dashboardStyles.statusCardBody}>
-                                    <div className={dashboardStyles.statusCardCount} style={{ color: card.color }}>
-                                        {card.count}
-                                    </div>
-                                    <p className={dashboardStyles.statusCardLabel}>{card.label}</p>
-                                </div>
-                                <div className={dashboardStyles.statusCardIcon} style={{ background: card.bgColor }}>
-                                    {card.icon}
-                                </div>
-                            </div>
-                        </div>
+            <motion.div
+                className={styles.statusCardsSection}
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+            >
+                {statusCards.map((card) => (
+                    <motion.div key={card.id} variants={itemVariants}>
+                        <StatusCardComponent card={card} />
                     </motion.div>
                 ))}
-            </div>
+            </motion.div>
 
-            {/* Upload Section */}
-            <motion.div
-                className={dashboardStyles.analyticsCard}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.3 }}
-                style={{ marginTop: '2rem' }}
-            >
-                <div className={dashboardStyles.cardHeader}>
-                    <h3>Upload Document</h3>
-                    <FaUpload className={dashboardStyles.filterIcon} />
+            <div className={styles.dashboard}>
+                <div className={styles.header}>
+                    <div className={styles.controls}>
+                        <div className={styles.searchBar}>
+                            <FaSearch className={styles.searchIcon} />
+                            <input
+                                type="text"
+                                placeholder="Search by document name..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+                        <motion.button
+                            className={styles.uploadBtn}
+                            onClick={() => {
+                                // Scroll to upload section
+                                const uploadForm = document.querySelector(`.${styles.uploadFormContainer}`);
+                                if (uploadForm) {
+                                    uploadForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                }
+                            }}
+                            title="Upload new document"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <FaUpload /> Upload Document
+                        </motion.button>
+                    </div>
                 </div>
 
-                <form onSubmit={handleUpload} className={styles.uploadFormContainer}>
+                <div className={styles.tableWrapper}>
+                    <table className={styles.table}>
+                        <thead>
+                            <tr>
+                                <th onClick={() => handleSort('created_at')}>
+                                    Date {getSortIcon('created_at')}
+                                </th>
+                                <th onClick={() => handleSort('details')}>
+                                    Document Name {getSortIcon('details')}
+                                </th>
+                                <th>Size</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {sortedAndFilteredDocuments.length === 0 ? (
+                                <tr>
+                                    <td colSpan={4} className={styles.noResults}>
+                                        No documents found
+                                    </td>
+                                </tr>
+                            ) : (
+                                paginatedDocuments.map((doc) => (
+                                    <motion.tr
+                                        key={doc.id}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
+                                        <td>
+                                            {new Date(doc.uploaded_at).toLocaleDateString('en-US', {
+                                                day: '2-digit',
+                                                month: 'short',
+                                                year: 'numeric',
+                                            })}
+                                        </td>
+                                        <td>
+                                            <div className={styles.documentCell}>
+                                                <div className={styles.documentIcon}>
+                                                    <FaFile />
+                                                </div>
+                                                <span className={styles.documentName}>{doc.details}</span>
+                                            </div>
+                                        </td>
+                                        <td>-</td>
+                                        <td>
+                                            <div className={styles.actionButtons}>
+                                                <motion.button
+                                                    className={`${styles.actionBtn} ${styles.viewBtn}`}
+                                                    onClick={() => setPreview({ url: doc.url, name: doc.details })}
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    title="View document"
+                                                >
+                                                    <FaEye /> View
+                                                </motion.button>
+                                                <motion.a
+                                                    href={doc.url}
+                                                    download
+                                                    className={`${styles.actionBtn} ${styles.downloadBtn}`}
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    title="Download document"
+                                                >
+                                                    <FaDownload /> Download
+                                                </motion.a>
+                                                {canManage && (
+                                                    <motion.button
+                                                        className={`${styles.actionBtn} ${styles.deleteBtn}`}
+                                                        onClick={() => handleDelete(doc)}
+                                                        whileHover={{ scale: 1.05 }}
+                                                        whileTap={{ scale: 0.95 }}
+                                                        title="Delete document"
+                                                    >
+                                                        <FaTrash /> Delete
+                                                    </motion.button>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </motion.tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Pagination Section */}
+                {sortedAndFilteredDocuments.length > 0 && (
+                    <div className={styles.paginationSection}>
+                        <div className={styles.paginationInfo}>
+                            <p className={styles.paginationText}>
+                                Showing <strong>{startIndex + 1}</strong> to{' '}
+                                <strong>{Math.min(endIndex, sortedAndFilteredDocuments.length)}</strong> of{' '}
+                                <strong>{sortedAndFilteredDocuments.length}</strong> documents
+                            </p>
+                        </div>
+
+                        <div className={styles.paginationControls}>
+                            <div className={styles.itemsPerPageSelector}>
+                                <label htmlFor="itemsPerPage">Items per page:</label>
+                                <select
+                                    id="itemsPerPage"
+                                    value={itemsPerPage}
+                                    onChange={(e) =>
+                                        handleItemsPerPageChange(Number(e.target.value) as ItemsPerPage)
+                                    }
+                                    className={styles.itemsPerPageSelect}
+                                >
+                                    <option value={20}>20</option>
+                                    <option value={50}>50</option>
+                                    <option value={100}>100</option>
+                                </select>
+                            </div>
+
+                            <div className={styles.paginationButtons}>
+                                <motion.button
+                                    className={styles.paginationBtn}
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    whileHover={{ scale: currentPage === 1 ? 1 : 1.05 }}
+                                    whileTap={{ scale: currentPage === 1 ? 1 : 0.95 }}
+                                    title="Previous page"
+                                >
+                                    <FaChevronLeft /> Previous
+                                </motion.button>
+
+                                <div className={styles.pageNumbers}>
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                                        const showPage =
+                                            page === 1 ||
+                                            page === totalPages ||
+                                            (page >= currentPage - 1 && page <= currentPage + 1);
+
+                                        if (!showPage) {
+                                            if (page === currentPage - 2 || page === currentPage + 2) {
+                                                return (
+                                                    <span key={`ellipsis-${page}`} className={styles.ellipsis}>
+                                                        ...
+                                                    </span>
+                                                );
+                                            }
+                                            return null;
+                                        }
+
+                                        return (
+                                            <motion.button
+                                                key={page}
+                                                className={`${styles.pageBtn} ${page === currentPage ? styles.active : ''
+                                                    }`}
+                                                onClick={() => handlePageChange(page)}
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                            >
+                                                {page}
+                                            </motion.button>
+                                        );
+                                    })}
+                                </div>
+
+                                <motion.button
+                                    className={styles.paginationBtn}
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    whileHover={{ scale: currentPage === totalPages ? 1 : 1.05 }}
+                                    whileTap={{ scale: currentPage === totalPages ? 1 : 0.95 }}
+                                    title="Next page"
+                                >
+                                    Next <FaChevronRight />
+                                </motion.button>
+                            </div>
+
+                            <div className={styles.pageInfo}>
+                                <p>
+                                    Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Upload Form Section */}
+            <motion.div
+                className={`${styles.uploadSection} ${styles.uploadFormContainer}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.2 }}
+            >
+                <div className={styles.uploadHeader}>
+                    <h3>Upload New Document</h3>
+                    <p>Add documents to the school repository</p>
+                </div>
+
+                <form onSubmit={handleUpload} className={styles.uploadForm}>
                     <div className={styles.uploadFormFields}>
                         <div className={styles.formGroup}>
                             <label htmlFor="details">Document Name *</label>
@@ -274,7 +484,7 @@ const DocumentDashboard = () => {
                                 type="text"
                                 value={details}
                                 onChange={(e) => setDetails(e.target.value)}
-                                placeholder="e.g., School Brochure 2024"
+                                placeholder="e.g., School Prospectus 2024"
                                 className={styles.formInput}
                             />
                         </div>
@@ -298,194 +508,11 @@ const DocumentDashboard = () => {
                     <button
                         type="submit"
                         disabled={uploadLoading || !file || !details.trim()}
-                        className={styles.uploadButton}
+                        className={styles.submitBtn}
                     >
                         {uploadLoading ? 'Uploading...' : 'Upload Document'}
                     </button>
                 </form>
-            </motion.div>
-
-            {/* Documents Table */}
-            <motion.div
-                className={dashboardStyles.analyticsCard}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.4 }}
-                style={{ marginTop: '2rem' }}
-            >
-                <div className={dashboardStyles.cardHeader}>
-                    <h3>Documents ({sortedAndFilteredDocuments.length})</h3>
-                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                        <div className={styles.searchContainer}>
-                            <FaSearch className={styles.searchIcon} />
-                            <input
-                                type="text"
-                                placeholder="Search documents..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className={styles.searchInput}
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                {sortedAndFilteredDocuments.length === 0 ? (
-                    <div className={styles.emptyState}>
-                        <div className={styles.emptyIcon}>📄</div>
-                        <p className={styles.emptyTitle}>No documents</p>
-                        <p className={styles.emptySubtitle}>
-                            {documents.length === 0 ? 'Upload your first document to get started' : 'Try adjusting your search'}
-                        </p>
-                    </div>
-                ) : (
-                    <>
-                        <div className={styles.tableWrapper}>
-                            <table className={styles.table}>
-                                <thead>
-                                    <tr>
-                                        <th>
-                                            <button
-                                                className={styles.sortButton}
-                                                onClick={() => handleSort('details')}
-                                            >
-                                                Document Name {getSortIcon('details')}
-                                            </button>
-                                        </th>
-                                        <th>
-                                            <button
-                                                className={styles.sortButton}
-                                                onClick={() => handleSort('created_at')}
-                                            >
-                                                Uploaded {getSortIcon('created_at')}
-                                            </button>
-                                        </th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <AnimatePresence mode="popLayout">
-                                        {paginatedDocuments.map((doc, index) => (
-                                            <motion.tr
-                                                key={doc.id}
-                                                initial={{ opacity: 0, y: 10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, y: -10 }}
-                                                transition={{ duration: 0.2, delay: index * 0.05 }}
-                                                className={styles.tableRow}
-                                            >
-                                                <td>
-                                                    <div className={styles.documentNameCell}>
-                                                        <div className={styles.documentIcon}>
-                                                            <FaFile />
-                                                        </div>
-                                                        <div className={styles.documentInfo}>
-                                                            <div className={styles.documentName}>{doc.details}</div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className={styles.dateCell}>
-                                                    {new Date(doc.uploaded_at).toLocaleString('en-US', {
-                                                        year: 'numeric',
-                                                        month: 'short',
-                                                        day: 'numeric',
-                                                        hour: '2-digit',
-                                                        minute: '2-digit',
-                                                    })}
-                                                </td>
-                                                <td>
-                                                    <div className={styles.actionsCell}>
-                                                        <motion.button
-                                                            className={styles.actionBtn + ' ' + styles.viewBtn}
-                                                            onClick={() => setPreview({ url: doc.url, name: doc.details })}
-                                                            whileHover={{ scale: 1.05 }}
-                                                            whileTap={{ scale: 0.95 }}
-                                                            title="View document"
-                                                        >
-                                                            <FaEye />
-                                                        </motion.button>
-                                                        <motion.a
-                                                            href={doc.url}
-                                                            download
-                                                            className={styles.actionBtn + ' ' + styles.downloadBtn}
-                                                            whileHover={{ scale: 1.05 }}
-                                                            whileTap={{ scale: 0.95 }}
-                                                            title="Download document"
-                                                        >
-                                                            <FaDownload />
-                                                        </motion.a>
-                                                        {canManage && (
-                                                            <motion.button
-                                                                className={styles.actionBtn + ' ' + styles.deleteBtn}
-                                                                onClick={() => handleDelete(doc)}
-                                                                whileHover={{ scale: 1.05 }}
-                                                                whileTap={{ scale: 0.95 }}
-                                                                title="Delete document"
-                                                            >
-                                                                <FaTrash />
-                                                            </motion.button>
-                                                        )}
-                                                    </div>
-                                                </td>
-                                            </motion.tr>
-                                        ))}
-                                    </AnimatePresence>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {/* Pagination */}
-                        {totalPages > 1 && (
-                            <div className={styles.paginationContainer}>
-                                <div className={styles.paginationInfo}>
-                                    <span>Showing {startIndex + 1} to {Math.min(endIndex, sortedAndFilteredDocuments.length)} of {sortedAndFilteredDocuments.length} documents</span>
-                                </div>
-
-                                <div className={styles.paginationControls}>
-                                    <button
-                                        className={styles.paginationBtn}
-                                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                                        disabled={currentPage === 1}
-                                    >
-                                        <FaChevronLeft /> Previous
-                                    </button>
-
-                                    <div className={styles.pageNumbers}>
-                                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                                            <button
-                                                key={page}
-                                                className={`${styles.pageNumber} ${currentPage === page ? styles.active : ''}`}
-                                                onClick={() => setCurrentPage(page)}
-                                            >
-                                                {page}
-                                            </button>
-                                        ))}
-                                    </div>
-
-                                    <button
-                                        className={styles.paginationBtn}
-                                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                                        disabled={currentPage === totalPages}
-                                    >
-                                        Next <FaChevronRight />
-                                    </button>
-                                </div>
-
-                                <select
-                                    className={styles.itemsPerPageSelect}
-                                    value={itemsPerPage}
-                                    onChange={(e) => {
-                                        setItemsPerPage(parseInt(e.target.value) as ItemsPerPage);
-                                        setCurrentPage(1);
-                                    }}
-                                >
-                                    <option value={20}>20 per page</option>
-                                    <option value={50}>50 per page</option>
-                                    <option value={100}>100 per page</option>
-                                </select>
-                            </div>
-                        )}
-                    </>
-                )}
             </motion.div>
 
             {/* Preview Modal */}
@@ -525,6 +552,33 @@ const DocumentDashboard = () => {
                 )}
             </AnimatePresence>
         </div>
+    );
+};
+
+const StatusCardComponent = ({
+    card,
+}: {
+    card: StatusCard;
+}) => {
+    return (
+        <motion.div
+            className={styles.statusCard}
+            whileHover={{ translateY: -6, boxShadow: '0 12px 24px rgba(0,0,0,0.1)' }}
+        >
+            <div className={styles.statusCardContent}>
+                <div className={styles.statusCardHeader}>
+                    <div className={styles.statusCardBody}>
+                        <div className={styles.statusCardCount} style={{ color: card.color }}>
+                            {card.count}
+                        </div>
+                        <p className={styles.statusCardLabel}>{card.label}</p>
+                    </div>
+                    <div className={styles.statusCardIcon} style={{ background: card.bgColor }}>
+                        {card.icon}
+                    </div>
+                </div>
+            </div>
+        </motion.div>
     );
 };
 
