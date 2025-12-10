@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { uploadUserPhotoToDrive } from '@/lib/googleDrive';
+import { uploadUserPhotoToDrive, deleteFileFromDrive } from '@/lib/googleDrive';
 
 /**
  * POST /api/upload-to-drive
@@ -119,4 +119,58 @@ export async function GET() {
     endpoint: 'POST /api/upload-to-drive',
     expected_fields: ['name', 'photo', 'email (optional)'],
   });
+}
+
+/**
+ * DELETE /api/upload-to-drive
+ * 
+ * Deletes a file from Google Drive
+ * Expects JSON with:
+ * - fileId: string - Google Drive file ID to delete
+ */
+export async function DELETE(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { fileId } = body;
+
+    if (!fileId) {
+      return NextResponse.json(
+        { error: 'fileId is required' },
+        { status: 400 }
+      );
+    }
+
+    console.log(`Deleting file from Google Drive: ${fileId}`);
+    
+    await deleteFileFromDrive(fileId);
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'File deleted successfully from Google Drive',
+        fileId: fileId,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error in delete API:', error);
+
+    if (error instanceof Error) {
+      if (error.message.includes('404') || error.message.includes('not found')) {
+        // File doesn't exist, which is fine - return success
+        return NextResponse.json(
+          {
+            success: true,
+            message: 'File not found or already deleted',
+          },
+          { status: 200 }
+        );
+      }
+    }
+
+    return NextResponse.json(
+      { error: 'Failed to delete file from Google Drive', details: error instanceof Error ? error.message : 'Unknown error' },
+      { status: 500 }
+    );
+  }
 }

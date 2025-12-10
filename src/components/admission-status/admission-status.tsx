@@ -11,11 +11,14 @@ import {
   FaArrowRight,
   FaHistory,
   FaExclamationCircle,
+  FaEdit,
 } from "react-icons/fa";
 import { supabase } from "@/lib/supabase";
 import toast from "react-hot-toast";
 import styles from "./admission-status.module.css";
 import HeadingTitle from "@/components/heading/headingtitle";
+import PhoneVerificationModal from "@/components/modals/phone-verification-modal/phone-verification-modal";
+import CorrectionForm from "@/components/correction-form/correction-form";
 
 interface AdmissionStatus {
   id: string;
@@ -23,15 +26,21 @@ interface AdmissionStatus {
   child_first_name?: string;
   childFirstName?: string;
   child_name?: string;
-  parent_first_name?: string;
-  parentFirstName?: string;
-  parent_last_name?: string;
-  parentLastName?: string;
-  admission_status: "In Review" | "Reviewed" | "Interview Scheduled" | "Confirmed" | "Rejected";
+  parent_mobile_number?: string;
+  admission_status: "In Review" | "Reviewed" | "Interview Scheduled" | "Confirmed" | "Rejected" | "Under Correction";
   program_name?: string;
   program?: string;
+  remark?: string;
   created_at: string;
   updated_at?: string;
+  child_dob?: string;
+  child_gender?: string;
+  child_place_of_birth?: string;
+  child_blood_group?: string;
+  parent_name?: string;
+  parent_email?: string;
+  parent_address?: string;
+  previous_school?: string;
 }
 
 interface StatusConfig {
@@ -84,6 +93,14 @@ const statusConfig: Record<string, StatusConfig> = {
     step: 0,
     message: "Unfortunately, your application has been rejected. Feel free to reapply next year.",
   },
+  "Under Correction": {
+    icon: <FaEdit />,
+    color: "#8b5cf6",
+    bgColor: "#faf5ff",
+    description: "Application under correction",
+    step: 2,
+    message: "Please review the remarks and make the necessary corrections to your application.",
+  },
 };
 
 const getChildName = (admission: AdmissionStatus): string => {
@@ -94,15 +111,9 @@ const getChildName = (admission: AdmissionStatus): string => {
     "N/A"
   );
 };
-
 const getParentName = (admission: AdmissionStatus): string => {
-  const firstName =
-    admission.parent_first_name || admission.parentFirstName || "";
-  const lastName =
-    admission.parent_last_name || admission.parentLastName || "";
-  return `${firstName} ${lastName}`.trim() || "N/A";
-};
-
+  return admission.parent_name || "N/A";
+}
 const getProgram = (admission: AdmissionStatus): string => {
   return admission.program_name || admission.program || "N/A";
 };
@@ -119,6 +130,8 @@ export default function AdmissionStatus() {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPhoneVerification, setShowPhoneVerification] = useState(false);
+  const [showCorrectionForm, setShowCorrectionForm] = useState(false);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -261,14 +274,42 @@ export default function AdmissionStatus() {
                   </motion.button>
                 </motion.div>
               ) : admissionData ? (
-                <StatusResultCard
-                  admission={admissionData}
-                  onReset={handleReset}
-                />
+                showCorrectionForm ? (
+                  <CorrectionForm
+                    admissionId={admissionData.id}
+                    admissionNumber={admissionData.admission_number}
+                    currentData={admissionData}
+                    remark={admissionData.remark}
+                    onSuccess={handleReset}
+                    onCancel={() => setShowCorrectionForm(false)}
+                  />
+                ) : (
+                  <StatusResultCard
+                    admission={admissionData}
+                    onReset={handleReset}
+                    onEditClick={() => {
+                      if (admissionData.admission_status === "Under Correction") {
+                        setShowPhoneVerification(true);
+                      }
+                    }}
+                  />
+                )
               ) : null}
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Phone Verification Modal */}
+        <PhoneVerificationModal
+          isOpen={showPhoneVerification}
+          admissionNumber={admissionNumber}
+          lastFourDigits={admissionData?.parent_mobile_number?.slice(-4) || "****"}
+          onVerificationSuccess={() => {
+            setShowPhoneVerification(false);
+            setShowCorrectionForm(true);
+          }}
+          onClose={() => setShowPhoneVerification(false)}
+        />
 
         {/* Empty State */}
         {!searched && (
@@ -296,9 +337,11 @@ export default function AdmissionStatus() {
 const StatusResultCard = ({
   admission,
   onReset,
+  onEditClick,
 }: {
   admission: AdmissionStatus;
   onReset: () => void;
+  onEditClick?: () => void;
 }) => {
   const status = admission.admission_status;
   const statusData = getStatusConfig(status);
@@ -341,14 +384,26 @@ const StatusResultCard = ({
             </p>
           </div>
         </div>
-        <motion.button
-          onClick={onReset}
-          className={styles.newSearchBtn}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <FaSearch /> New Search
-        </motion.button>
+        <div className={styles.headerButtons}>
+          {status === "Under Correction" && onEditClick && (
+            <motion.button
+              onClick={onEditClick}
+              className={styles.editBtn}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <FaEdit /> Edit Details
+            </motion.button>
+          )}
+          <motion.button
+            onClick={onReset}
+            className={styles.newSearchBtn}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <FaSearch /> New Search
+          </motion.button>
+        </div>
       </div>
 
       {/* Status Badge */}
@@ -362,6 +417,18 @@ const StatusResultCard = ({
         </span>
       </div>
 
+      {/* Remark Box (if Under Correction) */}
+      {status === "Under Correction" && admission.remark && (
+        <motion.div
+          className={styles.remarkBoxStatus}
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <strong>📝 What needs to be corrected:</strong>
+          <p>{admission.remark}</p>
+        </motion.div>
+      )}
+
       {/* Details Grid */}
       <div className={styles.detailsGrid}>
         <div className={styles.detailCard}>
@@ -370,7 +437,7 @@ const StatusResultCard = ({
         </div>
         <div className={styles.detailCard}>
           <label>Parent Name</label>
-          <p>{parentName}</p>
+          <p>{admission.parent_name}</p>
         </div>
         <div className={styles.detailCard}>
           <label>Applied Program</label>

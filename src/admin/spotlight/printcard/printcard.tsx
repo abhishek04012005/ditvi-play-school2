@@ -11,7 +11,7 @@ import schoolDetails from '@/json/schooldetails';
 interface Award {
   id: string;
   name: string;
-  award_type: 'weekly' | 'monthly' | 'yearly';
+  award_type: string;
   message: string;
   date: string;
   is_show_on_home_page: boolean;
@@ -20,13 +20,24 @@ interface Award {
   created_date: string;
 }
 
+interface CustomSpotlightType {
+  id: string;
+  name: string;
+  emoji: string;
+  color: string;
+  description: string;
+  created_date: string;
+  isDefault?: boolean;
+}
+
 interface PrintCardProps {
   award: Award | null;
   isOpen: boolean;
   onClose: () => void;
+  customTypes?: CustomSpotlightType[];
 }
 
-const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
+const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose, customTypes = [] }) => {
   const printRef = useRef<HTMLDivElement>(null);
   const [isPrinting, setIsPrinting] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -35,23 +46,51 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
 
   if (!isOpen || !award) return null;
 
-  const awardTypeLabels = {
-    weekly: 'Star of the Week',
-    monthly: 'Star of the Month',
-    yearly: 'Star of the Year'
+  // Get the selected award type details with dynamic colors
+  const getAwardTypeDetails = () => {
+    if (!award) return null;
+    const typeDetails = customTypes.find(t => t.id === award.award_type);
+    if (typeDetails) {
+      return {
+        name: typeDetails.name,
+        emoji: typeDetails.emoji,
+        color: typeDetails.color,
+        gradient: `linear-gradient(135deg, ${typeDetails.color} 0%, ${shadeColor(typeDetails.color, -30)} 100%)`
+      };
+    }
+    // Fallback for old hardcoded types
+    const defaults: { [key: string]: any } = {
+      weekly: { name: 'Star of the Week', emoji: '⭐', color: '#FFD700', gradient: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' },
+      monthly: { name: 'Star of the Month', emoji: '🌟', color: '#C0C0C0', gradient: 'linear-gradient(135deg, #C0C0C0 0%, #808080 100%)' },
+      yearly: { name: 'Star of the Year', emoji: '✨', color: '#CD7F32', gradient: 'linear-gradient(135deg, #CD7F32 0%, #8B4513 100%)' }
+    };
+    return defaults[award.award_type] || defaults.weekly;
   };
 
-  const awardIcons = {
-    weekly: '⭐',
-    monthly: '🌟',
-    yearly: '✨'
+  // Helper function to shade a color for gradients
+  const shadeColor = (color: string, percent: number) => {
+    let R = parseInt(color.substring(1,3), 16);
+    let G = parseInt(color.substring(3,5), 16);
+    let B = parseInt(color.substring(5,7), 16);
+    
+    R = parseInt(String(R * (100 + percent) / 100));
+    G = parseInt(String(G * (100 + percent) / 100));
+    B = parseInt(String(B * (100 + percent) / 100));
+    
+    R = (R<255)?R:255;
+    G = (G<255)?G:255;
+    B = (B<255)?B:255;
+    
+    const RR = ((R.toString(16).length==1)?"0"+R.toString(16):R.toString(16));
+    const GG = ((G.toString(16).length==1)?"0"+G.toString(16):G.toString(16));
+    const BB = ((B.toString(16).length==1)?"0"+B.toString(16):B.toString(16));
+    
+    return "#"+RR+GG+BB;
   };
 
-  const awardColors = {
-    weekly: { primary: '#FFD700', gradient: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' },
-    monthly: { primary: '#C0C0C0', gradient: 'linear-gradient(135deg, #C0C0C0 0%, #808080 100%)' },
-    yearly: { primary: '#CD7F32', gradient: 'linear-gradient(135deg, #CD7F32 0%, #8B4513 100%)' }
-  };
+  const awardTypeLabel = getAwardTypeDetails()?.name || 'Award';
+  const awardEmoji = getAwardTypeDetails()?.emoji || '⭐';
+  const awardColor = getAwardTypeDetails()?.color || '#FFD700';
 
   const getFormattedDate = () => {
     return new Date(award.date).toLocaleDateString('en-IN', {
@@ -453,7 +492,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
       if (navigator.share) {
         await navigator.share({
           title: `${award.name} - Award Certificate`,
-          text: `${award.name} received ${awardTypeLabels[award.award_type]}!`,
+          text: `${award.name} received ${awardTypeLabel}!`,
           url: window.location.href
         });
         showSuccessMessage('Shared successfully');
@@ -503,11 +542,11 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
                     animate={{ rotate: 360 }}
                     transition={{ duration: 20, repeat: Infinity }}
                   >
-                    {awardIcons[award.award_type]}
+                    {awardEmoji}
                   </motion.span>
                   <div>
                     <h2 className={styles.titleHeader}>🏆 Certificate of Excellence</h2>
-                    <p className={styles.subtitleHeader}>{awardTypeLabels[award.award_type]}</p>
+                    <p className={styles.subtitleHeader}>{awardTypeLabel}</p>
                   </div>
                 </div>
               </motion.div>
@@ -593,9 +632,9 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
                         {/* Award Type Badge */}
                         <div
                           className={styles.awardTypeBoxNew}
-                          style={{ background: awardColors[award.award_type].gradient }}
+                          style={{ background: getAwardTypeDetails()?.gradient || 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' }}
                         >
-                          <span>{awardTypeLabels[award.award_type]}</span>
+                          <span>{awardTypeLabel}</span>
                         </div>
 
                         {/* Main Content */}
@@ -603,7 +642,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
 
                         <h3
                           className={styles.studentNameNew}
-                          style={{ borderBottomColor: awardColors[award.award_type].primary }}
+                          style={{ borderBottomColor: awardColor }}
                         >
                           {award.name}
                         </h3>
@@ -672,7 +711,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose }) => {
                     >
                       <div className={styles.detailIcon}>🎖️</div>
                       <p className={styles.detailLabel}>Award Type</p>
-                      <p className={styles.detailValue}>{awardTypeLabels[award.award_type]}</p>
+                      <p className={styles.detailValue}>{awardTypeLabel}</p>
                     </motion.div>
                     <motion.div 
                       className={styles.detailsCard}

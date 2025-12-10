@@ -1,7 +1,5 @@
 /* ==================== CSS Variables ==================== */
 :root {
-    --primary-yellow: #ffbf00;
-    --primary-purple: #6a4c93;
     --white: #ffffff;
     --black: #333333;
     --text-gray: #666666;
@@ -324,6 +322,39 @@
     border-bottom: 2px solid var(--border-color);
 }
 
+.headerButtons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.editBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary-yellow) 0%, #f0c656 100%);
+    color: var(--primary-purple);
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(255, 191, 0, 0.3);
+}
+
+.editBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 191, 0, 0.4);
+}
+
+.editBtn:active {
+    transform: translateY(0);
+}
+
 .resultHeaderLeft {
     display: flex;
     align-items: center;
@@ -396,6 +427,30 @@
     border-radius: 30px;
     margin-bottom: 2rem;
     border: 2px solid rgba(106, 76, 147, 0.15);
+}
+
+.remarkBoxStatus {
+    background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+    border-left: 5px solid var(--primary-yellow);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255, 191, 0, 0.2);
+}
+
+.remarkBoxStatus strong {
+    display: block;
+    color: var(--primary-purple);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+}
+
+.remarkBoxStatus p {
+    margin: 0;
+    color: var(--primary-purple);
+    font-size: 0.95rem;
+    line-height: 1.6;
 }
 
 .statusBadgeDot {

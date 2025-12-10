@@ -34,9 +34,11 @@ export async function POST(request: NextRequest) {
     const child_dob = formData.get('child_dob') as string;
     const child_gender = formData.get('child_gender') as string;
     const child_place_of_birth = formData.get('child_place_of_birth') as string;
+    const child_blood_group = (formData.get('child_blood_group') as string) || undefined;
 
     // Extract parent details
     const parent_name = formData.get('parent_name') as string;
+    const parent_address = formData.get('parent_address') as string;
     const parent_mobile_number = formData.get('parent_mobile_number') as string;
     const parent_email = (formData.get('parent_email') as string) || undefined;
 
@@ -68,6 +70,7 @@ export async function POST(request: NextRequest) {
     if (!child_dob) errors.push('Child DOB is required');
     if (!child_gender) errors.push('Child gender is required');
     if (!parent_name?.trim()) errors.push('Parent name is required');
+    if (!parent_address?.trim()) errors.push('Parent address is required');
     if (!parent_mobile_number?.trim()) errors.push('Parent mobile number is required');
     if (!program_name) errors.push('Program name is required');
     // Note: All document files are now optional
@@ -234,7 +237,9 @@ export async function POST(request: NextRequest) {
         child_dob,
         child_gender,
         child_place_of_birth: child_place_of_birth || '',
+        child_blood_group,
         parent_name,
+        parent_address,
         parent_mobile_number,
         parent_email,
         program_name,

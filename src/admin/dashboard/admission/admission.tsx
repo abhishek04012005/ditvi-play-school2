@@ -22,14 +22,19 @@ import {
     FaTrash,
     FaChevronLeft,
     FaChevronRight,
+    FaPencilAlt,
 } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
+import { schoolDetails } from '@/json/schooldetails';
 import toast from 'react-hot-toast';
 import styles from './admission.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
 import { DownloadModal } from '../download/DownloadData';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import AdmissionPDFTemplate from '@/components/admissionpdftemplate/admissionpdftemplate';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 
 
@@ -52,11 +57,13 @@ interface Admission {
     gender?: string;
     child_place_of_birth: string;
     placeOfBirth?: string;
+    child_blood_group?: string;
     parent_name?: string;
     parentFirstName?: string;
     parentLastName?: string;
     parent_first_name?: string;
     parent_last_name?: string;
+    parent_address?: string;
     parent_mobile_number?: string;
     parentMobile?: string;
     parent_email?: string;
@@ -65,8 +72,9 @@ interface Admission {
     program?: string;
     previous_school?: string;
     previousSchool?: string;
-    admission_status: 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected';
+    admission_status: 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected' | 'Under Correction';
     admission_source?: 'enquiry' | 'social_media' | 'web' | 'offline';
+    remark?: string;
     notes?: NoteEntry[] | null;
     created_at: string;
     photo_url?: string | null;
@@ -81,7 +89,7 @@ interface StatusCard {
     icon: React.ReactNode;
     color: string;
     bgColor: string;
-    status: 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected';
+    status: 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected' | 'Under Correction';
     id: string;
 }
 
@@ -159,7 +167,7 @@ export default function AdminAdmission() {
     const [loading, setLoading] = useState(true);
     const [pageLoading, setPageLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [filter, setFilter] = useState<'all' | 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected'>('all');
+    const [filter, setFilter] = useState<'all' | 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected' | 'Under Correction'>('all');
     const [sortField, setSortField] = useState<SortField>('created_at');
     const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
@@ -183,6 +191,9 @@ export default function AdminAdmission() {
     const [updatingId, setUpdatingId] = useState<string | null>(null);
 
     const [downloadModalOpen, setDownloadModalOpen] = useState(false);
+    const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false);
+    const [pdfPreviewUrl, setPdfPreviewUrl] = useState<string | null>(null);
+    const [previewAdmission, setPreviewAdmission] = useState<Admission | null>(null);
 
 
     useEffect(() => {
@@ -332,6 +343,7 @@ export default function AdminAdmission() {
         'Interview Scheduled': admissions.filter((a) => getStatus(a) === 'Interview Scheduled').length,
         'Confirmed': admissions.filter((a) => getStatus(a) === 'Confirmed').length,
         'Rejected': admissions.filter((a) => getStatus(a) === 'Rejected').length,
+        'Under Correction': admissions.filter((a) => getStatus(a) === 'Under Correction').length,
     };
 
     const statusCards: StatusCard[] = [
@@ -388,6 +400,15 @@ export default function AdminAdmission() {
             bgColor: '#fef2f2',
             status: 'Rejected',
             id: 'rejected',
+        },
+        {
+            label: 'Under Correction',
+            count: statusCounts['Under Correction'],
+            icon: <FaPencilAlt />,
+            color: '#8b5cf6',
+            bgColor: '#faf5ff',
+            status: 'Under Correction',
+            id: 'under-correction',
         },
     ];
 
@@ -569,14 +590,178 @@ export default function AdminAdmission() {
     };
 
     // ✨ DETAILS MODAL FUNCTIONS ✨
+    const [editMode, setEditMode] = useState(false);
+    const [editingData, setEditingData] = useState<Partial<Admission> | null>(null);
+    const [savingEdit, setSavingEdit] = useState(false);
+    const [uploadedFileNames, setUploadedFileNames] = useState<{ [key: string]: string }>({});
+
     const openDetailsModal = (admission: Admission) => {
         setSelectedAdmissionIdForDetails(admission.id);
+        setEditingData(admission);
+        setEditMode(false);
+        setUploadedFileNames({});
         setDetailsModalOpen(true);
     };
 
     const closeDetailsModal = () => {
         setDetailsModalOpen(false);
         setSelectedAdmissionIdForDetails(null);
+        setEditMode(false);
+        setEditingData(null);
+        setUploadedFileNames({});
+    };
+
+    const handleSaveEdit = async () => {
+        if (!editingData || !selectedAdmissionIdForDetails) return;
+
+        try {
+            setSavingEdit(true);
+
+            // Get current admission data to access old file URLs
+            const currentAdmission = admissions.find(a => a.id === selectedAdmissionIdForDetails);
+            const admissionNumber = currentAdmission?.admission_number?.toString() || selectedAdmissionIdForDetails;
+
+            // Prepare update object
+            const updateData: any = {
+                child_name: editingData.child_name,
+                child_dob: editingData.child_dob,
+                child_gender: editingData.child_gender,
+                child_place_of_birth: editingData.child_place_of_birth,
+                child_blood_group: editingData.child_blood_group,
+                parent_name: editingData.parent_name,
+                parent_address: editingData.parent_address,
+                parent_email: editingData.parent_email,
+                program_name: editingData.program_name,
+                previous_school: editingData.previous_school,
+                remark: editingData.remark,
+            };
+
+            // Handle file uploads
+            const fileInputs = [
+                { inputId: 'photo_upload', dbField: 'photo_url', oldField: 'photo_url', type: 'image' },
+                { inputId: 'birth_cert_upload', dbField: 'birth_certificate_url', oldField: 'birth_certificate_url', type: 'document' },
+                { inputId: 'aadhar_upload', dbField: 'aadhar_card_url', oldField: 'aadhar_card_url', type: 'document' },
+                { inputId: 'parent_id_upload', dbField: 'parent_id_proof_url', oldField: 'parent_id_proof_url', type: 'document' },
+            ];
+
+            for (const fileInput of fileInputs) {
+                const input = document.getElementById(fileInput.inputId) as HTMLInputElement;
+                if (input?.files?.length) {
+                    const file = input.files[0];
+
+                    // Validate file size (max 10MB)
+                    if (file.size > 10 * 1024 * 1024) {
+                        toast.error(`File size must be less than 10MB for ${fileInput.inputId}`);
+                        return;
+                    }
+
+                    // Delete old file from Google Drive if it exists
+                    const oldUrl = currentAdmission?.[fileInput.oldField as keyof Admission];
+                    if (oldUrl) {
+                        try {
+                            let oldFileId = '';
+                            if (typeof oldUrl === 'string') {
+                                if (oldUrl.includes('id=')) {
+                                    oldFileId = oldUrl.split('id=')[1]?.split('&')[0];
+                                } else if (oldUrl.includes('/d/')) {
+                                    oldFileId = oldUrl.split('/d/')[1]?.split('/')[0];
+                                }
+                            }
+
+                            if (oldFileId) {
+                                // Call API to delete the old file
+                                await fetch('/api/upload-to-drive', {
+                                    method: 'DELETE',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ fileId: oldFileId }),
+                                });
+                            }
+                        } catch (deleteError) {
+                            console.warn(`Could not delete old file for ${fileInput.inputId}:`, deleteError);
+                            // Continue with upload even if delete fails
+                        }
+                    }
+
+                    // Upload new file to Google Drive with admission number as folder
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('field_name', fileInput.inputId);
+                    formData.append('admissionNumber', admissionNumber.toString());
+
+                    try {
+                        const uploadResponse = await fetch('/api/admission/upload-file', {
+                            method: 'POST',
+                            body: formData,
+                        });
+
+                        const uploadResult = await uploadResponse.json();
+
+                        if (!uploadResponse.ok) {
+                            console.error(`Upload error for ${fileInput.inputId}:`, uploadResult);
+                            toast.error(`Failed to upload ${fileInput.inputId}`);
+                            return;
+                        }
+
+                        // Get the Google Drive URL from the response
+                        const driveUrl = uploadResult?.data?.downloadUrl || uploadResult?.data?.driveLink || uploadResult?.data?.webViewLink;
+                        if (driveUrl) {
+                            // Extract file ID and construct consistent download URL
+                            let fileId = uploadResult?.data?.fileId || '';
+                            if (!fileId && driveUrl.includes('id=')) {
+                                fileId = driveUrl.split('id=')[1]?.split('&')[0];
+                            } else if (!fileId && driveUrl.includes('/d/')) {
+                                fileId = driveUrl.split('/d/')[1]?.split('/')[0];
+                            }
+
+                            // Store consistent download URL format
+                            const consistentUrl = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : driveUrl;
+                            updateData[fileInput.dbField] = consistentUrl;
+                        } else {
+                            toast.error(`No URL returned for ${fileInput.inputId}`);
+                            return;
+                        }
+                    } catch (uploadError) {
+                        console.error(`Upload error for ${fileInput.inputId}:`, uploadError);
+                        toast.error(`Failed to upload ${fileInput.inputId}`);
+                        return;
+                    }
+                }
+            }
+
+            // Update admission record with new data and file URLs
+            const { error } = await supabase
+                .from('admission')
+                .update(updateData)
+                .eq('id', selectedAdmissionIdForDetails)
+                .select();
+
+            if (error) {
+                console.error('❌ Update error:', error);
+                toast.error(`Failed to save: ${error.message}`);
+                return;
+            }
+
+            // Update local state
+            setAdmissions((prev) =>
+                prev.map((adm) =>
+                    adm.id === selectedAdmissionIdForDetails ? { ...adm, ...updateData } : adm
+                )
+            );
+
+            // Clear file inputs
+            fileInputs.forEach(fi => {
+                const input = document.getElementById(fi.inputId) as HTMLInputElement;
+                if (input) input.value = '';
+            });
+
+            setEditMode(false);
+            toast.success('✅ Details and documents updated successfully!');
+        } catch (error: any) {
+            console.error('❌ Error:', error);
+            toast.error(`Error: ${error?.message || 'Failed to save'}`);
+        } finally {
+            setSavingEdit(false);
+        }
     };
 
     const formatTimestamp = (timestamp: string) => {
@@ -670,6 +855,7 @@ export default function AdminAdmission() {
                             <option value="Interview Scheduled">Interview Scheduled</option>
                             <option value="Confirmed">Confirmed</option>
                             <option value="Rejected">Rejected</option>
+                            <option value="Under Correction">Under Correction</option>
                         </select>
                     </div>
                 </div>
@@ -683,9 +869,9 @@ export default function AdminAdmission() {
                                     Date {getSortIcon('created_at')}
                                 </th>
                                 <th onClick={() => handleSort('child_name')}>
-                                    Child Name {getSortIcon('child_name')}
+                                    Student's Name {getSortIcon('child_name')}
                                 </th>
-                                <th>Parent</th>
+                                <th>Parent's Name</th>
                                 <th>Contact</th>
                                 <th onClick={() => handleSort('program_name')}>
                                     Program {getSortIcon('program_name')}
@@ -728,6 +914,7 @@ export default function AdminAdmission() {
                                             })}
                                         </td>
                                         <td>{getChildName(admission)}</td>
+
                                         <td>{getParentName(admission)}</td>
                                         <td>
                                             <div className={styles.contactLinks}>
@@ -787,6 +974,7 @@ export default function AdminAdmission() {
                                                 <option value="Interview Scheduled">Interview Scheduled</option>
                                                 <option value="Confirmed">Confirmed</option>
                                                 <option value="Rejected">Rejected</option>
+                                                <option value="Under Correction">Under Correction</option>
                                             </select>
                                             {updatingId === admission.id && (
                                                 <FaSpinner
@@ -933,6 +1121,79 @@ export default function AdminAdmission() {
                 onPreview={setPreviewModal}
                 statusUpdating={statusUpdating}
                 updatingId={updatingId}
+                editMode={editMode}
+                setEditMode={setEditMode}
+                editingData={editingData}
+                setEditingData={setEditingData}
+                onSaveEdit={handleSaveEdit}
+                savingEdit={savingEdit}
+                uploadedFileNames={uploadedFileNames}
+                setUploadedFileNames={setUploadedFileNames}
+                onPdfPreview={async (adm) => {
+                    try {
+                        setPreviewAdmission(adm);
+                        setPdfPreviewOpen(true);
+                        // Wait for the template to render in the DOM
+                        setTimeout(async () => {
+                            try {
+                                const templateId = `admission-pdf-template-${adm.id}`;
+                                const element = document.getElementById(templateId);
+                                if (!element) throw new Error('Template element not found');
+
+                                const originalDisplay = element.style.display;
+                                element.style.display = 'block';
+
+                                const canvas = await html2canvas(element, {
+                                    scale: 2,
+                                    useCORS: true,
+                                    allowTaint: true,
+                                    logging: false,
+                                    backgroundColor: '#ffffff',
+                                    width: element.offsetWidth,
+                                    height: element.offsetHeight,
+                                });
+
+                                element.style.display = originalDisplay;
+
+                                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                                const pdf = new jsPDF({
+                                    orientation: 'portrait',
+                                    unit: 'mm',
+                                    format: 'a4',
+                                });
+
+                                const pdfWidth = pdf.internal.pageSize.getWidth();
+                                const pdfHeight = pdf.internal.pageSize.getHeight();
+                                const imgWidth = pdfWidth;
+                                let imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+                                if (!isFinite(imgHeight) || imgHeight <= 0) {
+                                    imgHeight = pdfHeight;
+                                }
+
+                                pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+
+                                let position = imgHeight;
+                                while (position > pdfHeight) {
+                                    pdf.addPage();
+                                    position -= pdfHeight;
+                                    pdf.addImage(imgData, 'JPEG', 0, -position, imgWidth, imgHeight);
+                                }
+
+                                const pdfUrl = pdf.output('dataurlstring');
+                                if (pdfUrl) {
+                                    setPdfPreviewUrl(pdfUrl);
+                                }
+                            } catch (error) {
+                                console.error('Error generating PDF preview:', error);
+                                toast.error('Failed to generate PDF preview');
+                            }
+                        }, 300);
+                    } catch (error) {
+                        console.error('Error opening PDF preview:', error);
+                        toast.error('Failed to open PDF preview');
+                    }
+                }}
             />
 
             {/* Document Preview Modal */}
@@ -940,6 +1201,14 @@ export default function AdminAdmission() {
                 isOpen={previewModal !== null}
                 onClose={() => setPreviewModal(null)}
                 preview={previewModal}
+            />
+
+            {/* PDF Form Preview Modal */}
+            <PDFPreviewModal
+                isOpen={pdfPreviewOpen}
+                onClose={() => setPdfPreviewOpen(false)}
+                pdfUrl={pdfPreviewUrl}
+                admission={previewAdmission}
             />
 
             <DownloadModal
@@ -1074,7 +1343,7 @@ const NotesModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2><EditNoteIcon/> Internal Notes</h2>
+                                <h2><EditNoteIcon /> Internal Notes</h2>
                                 <p>{childName} • {parentName}</p>
                                 {noteEntries.length > 0 && (
                                     <p className={styles.notesCount}>
@@ -1212,6 +1481,15 @@ const DetailsModal = ({
     onStatusChange,
     onPreview,
     statusUpdating,
+    editMode,
+    setEditMode,
+    editingData,
+    setEditingData,
+    onSaveEdit,
+    savingEdit,
+    uploadedFileNames,
+    setUploadedFileNames,
+    onPdfPreview,
 }: {
     isOpen: boolean;
     onClose: () => void;
@@ -1220,6 +1498,15 @@ const DetailsModal = ({
     onPreview: (preview: { url: string; type: 'image' | 'pdf' | 'document'; name: string }) => void;
     statusUpdating: boolean;
     updatingId: string | null;
+    editMode: boolean;
+    setEditMode: (mode: boolean) => void;
+    editingData: Partial<Admission> | null;
+    setEditingData: (data: Partial<Admission> | null) => void;
+    onSaveEdit: () => Promise<void>;
+    savingEdit: boolean;
+    uploadedFileNames: { [key: string]: string };
+    setUploadedFileNames: (files: { [key: string]: string }) => void;
+    onPdfPreview: (admission: Admission) => void;
 }) => {
     if (!admission) return null;
 
@@ -1246,31 +1533,209 @@ const DetailsModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2>👤 Admission Details</h2>
+                                <h2>👤 Admission Details {editMode && <span style={{ fontSize: '0.75em' }}>• EDIT MODE</span>}</h2>
                                 <p>{childName} • {parentName}</p>
                             </div>
-                            <button
-                                className={styles.closeBtn}
-                                onClick={onClose}
-                                aria-label="Close"
-                                disabled={statusUpdating}
-                            >
-                                <FaTimes />
-                            </button>
+                            <div className={styles.headerButtons}>
+                                {!editMode ? (
+                                    <>
+                                        <motion.button
+                                            className={styles.downloadBtn}
+                                            onClick={() => onPdfPreview(admission)}
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            title="Preview and download admission form"
+                                        >
+                                            <FaDownload /> Form PDF
+                                        </motion.button>
+                                        <motion.button
+                                            className={styles.editBtn}
+                                            onClick={() => setEditMode(true)}
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            title="Edit admission details"
+                                        >
+                                            <FaPencilAlt /> Edit
+                                        </motion.button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <motion.button
+                                            className={styles.saveBtn}
+                                            onClick={onSaveEdit}
+                                            disabled={savingEdit}
+                                            whileHover={{ scale: savingEdit ? 1 : 1.05 }}
+                                            whileTap={{ scale: savingEdit ? 1 : 0.95 }}
+                                        >
+                                            {savingEdit ? (
+                                                <>
+                                                    <FaSpinner className={styles.loadingIcon} /> Saving...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <FaCheck /> Save
+                                                </>
+                                            )}
+                                        </motion.button>
+                                        <motion.button
+                                            className={styles.cancelBtn}
+                                            onClick={() => setEditMode(false)}
+                                            disabled={savingEdit}
+                                            whileHover={{ scale: savingEdit ? 1 : 1.05 }}
+                                            whileTap={{ scale: savingEdit ? 1 : 0.95 }}
+                                        >
+                                            <FaTimes /> Cancel
+                                        </motion.button>
+                                    </>
+                                )}
+                                <button
+                                    className={styles.closeBtn}
+                                    onClick={onClose}
+                                    aria-label="Close"
+                                    disabled={statusUpdating || savingEdit}
+                                >
+                                    <FaTimes />
+                                </button>
+                            </div>
                         </div>
 
                         <div className={styles.modalContent}>
                             {/* Details Grid */}
                             <div className={styles.detailsGrid}>
-                                <DetailItem label="Child Name" value={childName} />
-                                <DetailItem label="Date of Birth" value={admission.child_dob || 'N/A'} />
-                                <DetailItem label="Gender" value={admission.child_gender || 'N/A'} />
-                                <DetailItem label="Place of Birth" value={admission.child_place_of_birth || 'N/A'} />
-                                <DetailItem label="Parent Name" value={parentName} />
-                                <DetailItem label="Email" value={getParentEmail(admission)} />
-                                <DetailItem label="Mobile" value={getParentMobile(admission)} />
-                                <DetailItem label="Program" value={getProgram(admission)} />
-                                <DetailItem label="Previous School" value={admission.previous_school || 'N/A'} />
+                                {editMode && editingData ? (
+                                    <>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Child Name</span>
+                                            <input
+                                                type="text"
+                                                value={editingData.child_name || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, child_name: e.target.value })}
+                                                className={styles.editInput}
+                                                placeholder="Child name"
+                                            />
+                                        </div>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Date of Birth</span>
+                                            <input
+                                                type="date"
+                                                value={editingData.child_dob || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, child_dob: e.target.value })}
+                                                className={styles.editInput}
+                                            />
+                                        </div>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Gender</span>
+                                            <select
+                                                value={editingData.child_gender || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, child_gender: e.target.value })}
+                                                className={styles.editInput}
+                                            >
+                                                <option value="">Select Gender</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Place of Birth</span>
+                                            <input
+                                                type="text"
+                                                value={editingData.child_place_of_birth || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, child_place_of_birth: e.target.value })}
+                                                className={styles.editInput}
+                                                placeholder="Place of birth"
+                                            />
+                                        </div>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Blood Group</span>
+                                            <select
+                                                value={editingData.child_blood_group || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, child_blood_group: e.target.value })}
+                                                className={styles.editInput}
+                                            >
+                                                <option value="">-- Select Blood Group --</option>
+                                                <option value="O+">O+</option>
+                                                <option value="O-">O-</option>
+                                                <option value="A+">A+</option>
+                                                <option value="A-">A-</option>
+                                                <option value="B+">B+</option>
+                                                <option value="B-">B-</option>
+                                                <option value="AB+">AB+</option>
+                                                <option value="AB-">AB-</option>
+                                            </select>
+                                        </div>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Parent Name</span>
+                                            <input
+                                                type="text"
+                                                value={editingData.parent_name || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, parent_name: e.target.value })}
+                                                className={styles.editInput}
+                                                placeholder="Parent name"
+                                            />
+                                        </div>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Address</span>
+                                            <textarea
+                                                value={editingData.parent_address || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, parent_address: e.target.value })}
+                                                className={styles.editInput}
+                                                placeholder="Complete address"
+                                                rows={3}
+                                                style={{ resize: 'vertical', minHeight: '80px' }}
+                                            />
+                                        </div>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Email</span>
+                                            <input
+                                                type="email"
+                                                value={editingData.parent_email || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, parent_email: e.target.value })}
+                                                className={styles.editInput}
+                                                placeholder="Email address"
+                                            />
+                                        </div>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Program</span>
+                                            <select
+                                                value={editingData.program_name || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, program_name: e.target.value })}
+                                                className={styles.editInput}
+                                            >
+                                                <option value="">-- Select Program --</option>
+                                                {schoolDetails.programs.map((program) => (
+                                                    <option key={program.name} value={program.name}>
+                                                        {program.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Previous School</span>
+                                            <input
+                                                type="text"
+                                                value={editingData.previous_school || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, previous_school: e.target.value })}
+                                                className={styles.editInput}
+                                                placeholder="Previous school"
+                                            />
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <DetailItem label="Child Name" value={childName} />
+                                        <DetailItem label="Date of Birth" value={admission.child_dob || 'N/A'} />
+                                        <DetailItem label="Gender" value={admission.child_gender || 'N/A'} />
+                                        <DetailItem label="Place of Birth" value={admission.child_place_of_birth || 'N/A'} />
+                                        <DetailItem label="Blood Group" value={admission.child_blood_group || 'N/A'} />
+                                        <DetailItem label="Parent Name" value={parentName} />
+                                        <DetailItem label="Address" value={admission.parent_address || 'N/A'} />
+                                        <DetailItem label="Email" value={getParentEmail(admission)} />
+                                        <DetailItem label="Mobile" value={getParentMobile(admission)} />
+                                        <DetailItem label="Program" value={getProgram(admission)} />
+                                        <DetailItem label="Previous School" value={admission.previous_school || 'N/A'} />
+                                    </>
+                                )}
                             </div>
 
                             {/* Status Section */}
@@ -1288,6 +1753,7 @@ const DetailsModal = ({
                                         <option value="Interview Scheduled">Interview Scheduled</option>
                                         <option value="Confirmed">Confirmed</option>
                                         <option value="Rejected">Rejected</option>
+                                        <option value="Under Correction">Under Correction</option>
                                     </select>
                                     {statusUpdating && (
                                         <div className={styles.updatingIndicator}>
@@ -1296,67 +1762,232 @@ const DetailsModal = ({
                                         </div>
                                     )}
                                 </div>
+
+                                {/* Remark Section - Show when status is "Under Correction" */}
+                                {editMode && getStatus(admission) === 'Under Correction' && (
+                                    <div style={{ marginTop: '1.5rem' }}>
+                                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: '600', color: 'var(--primary-purple)' }}>
+                                            📝 Remarks for Correction
+                                        </label>
+                                        <textarea
+                                            value={editingData?.remark || ''}
+                                            onChange={(e) => setEditingData({ ...editingData, remark: e.target.value })}
+                                            placeholder="Enter remarks about what needs to be corrected..."
+                                            style={{
+                                                width: '100%',
+                                                padding: '0.85rem',
+                                                border: '2px solid rgba(106, 76, 147, 0.2)',
+                                                borderRadius: '8px',
+                                                fontSize: '0.95rem',
+                                                minHeight: '100px',
+                                                fontFamily: 'inherit',
+                                                resize: 'vertical',
+                                            }}
+                                            disabled={savingEdit}
+                                        />
+                                    </div>
+                                )}
+
+                                {/* Display Remark when not in edit mode */}
+                                {!editMode && admission.remark && getStatus(admission) === 'Under Correction' && (
+                                    <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%)', borderLeft: '4px solid var(--primary-yellow)', borderRadius: '8px' }}>
+                                        <strong style={{ color: 'var(--primary-purple)' }}>📝 Remarks:</strong>
+                                        <p style={{ margin: '0.5rem 0 0 0', color: 'var(--primary-purple)' }}>{admission.remark}</p>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Documents Section */}
                             <div className={styles.documentsSection}>
                                 <label className={styles.sectionLabel}>📄 Documents</label>
-                                <div className={styles.documentsList}>
-                                    {admission.photo_url ? (
-                                        <DocumentListItem
-                                            name="Child Photo"
-                                            onPreview={() =>
-                                                onPreview({
-                                                    url: admission.photo_url!,
-                                                    type: 'image',
-                                                    name: 'Child Photo',
-                                                })
-                                            }
-                                            onDownload={admission.photo_url}
-                                        />
-                                    ) : (
-                                        <p className={styles.noDocuments}>No photo uploaded</p>
-                                    )}
-                                    {admission.birth_certificate_url && (
-                                        <DocumentListItem
-                                            name="Birth Certificate"
-                                            onPreview={() =>
-                                                onPreview({
-                                                    url: admission.birth_certificate_url!,
-                                                    type: 'pdf',
-                                                    name: 'Birth Certificate',
-                                                })
-                                            }
-                                            onDownload={admission.birth_certificate_url}
-                                        />
-                                    )}
-                                    {admission.aadhar_card_url && (
-                                        <DocumentListItem
-                                            name="Aadhar Card"
-                                            onPreview={() =>
-                                                onPreview({
-                                                    url: admission.aadhar_card_url!,
-                                                    type: 'pdf',
-                                                    name: 'Aadhar Card',
-                                                })
-                                            }
-                                            onDownload={admission.aadhar_card_url}
-                                        />
-                                    )}
-                                    {admission.parent_id_proof_url && (
-                                        <DocumentListItem
-                                            name="Parent ID Proof"
-                                            onPreview={() =>
-                                                onPreview({
-                                                    url: admission.parent_id_proof_url!,
-                                                    type: 'pdf',
-                                                    name: "Parent's ID Proof",
-                                                })
-                                            }
-                                            onDownload={admission.parent_id_proof_url}
-                                        />
-                                    )}
-                                </div>
+
+                                {editMode ? (
+                                    <div className={styles.documentUploadSection}>
+                                        <div className={styles.documentUploadItem}>
+                                            <span className={styles.documentUploadLabel}>Child Photo</span>
+                                            <div className={styles.uploadInputWrapper}>
+                                                <input
+                                                    type="file"
+                                                    id="photo_upload"
+                                                    accept="image/*"
+                                                    className={styles.fileInput}
+                                                    disabled={savingEdit}
+                                                    onChange={(e) => {
+                                                        const fileName = e.target.files?.[0]?.name || '';
+                                                        setUploadedFileNames({ ...uploadedFileNames, photo_upload: fileName });
+                                                    }}
+                                                />
+                                                <label htmlFor="photo_upload" className={styles.uploadLabel}>
+                                                    📷 Upload Photo
+                                                </label>
+                                            </div>
+                                            {uploadedFileNames.photo_upload && (
+                                                <span style={{ fontSize: '0.85rem', color: 'var(--primary-purple)', fontWeight: '600' }}>
+                                                    ✅ Selected: {uploadedFileNames.photo_upload}
+                                                </span>
+                                            )}
+                                            {admission.photo_url && !uploadedFileNames.photo_upload && (
+                                                <a href={admission.photo_url} target="_blank" rel="noopener noreferrer" className={styles.currentDocLink}>
+                                                    View Current Photo
+                                                </a>
+                                            )}
+                                        </div>
+
+                                        <div className={styles.documentUploadItem}>
+                                            <span className={styles.documentUploadLabel}>Birth Certificate</span>
+                                            <div className={styles.uploadInputWrapper}>
+                                                <input
+                                                    type="file"
+                                                    id="birth_cert_upload"
+                                                    accept=".pdf,.jpg,.jpeg,.png"
+                                                    className={styles.fileInput}
+                                                    disabled={savingEdit}
+                                                    onChange={(e) => {
+                                                        const fileName = e.target.files?.[0]?.name || '';
+                                                        setUploadedFileNames({ ...uploadedFileNames, birth_cert_upload: fileName });
+                                                    }}
+                                                />
+                                                <label htmlFor="birth_cert_upload" className={styles.uploadLabel}>
+                                                    📄 Upload Certificate
+                                                </label>
+                                            </div>
+                                            {uploadedFileNames.birth_cert_upload && (
+                                                <span style={{ fontSize: '0.85rem', color: 'var(--primary-purple)', fontWeight: '600' }}>
+                                                    ✅ Selected: {uploadedFileNames.birth_cert_upload}
+                                                </span>
+                                            )}
+                                            {admission.birth_certificate_url && !uploadedFileNames.birth_cert_upload && (
+                                                <a href={admission.birth_certificate_url} target="_blank" rel="noopener noreferrer" className={styles.currentDocLink}>
+                                                    View Current Document
+                                                </a>
+                                            )}
+                                        </div>
+
+                                        <div className={styles.documentUploadItem}>
+                                            <span className={styles.documentUploadLabel}>Aadhar Card</span>
+                                            <div className={styles.uploadInputWrapper}>
+                                                <input
+                                                    type="file"
+                                                    id="aadhar_upload"
+                                                    accept=".pdf,.jpg,.jpeg,.png"
+                                                    className={styles.fileInput}
+                                                    disabled={savingEdit}
+                                                    onChange={(e) => {
+                                                        const fileName = e.target.files?.[0]?.name || '';
+                                                        setUploadedFileNames({ ...uploadedFileNames, aadhar_upload: fileName });
+                                                    }}
+                                                />
+                                                <label htmlFor="aadhar_upload" className={styles.uploadLabel}>
+                                                    🆔 Upload Aadhar
+                                                </label>
+                                            </div>
+                                            {uploadedFileNames.aadhar_upload && (
+                                                <span style={{ fontSize: '0.85rem', color: 'var(--primary-purple)', fontWeight: '600' }}>
+                                                    ✅ Selected: {uploadedFileNames.aadhar_upload}
+                                                </span>
+                                            )}
+                                            {admission.aadhar_card_url && !uploadedFileNames.aadhar_upload && (
+                                                <a href={admission.aadhar_card_url} target="_blank" rel="noopener noreferrer" className={styles.currentDocLink}>
+                                                    View Current Document
+                                                </a>
+                                            )}
+                                        </div>
+
+                                        <div className={styles.documentUploadItem}>
+                                            <span className={styles.documentUploadLabel}>Parent ID Proof</span>
+                                            <div className={styles.uploadInputWrapper}>
+                                                <input
+                                                    type="file"
+                                                    id="parent_id_upload"
+                                                    accept=".pdf,.jpg,.jpeg,.png"
+                                                    className={styles.fileInput}
+                                                    disabled={savingEdit}
+                                                    onChange={(e) => {
+                                                        const fileName = e.target.files?.[0]?.name || '';
+                                                        setUploadedFileNames({ ...uploadedFileNames, parent_id_upload: fileName });
+                                                    }}
+                                                />
+                                                <label htmlFor="parent_id_upload" className={styles.uploadLabel}>
+                                                    🪳 Upload ID Proof
+                                                </label>
+                                            </div>
+                                            {uploadedFileNames.parent_id_upload && (
+                                                <span style={{ fontSize: '0.85rem', color: 'var(--primary-purple)', fontWeight: '600' }}>
+                                                    ✅ Selected: {uploadedFileNames.parent_id_upload}
+                                                </span>
+                                            )}
+                                            {admission.parent_id_proof_url && !uploadedFileNames.parent_id_upload && (
+                                                <a href={admission.parent_id_proof_url} target="_blank" rel="noopener noreferrer" className={styles.currentDocLink}>
+                                                    View Current Document
+                                                </a>
+                                            )}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className={styles.documentsList}>
+                                        {admission.photo_url ? (
+                                            <DocumentListItem
+                                                name="Child Photo"
+                                                onPreview={() =>
+                                                    onPreview({
+                                                        url: admission.photo_url!,
+                                                        type: 'image',
+                                                        name: 'Child Photo',
+                                                    })
+                                                }
+                                                onDownload={admission.photo_url}
+                                            />
+                                        ) : (
+                                            <p className={styles.noDocuments}>No photo uploaded</p>
+                                        )}
+                                        {admission.birth_certificate_url && (
+                                            <DocumentListItem
+                                                name="Birth Certificate"
+                                                onPreview={() =>
+                                                    onPreview({
+                                                        url: admission.birth_certificate_url!,
+                                                        type: 'pdf',
+                                                        name: 'Birth Certificate',
+                                                    })
+                                                }
+                                                onDownload={admission.birth_certificate_url}
+                                            />
+                                        )}
+                                        {admission.aadhar_card_url && (
+                                            <DocumentListItem
+                                                name="Aadhar Card"
+                                                onPreview={() =>
+                                                    onPreview({
+                                                        url: admission.aadhar_card_url!,
+                                                        type: 'pdf',
+                                                        name: 'Aadhar Card',
+                                                    })
+                                                }
+                                                onDownload={admission.aadhar_card_url}
+                                            />
+                                        )}
+                                        {admission.parent_id_proof_url && (
+                                            <DocumentListItem
+                                                name="Parent ID Proof"
+                                                onPreview={() =>
+                                                    onPreview({
+                                                        url: admission.parent_id_proof_url!,
+                                                        type: 'pdf',
+                                                        name: "Parent's ID Proof",
+                                                    })
+                                                }
+                                                onDownload={admission.parent_id_proof_url}
+                                            />
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Hidden Template for PDF Generation - Used for both preview and download */}
+                        <div style={{ display: 'none' }}>
+                            <div id={`admission-pdf-template-${admission.id}`}>
+                                <AdmissionPDFTemplate admission={admission} />
                             </div>
                         </div>
 
@@ -1481,6 +2112,194 @@ const DocumentPreviewModal = ({
                             <button className={styles.cancelBtn} onClick={onClose}>
                                 <FaTimes /> Close
                             </button>
+                        </div>
+                    </motion.div>
+                </>
+            )}
+        </AnimatePresence>
+    );
+};
+
+// ✨ PDF PREVIEW MODAL COMPONENT ✨
+const PDFPreviewModal = ({
+    isOpen,
+    onClose,
+    pdfUrl,
+    admission,
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+    pdfUrl: string | null;
+    admission: Admission | null;
+}) => {
+    if (!admission) return null;
+
+    const childName = getChildName(admission);
+    const fileName = `Admission_${childName.replace(/\s+/g, '_')}_${admission.admission_number}.pdf`;
+
+    const handleGeneratePreview = async () => {
+        try {
+            const templateId = `admission-pdf-preview-template-${admission.id}`;
+            const element = document.getElementById(templateId);
+            if (!element) throw new Error('Template element not found');
+
+            const originalDisplay = element.style.display;
+            element.style.display = 'block';
+
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                logging: false,
+                backgroundColor: '#ffffff',
+                width: element.offsetWidth,
+                height: element.offsetHeight,
+            });
+
+            element.style.display = originalDisplay;
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4',
+            });
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const imgWidth = pdfWidth;
+            let imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            if (!isFinite(imgHeight) || imgHeight <= 0) {
+                imgHeight = pdfHeight;
+            }
+
+            pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+
+            let position = imgHeight;
+            while (position > pdfHeight) {
+                pdf.addPage();
+                position -= pdfHeight;
+                pdf.addImage(imgData, 'JPEG', 0, -position, imgWidth, imgHeight);
+            }
+
+            return pdf.output('dataurlstring');
+        } catch (error) {
+            console.error('Error generating preview:', error);
+            toast.error('Failed to generate PDF preview');
+            return null;
+        }
+    };
+
+    const handleDownload = async () => {
+        try {
+            const templateId = `admission-pdf-preview-template-${admission.id}`;
+            const element = document.getElementById(templateId);
+            if (!element) throw new Error('Template element not found');
+
+            const originalDisplay = element.style.display;
+            element.style.display = 'block';
+
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                logging: false,
+                backgroundColor: '#ffffff',
+                width: element.offsetWidth,
+                height: element.offsetHeight,
+            });
+
+            element.style.display = originalDisplay;
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4',
+            });
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const imgWidth = pdfWidth;
+            let imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            if (!isFinite(imgHeight) || imgHeight <= 0) {
+                imgHeight = pdfHeight;
+            }
+
+            pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+
+            let position = imgHeight;
+            while (position > pdfHeight) {
+                pdf.addPage();
+                position -= pdfHeight;
+                pdf.addImage(imgData, 'JPEG', 0, -position, imgWidth, imgHeight);
+            }
+
+            pdf.save(fileName);
+            toast.success('PDF downloaded successfully!');
+        } catch (error) {
+            console.error('Download error:', error);
+            toast.error('Failed to download PDF');
+        }
+    };
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <>
+                    <motion.div
+                        className={styles.modalOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                    />
+                    <motion.div
+                        className={styles.pdfPreviewModal}
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    >
+                        <div className={styles.modalHeader}>
+                            <div>
+                                <h2>📄 Admission Form Preview</h2>
+                                <p>{childName} • Admission #{admission.admission_number}</p>
+                            </div>
+                            <button
+                                className={styles.closeBtn}
+                                onClick={onClose}
+                                aria-label="Close"
+                            >
+                                <FaTimes />
+                            </button>
+                        </div>
+
+                        <div  className={styles.pdfPreviewContent}>
+                            <div id={`admission-pdf-preview-template-${admission.id}`} className={styles.pdfPreviewContentInner}>
+                                <AdmissionPDFTemplate admission={admission} />
+                            </div>
+                        </div>
+
+                        <div className={styles.modalFooter}>
+                            <motion.button
+                                onClick={handleDownload}
+                                className={styles.downloadLink}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                <FaDownload /> Download PDF
+                            </motion.button>
+                            <motion.button
+                                className={styles.cancelBtn}
+                                onClick={onClose}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                <FaTimes /> Close
+                            </motion.button>
                         </div>
                     </motion.div>
                 </>

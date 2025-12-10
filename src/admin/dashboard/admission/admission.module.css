@@ -649,7 +649,8 @@
 
 /* ==================== Modal ==================== */
 .notesModal,
-.detailsModal {
+.detailsModal,
+.modal {
     position: fixed;
     top: 15%;
     left: 33%;
@@ -660,25 +661,6 @@
     width: 100%;
     max-width: 650px;
     max-height: 85vh;
-    overflow: hidden;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--border-color);
-}
-
-.modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--white);
-    border-radius: 16px;
-    padding: 0;
-    width: 100%;
-    max-width: 600px;
-    max-height: 90vh;
     overflow: hidden;
     z-index: 1000;
     display: flex;
@@ -749,6 +731,124 @@
     cursor: not-allowed;
 }
 
+/* ==================== Header Buttons ==================== */
+.headerButtons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.editBtn,
+.saveBtn,
+.cancelBtn,
+.downloadBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+
+.downloadBtn {
+    background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+    color: white;
+}
+
+.downloadBtn:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--secondary-purple), var(--primary-purple));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(106, 76, 147, 0.3);
+}
+
+.downloadBtn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.editBtn {
+    background: var(--primary-purple);
+    color: white;
+}
+
+.editBtn:hover:not(:disabled) {
+    background: var(--primary-yellow);
+    transform: translateY(-2px);
+}
+
+.saveBtn {
+    background: var(--success);
+    color: white;
+}
+
+.saveBtn:hover:not(:disabled) {
+    background: #059669;
+    transform: translateY(-2px);
+}
+
+.saveBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.cancelBtn {
+    background: var(--error);
+    color: white;
+}
+
+.cancelBtn:hover:not(:disabled) {
+    background: #dc2626;
+    transform: translateY(-2px);
+}
+
+.cancelBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.loadingIcon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==================== Edit Input ==================== */
+.editInput {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--primary-purple);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: white;
+    transition: var(--transition);
+    color: var(--black);
+    font-weight: 500;
+}
+
+.editInput:focus {
+    outline: none;
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.15);
+    background: rgba(106, 76, 147, 0.02);
+}
+
+.editInput::placeholder {
+    color: var(--text-light);
+}
+
 /* ==================== Modal Content ==================== */
 .modalContent {
     flex: 1;
@@ -779,6 +879,10 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
     margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: rgba(243, 232, 255, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(106, 76, 147, 0.2);
 }
 
 .detailItem {
@@ -786,15 +890,21 @@
     flex-direction: column;
     gap: 0.5rem;
     padding: 1rem;
-    background: var(--bg-light);
+    background: white;
     border-radius: 10px;
-    border: 1px solid var(--border-color);
+    border: 2px solid var(--primary-purple);
+    transition: var(--transition);
+}
+
+.detailItem:hover {
+    background: rgba(106, 76, 147, 0.02);
+    box-shadow: 0 2px 8px rgba(106, 76, 147, 0.1);
 }
 
 .detailLabel {
     font-size: 0.75rem;
     font-weight: 700;
-    color: var(--text-light);
+    color: var(--primary-purple);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -804,6 +914,9 @@
     font-weight: 600;
     color: var(--black);
     word-break: break-word;
+    padding: 0.5rem;
+    border-radius: 6px;
+    background: rgba(243, 232, 255, 0.3);
 }
 
 /* ==================== Section Labels ==================== */
@@ -956,6 +1069,100 @@
     background: var(--bg-light);
     border-radius: 10px;
     border: 1px solid var(--border-color);
+}
+
+.documentUploadSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.documentUploadItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, rgba(243, 232, 255, 0.15), white);
+    border: 2px dashed var(--primary-purple);
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.documentUploadItem:hover {
+    border-color: var(--primary-purple);
+    background: linear-gradient(135deg, rgba(243, 232, 255, 0.25), rgba(243, 232, 255, 0.1));
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.15);
+}
+
+.documentUploadLabel {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary-purple);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    background: rgba(243, 232, 255, 0.3);
+    border-radius: 4px;
+}
+
+.uploadInputWrapper {
+    position: relative;
+    display: flex;
+}
+
+.fileInput {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.uploadLabel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, var(--primary-purple), rgba(106, 76, 147, 0.8));
+    color: white;
+    border: 2px solid var(--primary-purple);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(106, 76, 147, 0.2);
+}
+
+.uploadLabel:hover {
+    background: linear-gradient(135deg, rgba(106, 76, 147, 0.9), var(--primary-purple));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(106, 76, 147, 0.3);
+}
+
+.currentDocLink {
+    font-size: 0.85rem;
+    color: var(--primary-purple);
+    text-decoration: none;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    background: rgba(106, 76, 147, 0.1);
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.currentDocLink:hover {
+    background: rgba(106, 76, 147, 0.2);
+    text-decoration: underline;
 }
 
 .documentsList {
@@ -1132,6 +1339,247 @@
     height: 500px;
     border: none;
     border-radius: 10px;
+}
+
+.pdfPreviewModal {
+    position: fixed;
+    top: 10%;
+    left: 27%;
+    transform: translate(-50%, -50%);
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    max-width: 900px;
+    max-height: 90vh;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid var(--border-color);
+}
+
+/* ==================== PDF PREVIEW SCROLLBAR - WEBKIT (Chrome, Safari, Edge) ==================== */
+.pdfPreviewModal::-webkit-scrollbar {
+    width: 10px;
+}
+
+.pdfPreviewModal::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, rgba(243, 232, 255, 0.3), rgba(255, 251, 240, 0.2));
+    border-radius: 10px;
+    margin: 10px 0;
+}
+
+.pdfPreviewModal::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #6a4c93, #ffc107);
+    border-radius: 10px;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 2px solid var(--white);
+    min-height: 40px;
+}
+
+.pdfPreviewModal::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #5a3c7a, #ffd700);
+    box-shadow: 0 0 12px rgba(106, 76, 147, 0.3), inset 0 0 8px rgba(0, 0, 0, 0.15);
+}
+
+.pdfPreviewModal::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(180deg, #6a4c93, #ffc107);
+    box-shadow: 0 0 16px rgba(106, 76, 147, 0.4), inset 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.pdfPreviewModal::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* ==================== PDF PREVIEW SCROLLBAR - FIREFOX ==================== */
+.pdfPreviewModal {
+    scrollbar-width: thin;
+    scrollbar-color: #6a4c93 rgba(243, 232, 255, 0.3);
+}
+
+/* ==================== RESPONSIVE PDF MODAL ==================== */
+@media (max-width: 1280px) {
+    .pdfPreviewModal {
+        width: 92%;
+        max-width: 850px;
+        height: 88vh;
+        max-height: 88vh;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar {
+        width: 9px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .pdfPreviewModal {
+        width: 93%;
+        max-width: 800px;
+        height: 85vh;
+        max-height: 85vh;
+        border-radius: 14px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-thumb {
+        border: 1.5px solid var(--white);
+        min-height: 35px;
+    }
+}
+
+@media (max-width: 768px) {
+    .pdfPreviewModal {
+        width: 95%;
+        max-width: 95%;
+        height: 80vh;
+        max-height: 80vh;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 16px 16px 0 0;
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.25);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar {
+        width: 7px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-track {
+        margin: 5px 0;
+        border-radius: 8px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-thumb {
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.08);
+        min-height: 30px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-thumb:hover {
+        border: 1px solid var(--white);
+        box-shadow: 0 0 10px rgba(106, 76, 147, 0.25), inset 0 0 6px rgba(0, 0, 0, 0.12);
+    }
+}
+
+@media (max-width: 640px) {
+    .pdfPreviewModal {
+        width: 98%;
+        max-width: 98%;
+        height: 78vh;
+        max-height: 78vh;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 18px 18px 0 0;
+        padding: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-track {
+        margin: 5px 0;
+        border-radius: 6px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-thumb {
+        border: none;
+        box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.1);
+        min-height: 25px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-thumb:hover {
+        box-shadow: 0 0 8px rgba(106, 76, 147, 0.2), inset 0 0 5px rgba(0, 0, 0, 0.15);
+    }
+}
+
+@media (max-width: 480px) {
+    .pdfPreviewModal {
+        width: 100%;
+        max-height: 100vh;
+        height: 90vh;
+        top: 10;
+        left: 0;
+        right: auto;
+        border-radius: 20px 20px 0 0;
+        box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.2);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-track {
+        margin: 3px 0;
+        border-radius: 5px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #6a4c93, #ffc107);
+        border-radius: 3px;
+        border: none;
+        min-height: 20px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #5a3c7a, #ffd700);
+        box-shadow: 0 0 6px rgba(106, 76, 147, 0.3);
+    }
+
+    .pdfPreviewContent {
+        overflow-x: scroll;
+    }
+
+
+}
+
+@media (max-width: 360px) {
+    .pdfPreviewModal {
+        width: 100%;
+        max-width: 100%;
+        height: 70vh;
+        max-height: 70vh;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .pdfPreviewModal::-webkit-scrollbar-thumb {
+        border-radius: 2px;
+        min-height: 15px;
+    }
+}
+
+.pdfPreviewContainer {
+    flex: 1;
+    overflow: hidden;
+    background: var(--bg-light);
+    border-radius: 0 0 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pdfFrame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 8px;
 }
 
 .previewPlaceholder {
@@ -1409,7 +1857,8 @@
     }
 
     .notesModal,
-    .detailsModal {
+    .detailsModal,
+    .modal {
         max-width: 600px;
     }
 }
@@ -1417,6 +1866,12 @@
 @media (max-width: 768px) {
     .dashboardWrapper {
         padding: 1rem;
+        padding-top: 6rem;
+    }
+
+    .pdfPreviewModal {
+        left: auto;
+        right: auto;
     }
 
     .statusCardsSection {
@@ -1486,7 +1941,8 @@
     }
 
     .notesModal,
-    .detailsModal {
+    .detailsModal,
+    .modal {
         width: 95%;
         max-width: none;
         max-height: 95vh;
@@ -1526,6 +1982,7 @@
 
     .cancelBtn,
     .saveBtn,
+    .downloadBtn,
     .downloadLink {
         padding: 0.7rem 1.2rem;
         font-size: 0.9rem;
@@ -1569,6 +2026,8 @@
 @media (max-width: 640px) {
     .dashboardWrapper {
         padding: 0.75rem;
+        padding-top: 6rem;
+
     }
 
     .statusCardsSection {
@@ -1644,7 +2103,8 @@
     }
 
     .notesModal,
-    .detailsModal {
+    .detailsModal,
+    .modal {
         width: 95vw;
         max-height: 90vh;
         max-width: 100%;
@@ -1713,6 +2173,7 @@
 
     .cancelBtn,
     .saveBtn,
+    .downloadBtn,
     .downloadLink {
         width: 100%;
         justify-content: center;
@@ -1794,6 +2255,8 @@
 @media (max-width: 480px) {
     .dashboardWrapper {
         padding: 0.5rem;
+        padding-top: 6rem;
+
     }
 
     .statusCardsSection {
@@ -1875,7 +2338,8 @@
     }
 
     .notesModal,
-    .detailsModal {
+    .detailsModal,
+    .modal {
         top: 10%;
         width: 100vw;
         max-height: 80vh;
