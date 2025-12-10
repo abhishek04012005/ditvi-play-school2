@@ -98,6 +98,20 @@ export const uploadFileToGoogleDrive = async (
     
     console.log(`File uploaded successfully: ${fileName} (ID: ${fileId})`);
     
+    // Make the file publicly readable so it can be downloaded by anyone with the link
+    try {
+      await drive.permissions.create({
+        fileId: fileId as string,
+        requestBody: {
+          role: 'reader',
+          type: 'anyone',
+        },
+      });
+    } catch (permErr) {
+      console.warn('Failed to set public permission for file:', permErr);
+      // proceed - the file was uploaded; permission failure shouldn't block the response
+    }
+
     return {
       fileId,
       fileName: response.data.name || fileName,
