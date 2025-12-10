@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const { data, error } = await supabase
       .from('downloads')
-      .select('id, details, uploaded_at, url, drive_file_id')
+      .select('id, details, uploaded_at, url, drive_file_id, file_size')
       .order('uploaded_at', { ascending: false });
 
     if (error) {

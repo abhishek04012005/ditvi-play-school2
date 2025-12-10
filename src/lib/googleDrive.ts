@@ -7,6 +7,10 @@ import { Readable } from 'stream';
  */
 
 // Initialize OAuth2 client
+if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+  throw new Error('Missing Google OAuth2 credentials: GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET');
+}
+
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET
@@ -17,6 +21,9 @@ const oauth2Client = new google.auth.OAuth2(
  * This allows us to get new access tokens without user re-authorization
  */
 export const initializeGoogleAuth = () => {
+  if (!process.env.GOOGLE_REFRESH_TOKEN) {
+    throw new Error('GOOGLE_REFRESH_TOKEN environment variable is not set');
+  }
   oauth2Client.setCredentials({
     refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
   });

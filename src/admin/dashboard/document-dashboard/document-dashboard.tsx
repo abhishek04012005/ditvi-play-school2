@@ -26,6 +26,7 @@ interface Document {
     url: string;
     drive_file_id: string;
     uploaded_at: string;
+    file_size?: number;
 }
 
 interface StatusCard {
@@ -41,6 +42,15 @@ type SortField = 'created_at' | 'details';
 type SortOrder = 'asc' | 'desc';
 type ItemsPerPage = 20 | 50 | 100;
 
+const formatFileSize = (bytes?: number): string => {
+    if (!bytes) return '-';
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+};
+
 const DocumentDashboard = () => {
     const [details, setDetails] = useState('');
     const [file, setFile] = useState<File | null>(null);
@@ -54,6 +64,7 @@ const DocumentDashboard = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState<ItemsPerPage>(20);
     const [uploadLoading, setUploadLoading] = useState(false);
+    const [uploadModalOpen, setUploadModalOpen] = useState(false);
 
     useEffect(() => {
         const r = localStorage.getItem('adminRoleId');
@@ -113,6 +124,7 @@ const DocumentDashboard = () => {
                 toast.success('Document uploaded successfully');
                 setDetails('');
                 setFile(null);
+                setUploadModalOpen(false);
                 await fetchDocuments();
             } else {
                 toast.error(json?.error || 'Upload failed');
@@ -239,6 +251,93 @@ const DocumentDashboard = () => {
         <div className={styles.dashboardWrapper}>
             <HeadingTitle text='Document Dashboard' />
 
+            {/* Upload Modal */}
+            <AnimatePresence>
+                {uploadModalOpen && (
+                    <>
+                        <motion.div
+                            className={styles.modalOverlay}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            onClick={() => setUploadModalOpen(false)}
+                        />
+                        <motion.div
+                            className={styles.modal}
+                            initial={{ scale: 0.95, opacity: 0, y: -20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.95, opacity: 0, y: -20 }}
+                            transition={{ duration: 0.3 }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className={styles.modalHeader}>
+                                <h2>Upload New Document</h2>
+                                <button
+                                    className={styles.modalCloseBtn}
+                                    onClick={() => setUploadModalOpen(false)}
+                                    aria-label="Close modal"
+                                >
+                                    <FaTimes />
+                                </button>
+                            </div>
+
+                            <form onSubmit={handleUpload} className={styles.modalForm}>
+                                <div className={styles.modalContent}>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="details">Document Name *</label>
+                                        <input
+                                            id="details"
+                                            type="text"
+                                            value={details}
+                                            onChange={(e) => setDetails(e.target.value)}
+                                            placeholder="e.g., School Prospectus 2024"
+                                            className={styles.formInput}
+                                        />
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="file">Select File *</label>
+                                        <label className={styles.fileInputWrapper}>
+                                            <input
+                                                id="file"
+                                                type="file"
+                                                onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
+                                                className={styles.fileInput}
+                                            />
+                                            <span className={styles.fileInputLabel}>
+                                                {file ? file.name : 'Choose a file...'}
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div className={styles.modalFooter}>
+                                    <motion.button
+                                        type="button"
+                                        className={styles.modalCancelBtn}
+                                        onClick={() => setUploadModalOpen(false)}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                    >
+                                        Cancel
+                                    </motion.button>
+                                    <motion.button
+                                        type="submit"
+                                        disabled={uploadLoading || !file || !details.trim()}
+                                        className={styles.modalSubmitBtn}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                    >
+                                        {uploadLoading ? 'Uploading...' : 'Upload Document'}
+                                    </motion.button>
+                                </div>
+                            </form>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
+
             <motion.div
                 className={styles.statusCardsSection}
                 variants={containerVariants}
@@ -266,13 +365,7 @@ const DocumentDashboard = () => {
                         </div>
                         <motion.button
                             className={styles.uploadBtn}
-                            onClick={() => {
-                                // Scroll to upload section
-                                const uploadForm = document.querySelector(`.${styles.uploadFormContainer}`);
-                                if (uploadForm) {
-                                    uploadForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                }
-                            }}
+                            onClick={() => setUploadModalOpen(true)}
                             title="Upload new document"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -326,8 +419,8 @@ const DocumentDashboard = () => {
                                                 <span className={styles.documentName}>{doc.details}</span>
                                             </div>
                                         </td>
-                                        <td>-</td>
-                                        <td>
+                                        <td className={styles.documentCell}>{formatFileSize(doc.file_size)}</td>
+                                        <td className={styles.actionCell}>
                                             <div className={styles.actionButtons}>
                                                 <motion.button
                                                     className={`${styles.actionBtn} ${styles.viewBtn}`}
@@ -463,58 +556,6 @@ const DocumentDashboard = () => {
                 )}
             </div>
 
-            {/* Upload Form Section */}
-            <motion.div
-                className={`${styles.uploadSection} ${styles.uploadFormContainer}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.2 }}
-            >
-                <div className={styles.uploadHeader}>
-                    <h3>Upload New Document</h3>
-                    <p>Add documents to the school repository</p>
-                </div>
-
-                <form onSubmit={handleUpload} className={styles.uploadForm}>
-                    <div className={styles.uploadFormFields}>
-                        <div className={styles.formGroup}>
-                            <label htmlFor="details">Document Name *</label>
-                            <input
-                                id="details"
-                                type="text"
-                                value={details}
-                                onChange={(e) => setDetails(e.target.value)}
-                                placeholder="e.g., School Prospectus 2024"
-                                className={styles.formInput}
-                            />
-                        </div>
-
-                        <div className={styles.formGroup}>
-                            <label htmlFor="file">Select File *</label>
-                            <div className={styles.fileInputWrapper}>
-                                <input
-                                    id="file"
-                                    type="file"
-                                    onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
-                                    className={styles.fileInput}
-                                />
-                                <span className={styles.fileInputLabel}>
-                                    {file ? file.name : 'Choose a file...'}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={uploadLoading || !file || !details.trim()}
-                        className={styles.submitBtn}
-                    >
-                        {uploadLoading ? 'Uploading...' : 'Upload Document'}
-                    </button>
-                </form>
-            </motion.div>
-
             {/* Preview Modal */}
             <AnimatePresence>
                 {preview && (
@@ -573,7 +614,7 @@ const StatusCardComponent = ({
                         </div>
                         <p className={styles.statusCardLabel}>{card.label}</p>
                     </div>
-                    <div className={styles.statusCardIcon} style={{ background: card.bgColor }}>
+                    <div className={styles.statusCardIcon} style={{ background: card.bgColor, color: card.color }}>
                         {card.icon}
                     </div>
                 </div>

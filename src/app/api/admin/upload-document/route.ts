@@ -22,7 +22,16 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(arrayBuffer);
 
     // Upload to Google Drive
-    const uploadResult = await uploadFileToGoogleDrive(file.name, buffer, file.type);
+    let uploadResult;
+    try {
+      uploadResult = await uploadFileToGoogleDrive(file.name, buffer, file.type);
+    } catch (driveError) {
+      console.error('Google Drive upload error:', driveError);
+      return NextResponse.json(
+        { error: 'Failed to upload file to Google Drive. Please check your Google Drive configuration.' },
+        { status: 500 }
+      );
+    }
 
     // Store record in downloads table
     const { data, error } = await supabase
@@ -32,18 +41,20 @@ export async function POST(request: NextRequest) {
         uploaded_at: new Date().toISOString(),
         url: uploadResult.webViewLink,
         drive_file_id: uploadResult.fileId,
+        file_size: file.size,
       }])
       .select('*')
       .single();
 
     if (error) {
       console.error('Supabase insert error:', error);
-      return NextResponse.json({ error: 'Failed to save record' }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to save record to database' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, data }, { status: 200 });
   } catch (err) {
     console.error('Upload document error:', err);
-    return NextResponse.json({ error: 'Failed to upload document' }, { status: 500 });
+    const errorMessage = err instanceof Error ? err.message : 'Failed to upload document';
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
