@@ -61,6 +61,13 @@ body {
     flex-shrink: 0;
 }
 
+.logoRight {
+    width: 1.5cm;
+    height: 1.5cm;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
 .childPhotoContainer {
     height: 2.2cm;
     width: 1.6cm;
@@ -113,11 +120,6 @@ body {
     margin: 0.03cm 0 0 0;
 }
 
-.dividerMain {
-    height: 1.5px;
-    background-color: var(--primary-purple);
-    margin: 0.2cm 0;
-}
 
 .formTitle {
     font-size: 14pt;
@@ -127,6 +129,8 @@ body {
     margin: 0.2cm 0;
     letter-spacing: 0.8px;
     text-transform: uppercase;
+    background-color: var(--primary-yellow);
+    padding-block: 0.2cm;
 }
 
 /* ===== Meta Section ===== */
@@ -293,8 +297,8 @@ body {
 
 .signatureBoxContainer {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 0.4cm;
+    grid-template-columns: 2fr 2fr;
+    gap: 3cm;
     margin-top: 0.25cm;
 }
 
@@ -341,8 +345,8 @@ body {
 .dateFieldSmall {
     font-size: 7pt;
     color: var(--color-text-lighter);
-    text-align: center;
-    margin: 0.05cm 0 0 0;
+    text-align: left;
+    margin: 0.5cm 0 0 0;
     line-height: 1;
 }
 

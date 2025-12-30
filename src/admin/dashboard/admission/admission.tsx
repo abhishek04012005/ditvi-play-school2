@@ -1534,7 +1534,7 @@ const DetailsModal = ({
                         <div className={styles.modalHeader}>
                             <div>
                                 <h2>👤 Admission Details {editMode && <span style={{ fontSize: '0.75em' }}>• EDIT MODE</span>}</h2>
-                                <p>{childName} • {parentName}</p>
+                                <p>{admission.admission_number} | {childName}</p>
                             </div>
                             <div className={styles.headerButtons}>
                                 {!editMode ? (

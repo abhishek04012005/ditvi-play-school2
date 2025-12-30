@@ -64,6 +64,7 @@
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
@@ -323,7 +324,6 @@
 }
 
 .headerButtons {
-    display: flex;
     gap: 1rem;
     flex-wrap: wrap;
 }
@@ -332,11 +332,11 @@
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
-    padding: 0.85rem 1.5rem;
+    padding: 1rem 1.5rem;
     background: linear-gradient(135deg, var(--primary-yellow) 0%, #f0c656 100%);
     color: var(--primary-purple);
     border: none;
-    border-radius: 10px;
+    border-radius: 50px;
     font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
@@ -344,6 +344,11 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     box-shadow: 0 4px 12px rgba(255, 191, 0, 0.3);
+    margin-left: 0.5rem;
+}
+
+.editButton {
+    background: linear-gradient(135deg, var(--primary-yellow) 0%, #f0c656 100%);
 }
 
 .editBtn:hover {
@@ -461,10 +466,13 @@
 }
 
 @keyframes pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 1;
         transform: scale(1);
     }
+
     50% {
         opacity: 0.7;
         transform: scale(1.2);
@@ -522,7 +530,7 @@
     background-size: 100% 100%;
 }
 
-.statusMessage > div:first-child {
+.statusMessage>div:first-child {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -685,7 +693,7 @@
     font-weight: 700;
 }
 
-.contactSection > p {
+.contactSection>p {
     margin: 0 0 1.25rem 0;
     color: var(--text-gray);
     font-size: 0.95rem;
@@ -888,7 +896,7 @@
         text-align: center;
     }
 
-    .statusMessage > div:first-child {
+    .statusMessage>div:first-child {
         width: 100%;
     }
 
@@ -1020,7 +1028,7 @@
         font-size: 0.95rem;
     }
 
-    .contactSection > p {
+    .contactSection>p {
         font-size: 0.85rem;
     }
 

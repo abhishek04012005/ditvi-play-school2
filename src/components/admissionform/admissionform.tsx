@@ -556,11 +556,10 @@ export default function AdmissionForm() {
             </motion.div>
 
             <h1 className={styles.successTitle}>
-              Admission Submitted Successfully!
+              Admission Request Submitted Successfully!
             </h1>
             <p className={styles.successSubtitle}>
-              Your application has been received. Check your email for further
-              updates.
+              Your application has been received. 
             </p>
 
             <motion.div
@@ -754,8 +753,8 @@ export default function AdmissionForm() {
                                 type="radio"
                                 id="gender_male"
                                 name="child_gender"
-                                value="male"
-                                checked={formData.child_gender === "male"}
+                                value="Male"
+                                checked={formData.child_gender === "Male"}
                                 onChange={handleInputChange}
                                 className={styles.radioInput}
                               />
@@ -772,8 +771,8 @@ export default function AdmissionForm() {
                                 type="radio"
                                 id="gender_female"
                                 name="child_gender"
-                                value="female"
-                                checked={formData.child_gender === "female"}
+                                value="Female"
+                                checked={formData.child_gender === "Female"}
                                 onChange={handleInputChange}
                                 className={styles.radioInput}
                               />
@@ -915,7 +914,7 @@ export default function AdmissionForm() {
                               name="parent_address"
                               value={formData.parent_address}
                               onChange={handleInputChange}
-                              placeholder="Enter complete address (street, city, state, postal code)"
+                              placeholder="Enter complete address"
                               rows={3}
                               required
                               className={styles.textarea}

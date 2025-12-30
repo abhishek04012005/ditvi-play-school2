@@ -95,11 +95,6 @@ body {
     margin: 0.03cm 0 0 0;
 }
 
-.dividerMain {
-    height: 1.5px;
-    background-color: var(--primary-purple);
-    margin: 0.2cm 0;
-}
 
 .formTitle {
     font-size: 14pt;
@@ -109,7 +104,8 @@ body {
     margin: 0.2cm 0;
     letter-spacing: 0.8px;
     text-transform: uppercase;
-    line-height: 1;
+    background-color: var(--primary-yellow);
+    padding-block: 0.2cm;
 }
 
 /* ===== META SECTION (ADMISSION NUMBER) ===== */

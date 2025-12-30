@@ -312,23 +312,7 @@ export default function AdmissionStatus() {
         />
 
         {/* Empty State */}
-        {!searched && (
-          <motion.div
-            className={styles.emptyState}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <div className={styles.emptyStateIcon}>
-              <FaHistory />
-            </div>
-            <h3>No Results Yet</h3>
-            <p>
-              Enter your admission number above to check the current status of
-              your application.
-            </p>
-          </motion.div>
-        )}
+
       </div>
     </section>
   );
@@ -368,15 +352,7 @@ const StatusResultCard = ({
       {/* Header */}
       <div className={styles.resultHeader}>
         <div className={styles.resultHeaderLeft}>
-          <div
-            className={styles.statusIconLarge}
-            style={{
-              backgroundColor: statusData.bgColor,
-              color: statusData.color,
-            }}
-          >
-            {statusData.icon}
-          </div>
+
           <div>
             <h2>Admission #{admission.admission_number}</h2>
             <p className={styles.applicationDate}>
@@ -385,49 +361,28 @@ const StatusResultCard = ({
           </div>
         </div>
         <div className={styles.headerButtons}>
+        
+          <div className={styles.statusBadge}>
+            <div
+              className={styles.statusBadgeDot}
+              style={{ backgroundColor: statusData.color }}
+            ></div>
+            <span style={{ color: statusData.color, fontWeight: 700 }}>
+              {status}
+            </span>
+          </div>
           {status === "Under Correction" && onEditClick && (
-            <motion.button
-              onClick={onEditClick}
+            <div
               className={styles.editBtn}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              onClick={onEditClick}
             >
               <FaEdit /> Edit Details
-            </motion.button>
+            </div>
           )}
-          <motion.button
-            onClick={onReset}
-            className={styles.newSearchBtn}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <FaSearch /> New Search
-          </motion.button>
+
+
         </div>
       </div>
-
-      {/* Status Badge */}
-      <div className={styles.statusBadge}>
-        <div
-          className={styles.statusBadgeDot}
-          style={{ backgroundColor: statusData.color }}
-        ></div>
-        <span style={{ color: statusData.color, fontWeight: 700 }}>
-          {status}
-        </span>
-      </div>
-
-      {/* Remark Box (if Under Correction) */}
-      {status === "Under Correction" && admission.remark && (
-        <motion.div
-          className={styles.remarkBoxStatus}
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <strong>📝 What needs to be corrected:</strong>
-          <p>{admission.remark}</p>
-        </motion.div>
-      )}
 
       {/* Details Grid */}
       <div className={styles.detailsGrid}>
@@ -442,12 +397,6 @@ const StatusResultCard = ({
         <div className={styles.detailCard}>
           <label>Applied Program</label>
           <p>{program}</p>
-        </div>
-        <div className={styles.detailCard}>
-          <label>Application Status</label>
-          <p style={{ color: statusData.color, fontWeight: 700 }}>
-            {status}
-          </p>
         </div>
       </div>
 
@@ -539,9 +488,8 @@ const StatusTimeline = ({ status }: { status: string }) => {
         {steps.map((step, index) => (
           <motion.div
             key={index}
-            className={`${styles.timelineStep} ${
-              step.completed ? styles.completed : ""
-            }`}
+            className={`${styles.timelineStep} ${step.completed ? styles.completed : ""
+              }`}
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: index * 0.1 }}

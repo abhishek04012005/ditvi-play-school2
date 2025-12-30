@@ -133,13 +133,14 @@ const PDFHeader: React.FC<{ logoUrl: string | null }> = ({ logoUrl }) => {
                         Phone: {schoolDetails.contact.phone} | Email: {schoolDetails.contact.email}
                     </p>
                 </div>
-                {logoUrl && (
-                    <img src={logoUrl} alt="School Logo" className={styles.logo} />
-                )}
+                {/* {logoUrl && (
+                    <img src={logoUrl} alt="School Logo" className={styles.logoRight} />
+                )} */}
+                <div className={styles.logo}>
+
+                </div>
             </div>
-            <div className={styles.dividerMain}></div>
             <h2 className={styles.formTitle}>ADMISSION FORM</h2>
-            <div className={styles.dividerMain}></div>
         </div>
     );
 };
@@ -270,13 +271,13 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
 
             {/* Child Information */}
             <div className={styles.section}>
-                <h3 className={styles.sectionTitle}>1. CHILD INFORMATION</h3>
+                <h3 className={styles.sectionTitle}>1. STUDENT DETAILS</h3>
                 <div className={styles.childInfoContainer}>
                     <div className={styles.childInfoContent}>
                         <div className={styles.sectionContent}>
                             <FieldRow columns={2}>
                                 <Field label="Child Name:" value={getChildName()} />
-                                <Field label="DOB:" value={formatDate(admission.child_dob)} />
+                                <Field label="DOB (dd/mm/yyyy):" value={formatDate(admission.child_dob)} />
                             </FieldRow>
                             <FieldRow columns={2}>
                                 <Field label="Gender:" value={admission.child_gender || 'N/A'} />
@@ -297,7 +298,7 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
             </div>
 
             {/* Parent Information */}
-            <PDFSection title="2. PARENT/GUARDIAN INFORMATION">
+            <PDFSection title="2. PARENT/GUARDIAN DETAILS">
                 <FieldRow columns={1}>
                     <Field label="Name:" value={getParentName()} />
                 </FieldRow>
@@ -329,25 +330,22 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
                     <p className={styles.consentText}>
                         I hereby declare that the information provided is true and correct. I understand and accept the admission policies of {schoolDetails.name}.
                     </p>
+                        <div className={styles.dateFieldSmall}>Date: __________</div>
+                        <div className={styles.dateFieldSmall}>Place: __________</div>
                 </div>
 
                 <div className={styles.signatureBoxContainer}>
                     <div className={styles.signatureBox}>
                         <div className={styles.signatureSpace}></div>
                         <div className={styles.signatureLabel}>Parent/Guardian</div>
-                        <div className={styles.dateFieldSmall}>Date: __________</div>
+                        {/* <div className={styles.dateFieldSmall}>Date: __________</div> */}
                     </div>
 
-                    <div className={styles.signatureBox}>
-                        <div className={styles.signatureSpace}></div>
-                        <div className={styles.signatureLabel}>Teacher/Authority</div>
-                        <div className={styles.dateFieldSmall}>Date: __________</div>
-                    </div>
 
                     <div className={styles.signatureBox}>
                         <div className={styles.signatureName}>{schoolDetails.director?.name || 'Director'}</div>
                         <div className={styles.signatureSpace}></div>
-                        <div className={styles.signatureLabel}>Director</div>
+                        <div className={styles.signatureLabel}>Admission Authority</div>
                     </div>
                 </div>
             </div>

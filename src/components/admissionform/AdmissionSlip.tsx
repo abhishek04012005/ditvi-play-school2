@@ -116,13 +116,12 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
                             Phone: {schoolDetails.contact.phone} | Email: {schoolDetails.contact.email}
                         </p>
                     </div>
-                    {logoSrc && (
+                    {/* {logoSrc && (
                         <img src={logoSrc} alt="School Logo" className={slipStyles.logo} />
-                    )}
+                    )} */}
+                    <div className={slipStyles.logo}></div>
                 </div>
-                <div className={slipStyles.dividerMain}></div>
-                <h2 className={slipStyles.formTitle}>ADMISSION CONFIRMATION SLIP</h2>
-                <div className={slipStyles.dividerMain}></div>
+                <h2 className={slipStyles.formTitle}>ADMISSION REQUEST SLIP</h2>
             </div>
 
             {/* Meta Section - Admission Number */}
@@ -145,7 +144,7 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
 
             {/* Child Information Section */}
             <div className={slipStyles.section}>
-                <h3 className={slipStyles.sectionTitle}>1. CHILD INFORMATION</h3>
+                <h3 className={slipStyles.sectionTitle}>1. STUDENT DETAILS</h3>
                 <div className={slipStyles.sectionContent}>
                     <div className={slipStyles.fieldRow}>
                         <div className={slipStyles.field}>
@@ -172,7 +171,7 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
 
             {/* Parent Information Section */}
             <div className={slipStyles.section}>
-                <h3 className={slipStyles.sectionTitle}>2. PARENT/GUARDIAN INFORMATION</h3>
+                <h3 className={slipStyles.sectionTitle}>2. PARENT/GUARDIAN DETAILS</h3>
                 <div className={slipStyles.sectionContent}>
                     <div className={slipStyles.fieldRow}>
                         <div className={slipStyles.field}>
