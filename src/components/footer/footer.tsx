@@ -24,11 +24,11 @@ const Footer = () => {
     { text: 'Admission', href: '/admission-form' },
     { text: 'Gallery', href: '/gallery' },
     { text: 'Contact', href: '/contact' },
+    { text: 'Admission Status', href: '/admission-status' },
   ];
 
   const links = [
     { text: 'Admin', href: '/admin/login' },
-    { text: 'Admin Status', href: '/admission-status' },
     { text: 'Terms of Service', href: '/terms' },
   ]
 
@@ -80,7 +80,7 @@ const Footer = () => {
               height={150}
               className={styles.logo}
             />
-            <p>Nurturing young minds with love, care, and creative learning experiences.</p>
+            <p>Where little minds grow big! Join us for fun learning experiences.</p>
             <div className={styles.socialLinks}>
               {socialLinks.map((social, index) => (
                 <motion.a

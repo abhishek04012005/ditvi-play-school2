@@ -20,7 +20,7 @@
     box-shadow: 0 40px 100px rgba(106, 76, 147, 0.3);
     position: relative;
     border: 2px solid rgba(106, 76, 147, 0.12);
-    overflow: hidden;
+    overflow: auto;
 }
 
 @keyframes slideUp {

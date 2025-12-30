@@ -148,7 +148,7 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
                 <div className={slipStyles.sectionContent}>
                     <div className={slipStyles.fieldRow}>
                         <div className={slipStyles.field}>
-                            <label className={slipStyles.fieldLabel}>Child Name:</label>
+                            <label className={slipStyles.fieldLabel}>Student Name:</label>
                             <div className={slipStyles.fieldValue}>{data.child_name || 'N/A'}</div>
                         </div>
                         <div className={slipStyles.field}>
@@ -304,7 +304,7 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
                         <span className={slipStyles.footerItem}>•</span>
                         <span className={slipStyles.footerItem}>Generated: {todayDate}</span>
                         <span className={slipStyles.footerItem}>•</span>
-                        <span className={slipStyles.footerItem}>Official Confirmation</span>
+                        <span className={slipStyles.footerItem}>Official Document</span>
                     </div>
                 </div>
             </div>
