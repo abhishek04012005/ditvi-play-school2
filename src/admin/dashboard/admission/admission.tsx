@@ -38,8 +38,6 @@ import AdmissionPDFTemplate from '@/components/admissionpdftemplate/admissionpdf
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
-
-
 interface NoteEntry {
     text: string;
     timestamp: string;
@@ -163,7 +161,6 @@ const getAdmissionSource = (admission: Admission): string => {
     return sourceMap[source] || 'Unknown';
 };
 
-
 export default function AdminAdmission() {
     const [admissions, setAdmissions] = useState<Admission[]>([]);
     const [loading, setLoading] = useState(true);
@@ -196,7 +193,6 @@ export default function AdminAdmission() {
     const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false);
     const [pdfPreviewUrl, setPdfPreviewUrl] = useState<string | null>(null);
     const [previewAdmission, setPreviewAdmission] = useState<Admission | null>(null);
-
 
     useEffect(() => {
         const initializePage = async () => {
@@ -890,7 +886,7 @@ export default function AdminAdmission() {
                             {loading ? (
                                 <tr>
                                     <td colSpan={9} className={styles.loading}>
-                                        <CircularProgress size={18} sx={{mr: 1}} /> Loading admissions...
+                                        <CircularProgress size={18} sx={{ mr: 1 }} /> Loading admissions...
                                     </td>
                                 </tr>
                             ) : sortedAndFilteredAdmissions.length === 0 ? (
@@ -1385,7 +1381,7 @@ const NotesModal = ({
                                                     <div className={styles.noteEntryHeader}>
                                                         <span className={styles.noteNumber}>Note #{index + 1}</span>
                                                         <span className={styles.noteUser}>
-                                                            <PersonOutlined style={{fontSize: '0.9em', marginRight: '4px'}} /> {entry.userName || 'Unknown User'}
+                                                            <PersonOutlined style={{ fontSize: '0.9em', marginRight: '4px' }} /> {entry.userName || 'Unknown User'}
                                                         </span>
                                                         <span className={styles.noteTimestamp}>
                                                             ⏰ {formatTimestamp(entry.timestamp)}
@@ -1401,7 +1397,7 @@ const NotesModal = ({
                                                                 disabled={!!deletingNoteId}
                                                             >
                                                                 {deletingNoteId === entry.id ? (
-                                                                    <CircularProgress size={14} sx={{mr: 1}} />
+                                                                    <CircularProgress size={14} sx={{ mr: 1 }} />
                                                                 ) : (
                                                                     <DeleteOutlined />
                                                                 )}
@@ -1459,7 +1455,7 @@ const NotesModal = ({
                             >
                                 {savingNote ? (
                                     <>
-                                        <CircularProgress size={16} sx={{mr: 1}} /> Saving...
+                                        <CircularProgress size={16} sx={{ mr: 1 }} /> Saving...
                                     </>
                                 ) : (
                                     <>
@@ -1572,7 +1568,7 @@ const DetailsModal = ({
                                         >
                                             {savingEdit ? (
                                                 <>
-                                                    <CircularProgress size={16} sx={{mr: 1}} /> Saving...
+                                                    <CircularProgress size={16} sx={{ mr: 1 }} /> Saving...
                                                 </>
                                             ) : (
                                                 <>
@@ -1760,7 +1756,7 @@ const DetailsModal = ({
                                     </select>
                                     {statusUpdating && (
                                         <div className={styles.updatingIndicator}>
-                                            <CircularProgress size={14} sx={{mr: 1}} />
+                                            <CircularProgress size={14} sx={{ mr: 1 }} />
                                             <span>Updating...</span>
                                         </div>
                                     )}
@@ -2280,7 +2276,7 @@ const PDFPreviewModal = ({
                             </button>
                         </div>
 
-                        <div  className={styles.pdfPreviewContent}>
+                        <div className={styles.pdfPreviewContent}>
                             <div id={`admission-pdf-preview-template-${admission.id}`} className={styles.pdfPreviewContentInner}>
                                 <AdmissionPDFTemplate admission={admission} />
                             </div>

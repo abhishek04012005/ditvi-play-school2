@@ -1144,9 +1144,11 @@ const Spotlight = () => {
                                                 type="text"
                                                 id="name"
                                                 value={formData.name}
-                                                onChange={(e) =>
-                                                    setFormData({ ...formData, name: e.target.value })
-                                                }
+                                                onChange={(e) => {
+                                                    // Only allow alphabets and spaces for student name
+                                                    const alphabetsOnly = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+                                                    setFormData({ ...formData, name: alphabetsOnly });
+                                                }}
                                                 placeholder="Enter student name"
                                                 disabled={loading}
                                             />

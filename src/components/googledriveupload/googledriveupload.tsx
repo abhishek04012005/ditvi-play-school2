@@ -31,7 +31,9 @@ export default function GoogleDriveUploadForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, name: e.target.value });
+    // Only allow alphabets and spaces for name
+    const alphabetsOnly = e.target.value.replace(/[^a-zA-Z\s]/g, '');
+    setFormData({ ...formData, name: alphabetsOnly });
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {

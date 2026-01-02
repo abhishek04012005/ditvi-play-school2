@@ -130,7 +130,22 @@ export default function AdmissionForm() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    
+    let processedValue = value;
+    
+    // Fields that should only contain alphabets and spaces
+    const nameFields = ['child_name', 'parent_name', 'child_place_of_birth'];
+    if (nameFields.includes(name)) {
+      processedValue = value.replace(/[^a-zA-Z\s]/g, '');
+    }
+    
+    // Fields that should only contain numbers
+    const numberFields = ['parent_mobile_number'];
+    if (numberFields.includes(name)) {
+      processedValue = value.replace(/[^0-9]/g, '');
+    }
+    
+    setFormData({ ...formData, [name]: processedValue });
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
     }

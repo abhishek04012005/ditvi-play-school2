@@ -97,19 +97,23 @@ const Enquiry = () => {
                 }));
             }
         } else if (name === 'parentName') {
+            // Only allow alphabets and spaces for parent name
+            const alphabetsOnly = value.replace(/[^a-zA-Z\s]/g, '');
             setFormData(prev => ({
                 ...prev,
-                [name]: value
+                [name]: alphabetsOnly
             }));
-            if (value.trim()) {
+            if (alphabetsOnly.trim()) {
                 setErrors(prev => ({ ...prev, parentName: '' }));
             }
         } else if (name === 'childName') {
+            // Only allow alphabets and spaces for child name
+            const alphabetsOnly = value.replace(/[^a-zA-Z\s]/g, '');
             setFormData(prev => ({
                 ...prev,
-                [name]: value
+                [name]: alphabetsOnly
             }));
-            if (value.trim()) {
+            if (alphabetsOnly.trim()) {
                 setErrors(prev => ({ ...prev, childName: '' }));
             }
         } else if (name === 'program') {

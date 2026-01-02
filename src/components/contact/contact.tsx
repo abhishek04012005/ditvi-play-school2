@@ -205,9 +205,11 @@ const Contact = () => {
         }));
       }
     } else if (name === "name") {
+      // Only allow alphabets and spaces for name
+      const alphabetsOnly = value.replace(/[^a-zA-Z\s]/g, '');
       setFormData((prev) => ({
         ...prev,
-        [name]: value,
+        [name]: alphabetsOnly,
       }));
 
       if (value.trim()) {
