@@ -2030,6 +2030,8 @@
   .selectInput,
   .textarea {
     padding: 11px 12px;
+    padding-left: 3rem;
+
     font-size: 0.9rem;
   }
 
@@ -2123,6 +2125,8 @@
   .selectInput,
   .textarea {
     padding: 10px 11px;
+    padding-left: 3rem;
+
     font-size: 0.85rem;
     border-radius: 8px;
   }
@@ -2220,6 +2224,7 @@
   .selectInput,
   .textarea {
     padding: 9px 10px;
+    padding-left: 3rem;
     font-size: 0.8rem;
   }
 

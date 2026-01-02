@@ -228,8 +228,8 @@ export default function AdmissionForm() {
 
     if (stepNum === 1) {
       if (!formData.child_name.trim()) {
-        errors.push("Child name is required");
-        fieldErrors.child_name = "Child name is required";
+        errors.push("Student name is required");
+        fieldErrors.child_name = "Student name is required";
       }
       if (!formData.child_dob) {
         errors.push("Date of birth is required");
@@ -662,7 +662,7 @@ export default function AdmissionForm() {
 
                   <div className={styles.pills}>
                     {[
-                      { n: 1, t: "Child Details", icon: EmojiPeople },
+                      { n: 1, t: "Student Details", icon: EmojiPeople },
                       { n: 2, t: "Parent's Details", icon: FamilyRestroom },
                       { n: 3, t: "Academic Details", icon: SchoolOutlined },
                       {
@@ -705,7 +705,7 @@ export default function AdmissionForm() {
                     >
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
-                          <label>Child's Name *</label>
+                          <label>Student's Name *</label>
                           <div className={styles.inputWrapper}>
                             <FaChild className={styles.icon} />
                             <input
@@ -713,7 +713,7 @@ export default function AdmissionForm() {
                               name="child_name"
                               value={formData.child_name}
                               onChange={handleInputChange}
-                              placeholder="Enter child's name"
+                              placeholder="Enter student's name"
                               required
                             />
                           </div>

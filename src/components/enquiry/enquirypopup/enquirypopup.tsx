@@ -156,7 +156,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
         }
 
         if (!formData.childName.trim()) {
-            newErrors.childName = 'Child name is required';
+            newErrors.childName = 'Student name is required';
             isValid = false;
         }
 
@@ -200,7 +200,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
             if (error) throw error;
 
             showSuccessModal(
-                'Thank you for your enquiry! Our admission team will contact you soon to discuss your child\'s admission.',
+                'Thank you for your enquiry! Our admission team will contact you soon to discuss your student\'s admission.',
                 'Enquiry Submitted Successfully! 🎉'
             );
 
@@ -370,14 +370,14 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.4 }}
                                     >
-                                        <label htmlFor="popupChildName">Child's Name *</label>
+                                        <label htmlFor="popupChildName">Student's Name *</label>
                                         <div className={styles.inputWrapper}>
                                             <FaChild className={styles.icon} />
                                             <input
                                                 type="text"
                                                 id="popupChildName"
                                                 name="childName"
-                                                placeholder="Enter child's name"
+                                                placeholder="Enter student's name"
                                                 value={formData.childName}
                                                 onChange={handleChange}
                                                 className={errors.childName ? styles.inputError : ''}
