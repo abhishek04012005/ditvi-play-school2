@@ -1,29 +1,31 @@
 "use client";
 import { useState, useEffect, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { CircularProgress } from '@mui/material';
 import {
-    FaSearch,
-    FaSort,
-    FaSortUp,
-    FaSortDown,
-    FaSpinner,
-    FaCheckCircle,
-    FaUser,
-    FaStickyNote,
-    FaTimes,
-    FaCheck,
-    FaClock,
-    FaFileAlt,
-    FaEye,
-    FaDownload,
-    FaPhoneAlt,
-    FaWhatsapp,
-    FaHistory,
-    FaTrash,
-    FaChevronLeft,
-    FaChevronRight,
-    FaPencilAlt,
-} from 'react-icons/fa';
+    SearchOutlined,
+    SortOutlined,
+    ArrowUpward,
+    ArrowDownward,
+    CheckCircleOutlined,
+    PersonOutlined,
+    NoteOutlined,
+    CloseOutlined,
+    CheckOutlined,
+    AccessTimeOutlined,
+    DescriptionOutlined,
+    VisibilityOutlined,
+    DownloadOutlined,
+    PhoneOutlined,
+    DeleteOutlined,
+    ChevronLeft,
+    ChevronRight,
+    EditOutlined,
+    WhatsApp,
+    HistoryOutlined,
+    AddOutlined,
+    DashboardOutlined,
+} from '@mui/icons-material';
 import { supabase } from '@/lib/supabase';
 import { schoolDetails } from '@/json/schooldetails';
 import toast from 'react-hot-toast';
@@ -294,8 +296,8 @@ export default function AdminAdmission() {
     };
 
     const getSortIcon = (field: SortField) => {
-        if (sortField !== field) return <FaSort />;
-        return sortOrder === 'asc' ? <FaSortUp /> : <FaSortDown />;
+        if (sortField !== field) return <SortOutlined />;
+        return sortOrder === 'asc' ? <ArrowUpward /> : <ArrowDownward />;
     };
 
     const sortedAndFilteredAdmissions = admissions
@@ -350,7 +352,7 @@ export default function AdminAdmission() {
         {
             label: 'Total Applications',
             count: statusCounts.total,
-            icon: <FaUser />,
+            icon: <PersonOutlined />,
             color: '#6a4c93',
             bgColor: '#f3e8ff',
             status: 'In Review',
@@ -359,7 +361,7 @@ export default function AdminAdmission() {
         {
             label: 'In Review',
             count: statusCounts['In Review'],
-            icon: <FaFileAlt />,
+            icon: <DescriptionOutlined />,
             color: '#3b82f6',
             bgColor: '#eff6ff',
             status: 'In Review',
@@ -368,7 +370,7 @@ export default function AdminAdmission() {
         {
             label: 'Reviewed',
             count: statusCounts['Reviewed'],
-            icon: <FaCheckCircle />,
+            icon: <CheckCircleOutlined />,
             color: '#f59e0b',
             bgColor: '#fffbf0',
             status: 'Reviewed',
@@ -377,7 +379,7 @@ export default function AdminAdmission() {
         {
             label: 'Interview Scheduled',
             count: statusCounts['Interview Scheduled'],
-            icon: <FaClock />,
+            icon: <AccessTimeOutlined />,
             color: '#8b5cf6',
             bgColor: '#faf5ff',
             status: 'Interview Scheduled',
@@ -386,7 +388,7 @@ export default function AdminAdmission() {
         {
             label: 'Confirmed',
             count: statusCounts['Confirmed'],
-            icon: <FaCheck />,
+            icon: <CheckOutlined />,
             color: '#10b981',
             bgColor: '#f0fdf4',
             status: 'Confirmed',
@@ -395,7 +397,7 @@ export default function AdminAdmission() {
         {
             label: 'Rejected',
             count: statusCounts['Rejected'],
-            icon: <FaTimes />,
+            icon: <CloseOutlined />,
             color: '#ef4444',
             bgColor: '#fef2f2',
             status: 'Rejected',
@@ -404,7 +406,7 @@ export default function AdminAdmission() {
         {
             label: 'Under Correction',
             count: statusCounts['Under Correction'],
-            icon: <FaPencilAlt />,
+            icon: <EditOutlined />,
             color: '#8b5cf6',
             bgColor: '#faf5ff',
             status: 'Under Correction',
@@ -827,7 +829,7 @@ export default function AdminAdmission() {
                 <div className={styles.header}>
                     <div className={styles.controls}>
                         <div className={styles.searchBar}>
-                            <FaSearch className={styles.searchIcon} />
+                            <SearchOutlined className={styles.searchIcon} />
                             <input
                                 type="text"
                                 placeholder="Search by child name, admission no., parent name, email or phone..."
@@ -842,7 +844,7 @@ export default function AdminAdmission() {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                         >
-                            <FaDownload /> Download Data
+                            <DownloadOutlined /> Download Data
                         </motion.button>
                         <select
                             value={filter}
@@ -888,7 +890,7 @@ export default function AdminAdmission() {
                             {loading ? (
                                 <tr>
                                     <td colSpan={9} className={styles.loading}>
-                                        <FaSpinner className={styles.loadingIcon} /> Loading admissions...
+                                        <CircularProgress size={18} sx={{mr: 1}} /> Loading admissions...
                                     </td>
                                 </tr>
                             ) : sortedAndFilteredAdmissions.length === 0 ? (
@@ -924,7 +926,7 @@ export default function AdminAdmission() {
                                                     className={styles.phoneLink}
                                                     title="Call"
                                                 >
-                                                    <FaPhoneAlt />
+                                                    <PhoneOutlined />
                                                 </a>
                                                 <a
                                                     href={`https://wa.me/91${getParentMobile(admission).replace(/\D/g, '')}`}
@@ -933,7 +935,7 @@ export default function AdminAdmission() {
                                                     className={styles.whatsappLink}
                                                     title="WhatsApp"
                                                 >
-                                                    <FaWhatsapp />
+                                                    <WhatsApp />
                                                 </a>
                                             </div>
                                         </td>
@@ -956,7 +958,7 @@ export default function AdminAdmission() {
                                                 onClick={() => openNotesModal(admission)}
                                                 title={admission.notes && admission.notes.length > 0 ? `${admission.notes.length} notes` : 'Add note'}
                                             >
-                                                <FaStickyNote />
+                                                <NoteOutlined />
                                                 {admission.notes && admission.notes.length > 0 && (
                                                     <span className={styles.notesIndicator}>{admission.notes.length}</span>
                                                 )}
@@ -977,7 +979,8 @@ export default function AdminAdmission() {
                                                 <option value="Under Correction">Under Correction</option>
                                             </select>
                                             {updatingId === admission.id && (
-                                                <FaSpinner
+                                                <CircularProgress
+                                                    size={18}
                                                     className={styles.statusSpinner}
                                                 />
                                             )}
@@ -988,7 +991,7 @@ export default function AdminAdmission() {
                                                 onClick={() => openDetailsModal(admission)}
                                                 title="View Details"
                                             >
-                                                <FaEye /> View
+                                                <VisibilityOutlined /> View
                                             </button>
                                         </td>
                                     </motion.tr>
@@ -1037,7 +1040,7 @@ export default function AdminAdmission() {
                                     whileTap={{ scale: currentPage === 1 ? 1 : 0.95 }}
                                     title="Previous page"
                                 >
-                                    <FaChevronLeft /> Previous
+                                    <ChevronLeft /> Previous
                                 </motion.button>
 
                                 <div className={styles.pageNumbers}>
@@ -1081,7 +1084,7 @@ export default function AdminAdmission() {
                                     whileTap={{ scale: currentPage === totalPages ? 1 : 0.95 }}
                                     title="Next page"
                                 >
-                                    Next <FaChevronRight />
+                                    Next <ChevronRight />
                                 </motion.button>
                             </div>
 
@@ -1347,7 +1350,7 @@ const NotesModal = ({
                                 <p>{childName} • {parentName}</p>
                                 {noteEntries.length > 0 && (
                                     <p className={styles.notesCount}>
-                                        <FaHistory /> {noteEntries.length} note{noteEntries.length !== 1 ? 's' : ''} saved
+                                        <HistoryOutlined /> {noteEntries.length} note{noteEntries.length !== 1 ? 's' : ''} saved
                                     </p>
                                 )}
                             </div>
@@ -1357,7 +1360,7 @@ const NotesModal = ({
                                 aria-label="Close"
                                 disabled={isProcessing}
                             >
-                                <FaTimes />
+                                <CloseOutlined />
                             </button>
                         </div>
 
@@ -1366,7 +1369,7 @@ const NotesModal = ({
                             {noteEntries.length > 0 && (
                                 <div className={styles.notesHistory}>
                                     <h3 className={styles.notesHistoryTitle}>
-                                        <FaHistory /> Note History
+                                        <HistoryOutlined /> Note History
                                     </h3>
                                     <div className={styles.notesList}>
                                         <AnimatePresence>
@@ -1382,10 +1385,10 @@ const NotesModal = ({
                                                     <div className={styles.noteEntryHeader}>
                                                         <span className={styles.noteNumber}>Note #{index + 1}</span>
                                                         <span className={styles.noteUser}>
-                                                            👤 {entry.userName || 'Unknown User'}
+                                                            <PersonOutlined style={{fontSize: '0.9em', marginRight: '4px'}} /> {entry.userName || 'Unknown User'}
                                                         </span>
                                                         <span className={styles.noteTimestamp}>
-                                                            🕒 {formatTimestamp(entry.timestamp)}
+                                                            ⏰ {formatTimestamp(entry.timestamp)}
                                                         </span>
                                                         {canDeleteNotes && (
                                                             <motion.button
@@ -1398,9 +1401,9 @@ const NotesModal = ({
                                                                 disabled={!!deletingNoteId}
                                                             >
                                                                 {deletingNoteId === entry.id ? (
-                                                                    <FaSpinner className={styles.spinnerIcon} />
+                                                                    <CircularProgress size={14} sx={{mr: 1}} />
                                                                 ) : (
-                                                                    <FaTrash />
+                                                                    <DeleteOutlined />
                                                                 )}
                                                             </motion.button>
                                                         )}
@@ -1426,7 +1429,7 @@ const NotesModal = ({
                             {/* New Note Input Section */}
                             <div className={styles.newNoteSection}>
                                 <h3 className={styles.newNoteTitle}>
-                                    ➕ Add New Note
+                                    <AddOutlined /> Add New Note
                                 </h3>
                                 <textarea
                                     value={newNoteText}
@@ -1445,7 +1448,7 @@ const NotesModal = ({
                                 onClick={onClose}
                                 disabled={isProcessing}
                             >
-                                <FaTimes /> Close
+                                <CloseOutlined /> Close
                             </button>
                             <motion.button
                                 className={styles.saveBtn}
@@ -1456,11 +1459,11 @@ const NotesModal = ({
                             >
                                 {savingNote ? (
                                     <>
-                                        <FaSpinner className={styles.loadingIcon} /> Saving...
+                                        <CircularProgress size={16} sx={{mr: 1}} /> Saving...
                                     </>
                                 ) : (
                                     <>
-                                        <FaCheck /> Save Note
+                                        <CheckOutlined /> Save Note
                                     </>
                                 )}
                             </motion.button>
@@ -1533,7 +1536,7 @@ const DetailsModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2>👤 Admission Details {editMode && <span style={{ fontSize: '0.75em' }}>• EDIT MODE</span>}</h2>
+                                <h2><PersonOutlined /> Admission Details {editMode && <span style={{ fontSize: '0.75em' }}>• EDIT MODE</span>}</h2>
                                 <p>{admission.admission_number} | {childName}</p>
                             </div>
                             <div className={styles.headerButtons}>
@@ -1546,7 +1549,7 @@ const DetailsModal = ({
                                             whileTap={{ scale: 0.95 }}
                                             title="Preview and download admission form"
                                         >
-                                            <FaDownload /> Form PDF
+                                            <DownloadOutlined /> Form PDF
                                         </motion.button>
                                         <motion.button
                                             className={styles.editBtn}
@@ -1555,7 +1558,7 @@ const DetailsModal = ({
                                             whileTap={{ scale: 0.95 }}
                                             title="Edit admission details"
                                         >
-                                            <FaPencilAlt /> Edit
+                                            <EditOutlined /> Edit
                                         </motion.button>
                                     </>
                                 ) : (
@@ -1569,11 +1572,11 @@ const DetailsModal = ({
                                         >
                                             {savingEdit ? (
                                                 <>
-                                                    <FaSpinner className={styles.loadingIcon} /> Saving...
+                                                    <CircularProgress size={16} sx={{mr: 1}} /> Saving...
                                                 </>
                                             ) : (
                                                 <>
-                                                    <FaCheck /> Save
+                                                    <CheckOutlined /> Save
                                                 </>
                                             )}
                                         </motion.button>
@@ -1584,7 +1587,7 @@ const DetailsModal = ({
                                             whileHover={{ scale: savingEdit ? 1 : 1.05 }}
                                             whileTap={{ scale: savingEdit ? 1 : 0.95 }}
                                         >
-                                            <FaTimes /> Cancel
+                                            <CloseOutlined /> Cancel
                                         </motion.button>
                                     </>
                                 )}
@@ -1594,7 +1597,7 @@ const DetailsModal = ({
                                     aria-label="Close"
                                     disabled={statusUpdating || savingEdit}
                                 >
-                                    <FaTimes />
+                                    <CloseOutlined />
                                 </button>
                             </div>
                         </div>
@@ -1740,7 +1743,7 @@ const DetailsModal = ({
 
                             {/* Status Section */}
                             <div className={styles.statusSection}>
-                                <label className={styles.sectionLabel}>📊 Status</label>
+                                <label className={styles.sectionLabel}><DashboardOutlined /> Status</label>
                                 <div className={styles.statusContainer}>
                                     <select
                                         value={getStatus(admission)}
@@ -1757,7 +1760,7 @@ const DetailsModal = ({
                                     </select>
                                     {statusUpdating && (
                                         <div className={styles.updatingIndicator}>
-                                            <FaSpinner className={styles.spinnerIcon} />
+                                            <CircularProgress size={14} sx={{mr: 1}} />
                                             <span>Updating...</span>
                                         </div>
                                     )}
@@ -1767,7 +1770,7 @@ const DetailsModal = ({
                                 {editMode && getStatus(admission) === 'Under Correction' && (
                                     <div style={{ marginTop: '1.5rem' }}>
                                         <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: '600', color: 'var(--primary-purple)' }}>
-                                            📝 Remarks for Correction
+                                            <NoteOutlined /> Remarks for Correction
                                         </label>
                                         <textarea
                                             value={editingData?.remark || ''}
@@ -1791,7 +1794,7 @@ const DetailsModal = ({
                                 {/* Display Remark when not in edit mode */}
                                 {!editMode && admission.remark && getStatus(admission) === 'Under Correction' && (
                                     <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%)', borderLeft: '4px solid var(--primary-yellow)', borderRadius: '8px' }}>
-                                        <strong style={{ color: 'var(--primary-purple)' }}>📝 Remarks:</strong>
+                                        <strong style={{ color: 'var(--primary-purple)' }}><NoteOutlined /> Remarks:</strong>
                                         <p style={{ margin: '0.5rem 0 0 0', color: 'var(--primary-purple)' }}>{admission.remark}</p>
                                     </div>
                                 )}
@@ -1799,7 +1802,7 @@ const DetailsModal = ({
 
                             {/* Documents Section */}
                             <div className={styles.documentsSection}>
-                                <label className={styles.sectionLabel}>📄 Documents</label>
+                                <label className={styles.sectionLabel}><DescriptionOutlined /> Documents</label>
 
                                 {editMode ? (
                                     <div className={styles.documentUploadSection}>
@@ -1848,7 +1851,7 @@ const DetailsModal = ({
                                                     }}
                                                 />
                                                 <label htmlFor="birth_cert_upload" className={styles.uploadLabel}>
-                                                    📄 Upload Certificate
+                                                    <DescriptionOutlined /> Upload Certificate
                                                 </label>
                                             </div>
                                             {uploadedFileNames.birth_cert_upload && (
@@ -1997,7 +2000,7 @@ const DetailsModal = ({
                                 onClick={onClose}
                                 disabled={statusUpdating}
                             >
-                                <FaTimes /> Close
+                                <CloseOutlined /> Close
                             </button>
                         </div>
                     </motion.div>
@@ -2024,13 +2027,13 @@ const DocumentListItem = ({
     onDownload: string;
 }) => (
     <div className={styles.documentItem}>
-        <FaFileAlt className={styles.documentIcon} />
+        <DescriptionOutlined className={styles.documentIcon} />
         <span className={styles.documentName}>{name}</span>
         <button className={styles.docBtn} onClick={onPreview} title="Preview">
-            <FaEye />
+            <VisibilityOutlined />
         </button>
         <a href={onDownload} download target="_blank" rel="noopener noreferrer" className={styles.docBtn} title="Download">
-            <FaDownload />
+            <DownloadOutlined />
         </a>
     </div>
 );
@@ -2066,7 +2069,7 @@ const DocumentPreviewModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2>📄 Document Preview</h2>
+                                <h2><DescriptionOutlined /> Document Preview</h2>
                                 <p>{preview.name}</p>
                             </div>
                             <button
@@ -2074,7 +2077,7 @@ const DocumentPreviewModal = ({
                                 onClick={onClose}
                                 aria-label="Close"
                             >
-                                <FaTimes />
+                                <CloseOutlined />
                             </button>
                         </div>
 
@@ -2107,10 +2110,10 @@ const DocumentPreviewModal = ({
                                 rel="noopener noreferrer"
                                 className={styles.downloadLink}
                             >
-                                <FaDownload /> Download
+                                <DownloadOutlined /> Download
                             </a>
                             <button className={styles.cancelBtn} onClick={onClose}>
-                                <FaTimes /> Close
+                                <CloseOutlined /> Close
                             </button>
                         </div>
                     </motion.div>
@@ -2265,7 +2268,7 @@ const PDFPreviewModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2>📄 Admission Form Preview</h2>
+                                <h2><DescriptionOutlined /> Admission Form Preview</h2>
                                 <p>{childName} • Admission #{admission.admission_number}</p>
                             </div>
                             <button
@@ -2273,7 +2276,7 @@ const PDFPreviewModal = ({
                                 onClick={onClose}
                                 aria-label="Close"
                             >
-                                <FaTimes />
+                                <CloseOutlined />
                             </button>
                         </div>
 
@@ -2290,7 +2293,7 @@ const PDFPreviewModal = ({
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
-                                <FaDownload /> Download PDF
+                                <DownloadOutlined /> Download PDF
                             </motion.button>
                             <motion.button
                                 className={styles.cancelBtn}
@@ -2298,7 +2301,7 @@ const PDFPreviewModal = ({
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
-                                <FaTimes /> Close
+                                <CloseOutlined /> Close
                             </motion.button>
                         </div>
                     </motion.div>
