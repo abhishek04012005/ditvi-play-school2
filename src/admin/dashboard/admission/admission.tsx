@@ -927,7 +927,7 @@ export default function AdminAdmission() {
                                                     <FaPhoneAlt />
                                                 </a>
                                                 <a
-                                                    href={`https://wa.me/${getParentMobile(admission).replace(/\D/g, '')}`}
+                                                    href={`https://wa.me/91${getParentMobile(admission).replace(/\D/g, '')}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className={styles.whatsappLink}

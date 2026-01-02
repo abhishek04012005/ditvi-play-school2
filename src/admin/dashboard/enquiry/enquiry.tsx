@@ -585,7 +585,7 @@ const EnquiryDashboard = () => {
                                                             <FaPhoneAlt />
                                                         </a>
                                                         <a
-                                                            href={`https://wa.me/${enquiry.phone.replace(/\D/g, '')}`}
+                                                            href={`https://wa.me/91${enquiry.phone.replace(/\D/g, '')}`}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className={styles.whatsappLink}

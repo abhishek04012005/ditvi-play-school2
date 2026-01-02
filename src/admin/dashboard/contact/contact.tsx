@@ -583,7 +583,7 @@ const ContactDashboard = () => {
                                                     <FaPhoneAlt />
                                                 </a>
                                                 <a
-                                                    href={`https://wa.me/${contact.phone.replace(/\D/g, '')}`}
+                                                    href={`https://wa.me/91${contact.phone.replace(/\D/g, '')}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className={styles.whatsappLink}
