@@ -183,13 +183,13 @@ const PhotoField: React.FC<{ photoUrl?: string | null }> = ({ photoUrl }) => {
             <div className={styles.childPhotoContainer}>
                 <img
                     src={convertedPhotoUrl}
-                    alt="Child Photo"
+                    alt="Student Photo"
                     className={styles.childPhoto}
                     onLoad={() => {
-                        console.log('✅ Child photo loaded successfully from:', convertedPhotoUrl);
+                        console.log('✅ Student photo loaded successfully from:', convertedPhotoUrl);
                     }}
                     onError={(e) => {
-                        console.error('❌ Failed to load child photo');
+                        console.error('❌ Failed to load student photo');
                         console.error('Converted URL:', convertedPhotoUrl);
                         console.error('Original URL:', photoUrl);
                         console.error('Error:', e);
@@ -276,7 +276,7 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
                     <div className={styles.childInfoContent}>
                         <div className={styles.sectionContent}>
                             <FieldRow columns={2}>
-                                <Field label="Child Name:" value={getChildName()} />
+                                <Field label="Student Name:" value={getChildName()} />
                                 <Field label="DOB (dd/mm/yyyy):" value={formatDate(admission.child_dob)} />
                             </FieldRow>
                             <FieldRow columns={2}>
