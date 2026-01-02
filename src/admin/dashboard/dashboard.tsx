@@ -2,18 +2,23 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    FaEnvelope,
-    FaUsers,
-    FaArrowUp,
-    FaArrowDown,
-    FaComments,
-    FaUserCheck,
-    FaCalendarAlt,
-    FaFilter,
-    FaGraduationCap,
-    FaStar,
-    FaCheck,
-} from 'react-icons/fa';
+    MailOutlined,
+    PeopleOutlined,
+    TrendingUp,
+    TrendingDown,
+    ChatBubbleOutline,
+    PersonAddOutlined,
+    CalendarMonthOutlined,
+    FilterListOutlined,
+    SchoolOutlined,
+    StarOutlined,
+    CheckCircleOutlined,
+    DashboardOutlined,
+    BarChartOutlined,
+    BabyChangingStationOutlined,
+    AccessTimeOutlined,
+    AssignmentOutlined,
+} from '@mui/icons-material';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
 import styles from './dashboard.module.css';
@@ -288,7 +293,7 @@ const Dashboard = () => {
             title: 'Total Contacts',
             value: contactMetrics.total,
             subtitle: `${contactMetrics.new} new this period`,
-            icon: <FaEnvelope />,
+            icon: <MailOutlined />,
             trend: { value: 12, isPositive: true },
             color: '#6a4c93',
             bgColor: '#f3e8ff',
@@ -297,7 +302,7 @@ const Dashboard = () => {
             title: 'Response Rate',
             value: contactMetrics.responseRate,
             subtitle: 'of messages replied',
-            icon: <FaComments />,
+            icon: <ChatBubbleOutline />,
             trend: { value: 5, isPositive: true },
             color: '#ffbf00',
             bgColor: '#fffbf0',
@@ -306,7 +311,7 @@ const Dashboard = () => {
             title: 'Total Enquiries',
             value: enquiryMetrics.total,
             subtitle: `${enquiryMetrics.new} new this period`,
-            icon: <FaUsers />,
+            icon: <PeopleOutlined />,
             trend: { value: 8, isPositive: true },
             color: '#6a4c93',
             bgColor: '#f3e8ff',
@@ -315,7 +320,7 @@ const Dashboard = () => {
             title: 'Conversion Rate',
             value: enquiryMetrics.conversionRate,
             subtitle: `${enquiryMetrics.enrolled} students enrolled`,
-            icon: <FaUserCheck />,
+            icon: <PersonAddOutlined />,
             trend: { value: 3, isPositive: true },
             color: '#10b981',
             bgColor: '#f0fdf4',
@@ -324,7 +329,7 @@ const Dashboard = () => {
             title: 'Total Admissions',
             value: admissionMetrics.total,
             subtitle: `${admissionMetrics.approved} approved`,
-            icon: <FaGraduationCap />,
+            icon: <SchoolOutlined />,
             trend: { value: 6, isPositive: true },
             color: '#3b82f6',
             bgColor: '#eff6ff',
@@ -333,7 +338,7 @@ const Dashboard = () => {
             title: 'Approval Rate',
             value: admissionMetrics.approvalRate,
             subtitle: 'admissions approved',
-            icon: <FaCheck />,
+            icon: <CheckCircleOutlined />,
             trend: { value: 4, isPositive: true },
             color: '#ec4899',
             bgColor: '#fdf2f8',
@@ -342,7 +347,7 @@ const Dashboard = () => {
             title: 'Total Spotlights',
             value: spotlightMetrics.total,
             subtitle: `${spotlightMetrics.published} published`,
-            icon: <FaStar />,
+            icon: <StarOutlined />,
             trend: { value: 9, isPositive: true },
             color: '#f59e0b',
             bgColor: '#fffbf0',
@@ -351,7 +356,7 @@ const Dashboard = () => {
             title: 'Publish Rate',
             value: spotlightMetrics.publishRate,
             subtitle: 'spotlights published',
-            icon: <FaCheck />,
+            icon: <CheckCircleOutlined />,
             trend: { value: 2, isPositive: true },
             color: '#8b5cf6',
             bgColor: '#faf5ff',
@@ -384,14 +389,14 @@ const Dashboard = () => {
             >
                 <div className={styles.headerContent}>
                     <div>
-                        <h1 className={styles.pageTitle}>📊 Dashboard Overview</h1>
+                        <h1 className={styles.pageTitle}><DashboardOutlined sx={{mr: 1}} /> Dashboard Overview</h1>
                         <p className={styles.pageSubtitle}>
                             Viewing data from <span style={{ fontWeight: '700', color: '#6a4c93' }}>{getDateRangeLabel()}</span>
                         </p>
                     </div>
                     <div className={styles.headerControls}>
                         <div className={styles.dateRangeControl}>
-                            <FaCalendarAlt className={styles.controlIcon} />
+                            <CalendarMonthOutlined className={styles.controlIcon} />
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                                 <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#999', textTransform: 'uppercase', letterSpacing: '0.4px' }}>Date Range</span>
                                 <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#333' }}>{getRangeDescription()}</span>
@@ -426,7 +431,7 @@ const Dashboard = () => {
                                         fontSize: '0.85rem'
                                     }}
                                 >
-                                    📅 Custom
+                                    <CalendarMonthOutlined sx={{mr: 0.5, fontSize: '1rem'}} /> Custom
                                 </motion.button>
                             </div>
                         </div>
@@ -591,7 +596,7 @@ const Dashboard = () => {
                 transition={{ delay: 0.2, duration: 0.6 }}
             >
                 <div className={styles.summaryHeader}>
-                    <h2>📊 Complete Data Summary</h2>
+                    <h2><DashboardOutlined sx={{mr: 1}} /> Complete Data Summary</h2>
                 </div>
                 <div className={styles.summaryGrid}>
                     {/* Total Records */}
@@ -601,7 +606,7 @@ const Dashboard = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.25 }}
                     >
-                        <div className={styles.summaryIcon}>📈</div>
+                        <div className={styles.summaryIcon}><TrendingUp sx={{fontSize: '2rem'}} /></div>
                         <div className={styles.summaryLabel}>Total Records</div>
                         <div className={styles.summaryNumber}>
                             {contactMetrics.total + enquiryMetrics.total + admissionMetrics.total + spotlightMetrics.total}
@@ -616,7 +621,7 @@ const Dashboard = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
                     >
-                        <div className={styles.summaryIcon}>📧</div>
+                        <div className={styles.summaryIcon}><MailOutlined sx={{fontSize: '2rem'}} /></div>
                         <div className={styles.summaryLabel}>Contacts Module</div>
                         <div className={styles.summaryNumber}>{contactMetrics.total}</div>
                         <div className={styles.summarySubtext}>{contactMetrics.new} new</div>
@@ -629,7 +634,7 @@ const Dashboard = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.35 }}
                     >
-                        <div className={styles.summaryIcon}>👶</div>
+                        <div className={styles.summaryIcon}><BabyChangingStationOutlined sx={{fontSize: '2rem'}} /></div>
                         <div className={styles.summaryLabel}>Enquiries Module</div>
                         <div className={styles.summaryNumber}>{enquiryMetrics.total}</div>
                         <div className={styles.summarySubtext}>{enquiryMetrics.enrolled} enrolled</div>
@@ -642,7 +647,7 @@ const Dashboard = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
                     >
-                        <div className={styles.summaryIcon}>🎓</div>
+                        <div className={styles.summaryIcon}><SchoolOutlined sx={{fontSize: '2rem'}} /></div>
                         <div className={styles.summaryLabel}>Admissions Module</div>
                         <div className={styles.summaryNumber}>{admissionMetrics.total}</div>
                         <div className={styles.summarySubtext}>{admissionMetrics.approved} approved</div>
@@ -655,7 +660,7 @@ const Dashboard = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.45 }}
                     >
-                        <div className={styles.summaryIcon}>⭐</div>
+                        <div className={styles.summaryIcon}><StarOutlined sx={{fontSize: '2rem'}} /></div>
                         <div className={styles.summaryLabel}>Spotlight Module</div>
                         <div className={styles.summaryNumber}>{spotlightMetrics.total}</div>
                         <div className={styles.summarySubtext}>{spotlightMetrics.published} published</div>
@@ -668,7 +673,7 @@ const Dashboard = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.5 }}
                     >
-                        <div className={styles.summaryIcon}>💬</div>
+                        <div className={styles.summaryIcon}><ChatBubbleOutline sx={{fontSize: '2rem'}} /></div>
                         <div className={styles.summaryLabel}>Response Rate</div>
                         <div className={styles.summaryNumber}>{contactMetrics.responseRate}%</div>
                         <div className={styles.summarySubtext}>Contacts replied</div>
@@ -681,7 +686,7 @@ const Dashboard = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.55 }}
                     >
-                        <div className={styles.summaryIcon}>📊</div>
+                        <div className={styles.summaryIcon}><BarChartOutlined sx={{fontSize: '2rem'}} /></div>
                         <div className={styles.summaryLabel}>Conversion Rate</div>
                         <div className={styles.summaryNumber}>{enquiryMetrics.conversionRate}%</div>
                         <div className={styles.summarySubtext}>Enquiries to enrollment</div>
@@ -694,7 +699,7 @@ const Dashboard = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.6 }}
                     >
-                        <div className={styles.summaryIcon}>✅</div>
+                        <div className={styles.summaryIcon}><CheckCircleOutlined sx={{fontSize: '2rem'}} /></div>
                         <div className={styles.summaryLabel}>Approval Rate</div>
                         <div className={styles.summaryNumber}>{admissionMetrics.approvalRate}%</div>
                         <div className={styles.summarySubtext}>Admissions approved</div>
@@ -707,7 +712,7 @@ const Dashboard = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.65 }}
                     >
-                        <div className={styles.summaryIcon}>⏳</div>
+                        <div className={styles.summaryIcon}><AccessTimeOutlined sx={{fontSize: '2rem'}} /></div>
                         <div className={styles.summaryLabel}>Pending Items</div>
                         <div className={styles.summaryNumber}>
                             {contactMetrics.new + enquiryMetrics.new + admissionMetrics.pending}
@@ -729,7 +734,7 @@ const Dashboard = () => {
                     <div className={styles.analyticsCard}>
                         <div className={styles.cardHeader}>
                             <h3>Contact Status</h3>
-                            <FaFilter className={styles.filterIcon} />
+                            <FilterListOutlined className={styles.filterIcon} />
                         </div>
                         <div className={styles.statusMetrics}>
                             <div className={styles.metricRow}>
@@ -796,7 +801,7 @@ const Dashboard = () => {
                     <div className={styles.analyticsCard}>
                         <div className={styles.cardHeader}>
                             <h3>Enquiry Status</h3>
-                            <FaFilter className={styles.filterIcon} />
+                            <FilterListOutlined className={styles.filterIcon} />
                         </div>
                         <div className={styles.statusMetrics}>
                             <div className={styles.metricRow}>
@@ -879,7 +884,7 @@ const Dashboard = () => {
                 transition={{ delay: 0.5, duration: 0.6 }}
             >
                 <div className={styles.reportingHeader}>
-                    <h2>📈 Dashboard Reporting</h2>
+                    <h2><TrendingUp sx={{mr: 1}} /> Dashboard Reporting</h2>
                     <p>Key metrics across all modules</p>
                 </div>
 
@@ -1184,7 +1189,7 @@ const Dashboard = () => {
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >
-                                {tab === 'contacts' ? '📧 Contacts' : '👶 Enquiries'}
+                                {tab === 'contacts' ? <><MailOutlined sx={{mr: 0.5, fontSize: '1rem'}} />Contacts</> : <><BabyChangingStationOutlined sx={{mr: 0.5, fontSize: '1rem'}} />Enquiries</>}
                             </motion.button>
                         ))}
                     </div>
@@ -1213,7 +1218,7 @@ const Dashboard = () => {
                                     ))
                                 ) : (
                                     <div className={styles.emptyState}>
-                                        <FaEnvelope />
+                                        <MailOutlined />
                                         <p>No contacts in this period</p>
                                     </div>
                                 )
@@ -1230,7 +1235,7 @@ const Dashboard = () => {
                                 ))
                             ) : (
                                 <div className={styles.emptyState}>
-                                    <FaUsers />
+                                    <PeopleOutlined />
                                     <p>No enquiries in this period</p>
                                 </div>
                             )}
@@ -1271,9 +1276,9 @@ const StatCardComponent = ({ card }: { card: StatCard }) => {
                                 transition={{ delay: 0.3 }}
                             >
                                 {card.trend.isPositive ? (
-                                    <FaArrowUp />
+                                    <TrendingUp />
                                 ) : (
-                                    <FaArrowDown />
+                                    <TrendingDown />
                                 )}
                                 <span>{card.trend.value}%</span>
                             </motion.div>
