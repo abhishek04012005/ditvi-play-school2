@@ -17,9 +17,47 @@
     border-radius: 28px;
     max-width: 520px;
     width: 100%;
+    height: 90%;
     box-shadow: 0 40px 100px rgba(106, 76, 147, 0.3);
     position: relative;
     border: 2px solid rgba(106, 76, 147, 0.12);
+    overflow: auto;
+}
+
+/* ===== CUSTOM SCROLLBAR ===== */
+.popupContainer {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-purple) rgba(106, 76, 147, 0.1);
+}
+
+/* Chrome, Edge, and Safari scrollbar styling */
+.popupContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+.popupContainer::-webkit-scrollbar-track {
+    background: rgba(106, 76, 147, 0.05);
+    border-radius: 10px;
+}
+
+.popupContainer::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--primary-purple) 0%, var(--primary-yellow) 100%);
+    border-radius: 10px;
+    border: 2px solid rgba(106, 76, 147, 0.08);
+    transition: all 0.3s ease;
+}
+
+.popupContainer::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--primary-yellow) 0%, var(--primary-purple) 100%);
+    box-shadow: 0 0 8px rgba(106, 76, 147, 0.25);
+}
+
+.popupContainer::-webkit-scrollbar-thumb:active {
+    background: var(--primary-purple);
+}
+
+/* Firefox scrollbar styling */
+.popupContainer {
     overflow: auto;
 }
 
@@ -386,7 +424,7 @@
     background: linear-gradient(135deg, rgba(106, 76, 147, 0.04), rgba(255, 209, 102, 0.03));
     text-align: center;
     border-top: 1px solid rgba(106, 76, 147, 0.1);
-    
+
 }
 
 .popupFooter p {
