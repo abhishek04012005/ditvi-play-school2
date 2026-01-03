@@ -1,4 +1,4 @@
-'use client';
+    'use client';
 import { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -73,6 +73,10 @@ const Program = () => {
             color: "var(--primary-yellow)"
         }
     ];
+
+    const admissionNow = () => {
+        window.location.href = '/admission-form';
+    }
 
     return (
         <section className={styles.programs}>
@@ -176,6 +180,7 @@ const Program = () => {
                         className={styles.enrollButton}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
+                        onClick={admissionNow}
                     >
                         Admission Now
                     </motion.button>

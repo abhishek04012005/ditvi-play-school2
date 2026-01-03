@@ -38,6 +38,7 @@
   text-align: center;
   box-shadow: 0 10px 20px rgba(106, 76, 147, 0.1);
   transition: all 0.3s ease;
+  z-index: 20;
 }
 
 .featureCard:hover {
@@ -62,16 +63,19 @@
 }
 
 .featureIcon svg {
-     animation: sparkle 2s infinite;
+  animation: sparkle 2s infinite;
 }
 
 @keyframes sparkle {
-    0%, 100% {
-        transform: scale(0.8);
-    }
-    50% {
-        transform: scale(1.1);
-    }
+
+  0%,
+  100% {
+    transform: scale(0.8);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
 }
 
 .featureCard h3 {
@@ -184,6 +188,7 @@
 }
 
 @media (max-width: 768px) {
+
   .aboutTitle,
   .mainTitle {
     font-size: 2rem;
@@ -207,6 +212,7 @@
 }
 
 @media (max-width: 480px) {
+
   .about,
   .missionVision {
     padding: 4rem 1rem;
@@ -381,6 +387,7 @@
 }
 
 @media (max-width: 480px) {
+
   .founderSection,
   .storySection {
     padding: 4rem 1rem;
