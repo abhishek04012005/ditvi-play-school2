@@ -29,7 +29,6 @@ export default function Home() {
       <About />
       <Program />
       <Awards isHomePage={true} />
-      <ARBooks isHomePage={true} />
       <Gallery
         items={galleryItems}
         youtubeVideos={[]}

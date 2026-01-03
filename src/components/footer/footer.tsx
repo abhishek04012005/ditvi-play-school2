@@ -32,6 +32,11 @@ const Footer = () => {
     { text: 'Terms of Service', href: '/terms' },
   ]
 
+   const arBooks = [
+    { text: 'AR Alphabates', href: '/admin/login' },
+    { text: 'Terms of Service', href: '/terms' },
+  ]
+
   const contactDetails = [
     {
       icon: <FaMapMarkerAlt />,
@@ -126,6 +131,24 @@ const Footer = () => {
             <h3>Links</h3>
             <ul>
               {links.map((link) => (
+                <li key={link.text}>
+                  <Link href={link.href}>{link.text}</Link>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+
+          <motion.div
+            className={styles.linksSection}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            <h3>AR Books</h3>
+            <ul>
+              {arBooks.map((link) => (
                 <li key={link.text}>
                   <Link href={link.href}>{link.text}</Link>
                 </li>
