@@ -1,0 +1,602 @@
+:root {
+  --primary-yellow: #ffbf00;
+  --primary-purple: #6a4c93;
+  --muted: #7b6f88;
+  --light: #f9f7f4;
+  --bg: #f5f3f0;
+  --card-shadow: 0 8px 24px rgba(106, 76, 147, 0.12);
+  --card-shadow-sm: 0 4px 12px rgba(106, 76, 147, 0.08);
+}
+
+.container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: transparent;
+}
+
+.actionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+}
+
+.downloadBtn {
+  background: linear-gradient(135deg, var(--primary-purple), #7a5a9e);
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.4rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: var(--card-shadow-sm);
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.downloadBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(106, 76, 147, 0.25);
+}
+
+.title {
+  color: var(--primary-purple);
+  font-size: 2rem;
+  margin: 0;
+  letter-spacing: 0.4px;
+  font-weight: 700;
+}
+
+/* PDF WRAPPER & PAGES */
+.pdfWrapper {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.pdfPage {
+  width: 210mm;
+  height: 297mm;
+  background: #fff;
+  margin: 0;
+  padding: 12mm;
+  box-sizing: border-box;
+  page-break-after: always;
+  box-shadow: none;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* PAGE 1: COVER */
+.coverSection {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 3px solid var(--primary-yellow);
+}
+
+.logo {
+  width: 70px;
+  height: auto;
+  margin-bottom: 0.8rem;
+}
+
+.coverTitle {
+  color: var(--primary-purple);
+  font-size: 2.2rem;
+  font-weight: 900;
+  margin-bottom: 0.3rem;
+  letter-spacing: 0.5px;
+}
+
+.coverSubtitle {
+  background: linear-gradient(135deg, var(--primary-yellow), var(--primary-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
+  font-weight: 700;
+}
+
+.coverYear {
+  color: var(--primary-purple);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* Hero gallery for fee-structure cover */
+.heroGalleryGrid{
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 140px 100px;
+  gap: 0.6rem;
+  margin: 0.8rem 0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.heroLarge img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.heroSmall img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.heroThumbs{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.heroThumb{
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: var(--card-shadow-sm);
+}
+
+.heroThumb img{
+  width: 100%;
+  height: 72px;
+  object-fit: cover;
+  display: block;
+}
+
+.overviewBox {
+  flex: 1;
+  margin-bottom: 0.8rem;
+}
+
+.overviewBox h2 {
+  color: var(--primary-purple);
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.overviewGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.overviewCard {
+  background: linear-gradient(135deg, #fff9f0 0%, #f5f3f0 100%);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 2px solid var(--primary-yellow);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.overviewCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 191, 0, 0.1);
+  border-radius: 50%;
+  transform: translate(30%, -30%);
+}
+
+.cardIcon {
+  font-size: 2.8rem;
+  margin-bottom: 0.4rem;
+  position: relative;
+  z-index: 1;
+}
+
+.programCardIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  object-fit: cover;
+  display: inline-block;
+}
+
+.overviewCard h3 {
+  color: var(--primary-purple);
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+  font-weight: 800;
+}
+
+.ageText {
+  color: var(--muted);
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.feeHighlight {
+  color: var(--primary-yellow);
+  font-size: 1.3rem;
+  font-weight: 900;
+  margin-bottom: 0.1rem;
+}
+
+.annualText {
+  color: var(--primary-purple);
+  font-size: 0.75rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.footerNote {
+  background: linear-gradient(135deg, rgba(255, 191, 0, 0.15), rgba(106, 76, 147, 0.08));
+  padding: 0.9rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-yellow);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.footerNote p {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* PROGRAM DETAIL PAGES */
+.programHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 3px solid var(--primary-yellow);
+  position: relative;
+}
+
+.programHeader::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  height: 3px;
+  width: 40%;
+  background: var(--primary-purple);
+}
+
+.programIcon {
+  font-size: 3.2rem;
+  background: linear-gradient(135deg, rgba(255, 191, 0, 0.2), rgba(106, 76, 147, 0.1));
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.programHeader h2 {
+  color: var(--primary-purple);
+  font-size: 1.8rem;
+  margin: 0;
+  font-weight: 900;
+}
+
+.programAge {
+  color: var(--primary-yellow);
+  font-size: 0.9rem;
+  margin: 0.2rem 0 0 0;
+  font-weight: 600;
+}
+
+.feeBox {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+  background: linear-gradient(135deg, #fff9f0 0%, #f5f3f0 100%);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 191, 0, 0.3);
+}
+
+.feeItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0.6rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.feeLabel {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.feeAmount {
+  color: var(--primary-purple);
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.section {
+  margin-bottom: 0.9rem;
+}
+
+.section h3 {
+  color: var(--primary-purple);
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.section h3::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background: var(--primary-yellow);
+  border-radius: 50%;
+}
+
+.section p {
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: 0.4rem;
+}
+
+.includesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.4rem;
+}
+
+.includesList li {
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  padding-left: 1.3rem;
+  position: relative;
+}
+
+.includesList li:before {
+  content: "✓";
+  color: var(--primary-yellow);
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+  font-size: 1rem;
+}
+
+.chargesTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.chargesTable tr {
+  border-bottom: 1px solid rgba(255, 191, 0, 0.2);
+}
+
+.chargesTable tr:nth-child(odd) {
+  background: rgba(255, 191, 0, 0.05);
+}
+
+.chargesTable td {
+  padding: 0.5rem;
+  color: var(--muted);
+}
+
+.chargePrice {
+  text-align: right;
+  color: var(--primary-purple);
+  font-weight: 700;
+}
+
+/* PAYMENT TERMS PAGE */
+.sectionTitle {
+  color: var(--primary-purple);
+  font-size: 1.8rem;
+  margin: 0 0 1rem 0;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sectionTitle::before {
+  content: '';
+  width: 6px;
+  height: 30px;
+  background: var(--primary-yellow);
+  border-radius: 3px;
+}
+
+.paymentGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.paymentCard {
+  background: linear-gradient(135deg, #fff9f0 0%, #f5f3f0 100%);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 2px solid var(--primary-yellow);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.paymentCard::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 191, 0, 0.15);
+  border-radius: 50%;
+  transform: translate(30%, -30%);
+}
+
+.paymentIcon {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.paymentCard h4 {
+  color: var(--primary-purple);
+  font-size: 0.95rem;
+  margin-bottom: 0.3rem;
+  font-weight: 800;
+}
+
+.paymentCard p {
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.policiesList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.2rem 0;
+}
+
+.policiesList li {
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  padding-left: 1.5rem;
+  position: relative;
+  margin-bottom: 0.4rem;
+  background: rgba(255, 191, 0, 0.05);
+  padding: 0.5rem 0.6rem 0.5rem 1.5rem;
+  border-radius: 6px;
+}
+
+.policiesList li:before {
+  content: "▪";
+  color: var(--primary-yellow);
+  font-weight: bold;
+  position: absolute;
+  left: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.contactBox {
+  background: linear-gradient(135deg, var(--primary-yellow) 0%, rgba(255, 191, 0, 0.8) 100%);
+  padding: 1rem;
+  border-radius: 12px;
+  margin-top: 0.8rem;
+  border: 2px solid var(--primary-yellow);
+  position: relative;
+  overflow: hidden;
+}
+
+.contactBox::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 100px;
+  height: 100px;
+  background: rgba(106, 76, 147, 0.1);
+  border-radius: 50%;
+}
+
+.contactBox h3 {
+  color: var(--primary-purple);
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 800;
+  position: relative;
+  z-index: 1;
+}
+
+.contactBox p {
+  color: var(--primary-purple);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin: 0.3rem 0;
+  position: relative;
+  z-index: 1;
+  font-weight: 500;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1100px) {
+  .overviewGrid,
+  .feeBox,
+  .paymentGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .includesList {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .container {
+    padding: 1.5rem;
+  }
+
+  .actionRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+}
+
+@media print {
+  .pdfWrapper {
+    box-shadow: none;
+    background: #fff;
+  }
+
+  .pdfPage {
+    box-shadow: none;
+    margin: 0;
+    border-radius: 0;
+  }
+}
+
