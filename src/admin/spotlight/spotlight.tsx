@@ -350,8 +350,8 @@ const Spotlight = () => {
             return;
         }
 
-        // Check if type is in use
-        const isInUse = spotlights.some(s => s.award_type === selectedTypeToDelete.id);
+        // Check if type is in use (by name since we store names now)
+        const isInUse = spotlights.some(s => s.award_type === selectedTypeToDelete.name);
         if (isInUse) {
             toast.error('Cannot delete type that has associated spotlights');
             setShowDeleteTypeModal(false);
@@ -427,7 +427,7 @@ const Spotlight = () => {
                 imagePath = fileName;
             }
 
-            // Validate award_type exists in customTypes
+            // Validate award_type exists in customTypes and get the name
             const selectedType = customTypes.find(t => t.id === formData.award_type);
             if (!selectedType) {
                 toast.error('Selected spotlight type is invalid');
@@ -435,12 +435,12 @@ const Spotlight = () => {
                 return;
             }
 
-            // Insert spotlight with date
+            // Insert spotlight with type NAME instead of id
             const { error: insertError } = await supabase.from('awards').insert([
                 {
                     name: formData.name,
                     message: formData.message,
-                    award_type: formData.award_type,
+                    award_type: selectedType.name, // CHANGED: Store name instead of id
                     is_show_on_home_page: formData.is_show_on_home_page,
                     image_url: imagePath,
                     date: formData.date,
@@ -641,6 +641,7 @@ const Spotlight = () => {
                 name.includes(searchTerm.toLowerCase()) ||
                 message.includes(searchTerm.toLowerCase());
 
+            // CHANGED: Filter by type name instead of id
             const matchesFilter = filterType === 'all' || spotlight.award_type === filterType;
 
             return matchesSearch && matchesFilter;
@@ -681,7 +682,8 @@ const Spotlight = () => {
     const statusCounts = {
         total: spotlights.length,
         ...customTypes.reduce((acc, type) => (
-            { ...acc, [type.id]: spotlights.filter((s) => s.award_type === type.id).length }
+            // CHANGED: Count by type name instead of id
+            { ...acc, [type.id]: spotlights.filter((s) => s.award_type === type.name).length }
         ), {})
     };
 
@@ -701,7 +703,7 @@ const Spotlight = () => {
             icon: <span>{type.emoji}</span>,
             color: type.color,
             bgColor: `${type.color}15`,
-            type: type.id,
+            type: type.name, // CHANGED: Use name for filtering
             id: type.id,
         }))
     ];
@@ -808,7 +810,7 @@ const Spotlight = () => {
                         >
                             <option value="all">All Types</option>
                             {customTypes.map(type => (
-                                <option key={type.id} value={type.id}>{type.emoji} {type.name}</option>
+                                <option key={type.id} value={type.name}>{type.emoji} {type.name}</option>
                             ))}
                         </select>
                     </div>
@@ -879,10 +881,11 @@ const Spotlight = () => {
                                             </td>
                                             <td>
                                                 {(() => {
-                                                    const type = customTypes.find(t => t.id === spotlight.award_type);
+                                                    // CHANGED: Find type by name instead of id
+                                                    const type = customTypes.find(t => t.name === spotlight.award_type);
                                                     return (
                                                         <span className={styles.badge} data-type={spotlight.award_type} style={{ color: type?.color, borderColor: type?.color }}>
-                                                            {type ? `${type.emoji} ${type.name}` : spotlight.award_type}
+                                                            {type ? `${type.emoji} ${spotlight.award_type}` : spotlight.award_type}
                                                         </span>
                                                     );
                                                 })()}
@@ -1411,20 +1414,20 @@ const Spotlight = () => {
                                 <div className={styles.comparisonCard}>
                                     <div className={styles.comparisonLabel}>Currently Featured</div>
                                     <Image
-                                        src={conflictData.existingCard.image_url}
-                                        alt={conflictData.existingCard.name}
+                                        src={conflictData.existingCard?.image_url || ''}
+                                        alt={conflictData.existingCard?.name || ''}
                                         width={100}
                                         height={100}
                                         className={styles.comparisonImage}
                                         unoptimized
                                     />
-                                    <div className={styles.comparisonName}>{conflictData.existingCard.name}</div>
+                                    <div className={styles.comparisonName}>{conflictData.existingCard?.name}</div>
                                     <div className={styles.comparisonType}>
-                                        {conflictData.existingCard.award_type === 'weekly'
-                                            ? '⭐ Weekly'
-                                            : conflictData.existingCard.award_type === 'monthly'
-                                                ? '✨ Monthly'
-                                                : '🏆 Yearly'}
+                                        {(() => {
+                                            if (!conflictData.existingCard) return '';
+                                            const type = customTypes.find(t => t.name === conflictData.existingCard?.award_type);
+                                            return type ? `${type.emoji} ${type.name}` : conflictData.existingCard?.award_type;
+                                        })()}
                                     </div>
                                 </div>
 
@@ -1432,22 +1435,25 @@ const Spotlight = () => {
 
                                 <div className={styles.comparisonCard}>
                                     <div className={styles.comparisonLabel}>Want to Feature</div>
-                                    <Image
-                                        src={conflictData.newCard.image_url}
-                                        alt={conflictData.newCard.name}
-                                        width={100}
-                                        height={100}
-                                        className={styles.comparisonImage}
-                                        unoptimized
-                                    />
-                                    <div className={styles.comparisonName}>{conflictData.newCard.name}</div>
-                                    <div className={styles.comparisonType}>
-                                        {conflictData.newCard.award_type === 'weekly'
-                                            ? '⭐ Weekly'
-                                            : conflictData.newCard.award_type === 'monthly'
-                                                ? '✨ Monthly'
-                                                : '🏆 Yearly'}
-                                    </div>
+                                    {conflictData.newCard && (
+                                        <>
+                                            <Image
+                                                src={conflictData.newCard.image_url}
+                                                alt={conflictData.newCard.name}
+                                                width={100}
+                                                height={100}
+                                                className={styles.comparisonImage}
+                                                unoptimized
+                                            />
+                                            <div className={styles.comparisonName}>{conflictData.newCard.name}</div>
+                                            <div className={styles.comparisonType}>
+                                                {(() => {
+                                                    const type = customTypes.find(t => t.name === conflictData.newCard?.award_type);
+                                                    return type ? `${type.emoji} ${type.name}` : conflictData.newCard?.award_type;
+                                                })()}
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             </div>
 
