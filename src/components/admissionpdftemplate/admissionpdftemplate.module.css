@@ -144,8 +144,9 @@ body {
 }
 
 .metaRow {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     gap: 0.5cm;
 }
 

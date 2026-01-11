@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaUser, FaChild, FaPhone } from 'react-icons/fa';
 import { PiGraduationCapBold } from 'react-icons/pi';
-import { supabase } from '@/lib/supabase';
+import { saveEnquiryToDatabase, generateEnquiryNumber } from '@/lib/enquiry';
 import Toast from '../../custom/toast/toast';
 import SubmitModal from '../../custom/popup/popup';
 import AdmissionInfo from '../../components/admissioninfo/admissioninfo';
@@ -166,22 +166,16 @@ const Enquiry = () => {
         setLoading(true);
 
         try {
-            const { error } = await supabase
-                .from('enquiries')
-                .insert([
-                    {
-                        parent_name: formData.parentName,
-                        child_name: formData.childName,
-                        phone: formData.phone,
-                        program: formData.program,
-                        status: 'new'
-                    }
-                ]);
-
-            if (error) throw error;
+            const result = await saveEnquiryToDatabase({
+                parent_name: formData.parentName,
+                child_name: formData.childName,
+                phone: formData.phone,
+                program: formData.program,
+                status: 'new'
+            });
 
             showSuccessModal(
-                'Thank you for your enquiry! Our admission team will contact you soon to discuss your child\'s admission.',
+                `Thank you for your enquiry! Your Enquiry Number: ${result.enquiry_number}\n\nOur admission team will contact you soon to discuss your child's admission.`,
                 'Enquiry Submitted Successfully! 🎉'
             );
 

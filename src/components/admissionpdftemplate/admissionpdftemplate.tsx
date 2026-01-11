@@ -71,6 +71,29 @@ const formatDate = (dateString: string): string => {
     }
 };
 
+const formatDateTime = (isoString: string) => {
+  const date = new Date(isoString);
+
+  const formattedDate = date.toLocaleDateString('en-IN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+
+  const formattedTime = date.toLocaleTimeString('en-IN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true   // ensures AM/PM format
+  });
+
+  return `${formattedDate} ${formattedTime}`;
+}
+
+const todayDateTime = formatDateTime(new Date().toISOString());
+
+
+
 const getGoogleDriveImageURL = (url: string): string => {
     if (!url) return '';
 
@@ -130,7 +153,7 @@ const PDFHeader: React.FC<{ logoUrl: string | null }> = ({ logoUrl }) => {
                         {schoolDetails.address.city}, {schoolDetails.address.state} - {schoolDetails.address.pincode}
                     </p>
                     <p className={styles.contact}>
-                        Phone: {schoolDetails.contact.phone} | Email: {schoolDetails.contact.email}
+                        Phone: {schoolDetails.contact.phone} | Email: {schoolDetails.contact.email} | Website: {schoolDetails.website}
                     </p>
                 </div>
                 {/* {logoUrl && (
@@ -259,12 +282,8 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
                         <span className={styles.metaValue}>{admission.admission_number?.toString() || 'N/A'}</span>
                     </div>
                     <div className={styles.metaItem}>
-                        <span className={styles.metaLabel}>Date:</span>
-                        <span className={styles.metaValue}>{todayDate}</span>
-                    </div>
-                    <div className={styles.metaItem}>
                         <span className={styles.metaLabel}>Session:</span>
-                        <span className={styles.metaValue}>{admission.session || 'N/A'}</span>
+                        <span className={styles.metaValue}>{schoolDetails.session || 'N/A'}</span>
                     </div>
                 </div>
             </div>
@@ -312,7 +331,7 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
             </PDFSection>
 
             {/* Program & Admission Details */}
-            <PDFSection title="3. PROGRAM & ADMISSION DETAILS">
+            <PDFSection title="3. PROGRAM DETAILS">
                 <FieldRow columns={2}>
                     <Field label="Program:" value={admission.program_name || 'N/A'} />
                     <Field label="Previous School:" value={admission.previous_school || 'N/A'} />
@@ -324,7 +343,7 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
 
             {/* Consent & Signatures */}
             <div className={styles.signatureSection}>
-                <h3 className={styles.sectionTitle}>SIGNATURES & DECLARATION</h3>
+                <h3 className={styles.sectionTitle}>4. SIGNATURES & DECLARATION</h3>
 
                 <div className={styles.consentBox}>
                     <p className={styles.consentText}>
@@ -343,7 +362,7 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
 
 
                     <div className={styles.signatureBox}>
-                        <div className={styles.signatureName}>{schoolDetails.director?.name || 'Director'}</div>
+                        <div className={styles.signatureName}>{schoolDetails.admissionAuthority || ''}</div>
                         <div className={styles.signatureSpace}></div>
                         <div className={styles.signatureLabel}>Admission Authority</div>
                     </div>
@@ -355,9 +374,7 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
                 <div className={styles.footerContent}>
                     <span className={styles.footerItem}>Doc ID: {admission.admission_number}</span>
                     <span className={styles.footerItem}>•</span>
-                    <span className={styles.footerItem}>Generated: {todayDate}</span>
-                    <span className={styles.footerItem}>•</span>
-                    <span className={styles.footerItem}>Official Form</span>
+                    <span className={styles.footerItem}>Generated At: {todayDateTime}</span>
                 </div>
             </div>
         </div>

@@ -4,6 +4,9 @@ import LogoImage from '../../public/assets/logo/logo.png'
 export interface SchoolDetails {
     name: string;
     logo: string | StaticImageData;
+    session: string;
+    admissionAuthority?: string;
+    website: string;
     contact: {
         phone: string;
         email: string;
@@ -38,6 +41,9 @@ export interface SchoolDetails {
 export const schoolDetails: SchoolDetails = {
     name: "Apollo Kids",
     logo: LogoImage,
+    session: "2026-27",
+    admissionAuthority: "Shashi Sharma",
+    website: "www.apollokids.com",
     contact: {
         phone: "+91 9263767441",
         email: "admission@apollokids.com",

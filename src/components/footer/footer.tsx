@@ -33,7 +33,7 @@ const Footer = () => {
   ]
 
    const arBooks = [
-    { text: 'AR Alphabates', href: '/admin/login' },
+    { text: 'AR Alphabates', href: '/ar-books/book-001/user' },
     { text: 'Terms of Service', href: '/terms' },
   ]
 

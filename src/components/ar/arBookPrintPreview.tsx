@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { FaPrint, FaDownload, FaArrowLeft } from 'react-icons/fa';
@@ -16,6 +16,8 @@ interface ARBookPrintPreviewProps {
 const ARBookPrintPreview: React.FC<ARBookPrintPreviewProps> = ({ bookId }) => {
     const [book, setBook] = useState<ARBook | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+    const printTemplateRef = useRef<HTMLDivElement>(null);
 
     React.useEffect(() => {
         // Simulate finding the book
@@ -53,9 +55,65 @@ const ARBookPrintPreview: React.FC<ARBookPrintPreviewProps> = ({ bookId }) => {
         window.print();
     };
 
-    const handleDownloadPDF = () => {
-        // This would require a PDF generation library like html2pdf or similar
-        alert('PDF download functionality would require server-side implementation');
+    const handleDownloadPDF = async () => {
+        if (!printTemplateRef.current || !book) return;
+
+        setIsGeneratingPDF(true);
+        try {
+            // Dynamically import html2pdf only on client side
+            const html2pdf = (await import('html2pdf.js')).default;
+            const element = printTemplateRef.current;
+            
+            // Wait longer for all images to load
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            
+            const opt: any = {
+                margin: 0,
+                filename: `${book.title.replace(/\s+/g, '_')}_complete_book.pdf`,
+                image: { type: 'jpeg', quality: 0.99 },
+                html2canvas: { 
+                    scale: 1.3,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    windowWidth: 794,
+                    windowHeight: window.innerHeight,
+                    letterRendering: true,
+                    imageTimeout: 15000,
+                    foreignObjectRendering: true
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'portrait',
+                    compress: true
+                },
+                pagebreak: { 
+                    mode: ['css', 'legacy', 'avoid-all'],
+                    after: '.page',
+                    before: undefined,
+                    avoid: ['img', 'tr', 'td'],
+                    margin: 0
+                }
+            };
+
+            // Use html2pdf with the element directly
+            const worker = html2pdf().set(opt);
+            
+            // Get all page elements
+            const pages = element.querySelectorAll('[class*="page"]');
+            console.log(`Found ${pages.length} pages to render`);
+            
+            // Process entire container - html2pdf will handle page breaks
+            await worker.from(element).save();
+            
+        } catch (error) {
+            console.error('PDF generation error:', error);
+            alert('Failed to generate PDF. Please check browser console and try again.');
+        } finally {
+            setIsGeneratingPDF(false);
+        }
     };
 
     return (
@@ -95,10 +153,11 @@ const ARBookPrintPreview: React.FC<ARBookPrintPreviewProps> = ({ bookId }) => {
                         <motion.button
                             className={styles.downloadBtn}
                             onClick={handleDownloadPDF}
+                            disabled={isGeneratingPDF}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                         >
-                            <FaDownload /> PDF
+                            <FaDownload /> {isGeneratingPDF ? 'Generating...' : 'PDF'}
                         </motion.button>
                     </div>
                 </div>
@@ -131,11 +190,13 @@ const ARBookPrintPreview: React.FC<ARBookPrintPreviewProps> = ({ bookId }) => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2, duration: 0.6 }}
             >
-                <ARBookPrintTemplate
-                    book={book}
-                    qrCodeUrl="/assets/qr-placeholder.png"
-                    arScanImageUrl="/assets/ar-scan-placeholder.png"
-                />
+                <div ref={printTemplateRef}>
+                    <ARBookPrintTemplate
+                        book={book}
+                        qrCodeUrl="/assets/qr-placeholder.png"
+                        arScanImageUrl="/assets/ar-scan-placeholder.png"
+                    />
+                </div>
             </motion.div>
 
             {/* Footer Info */}

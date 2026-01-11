@@ -1545,7 +1545,7 @@ const DetailsModal = ({
                                             whileTap={{ scale: 0.95 }}
                                             title="Preview and download admission form"
                                         >
-                                            <DownloadOutlined /> Admission Form Pdf     
+                                            <DownloadOutlined /> Download    
                                         </motion.button>
                                         <motion.button
                                             className={styles.editBtn}
