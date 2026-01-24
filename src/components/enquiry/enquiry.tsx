@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaUser, FaChild, FaPhone } from 'react-icons/fa';
 import { PiGraduationCapBold } from 'react-icons/pi';
@@ -13,6 +13,7 @@ import LineArt from '@/custom/lineart/lineart';
 import AirplanemodeActiveOutlinedIcon from '@mui/icons-material/AirplanemodeActiveOutlined';
 import Loader from '@/custom/loader/loader';
 import { schoolDetails } from '@/json/schooldetails';
+import schoolDetailsHi from '@/json/schooldetails-hi';
 
 
 
@@ -25,6 +26,16 @@ const Enquiry = () => {
     const [modalType, setModalType] = useState<'success' | 'error'>('success');
     const [modalMessage, setModalMessage] = useState('');
     const [modalTitle, setModalTitle] = useState('');
+    const [language, setLanguage] = useState<'en' | 'hi'>('en');
+
+    useEffect(() => {
+        const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+        if (saved && (saved === 'en' || saved === 'hi')) {
+            setLanguage(saved);
+        }
+    }, []);
+
+    const currentSchoolDetails = language === 'hi' ? schoolDetailsHi : schoolDetails;
 
     const [formData, setFormData] = useState({
         parentName: '',
@@ -40,7 +51,7 @@ const Enquiry = () => {
         program: ''
     });
 
-    const programs = schoolDetails.programs.map(p => p.name);
+    const programs = currentSchoolDetails.programs.map(p => p.name);
 
 
     const validatePhone = (phone: string): boolean => {

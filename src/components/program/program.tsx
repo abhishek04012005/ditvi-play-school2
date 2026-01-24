@@ -1,5 +1,5 @@
     'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import styles from './program.module.css';
@@ -11,68 +11,41 @@ import KGProgramImage from '../../../public/assets/programs/kg.jpg'
 import HeadingTitle from '../heading/headingtitle';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import LineArt from '@/custom/lineart/lineart';
+import en from '@/translations/en.json';
+import hi from '@/translations/hi.json';
+import programsEng from '@/data/programs-eng';
+import programsHi from '@/data/programs-hi';
+import { headingTitlesEng } from '@/data/headingtitles-eng';
+import { headingTitlesHi } from '@/data/headingtitles-hi';
 
 const Program = () => {
     const [activeProgram, setActiveProgram] = useState(0);
+    const [language, setLanguage] = useState<'en' | 'hi'>('en');
 
-    const programs = [
-        {
-            title: "Toddler Program",
-            ageGroup: "1.5 - 2.5 Years",
-            description: "Early development focused on sensory exploration and basic social skills.",
-            features: [
-                "Sensory Activities",
-                "Basic Language Development",
-                "Motor Skills Development",
-                "Social Interaction",
-            ],
-            image: ToddlerProgramImage,
-            schedule: "2-3 hours daily",
-            color: "var(--primary-yellow)"
-        },
-        {
-            title: "Nursery Program",
-            ageGroup: "2.5 - 3.5 Years",
-            description: "Structured learning with emphasis on creativity and independence.",
-            features: [
-                "Creative Arts & Crafts",
-                "Pre-Writing Skills",
-                "Number Concepts",
-                "Physical Activities",
-            ],
-            image: NurseryProgramImage,
-            schedule: "3-4 hours daily",
-            color: "var(--primary-yellow)"
-        },
-        {
-            title: "Pre-KG Program",
-            ageGroup: "3.5 - 4.5 Years",
-            description: "Comprehensive preparation for kindergarten with focus on academic and social skills.",
-            features: [
-                "Early Reading & Writing",
-                "Basic Mathematics",
-                "Science Exploration",
-                "Social Development",
-            ],
-            image: PreKGProgramImage,
-            schedule: "4-5 hours daily",
-            color: "var(--primary-yellow)"
-        },
-        {
-            title: "Kindergarten Readiness Program",
-            ageGroup: "4.5 - 5.5 Years",
-            description: "Focused readiness curriculum that builds confidence, independence, and foundational academic skills for a smooth transition to kindergarten.",
-            features: [
-                "Advanced Pre-Reading & Phonics",
-                "Early Math Concepts & Problem Solving",
-                "Structured Classroom Routines",
-                "Emotional Regulation & Peer Skills",
-            ],
-            image: KGProgramImage,
-            schedule: "5-6 hours daily",
-            color: "var(--primary-yellow)"
+    useEffect(() => {
+      try {
+        const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+        if (saved && (saved === 'en' || saved === 'hi')) {
+          setLanguage(saved);
         }
-    ];
+      } catch (e) {
+        // localStorage not available
+      }
+    }, []);
+
+    const translations = language === 'hi' ? hi : en;
+    const t = (key: string): string => {
+      const keys = key.split('.');
+      let value: any = translations;
+      for (const k of keys) {
+        value = value?.[k];
+      }
+      return typeof value === 'string' ? value : key;
+    };
+
+    const programs = language === 'hi' ? programsHi : programsEng;
+
+    const headingTitles = language === 'hi' ? headingTitlesHi : headingTitlesEng;
 
     const admissionNow = () => {
         window.location.href = '/admission-form';
@@ -120,7 +93,7 @@ const Program = () => {
         
 
 
-            <HeadingTitle text="Our Programs" />
+            <HeadingTitle text={headingTitles.programs} />
 
             <div className={styles.programTabs}>
                 {programs.map((program, index) => (

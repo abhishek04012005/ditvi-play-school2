@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   IoLocationOutline,
@@ -14,10 +14,38 @@ import HeadingTitle from "../heading/headingtitle";
 import Toast from "../../custom/toast/toast";
 import SubmitModal from "../../custom/popup/popup";
 import schoolDetails from "@/json/schooldetails";
+import schoolDetailsHi from "@/json/schooldetails-hi";
 import AirplanemodeActiveOutlinedIcon from "@mui/icons-material/AirplanemodeActiveOutlined";
 import Loader from "@/custom/loader/loader";
+import en from "@/translations/en.json";
+import hi from "@/translations/hi.json";
+import { headingTitlesEng } from "@/data/headingtitles-eng";
+import { headingTitlesHi } from "@/data/headingtitles-hi";
 
 const Contact = () => {
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+      if (saved && (saved === 'en' || saved === 'hi')) {
+        setLanguage(saved);
+      }
+    } catch (e) {
+      // localStorage not available
+    }
+  }, []);
+
+  const translations = language === 'hi' ? hi : en;
+  const t = (key: string): string => {
+    const keys = key.split('.');
+    let value: any = translations;
+    for (const k of keys) {
+      value = value?.[k];
+    }
+    return typeof value === 'string' ? value : key;
+  };
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -58,23 +86,27 @@ const Contact = () => {
     return emailRegex.test(email);
   };
 
+  const currentSchoolDetails = language === 'hi' ? schoolDetailsHi : schoolDetails;
+
+  const headingTitles = language === 'hi' ? headingTitlesHi : headingTitlesEng;
+
   const contactInfo = [
     {
       icon: <IoLocationOutline size={24} />,
-      title: "Address",
-      details: `${schoolDetails.address.street}, ${schoolDetails.address.city}, ${schoolDetails.address.state} - ${schoolDetails.address.pincode}`,
+      title: t('contact.address'),
+      details: `${currentSchoolDetails.address.street}, ${currentSchoolDetails.address.city}, ${currentSchoolDetails.address.state} - ${currentSchoolDetails.address.pincode}`,
       color: "var(--primary-yellow)",
     },
     {
       icon: <IoCallOutline size={24} />,
-      title: "Contact No.",
-      details: `${schoolDetails.contact.phone}`,
+      title: t('contact.phone'),
+      details: `${currentSchoolDetails.contact.phone}`,
       color: "var(--primary-yellow)",
     },
     {
       icon: <IoMailOutline size={24} />,
-      title: "Email Id",
-      details: `${schoolDetails.contact.email}`,
+      title: t('contact.email'),
+      details: `${currentSchoolDetails.contact.email}`,
       color: "var(--primary-yellow)",
     },
   ];
@@ -335,7 +367,7 @@ const Contact = () => {
         <div className={styles.squiggly}></div>
       </div>
 
-      <HeadingTitle text="Contact Us" />
+      <HeadingTitle text={headingTitles.contact} />
 
       {/* Toast Notification */}
       <Toast

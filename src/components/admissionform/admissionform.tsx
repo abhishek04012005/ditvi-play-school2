@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { MdDateRange } from "react-icons/md";
@@ -29,9 +29,12 @@ import {
 import LineArt from "@/custom/lineart/lineart";
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import { schoolDetails } from "@/json/schooldetails";
+import schoolDetailsHi from "@/json/schooldetails-hi";
 import Loader from "@/custom/loader/loader";
 import { MdBloodtype } from "react-icons/md";
 import AdmissionSlip from "./AdmissionSlip";
+import en from "@/translations/en.json";
+import hi from "@/translations/hi.json";
 
 
 interface FormData {
@@ -72,6 +75,28 @@ export default function AdmissionForm() {
     useState<SubmissionResult | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [uploadDocsNow, setUploadDocsNow] = useState(true);
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+      if (saved && (saved === 'en' || saved === 'hi')) {
+        setLanguage(saved);
+      }
+    } catch (e) {
+      // localStorage not available
+    }
+  }, []);
+
+  const translations = language === 'hi' ? hi : en;
+  const t = (key: string): string => {
+    const keys = key.split('.');
+    let value: any = translations;
+    for (const k of keys) {
+      value = value?.[k];
+    }
+    return typeof value === 'string' ? value : key;
+  };
 
   const [formData, setFormData] = useState<FormData>({
     child_name: "",
@@ -124,7 +149,8 @@ export default function AdmissionForm() {
 
   const pdfRef = useRef<HTMLDivElement>(null);
 
-  const programs = schoolDetails.programs.map(p => p.name);
+  const currentSchoolDetails = language === 'hi' ? schoolDetailsHi : schoolDetails;
+  const programs = currentSchoolDetails.programs.map(p => p.name);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -472,7 +498,7 @@ export default function AdmissionForm() {
   };
 
   const handleShare = async () => {
-    const text = `I have successfully submitted my admission application to ${schoolDetails.name}! Admission Number: ${submissionResult?.admission_number}`;
+    const text = `I have successfully submitted my admission application to ${currentSchoolDetails.name}! Admission Number: ${submissionResult?.admission_number}`;
 
     if (navigator.share) {
       try {
@@ -677,14 +703,10 @@ export default function AdmissionForm() {
 
                   <div className={styles.pills}>
                     {[
-                      { n: 1, t: "Student Details", icon: EmojiPeople },
-                      { n: 2, t: "Parent's Details", icon: FamilyRestroom },
-                      { n: 3, t: "Academic Details", icon: SchoolOutlined },
-                      {
-                        n: 4,
-                        t: "Upload Documents",
-                        icon: DescriptionOutlined,
-                      },
+                      { n: 1, t: "Student", icon: EmojiPeople },
+                      { n: 2, t: "Parents", icon: FamilyRestroom },
+                      { n: 3, t: "Academic", icon: SchoolOutlined },
+                      { n: 4, t: "Upload Documents", icon: DescriptionOutlined },
                     ].map((s) => {
                       const IconComponent = s.icon;
                       return (

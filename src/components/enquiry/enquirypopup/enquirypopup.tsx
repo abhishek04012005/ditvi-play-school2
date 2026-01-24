@@ -10,6 +10,7 @@ import styles from './enquirypopup.module.css';
 import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined';
 import Loader from '@/custom/loader/loader';
 import { schoolDetails } from '@/json/schooldetails';
+import schoolDetailsHi from '@/json/schooldetails-hi';
 
 
 interface EnquiryPopupProps {
@@ -21,6 +22,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
     const [showPopup, setShowPopup] = useState(false);
     const [popupDismissed, setPopupDismissed] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [language, setLanguage] = useState<'en' | 'hi'>('en');
 
     // Toast state
     const [showToast, setShowToast] = useState(false);
@@ -46,7 +48,16 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
         childName: '',
         program: ''
     });
-    const programs = schoolDetails.programs.map(p => p.name);
+
+    useEffect(() => {
+        const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+        if (saved && (saved === 'en' || saved === 'hi')) {
+            setLanguage(saved);
+        }
+    }, []);
+
+    const currentSchoolDetails = language === 'hi' ? schoolDetailsHi : schoolDetails;
+    const programs = currentSchoolDetails.programs.map(p => p.name);
 
     // Show popup after delay on page load
     useEffect(() => {

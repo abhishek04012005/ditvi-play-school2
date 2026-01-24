@@ -5,6 +5,7 @@ import { FaFilePdf, FaImage, FaFileAlt, FaTimes, FaSpinner, FaUpload, FaArrowLef
 import toast from 'react-hot-toast';
 import styles from './correction-form.module.css';
 import { schoolDetails } from '@/json/schooldetails';
+import schoolDetailsHi from '@/json/schooldetails-hi';
 import Loader from '@/custom/loader/loader';
 import {
     EmojiPeople,
@@ -42,6 +43,16 @@ export default function CorrectionForm({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [previewModal, setPreviewModal] = useState<{ url: string; type: 'image' | 'pdf' | 'document'; name: string } | null>(null);
+    const [language, setLanguage] = useState<'en' | 'hi'>('en');
+
+    useEffect(() => {
+        const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+        if (saved && (saved === 'en' || saved === 'hi')) {
+            setLanguage(saved);
+        }
+    }, []);
+
+    const currentSchoolDetails = language === 'hi' ? schoolDetailsHi : schoolDetails;
 
     // Available document fields
     const documentFields = [
@@ -418,7 +429,7 @@ export default function CorrectionForm({
                                     disabled={loading}
                                 >
                                     <option value="">-- Select Program --</option>
-                                    {schoolDetails.programs.map((program) => (
+                                    {currentSchoolDetails.programs.map((program) => (
                                         <option key={program.name} value={program.name}>
                                             {program.name}
                                         </option>

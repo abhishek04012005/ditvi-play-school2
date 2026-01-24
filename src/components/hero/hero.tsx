@@ -8,36 +8,60 @@ import HeroImage1 from '../../../public/assets/hero/1.jpg';
 import HeroImage2 from '../../../public/assets/hero/2.jpg';
 import HeroImage3 from '../../../public/assets/hero/3.jpg';
 import schoolDetails from '@/json/schooldetails';
+import en from '@/translations/en.json';
+import hi from '@/translations/hi.json';
 
 
 
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+      if (saved && (saved === 'en' || saved === 'hi')) {
+        setLanguage(saved);
+      }
+    } catch (e) {
+      // localStorage not available
+    }
+  }, []);
+
+  const translations = language === 'hi' ? hi : en;
+  const t = (key: string): string => {
+    const keys = key.split('.');
+    let value: any = translations;
+    for (const k of keys) {
+      value = value?.[k];
+    }
+    return typeof value === 'string' ? value : key;
+  };
 
   const slides = [
     {
       image: HeroImage1,
-      title: `Welcome to ${schoolDetails.name}`,
-      subtitle: 'Play School',
-      description: 'Where Learning Meets Fun and Adventure',
-      ctaText: 'Visit Us',
+      title: t('hero.title'),
+      subtitle: t('hero.subtitle'),
+      description: t('hero.description'),
+      ctaText: t('nav.programs'),
       ctaLink: '/programs'
     },
     {
       image: HeroImage2,
-      title: 'Nurturing',
-      subtitle: 'Young Minds',
-      description: 'Creating a Strong Foundation for Lifelong Learning',
-      ctaText: 'Admission Now',
+      title: t('about.mission'),
+      subtitle: t('about.title'),
+      description: t('hero.subtitle'),
+      ctaText: t('nav.admission'),
       ctaLink: '/admission-form'
     },
     {
       image: HeroImage3,
-      title: 'Safe and Caring',
-      subtitle: 'Environment',
-      description: `Your Child's Second Home`,
-      ctaText: 'Know More',
+      title: t('contact.title'),
+      subtitle: t('contact.subtitle'),
+      description: t('footer.aboutSchool'),
+      ctaText: t('nav.contact'),
       ctaLink: '/contact'
     },
   ];

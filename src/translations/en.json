@@ -1,0 +1,138 @@
+{
+  "nav": {
+    "home": "Home",
+    "aboutUs": "About Us",
+    "programs": "Programs",
+    "spotlight": "Spotlight",
+    "gallery": "Gallery",
+    "contact": "Contact",
+    "admission": "Admission",
+    "admissionStatus": "Admission Status",
+    "downloads": "Downloads",
+    "arBooks": "AR Books",
+    "feeStructure": "Fee Structure",
+    "brochure": "Brochure"
+  },
+  "common": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info",
+    "close": "Close",
+    "apply": "Apply",
+    "enrolled": "Enrolled"
+  },
+  "hero": {
+    "title": "Welcome to Ditvi Play School",
+    "subtitle": "Nurturing Minds, Building Futures",
+    "description": "Best Play School in Your City",
+    "cta": "Enroll Now"
+  },
+  "about": {
+    "title": "About Us",
+    "subtitle": "Our Story & Mission",
+    "description": "At Ditvi Play School, we believe in providing a nurturing environment where children can explore, learn, and grow.",
+    "mission": "Our Mission",
+    "vision": "Our Vision",
+    "values": "Our Values"
+  },
+  "programs": {
+    "title": "Our Programs",
+    "subtitle": "Designed for Every Stage",
+    "playgroup": "Play Group",
+    "nursery": "Nursery",
+    "kindergarten": "Kindergarten",
+    "preschool": "Pre School"
+  },
+  "admission": {
+    "title": "Admission Form",
+    "subtitle": "Join Our Family",
+    "apply": "Apply for Admission",
+    "fullName": "Full Name",
+    "fatherName": "Father's Name",
+    "motherName": "Mother's Name",
+    "dateOfBirth": "Date of Birth",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "address": "Address",
+    "city": "City",
+    "state": "State",
+    "pincode": "Pincode",
+    "program": "Program",
+    "message": "Message",
+    "terms": "I agree to the terms and conditions",
+    "submit": "Submit Application",
+    "success": "Application submitted successfully",
+    "error": "Error submitting application"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get In Touch",
+    "name": "Your Name",
+    "email": "Email Address",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send Message",
+    "phone": "Phone",
+    "address": "Address",
+    "hours": "Office Hours",
+    "social": "Follow Us"
+  },
+  "footer": {
+    "quickLinks": "Quick Links",
+    "resources": "Resources",
+    "aboutSchool": "About School",
+    "contact": "Contact",
+    "followUs": "Follow Us",
+    "copyright": "All Rights Reserved",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy"
+  },
+  "gallery": {
+    "title": "Gallery",
+    "subtitle": "Moments from Our School",
+    "photos": "Photos",
+    "videos": "Videos"
+  },
+  "testimonial": {
+    "title": "What Parents Say",
+    "subtitle": "Testimonials from Our Community"
+  },
+  "feeStructure": {
+    "title": "Fee Structure",
+    "subtitle": "Transparent Pricing",
+    "program": "Program",
+    "fees": "Monthly Fees",
+    "admission": "Admission Fee",
+    "annual": "Annual Fee"
+  },
+  "admissionStatus": {
+    "title": "Check Admission Status",
+    "subtitle": "Track Your Application",
+    "enrollmentId": "Enrollment ID",
+    "check": "Check Status",
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected"
+  },
+  "brochure": {
+    "title": "School Brochure",
+    "subtitle": "Learn More About Us",
+    "download": "Download Brochure"
+  },
+  "errors": {
+    "notFound": "Page Not Found",
+    "unauthorized": "Unauthorized Access",
+    "serverError": "Server Error"
+  }
+}

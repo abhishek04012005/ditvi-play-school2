@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -16,6 +16,10 @@ import { GalleryItem, YouTubeVideo, InstagramVideo, NormalVideo } from '../../js
 import HeadingTitle from '../heading/headingtitle';
 import LineArt from '@/custom/lineart/lineart';
 import CrueltyFreeOutlinedIcon from '@mui/icons-material/CrueltyFreeOutlined';
+import en from '@/translations/en.json';
+import hi from '@/translations/hi.json';
+import { headingTitlesEng } from '@/data/headingtitles-eng';
+import { headingTitlesHi } from '@/data/headingtitles-hi';
 
 interface GalleryProps {
     items: GalleryItem[];
@@ -34,6 +38,30 @@ const Gallery = ({ items, youtubeVideos = [], instagramVideos = [], normalVideos
     const [mediaType, setMediaType] = useState<MediaType>(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [activeTab, setActiveTab] = useState<'photos' | 'youtube' | 'instagram' | 'videos'>('photos');
+    const [language, setLanguage] = useState<'en' | 'hi'>('en');
+
+    useEffect(() => {
+      try {
+        const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+        if (saved && (saved === 'en' || saved === 'hi')) {
+          setLanguage(saved);
+        }
+      } catch (e) {
+        // localStorage not available
+      }
+    }, []);
+
+    const translations = language === 'hi' ? hi : en;
+    const t = (key: string): string => {
+      const keys = key.split('.');
+      let value: any = translations;
+      for (const k of keys) {
+        value = value?.[k];
+      }
+      return typeof value === 'string' ? value : key;
+    };
+
+    const headingTitles = language === 'hi' ? headingTitlesHi : headingTitlesEng;
 
     const handleMediaClick = (media: SelectedMedia, type: MediaType) => {
         setSelectedMedia(media);
@@ -115,7 +143,7 @@ const Gallery = ({ items, youtubeVideos = [], instagramVideos = [], normalVideos
                         transition={{ duration: 0.6 }}
                         viewport={{ once: true }}
                     >
-                        <HeadingTitle text="Our Gallery" />
+                        <HeadingTitle text={headingTitles.gallery} />
                     </motion.div>
 
                     {/* Photos Slider */}
@@ -336,7 +364,7 @@ const Gallery = ({ items, youtubeVideos = [], instagramVideos = [], normalVideos
                     zIndex={1}
                 />
             <div className={styles.container}>
-                <HeadingTitle text="Gallery" />
+                <HeadingTitle text={headingTitles.gallery} />
 
                 {/* Tab Navigation */}
                 <motion.div

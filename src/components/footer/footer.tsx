@@ -1,4 +1,5 @@
 'use client';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -6,9 +7,35 @@ import { FaFacebookF, FaInstagram, FaYoutube, FaLinkedinIn, FaMapMarkerAlt, FaPh
 import { FaXTwitter } from "react-icons/fa6";
 import styles from './footer.module.css';
 import schoolDetails from '@/json/schooldetails';
+import schoolDetailsHi from '@/json/schooldetails-hi';
+import en from '@/translations/en.json';
+import hi from '@/translations/hi.json';
 
 
 const Footer = () => {
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+      if (saved && (saved === 'en' || saved === 'hi')) {
+        setLanguage(saved);
+      }
+    } catch (e) {
+      // localStorage not available
+    }
+  }, []);
+
+  const translations = language === 'hi' ? hi : en;
+  const t = (key: string): string => {
+    const keys = key.split('.');
+    let value: any = translations;
+    for (const k of keys) {
+      value = value?.[k];
+    }
+    return typeof value === 'string' ? value : key;
+  };
+
   const socialLinks = [
     { icon: <FaFacebookF />, url: `${schoolDetails.socialMedia.facebook}`, label: 'Facebook' },
     { icon: <FaXTwitter />, url: `${schoolDetails.socialMedia.x}`, label: 'X' },
@@ -18,13 +45,13 @@ const Footer = () => {
   ];
 
   const quickLinks = [
-    { text: 'Home', href: '/' },
-    { text: 'About Us', href: '/about' },
-    { text: 'Programs', href: '/programs' },
-    { text: 'Admission', href: '/admission-form' },
-    { text: 'Gallery', href: '/gallery' },
-    { text: 'Contact', href: '/contact' },
-    { text: 'Admission Status', href: '/admission-status' },
+    { text: t('nav.home'), href: '/' },
+    { text: t('nav.aboutUs'), href: '/about' },
+    { text: t('nav.programs'), href: '/programs' },
+    { text: t('nav.admission'), href: '/admission-form' },
+    { text: t('nav.gallery'), href: '/gallery' },
+    { text: t('nav.contact'), href: '/contact' },
+    { text: t('nav.admissionStatus'), href: '/admission-status' },
   ];
 
   const links = [
@@ -37,23 +64,25 @@ const Footer = () => {
     { text: 'Terms of Service', href: '/terms' },
   ]
 
+  const currentSchoolDetails = language === 'hi' ? schoolDetailsHi : schoolDetails;
+
   const contactDetails = [
     {
       icon: <FaMapMarkerAlt />,
-      text: `${schoolDetails.address.street}, ${schoolDetails.address.city}, ${schoolDetails.address.state} - ${schoolDetails.address.pincode}`,
+      text: `${currentSchoolDetails.address.street}, ${currentSchoolDetails.address.city}, ${currentSchoolDetails.address.state} - ${currentSchoolDetails.address.pincode}`,
       type: 'address'
     },
     {
       icon: <FaPhoneAlt />,
-      text: `${schoolDetails.contact.phone}`,
+      text: `${currentSchoolDetails.contact.phone}`,
       type: 'phone',
-      href: `tel:${schoolDetails.contact.phone}`
+      href: `tel:${currentSchoolDetails.contact.phone}`
     },
     {
       icon: <FaEnvelope />,
-      text: `${schoolDetails.contact.email}`,
+      text: `${currentSchoolDetails.contact.email}`,
       type: 'email',
-      href: `mailto:${schoolDetails.contact.email}`
+      href: `mailto:${currentSchoolDetails.contact.email}`
     },
   ];
 
@@ -79,13 +108,13 @@ const Footer = () => {
             viewport={{ once: true }}
           >
             <Image
-              src={schoolDetails.logo}
-              alt={schoolDetails.name + ' Logo'}
+              src={currentSchoolDetails.logo}
+              alt={currentSchoolDetails.name + ' Logo'}
               width={150}
               height={150}
               className={styles.logo}
             />
-            <p>Where little minds grow big! Join us for fun learning experiences.</p>
+            <p>{language === 'hi' ? 'जहां छोटे दिमाग बड़े हो जाते हैं! मजेदार सीखने के अनुभवों के लिए हमारे साथ जुड़ें।' : 'Where little minds grow big! Join us for fun learning experiences.'}</p>
             <div className={styles.socialLinks}>
               {socialLinks.map((social, index) => (
                 <motion.a
@@ -111,7 +140,7 @@ const Footer = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            <h3>Quick Links</h3>
+            <h3>{t('footer.quickLinks')}</h3>
             <ul>
               {quickLinks.map((link) => (
                 <li key={link.text}>
@@ -128,7 +157,7 @@ const Footer = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            <h3>Links</h3>
+            <h3>{t('footer.resources')}</h3>
             <ul>
               {links.map((link) => (
                 <li key={link.text}>
@@ -146,7 +175,7 @@ const Footer = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            <h3>AR Books</h3>
+            <h3>{t('nav.arBooks')}</h3>
             <ul>
               {arBooks.map((link) => (
                 <li key={link.text}>

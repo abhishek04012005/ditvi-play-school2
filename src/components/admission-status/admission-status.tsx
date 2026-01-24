@@ -1,5 +1,5 @@
 "use client";
-import { JSX, useState } from "react";
+import { JSX, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaSearch,
@@ -19,6 +19,8 @@ import styles from "./admission-status.module.css";
 import HeadingTitle from "@/components/heading/headingtitle";
 import PhoneVerificationModal from "@/components/modals/phone-verification-modal/phone-verification-modal";
 import CorrectionForm from "@/components/correction-form/correction-form";
+import en from "@/translations/en.json";
+import hi from "@/translations/hi.json";
 
 interface AdmissionStatus {
   id: string;
@@ -132,6 +134,28 @@ export default function AdmissionStatus() {
   const [error, setError] = useState<string | null>(null);
   const [showPhoneVerification, setShowPhoneVerification] = useState(false);
   const [showCorrectionForm, setShowCorrectionForm] = useState(false);
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+      if (saved && (saved === 'en' || saved === 'hi')) {
+        setLanguage(saved);
+      }
+    } catch (e) {
+      // localStorage not available
+    }
+  }, []);
+
+  const translations = language === 'hi' ? hi : en;
+  const t = (key: string): string => {
+    const keys = key.split('.');
+    let value: any = translations;
+    for (const k of keys) {
+      value = value?.[k];
+    }
+    return typeof value === 'string' ? value : key;
+  };
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
@@ -9,16 +9,45 @@ import styles from './navbar.module.css';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import schoolDetails from '@/json/schooldetails';
+import schoolDetailsHi from '@/json/schooldetails-hi';
+import LanguageToggle from '@/components/LanguageToggle/LanguageToggle';
+import en from '@/translations/en.json';
+import hi from '@/translations/hi.json';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
+  
+  // Load translations
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+      if (saved && (saved === 'en' || saved === 'hi')) {
+        setLanguage(saved);
+      }
+    } catch (e) {
+      // localStorage might not be available
+    }
+  }, []);
+  
+  // Get translations based on current language
+  const translations = language === 'hi' ? hi : en;
+  const t = (key: string) => {
+    const keys = key.split('.');
+    let value: any = translations;
+    for (const k of keys) {
+      value = value?.[k];
+    }
+    return typeof value === 'string' ? value : key.split('.').pop();
+  };
 
   const isAdminPage = pathname?.startsWith('/admin');
 
+  const currentSchoolDetails = language === 'hi' ? schoolDetailsHi : schoolDetails;
 
   const handleWhatsAppClick = () => {
-    window.open(`https://wa.me/${schoolDetails.contact.whatsapp}`, '_blank'); // Replace with your WhatsApp number
+    window.open(`https://wa.me/${currentSchoolDetails.contact.whatsapp}`, '_blank'); // Replace with your WhatsApp number
   };
 
   const handleAdmissionClick = () => {
@@ -27,12 +56,12 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/about', label: 'About Us' },
-    { href: '/programs', label: 'Programs' },
-    { href: '/spotlight', label: 'Spotlight' },
-    { href: '/gallery', label: 'Gallery' },
-    { href: '/contact', label: 'Contact' },
+    { href: '/', label: t('nav.home') },
+    { href: '/about', label: t('nav.aboutUs') },
+    { href: '/programs', label: t('nav.programs') },
+    { href: '/spotlight', label: t('nav.spotlight') },
+    { href: '/gallery', label: t('nav.gallery') },
+    { href: '/contact', label: t('nav.contact') },
 
   ];
 
@@ -51,12 +80,12 @@ const Navbar = () => {
         <div className={styles.navContainer}>
           <Link href="/" className={styles.logo}>
             <Image
-              src={schoolDetails.logo}
-              alt={schoolDetails.name + ' Logo'}
+              src={currentSchoolDetails.logo}
+              alt={currentSchoolDetails.name + ' Logo'}
               width={40}
               height={40}
             />
-            <span className={styles.logoText}>{schoolDetails.name}</span>
+            <span className={styles.logoText}>{currentSchoolDetails.name}</span>
           </Link>
 
           <div className={styles.navWrapper}>
@@ -78,8 +107,10 @@ const Navbar = () => {
               onClick={handleAdmissionClick}
               className={styles.enrollBtn}
             >
-              Admission Now
+              {t('nav.admission')}
             </button>
+
+            <LanguageToggle />
 
             <button
               className={styles.mobileMenuBtn}
@@ -103,14 +134,14 @@ const Navbar = () => {
           className={`${styles.floatingButton} ${styles.enquiryButton}`}
         >
           <BiMessageDetail />
-          <span>Enquiry</span>
+          <span>{t('nav.contact')}</span>
         </Link>
         <Link
           href="/admission-status"
           className={`${styles.floatingButton} ${styles.searchButton}`}
         >
           <BiSearch />
-          <span>Admission Status</span>
+          <span>{t('nav.admissionStatus')}</span>
         </Link>
         <button
           className={`${styles.floatingButton} ${styles.whatsappButton}`}

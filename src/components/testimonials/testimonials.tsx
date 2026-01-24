@@ -1,5 +1,5 @@
 'use client';
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Image, { StaticImageData } from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
@@ -9,73 +9,39 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import styles from './testimonials.module.css';
 import HeadingTitle from '../heading/headingtitle';
-import Image1 from '../../../public/assets/testimonial/1.jpg'
-import Image2 from '../../../public/assets/testimonial/2.png'
-import Image3 from '../../../public/assets/testimonial/3.png'
-import Image4 from '../../../public/assets/testimonial/4.png'
-import Image5 from '../../../public/assets/testimonial/5.png'
 import schoolDetails from '@/json/schooldetails';
+import schoolDetailsHi from '@/json/schooldetails-hi';
 import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined';
 import LineArt from '@/custom/lineart/lineart';
+import en from '@/translations/en.json';
+import hi from '@/translations/hi.json';
+import { TestimonialItem } from '@/types/testimonials-types';
+import testimonialsEng from '@/data/testimonials-eng';
+import testimonialsHi from '@/data/testimonials-hi';
+import { headingTitlesEng } from '@/data/headingtitles-eng';
+import { headingTitlesHi } from '@/data/headingtitles-hi';
 
-
-
-interface TestimonialItem {
-  id: number;
-  name: string;
-  role: string;
-  image: string | StaticImageData;
-  quote: string;
-  rating: number;
-}
-
-const testimonials: TestimonialItem[] = [
-  {
-    id: 1,
-    name: 'Shivam Sharma',
-    role: 'Parent of Rahul, Age 2',
-    image: Image1,
-    quote: `The progress Rahul has made since joining ${schoolDetails.name} is incredible. He’s more curious and confident every day.`,
-    rating: 5
-  },
-  {
-    id: 2,
-    name: 'Ritika Kumari',
-    role: 'Parent of Riya, Age 3',
-    image: Image2,
-    quote: `Riya absolutely loves going to ${schoolDetails.name}. The playful learning approach keeps her engaged and happy.`,
-    rating: 5
-  },
-  {
-    id: 3,
-    name: 'Akash Verma',
-    role: 'Parent of Samarth, Age 2',
-    image: Image3,
-    quote: `${schoolDetails.name} has created a nurturing space where Samarth feels safe and excited to learn new things and explore.`,
-    rating: 5
-  },
-  {
-    id: 4,
-    name: 'Neha Singh',
-    role: 'Parent of Khushal, Age 4',
-    image: Image4,
-    quote: `The staff at ${schoolDetails.name} are incredibly supportive. Khushal’s communication skills have improved so much.`,
-    rating: 5
-  },
-  {
-    id: 5,
-    name: 'Prerna Shah',
-    role: 'Parent of Kiyansh, Age 4',
-    image: Image5,
-    quote: `We’re thrilled with Kiyansh’s development. ${schoolDetails.name} blends fun and learning in the best way possible.`,
-    rating: 5
-  },
-];
 
 
 
 const Testimonials = () => {
   const swiperRef = useRef<SwiperType | null>(null);
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+      if (saved && (saved === 'en' || saved === 'hi')) {
+        setLanguage(saved);
+      }
+    } catch (e) {
+      // localStorage not available
+    }
+  }, []);
+
+  const testimonials = language === 'hi' ? testimonialsHi : testimonialsEng;
+
+  const headingTitles = language === 'hi' ? headingTitlesHi : headingTitlesEng;
 
   return (
     <section className={styles.testimonials}>
@@ -117,7 +83,7 @@ const Testimonials = () => {
         zIndex={1}
       />
       <div className={styles.container}>
-        <HeadingTitle text="What Parents Say" />
+        <HeadingTitle text={headingTitles.testimonials} />
 
         <div className={styles.sliderContainer}>
           <button
