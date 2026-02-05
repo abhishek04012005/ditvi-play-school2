@@ -14,6 +14,8 @@ import AirplanemodeActiveOutlinedIcon from '@mui/icons-material/AirplanemodeActi
 import Loader from '@/custom/loader/loader';
 import { schoolDetails } from '@/json/schooldetails';
 import schoolDetailsHi from '@/json/schooldetails-hi';
+import en from '@/translations/en.json';
+import hi from '@/translations/hi.json';
 
 
 
@@ -34,6 +36,16 @@ const Enquiry = () => {
             setLanguage(saved);
         }
     }, []);
+
+    const translations = language === 'hi' ? hi : en;
+    const t = (key: string): string => {
+        const keys = key.split('.');
+        let value: any = translations;
+        for (const k of keys) {
+            value = value?.[k];
+        }
+        return typeof value === 'string' ? value : key;
+    };
 
     const currentSchoolDetails = language === 'hi' ? schoolDetailsHi : schoolDetails;
 
@@ -90,13 +102,13 @@ const Enquiry = () => {
             } else if (truncated.length === 1 && !['6', '7', '8', '9'].includes(truncated)) {
                 setErrors(prev => ({
                     ...prev,
-                    phone: 'Phone number must start with 6, 7, 8, or 9'
+                    phone: t('enquiry.form.phoneStart')
                 }));
             } else if (truncated.length === 10) {
                 if (!validatePhone(truncated)) {
                     setErrors(prev => ({
                         ...prev,
-                        phone: 'Invalid phone number format'
+                        phone: t('enquiry.form.phoneFormat')
                     }));
                 } else {
                     setErrors(prev => ({ ...prev, phone: '' }));
@@ -104,7 +116,7 @@ const Enquiry = () => {
             } else if (truncated.length > 0 && truncated.length < 10) {
                 setErrors(prev => ({
                     ...prev,
-                    phone: `Enter ${10 - truncated.length} more digits`
+                    phone: `${t('enquiry.form.enterMoreDigits')} ${10 - truncated.length} ${t('enquiry.form.digits')}`
                 }));
             }
         } else if (name === 'parentName') {
@@ -143,22 +155,22 @@ const Enquiry = () => {
         let isValid = true;
 
         if (!formData.parentName.trim()) {
-            newErrors.parentName = 'Parent name is required';
+            newErrors.parentName = t('enquiry.form.parentNameRequired');
             isValid = false;
         }
 
         if (!formData.childName.trim()) {
-            newErrors.childName = 'Child name is required';
+            newErrors.childName = t('enquiry.form.childNameRequired');
             isValid = false;
         }
 
         if (!formData.program) {
-            newErrors.program = 'Please select a program';
+            newErrors.program = t('enquiry.form.programRequired');
             isValid = false;
         }
 
         if (!validatePhone(formData.phone)) {
-            newErrors.phone = 'Please enter a valid 10-digit phone number';
+            newErrors.phone = t('enquiry.form.phoneRequired');
             isValid = false;
         }
 
@@ -170,7 +182,10 @@ const Enquiry = () => {
         e.preventDefault();
 
         if (!validateForm()) {
-            showErrorModal('Please fill all fields correctly', 'Validation Error');
+            showErrorModal(
+                t('enquiry.form.formValidation.fillAllFields'),
+                t('enquiry.form.formValidation.validationError')
+            );
             return;
         }
 
@@ -186,12 +201,12 @@ const Enquiry = () => {
             });
 
             showSuccessModal(
-                `Thank you for your enquiry! Your Enquiry Number: ${result.enquiry_number}\n\nOur admission team will contact you soon to discuss your child's admission.`,
-                'Enquiry Submitted Successfully! 🎉'
+                `${t('enquiry.form.formSuccess.message')}${result.enquiry_number}${t('enquiry.form.formSuccess.messageSuffix')}`,
+                t('enquiry.form.formSuccess.title')
             );
 
             setToastType('success');
-            setToastMessage('Your enquiry has been submitted successfully!');
+            setToastMessage(t('enquiry.form.formSuccess.toastMessage'));
             setShowToast(true);
 
             setFormData({
@@ -205,12 +220,12 @@ const Enquiry = () => {
             console.error('Error:', error);
 
             showErrorModal(
-                'Failed to submit your enquiry. Please try again or contact us directly.',
-                'Failed to Submit Enquiry'
+                t('enquiry.form.formError.message'),
+                t('enquiry.form.formError.title')
             );
 
             setToastType('error');
-            setToastMessage('Failed to submit enquiry. Please try again.');
+            setToastMessage(t('enquiry.form.formError.toastMessage'));
             setShowToast(true);
         } finally {
             setLoading(false);
@@ -293,7 +308,7 @@ const Enquiry = () => {
                     viewport={{ once: true }}
                     className={styles.headerSection}
                 >
-                    <HeadingTitle text="Admission Enquiry" />
+                    <HeadingTitle text={t('enquiry.form.heading')} />
 
                 </motion.div>
 
@@ -312,8 +327,8 @@ const Enquiry = () => {
                         viewport={{ once: true }}
                     >
                         <div className={styles.formHeader}>
-                            <h3>Admission Enquiry Form</h3>
-                            <p>Fill in your details and we'll contact you</p>
+                            <h3>{t('enquiry.form.formTitle')}</h3>
+                            <p>{t('enquiry.form.formSubtitle')}</p>
                         </div>
 
                         <form onSubmit={handleSubmit} className={styles.form}>
@@ -324,14 +339,14 @@ const Enquiry = () => {
                                 transition={{ duration: 0.4, delay: 0.1 }}
                                 viewport={{ once: true }}
                             >
-                                <label htmlFor="parentName">Parent's Name *</label>
+                                <label htmlFor="parentName">{t('enquiry.form.parentNameLabel')} *</label>
                                 <div className={styles.inputWrapper}>
                                     <FaUser className={styles.icon} />
                                     <input
                                         type="text"
                                         id="parentName"
                                         name="parentName"
-                                        placeholder="Enter parent's name"
+                                        placeholder={t('enquiry.form.parentNamePlaceholder')}
                                         value={formData.parentName}
                                         onChange={handleChange}
                                         className={errors.parentName ? styles.inputError : ''}
@@ -355,14 +370,14 @@ const Enquiry = () => {
                                 transition={{ duration: 0.4, delay: 0.15 }}
                                 viewport={{ once: true }}
                             >
-                                <label htmlFor="childName">Child's Name *</label>
+                                <label htmlFor="childName">{t('enquiry.form.childNameLabel')} *</label>
                                 <div className={styles.inputWrapper}>
                                     <FaChild className={styles.icon} />
                                     <input
                                         type="text"
                                         id="childName"
                                         name="childName"
-                                        placeholder="Enter child's name"
+                                        placeholder={t('enquiry.form.childNamePlaceholder')}
                                         value={formData.childName}
                                         onChange={handleChange}
                                         className={errors.childName ? styles.inputError : ''}
@@ -386,14 +401,14 @@ const Enquiry = () => {
                                 transition={{ duration: 0.4, delay: 0.2 }}
                                 viewport={{ once: true }}
                             >
-                                <label htmlFor="phone">Phone Number *</label>
+                                <label htmlFor="phone">{t('enquiry.form.phoneLabel')} *</label>
                                 <div className={styles.inputWrapper}>
                                     <FaPhone className={styles.icon} />
                                     <input
                                         type="tel"
                                         id="phone"
                                         name="phone"
-                                        placeholder="10-digit mobile number"
+                                        placeholder={t('enquiry.form.phonePlaceholder')}
                                         value={formData.phone}
                                         onChange={handleChange}
                                         maxLength={10}
@@ -423,7 +438,7 @@ const Enquiry = () => {
                                 transition={{ duration: 0.4, delay: 0.25 }}
                                 viewport={{ once: true }}
                             >
-                                <label htmlFor="program">Select Program *</label>
+                                <label htmlFor="program">{t('enquiry.form.programLabel')} *</label>
                                 <div className={styles.inputWrapper}>
                                     <PiGraduationCapBold className={styles.icon} />
                                     <select
@@ -433,7 +448,7 @@ const Enquiry = () => {
                                         onChange={handleChange}
                                         className={errors.program ? styles.inputError : ''}
                                     >
-                                        <option value="">-- Select Program --</option>
+                                        <option value="">{t('enquiry.form.programPlaceholder')}</option>
                                         {programs.map((program) => (
                                             <option key={program} value={program}>
                                                 {program}
@@ -467,15 +482,15 @@ const Enquiry = () => {
                                     {loading ? (
                                         <>
                                             <span className={styles.spinner}></span>
-                                            Submitting...
+                                            {t('enquiry.form.submitting')}
                                         </>
                                     ) : (
-                                        'Submit Enquiry'
+                                        t('enquiry.form.submitButton')
                                     )}
                                 </span>
                             </motion.button>
 
-                            <p className={styles.requiredNote}>* Required fields</p>
+                            <p className={styles.requiredNote}>* {t('enquiry.form.requiredNote')}</p>
                         </form>
                     </motion.div>
 

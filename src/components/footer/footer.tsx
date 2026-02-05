@@ -55,13 +55,13 @@ const Footer = () => {
   ];
 
   const links = [
-    { text: 'Admin', href: '/admin/login' },
-    { text: 'Terms of Service', href: '/terms' },
+    { text: t('common.admin'), href: '/admin/login' },
+    { text: t('footer.termsOfService'), href: '/terms' },
   ]
 
    const arBooks = [
-    { text: 'AR Alphabates', href: '/ar-books/book-001/user' },
-    { text: 'Terms of Service', href: '/terms' },
+    { text: t('arBooks.arAlphabates'), href: '/ar-books/book-001/user' },
+    { text: t('arBooks.arAnimals'), href: '/ar-books/book-002/user' },
   ]
 
   const currentSchoolDetails = language === 'hi' ? schoolDetailsHi : schoolDetails;
@@ -192,7 +192,7 @@ const Footer = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
             viewport={{ once: true }}
           >
-            <h3>Contact Details</h3>
+            <h3>{t('contact.title')}</h3>
             <ul>
               {contactDetails.map((info, index) => (
                 <li key={index} className={styles.contactItem}>
@@ -227,8 +227,8 @@ const Footer = () => {
           <p>&copy; {new Date().getFullYear()} {schoolDetails.name}. All rights reserved.</p>
           <p>Powered by <a href="https://technologies.ditvi.org/" target='_blank'> <strong>Ditvi Technologies</strong></a></p>
           <div className={styles.bottomLinks}>
-            <Link href="/privacy">Privacy Policy</Link>
-            <Link href="/terms">Terms of Service</Link>
+            <Link href="/privacy">{t('footer.privacyPolicy')}</Link>
+            <Link href="/terms">{t('footer.termsOfService')}</Link>
           </div>
         </motion.div>
       </div>

@@ -30,7 +30,8 @@
     "info": "जानकारी",
     "close": "बंद करें",
     "apply": "आवेदन करें",
-    "enrolled": "नामांकित"
+    "enrolled": "नामांकित",
+    "admin": "प्रशासक"
   },
   "hero": {
     "title": "दितवी प्ले स्कूल में आपका स्वागत है",
@@ -56,24 +57,81 @@
   },
   "admission": {
     "title": "प्रवेश फॉर्म",
-    "subtitle": "हमारे परिवार में शामिल हों",
-    "apply": "प्रवेश के लिए आवेदन करें",
-    "fullName": "पूरा नाम",
-    "fatherName": "पिता का नाम",
-    "motherName": "माता का नाम",
-    "dateOfBirth": "जन्म तारीख",
-    "email": "ईमेल पता",
-    "phone": "फोन नंबर",
-    "address": "पता",
-    "city": "शहर",
-    "state": "राज्य",
-    "pincode": "पिन कोड",
-    "program": "कार्यक्रम",
-    "message": "संदेश",
-    "terms": "मैं शर्तों और शर्तों से सहमत हूं",
-    "submit": "आवेदन सबमिट करें",
-    "success": "आवेदन सफलतापूर्वक सबमिट किया गया",
-    "error": "आवेदन सबमिट करने में त्रुटि"
+    "subtitle": "प्रवेश के लिए आवेदन करने के लिए नीचे विवरण भरें",
+    "steps": {
+      "student": "छात्र",
+      "parents": "माता-पिता",
+      "academic": "शैक्षणिक",
+      "documents": "दस्तावेज़ अपलोड करें"
+    },
+    "form": {
+      "studentName": "छात्र का नाम",
+      "studentNamePlaceholder": "छात्र का नाम दर्ज करें",
+      "studentNameRequired": "छात्र का नाम आवश्यक है",
+      "dob": "जन्म तारीख",
+      "dobRequired": "जन्म तारीख आवश्यक है",
+      "gender": "लिंग",
+      "genderRequired": "लिंग आवश्यक है",
+      "male": "पुरुष",
+      "female": "महिला",
+      "placeOfBirth": "जन्म स्थान",
+      "placeOfBirthPlaceholder": "जन्म स्थान दर्ज करें",
+      "placeOfBirthRequired": "जन्म स्थान आवश्यक है",
+      "bloodGroup": "रक्त समूह (वैकल्पिक)",
+      "selectBloodGroup": "-- रक्त समूह का चयन करें --",
+      "parentName": "माता-पिता का नाम",
+      "parentNamePlaceholder": "माता-पिता का नाम दर्ज करें",
+      "parentNameRequired": "माता-पिता का नाम आवश्यक है",
+      "mobileNumber": "मोबाइल नंबर",
+      "mobileNumberPlaceholder": "10 अंकों का मोबाइल नंबर",
+      "mobileNumberRequired": "मोबाइल नंबर आवश्यक है",
+      "mobileNumberInvalid": "मोबाइल नंबर 10 अंकों का होना चाहिए",
+      "email": "ईमेल (वैकल्पिक)",
+      "emailPlaceholder": "माता-पिता का ईमेल दर्ज करें",
+      "address": "पता",
+      "addressPlaceholder": "पूरा पता दर्ज करें",
+      "addressRequired": "पता आवश्यक है",
+      "selectProgram": "कार्यक्रम का चयन करें",
+      "programRequired": "कार्यक्रम आवश्यक है",
+      "previousSchool": "पिछला स्कूल (वैकल्पिक)",
+      "previousSchoolPlaceholder": "पिछले स्कूल का नाम दर्ज करें",
+      "selectedFilesStatus": "चयनित फ़ाइलों की स्थिति",
+      "photoLabel": "फोटो (वैकल्पिक)",
+      "photoStatus": "फोटो: ",
+      "photoNotUploaded": "अपलोड नहीं किया गया",
+      "photoSelected": "चित्र चयनित",
+      "birthCertificateLabel": "जन्म प्रमाण पत्र (वैकल्पिक)",
+      "birthCertificateStatus": "जन्म प्रमाण पत्र: ",
+      "aadharCardLabel": "आधार कार्ड (वैकल्पिक)",
+      "aadharCardStatus": "आधार कार्ड: ",
+      "parentIdLabel": "माता-पिता का पहचान प्रमाण (वैकल्पिक)",
+      "parentIdStatus": "माता-पिता आईडी प्रमाण: ",
+      "clickToUpload": "अपलोड करने के लिए क्लिक करें",
+      "fileSize": "अधिकतम 10MB • JPG, PNG, PDF",
+      "clickToChange": "बदलने के लिए क्लिक करें",
+      "previousButton": "← पिछला",
+      "nextButton": "अगला →",
+      "submitButton": "✓ प्रवेश सबमिट करें",
+      "submitting": "जमा किया जा रहा है...",
+      "imageSelected": "चित्र चयनित"
+    },
+    "success": {
+      "title": "प्रवेश अनुरोध सफलतापूर्वक जमा किया गया!",
+      "subtitle": "आपका आवेदन प्राप्त हुआ है।",
+      "downloadPdf": "PDF डाउनलोड करें"
+    },
+    "validation": {
+      "fileTypeError": "केवल JPG, PNG और PDF फ़ाइलें अनुमति हैं",
+      "fileSizeError": "फ़ाइल का आकार 10MB से कम होना चाहिए",
+      "uploadError": "फ़ाइल अपलोड करने में विफल",
+      "generatingPdf": "PDF बनाया जा रहा है...",
+      "pdfDownloadSuccess": "PDF सफलतापूर्वक डाउनलोड किया गया!",
+      "pdfDownloadError": "PDF बनाने में विफल",
+      "uploadingDocuments": "दस्तावेज़ अपलोड किए जा रहे हैं...",
+      "submittingApplication": "आपका आवेदन जमा किया जा रहा है...",
+      "submissionSuccess": "प्रवेश सफलतापूर्वक सबमिट किया गया!",
+      "submissionError": "सबमिशन विफल"
+    }
   },
   "contact": {
     "title": "हमसे संपर्क करें",
@@ -86,7 +144,130 @@
     "phone": "फोन",
     "address": "पता",
     "hours": "कार्यालय के घंटे",
-    "social": "हमें फॉलो करें"
+    "social": "हमें फॉलो करें",
+    "form": {
+      "name": "आपका नाम",
+      "namePlaceholder": "अपना नाम दर्ज करें",
+      "email": "आपका ईमेल",
+      "emailPlaceholder": "अपना ईमेल पता दर्ज करें",
+      "phone": "आपका फोन",
+      "phonePlaceholder": "10 अंकों का मोबाइल नंबर",
+      "message": "आपका संदेश",
+      "messagePlaceholder": "यहाँ अपना संदेश लिखें...",
+      "sendMessage": "संदेश भेजें",
+      "sending": "भेजा जा रहा है...",
+      "messageSent": "संदेश भेज दिया गया!",
+      "error": "त्रुटि! फिर से प्रयास करें",
+      "requiredFields": "आवश्यक फ़ील्ड्स"
+    },
+    "validation": {
+      "nameRequired": "नाम आवश्यक है",
+      "emailRequired": "ईमेल आवश्यक है",
+      "invalidEmail": "कृपया एक वैध ईमेल पता दर्ज करें",
+      "phoneRequired": "फोन नंबर आवश्यक है",
+      "invalidPhone": "कृपया एक वैध 10 अंकों का फोन नंबर दर्ज करें",
+      "phoneStart": "फोन नंबर 6, 7, 8, या 9 से शुरू होना चाहिए",
+      "invalidPhoneFormat": "अमान्य फोन नंबर प्रारूप",
+      "enterMoreDigits": "दर्ज करें",
+      "digits": "और अंक",
+      "messageRequired": "संदेश आवश्यक है",
+      "messageMinLength": "संदेश कम से कम 10 वर्णों का होना चाहिए",
+      "fillAllFields": "सबमिट करने से पहले कृपया सभी फ़ील्ड्स को सही तरीके से भरें।",
+      "validationError": "सत्यापन त्रुटि"
+    },
+    "success": {
+      "title": "🎉धन्यवाद!🎉",
+      "message": "हम आपसे जल्द ही संपर्क करेंगे।",
+      "toastMessage": "आपका संदेश सफलतापूर्वक भेज दिया गया है!"
+    },
+    "error": {
+      "title": "संदेश भेजने में विफल",
+      "message": "आपका संदेश भेजने में विफल रहा। कृपया बाद में पुनः प्रयास करें या हमसे सीधे संपर्क करें।",
+      "toastMessage": "संदेश भेजने में विफल। कृपया फिर से प्रयास करें।"
+    }
+  },
+  "enquiry": {
+    "popup": {
+      "badge": "🎓 सीमित सीटें उपलब्ध",
+      "title": "आज ही अपने बच्चे की यात्रा शुरू करें!",
+      "subtitle1": "500+ खुश परिवारों से जुड़ें।",
+      "subtitle2": "आज ही पूछताछ करें, पहले महीने के प्रवेश पर 10% छूट पाएं!",
+      "parentNameLabel": "माता-पिता का नाम",
+      "parentNamePlaceholder": "माता-पिता का नाम दर्ज करें",
+      "parentNameRequired": "माता-पिता का नाम आवश्यक है",
+      "studentNameLabel": "छात्र का नाम",
+      "studentNamePlaceholder": "छात्र का नाम दर्ज करें",
+      "studentNameRequired": "छात्र का नाम आवश्यक है",
+      "phoneLabel": "फोन नंबर",
+      "phonePlaceholder": "10 अंकों का मोबाइल नंबर",
+      "phoneRequired": "कृपया एक वैध 10 अंकों का फोन नंबर दर्ज करें",
+      "phoneStart": "फोन नंबर 6, 7, 8, या 9 से शुरू होना चाहिए",
+      "phoneFormat": "अमान्य फोन नंबर प्रारूप",
+      "enterMoreDigits": "दर्ज करें",
+      "digits": "और अंक",
+      "programLabel": "कार्यक्रम का चयन करें",
+      "programPlaceholder": "-- कार्यक्रम का चयन करें --",
+      "programRequired": "कृपया एक कार्यक्रम का चयन करें",
+      "submitButton": "पूछताछ सबमिट करें",
+      "submitting": "जमा किया जा रहा है...",
+      "secure": "100% सुरक्षित",
+      "quickResponse": "तेजी से प्रतिक्रिया",
+      "noSpam": "स्पैम नहीं"
+    },
+    "validation": {
+      "fillAllFields": "कृपया सभी फ़ील्ड्स को सही तरीके से भरें",
+      "validationError": "सत्यापन त्रुटि"
+    },
+    "success": {
+      "title": "पूछताछ सफलतापूर्वक सबमिट की गई! 🎉",
+      "message": "आपकी पूछताछ के लिए धन्यवाद! आपका पूछताछ नंबर: ",
+      "messageSuffix": "\n\nहमारी प्रवेश टीम जल्द ही आपसे संपर्क करेगी और आपके बच्चे के प्रवेश पर चर्चा करेगी।",
+      "toastMessage": "आपकी पूछताछ सफलतापूर्वक सबमिट की गई है!"
+    },
+    "error": {
+      "title": "पूछताछ सबमिट करने में विफल",
+      "message": "आपकी पूछताछ सबमिट करने में विफल रहा। कृपया फिर से प्रयास करें या हमसे सीधे संपर्क करें।",
+      "toastMessage": "पूछताछ सबमिट करने में विफल। कृपया फिर से प्रयास करें।"
+    }
+  },
+  "enquiry_form": {
+    "heading": "प्रवेश पूछताछ",
+    "formTitle": "प्रवेश पूछताछ फॉर्म",
+    "formSubtitle": "अपने विवरण भरें और हम आपसे संपर्क करेंगे",
+    "parentNameLabel": "माता-पिता का नाम",
+    "parentNamePlaceholder": "माता-पिता का नाम दर्ज करें",
+    "parentNameRequired": "माता-पिता का नाम आवश्यक है",
+    "childNameLabel": "बच्चे का नाम",
+    "childNamePlaceholder": "बच्चे का नाम दर्ज करें",
+    "childNameRequired": "बच्चे का नाम आवश्यक है",
+    "phoneLabel": "फोन नंबर",
+    "phonePlaceholder": "10 अंकों का मोबाइल नंबर",
+    "phoneRequired": "कृपया एक वैध 10 अंकों का फोन नंबर दर्ज करें",
+    "phoneStart": "फोन नंबर 6, 7, 8, या 9 से शुरू होना चाहिए",
+    "phoneFormat": "अमान्य फोन नंबर प्रारूप",
+    "enterMoreDigits": "दर्ज करें",
+    "digits": "और अंक",
+    "programLabel": "कार्यक्रम का चयन करें",
+    "programPlaceholder": "-- कार्यक्रम का चयन करें --",
+    "programRequired": "कृपया एक कार्यक्रम का चयन करें",
+    "submitButton": "पूछताछ सबमिट करें",
+    "submitting": "जमा किया जा रहा है...",
+    "requiredNote": "आवश्यक फ़ील्ड्स",
+    "formValidation": {
+      "fillAllFields": "कृपया सभी फ़ील्ड्स को सही तरीके से भरें",
+      "validationError": "सत्यापन त्रुटि"
+    },
+    "formSuccess": {
+      "title": "पूछताछ सफलतापूर्वक सबमिट की गई! 🎉",
+      "message": "आपकी पूछताछ के लिए धन्यवाद! आपका पूछताछ नंबर: ",
+      "messageSuffix": "\n\nहमारी प्रवेश टीम जल्द ही आपसे संपर्क करेगी और आपके बच्चे के प्रवेश पर चर्चा करेगी।",
+      "toastMessage": "आपकी पूछताछ सफलतापूर्वक सबमिट की गई है!"
+    },
+    "formError": {
+      "title": "पूछताछ सबमिट करने में विफल",
+      "message": "आपकी पूछताछ सबमिट करने में विफल रहा। कृपया फिर से प्रयास करें या हमसे सीधे संपर्क करें।",
+      "toastMessage": "पूछताछ सबमिट करने में विफल। कृपया फिर से प्रयास करें।"
+    }
   },
   "footer": {
     "quickLinks": "त्वरित लिंक",
@@ -134,5 +315,10 @@
     "notFound": "पृष्ठ नहीं मिला",
     "unauthorized": "अनुमति नहीं है",
     "serverError": "सर्वर त्रुटि"
+  },
+  "arBooks": {
+    "title": "एआर पुस्तकें",
+    "arAlphabates": "एआर वर्णमाला",
+    "arAnimals": "एआर जानवर"
   }
 }

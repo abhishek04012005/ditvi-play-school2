@@ -167,7 +167,7 @@
     color: var(--white);
     border: none;
     border-radius: 10px;
-    font-weight: 700;
+    
     font-size: 0.95rem;
     cursor: pointer;
     transition: var(--transition);
@@ -230,7 +230,7 @@
 .table th {
     padding: 1.25rem 1.5rem;
     text-align: left;
-    font-weight: 700;
+    
     color: var(--primary-purple);
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -271,7 +271,7 @@
 }
 
 .table td:first-child {
-    font-weight: 700;
+    
     color: var(--black);
 }
 
@@ -296,7 +296,7 @@
 }
 
 .documentName {
-    font-weight: 700;
+    
     color: var(--black);
     word-break: break-word;
     white-space: normal;
@@ -318,7 +318,7 @@
     border: 1px solid;
     border-radius: 8px;
     font-size: 0.8rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     display: flex;
@@ -405,7 +405,7 @@
 
 .paginationText strong {
     color: var(--black);
-    font-weight: 700;
+    
 }
 
 .paginationControls {
@@ -433,7 +433,7 @@
 
 .itemsPerPageSelector label {
     font-size: 0.85rem;
-    font-weight: 700;
+    
     color: var(--black);
 }
 
@@ -444,7 +444,7 @@
     border: 1px solid var(--border-color);
     border-radius: 6px;
     font-size: 0.85rem;
-    font-weight: 700;
+    
     font-family: 'Verdana', sans-serif;
     cursor: pointer;
     transition: var(--transition);
@@ -476,7 +476,7 @@
     border: 1px solid var(--border-color);
     border-radius: 6px;
     font-size: 0.85rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     display: flex;
@@ -516,7 +516,7 @@
     border: 1px solid var(--border-color);
     border-radius: 6px;
     font-size: 0.85rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     display: flex;
@@ -543,7 +543,7 @@
 
 .ellipsis {
     color: var(--text-light);
-    font-weight: 700;
+    
     padding: 0 0.25rem;
 }
 
@@ -561,7 +561,7 @@
 
 .pageInfo strong {
     color: var(--black);
-    font-weight: 700;
+    
 }
 
 /* ==================== Upload Section ==================== */
@@ -582,7 +582,7 @@
 .uploadHeader h3 {
     margin: 0 0 0.5rem 0;
     font-size: 1.25rem;
-    font-weight: 700;
+    
     color: var(--black);
 }
 
@@ -626,7 +626,7 @@
 
 .formGroup label {
     font-size: 0.9rem;
-    font-weight: 700;
+    
     color: var(--black);
     display: block;
 }
@@ -691,7 +691,7 @@
     border: none;
     border-radius: 8px;
     font-size: 0.95rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     display: flex;
@@ -762,7 +762,7 @@
 .previewHeader h3 {
     margin: 0;
     font-size: 1rem;
-    font-weight: 700;
+    
     color: var(--black);
     word-break: break-word;
     flex: 1;
@@ -1179,7 +1179,7 @@
 
 .formGroup label {
     font-size: 0.9rem;
-    font-weight: 700;
+    
     color: var(--black);
     display: block;
 }
@@ -1244,7 +1244,7 @@
     border: none;
     border-radius: 8px;
     font-size: 0.95rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     display: flex;
@@ -1333,7 +1333,7 @@
 .table th {
     padding: 1rem;
     text-align: left;
-    font-weight: 700;
+    
     color: var(--primary-purple);
     font-size: 0.85rem;
     text-transform: uppercase;
@@ -1345,7 +1345,7 @@
     border: none;
     color: var(--black);
     cursor: pointer;
-    font-weight: 700;
+    
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -1409,7 +1409,7 @@
 }
 
 .documentName {
-    font-weight: 700;
+    
     color: var(--black);
     word-break: break-word;
     white-space: normal;
@@ -1445,7 +1445,7 @@
     border: none;
     border-radius: 6px;
     font-size: 0.8rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     display: flex;
@@ -1520,7 +1520,7 @@
 .emptyTitle {
     margin: 0 0 0.5rem 0;
     font-size: 1.1rem;
-    font-weight: 700;
+    
     color: var(--black);
 }
 
@@ -1577,7 +1577,7 @@
     border: 1px solid var(--border-color);
     border-radius: 6px;
     font-size: 0.85rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     display: flex;
@@ -1611,7 +1611,7 @@
     border: 1px solid var(--border-color);
     border-radius: 6px;
     font-size: 0.85rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     display: flex;
@@ -1639,7 +1639,7 @@
     border: 1px solid var(--border-color);
     border-radius: 6px;
     font-size: 0.85rem;
-    font-weight: 700;
+    
     font-family: 'Verdana', sans-serif;
     cursor: pointer;
     transition: var(--transition);
@@ -1703,7 +1703,7 @@
 .previewHeader h3 {
     margin: 0;
     font-size: 1rem;
-    font-weight: 700;
+    
     color: var(--black);
     word-break: break-word;
     flex: 1;
@@ -1778,7 +1778,7 @@
     margin: 0;
     font-size: 1.5rem;
     color: var(--black);
-    font-weight: 700;
+    
 }
 
 .modalCloseBtn {
@@ -1833,7 +1833,7 @@
     border: 2px solid var(--border-color);
     border-radius: 10px;
     font-size: 0.95rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     font-family: 'Verdana', sans-serif;
@@ -1852,7 +1852,7 @@
     border: none;
     border-radius: 10px;
     font-size: 0.95rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     font-family: 'Verdana', sans-serif;

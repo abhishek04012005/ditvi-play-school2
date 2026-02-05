@@ -9,7 +9,7 @@
 }
 
 .navContainer {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
@@ -24,20 +24,19 @@
 
 .logoText {
   font-size: 1.5rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--primary-purple);
 }
 
 .navLinks {
   display: flex;
-  gap: 2rem;
+  gap: 1.3rem;
   align-items: center;
 }
 
 .navLink {
   color: var(--black);
   text-decoration: none;
-  font-weight: 500;
   transition: var(--transition);
   padding: 0.5rem 1rem;
   border-radius: 4px;

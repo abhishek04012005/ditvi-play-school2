@@ -74,7 +74,7 @@
     margin: 0 0 0.5rem 0;
     font-size: 1.5rem;
     color: var(--primary-purple);
-    font-weight: 700;
+    
 }
 
 .header p {
@@ -186,7 +186,7 @@
     border: none;
     border-radius: 10px;
     font-size: 1rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: all 0.3s ease-in-out;
     box-shadow: 0 10px 25px rgba(106, 76, 147, 0.25);
@@ -246,7 +246,7 @@
     margin: 0 0 0.75rem 0;
     font-size: 1.3rem;
     color: var(--primary-purple);
-    font-weight: 700;
+    
 }
 
 .successContent p {

@@ -314,7 +314,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose, customTyp
               margin: 8mm 0;
               font-size: 11pt;
               color: #2b2b2b;
-              font-weight: 700;
+              
               line-height: 1.8;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
@@ -339,7 +339,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose, customTyp
               padding: 6mm 8mm;
               margin: 8mm 0;
               font-size: 11pt;
-              font-weight: 800;
+              
               font-style: italic;
               color: #6a4c93;
               line-height: 1.6;
@@ -369,7 +369,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose, customTyp
 
             .label {
               font-size: 8pt;
-              font-weight: 700;
+              
               color: #666;
               text-transform: uppercase;
               letter-spacing: 0.5px;
@@ -381,7 +381,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose, customTyp
             .date {
               font-size: 11pt;
               color: #6a4c93;
-              font-weight: 800;
+              
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }

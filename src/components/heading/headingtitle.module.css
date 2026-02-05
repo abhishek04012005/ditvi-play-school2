@@ -4,7 +4,6 @@
     font-size: clamp(1.6rem, 4.2vw, 2.4rem);
     color: var(--primary-purple);
     margin: 0 0 2rem 0;
-    font-weight: 800;
     padding: 0;
 }
 

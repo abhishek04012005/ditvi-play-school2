@@ -30,7 +30,8 @@
     "info": "Info",
     "close": "Close",
     "apply": "Apply",
-    "enrolled": "Enrolled"
+    "enrolled": "Enrolled",
+    "admin": "Admin"
   },
   "hero": {
     "title": "Welcome to Ditvi Play School",
@@ -56,24 +57,81 @@
   },
   "admission": {
     "title": "Admission Form",
-    "subtitle": "Join Our Family",
-    "apply": "Apply for Admission",
-    "fullName": "Full Name",
-    "fatherName": "Father's Name",
-    "motherName": "Mother's Name",
-    "dateOfBirth": "Date of Birth",
-    "email": "Email Address",
-    "phone": "Phone Number",
-    "address": "Address",
-    "city": "City",
-    "state": "State",
-    "pincode": "Pincode",
-    "program": "Program",
-    "message": "Message",
-    "terms": "I agree to the terms and conditions",
-    "submit": "Submit Application",
-    "success": "Application submitted successfully",
-    "error": "Error submitting application"
+    "subtitle": "Fill in the details below to apply for admission",
+    "steps": {
+      "student": "Student",
+      "parents": "Parents",
+      "academic": "Academic",
+      "documents": "Upload Documents"
+    },
+    "form": {
+      "studentName": "Student's Name",
+      "studentNamePlaceholder": "Enter student's name",
+      "studentNameRequired": "Student name is required",
+      "dob": "Date of Birth",
+      "dobRequired": "Date of birth is required",
+      "gender": "Gender",
+      "genderRequired": "Gender is required",
+      "male": "Male",
+      "female": "Female",
+      "placeOfBirth": "Place of Birth",
+      "placeOfBirthPlaceholder": "Enter place of birth",
+      "placeOfBirthRequired": "Place of birth is required",
+      "bloodGroup": "Blood Group (Optional)",
+      "selectBloodGroup": "-- Select Blood Group --",
+      "parentName": "Parent's Name",
+      "parentNamePlaceholder": "Enter parent's name",
+      "parentNameRequired": "Parent name is required",
+      "mobileNumber": "Mobile Number",
+      "mobileNumberPlaceholder": "10-digit mobile number",
+      "mobileNumberRequired": "Mobile number is required",
+      "mobileNumberInvalid": "Mobile number must be 10 digits",
+      "email": "Email (Optional)",
+      "emailPlaceholder": "Enter parent's email",
+      "address": "Address",
+      "addressPlaceholder": "Enter complete address",
+      "addressRequired": "Address is required",
+      "selectProgram": "Select Program",
+      "programRequired": "Program is required",
+      "previousSchool": "Previous School (Optional)",
+      "previousSchoolPlaceholder": "Enter previous school name",
+      "selectedFilesStatus": "Selected Files Status",
+      "photoLabel": "Photo (Optional)",
+      "photoStatus": "Photo: ",
+      "photoNotUploaded": "Not uploaded",
+      "photoSelected": "Image selected",
+      "birthCertificateLabel": "Birth Certificate (Optional)",
+      "birthCertificateStatus": "Birth Certificate: ",
+      "aadharCardLabel": "Aadhar Card (Optional)",
+      "aadharCardStatus": "Aadhar Card: ",
+      "parentIdLabel": "Parent's ID Proof (Optional)",
+      "parentIdStatus": "Parent ID Proof: ",
+      "clickToUpload": "Click to upload file",
+      "fileSize": "Max 10MB • JPG, PNG, PDF",
+      "clickToChange": "Click to change",
+      "previousButton": "← Previous",
+      "nextButton": "Next →",
+      "submitButton": "✓ Submit Admission",
+      "submitting": "Submitting...",
+      "imageSelected": "Image selected"
+    },
+    "success": {
+      "title": "Admission Request Submitted Successfully!",
+      "subtitle": "Your application has been received.",
+      "downloadPdf": "Download PDF"
+    },
+    "validation": {
+      "fileTypeError": "Only JPG, PNG, and PDF files are allowed",
+      "fileSizeError": "File size must be less than 10MB",
+      "uploadError": "Failed to upload file",
+      "generatingPdf": "Generating PDF...",
+      "pdfDownloadSuccess": "PDF downloaded successfully!",
+      "pdfDownloadError": "Failed to generate PDF",
+      "uploadingDocuments": "Uploading documents...",
+      "submittingApplication": "Submitting your application...",
+      "submissionSuccess": "Admission submitted successfully!",
+      "submissionError": "Submission failed"
+    }
   },
   "contact": {
     "title": "Contact Us",
@@ -86,7 +144,115 @@
     "phone": "Phone",
     "address": "Address",
     "hours": "Office Hours",
-    "social": "Follow Us"
+    "social": "Follow Us",
+    "form": {
+      "name": "Your Name",
+      "namePlaceholder": "Enter your name",
+      "email": "Your Email",
+      "emailPlaceholder": "Enter your email address",
+      "phone": "Your Phone",
+      "phonePlaceholder": "10-digit mobile number",
+      "message": "Your Message",
+      "messagePlaceholder": "Write your message here...",
+      "sendMessage": "Send Message",
+      "sending": "Sending...",
+      "messageSent": "Message Sent!",
+      "error": "Error! Try Again",
+      "requiredFields": "Required fields"
+    },
+    "validation": {
+      "nameRequired": "Name is required",
+      "emailRequired": "Email is required",
+      "invalidEmail": "Please enter a valid email address",
+      "phoneRequired": "Phone number is required",
+      "invalidPhone": "Please enter a valid 10-digit phone number",
+      "phoneStart": "Phone number must start with 6, 7, 8, or 9",
+      "invalidPhoneFormat": "Invalid phone number format",
+      "enterMoreDigits": "Enter",
+      "digits": "more digits",
+      "messageRequired": "Message is required",
+      "messageMinLength": "Message must be at least 10 characters long",
+      "fillAllFields": "Please fill all fields correctly before submitting.",
+      "validationError": "Validation Error"
+    },
+    "success": {
+      "title": "🎉Thank you!🎉",
+      "message": "We will get back to you soon.",
+      "toastMessage": "Your message has been sent successfully!"
+    },
+    "error": {
+      "title": "Failed to Send Message",
+      "message": "Failed to send your message. Please try again later or contact us directly.",
+      "toastMessage": "Failed to send message. Please try again."
+    }
+  },
+  "enquiry": {
+    "form": {
+      "heading": "Admission Enquiry",
+      "formTitle": "Admission Enquiry Form",
+      "formSubtitle": "Fill in your details and we'll contact you",
+      "parentNameLabel": "Parent's Name",
+      "parentNamePlaceholder": "Enter parent's name",
+      "parentNameRequired": "Parent name is required",
+      "childNameLabel": "Child's Name",
+      "childNamePlaceholder": "Enter child's name",
+      "childNameRequired": "Child name is required",
+      "phoneLabel": "Phone Number",
+      "phonePlaceholder": "10-digit mobile number",
+      "phoneRequired": "Please enter a valid 10-digit phone number",
+      "phoneStart": "Phone number must start with 6, 7, 8, or 9",
+      "phoneFormat": "Invalid phone number format",
+      "enterMoreDigits": "Enter",
+      "digits": "more digits",
+      "programLabel": "Select Program",
+      "programPlaceholder": "-- Select Program --",
+      "programRequired": "Please select a program",
+      "submitButton": "Submit Enquiry",
+      "submitting": "Submitting...",
+      "requiredNote": "Required fields"
+    },
+    "validation": {
+      "fillAllFields": "Please fill all fields correctly",
+      "validationError": "Validation Error"
+    },
+    "success": {
+      "title": "Enquiry Submitted Successfully! 🎉",
+      "message": "Thank you for your enquiry! Your Enquiry Number: ",
+      "messageSuffix": "\n\nOur admission team will contact you soon to discuss your child's admission.",
+      "toastMessage": "Your enquiry has been submitted successfully!"
+    },
+    "error": {
+      "title": "Failed to Submit Enquiry",
+      "message": "Failed to submit your enquiry. Please try again or contact us directly.",
+      "toastMessage": "Failed to submit enquiry. Please try again."
+    },
+    "popup": {
+      "badge": "10% OFF",
+      "title": "Get 10% Off on Admission Fee",
+      "subtitle1": "Enquire now and get instant discount",
+      "subtitle2": "Limited time offer!",
+      "parentNameLabel": "Parent's Name",
+      "parentNamePlaceholder": "Enter parent's name",
+      "studentNameLabel": "Child's Name",
+      "studentNamePlaceholder": "Enter child's name",
+      "phoneLabel": "Phone Number",
+      "phonePlaceholder": "10-digit mobile number",
+      "programLabel": "Select Program",
+      "programPlaceholder": "-- Select Program --",
+      "submitButton": "Submit Enquiry",
+      "submitting": "Submitting...",
+      "secure": "Secure",
+      "quickResponse": "Quick Response",
+      "noSpam": "No Spam",
+      "phoneStart": "Phone number must start with 6, 7, 8, or 9",
+      "phoneFormat": "Invalid phone number format",
+      "enterMoreDigits": "Enter",
+      "digits": "more digits",
+      "parentNameRequired": "Parent name is required",
+      "studentNameRequired": "Child name is required",
+      "programRequired": "Please select a program",
+      "phoneRequired": "Please enter a valid 10-digit phone number"
+    }
   },
   "footer": {
     "quickLinks": "Quick Links",
@@ -134,5 +300,10 @@
     "notFound": "Page Not Found",
     "unauthorized": "Unauthorized Access",
     "serverError": "Server Error"
+  },
+  "arBooks": {
+    "title": "AR Books",
+    "arAlphabates": "Ar Alphabates",
+    "arAnimals": "Ar Animals"
   }
 }

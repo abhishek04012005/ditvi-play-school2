@@ -19,7 +19,7 @@
   margin: 0 0 1rem 0;
   font-size: 2rem;
   color: var(--primary-purple);
-  font-weight: 700;
+  
 }
 
 .header p {
@@ -41,7 +41,7 @@
   display: block;
   font-size: 0.85rem;
   color: var(--primary-purple);
-  font-weight: 700;
+  
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 0.5rem;
@@ -67,7 +67,7 @@
 .sectionTitle {
   font-size: 1.1rem;
   color: var(--primary-purple);
-  font-weight: 700;
+  
   margin: 0 0 1.5rem 0;
   padding-bottom: 1rem;
   border-bottom: 2px solid rgba(106, 76, 147, 0.1);
@@ -172,7 +172,7 @@
   display: block;
   font-size: 0.85rem;
   color: var(--text-gray);
-  font-weight: 700;
+  
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 0.75rem;
@@ -276,7 +276,7 @@
   border: none;
   border-radius: 10px;
   font-size: 0.95rem;
-  font-weight: 700;
+  
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   text-transform: uppercase;
@@ -467,7 +467,7 @@
 
 .existingDocLabel {
   font-size: 0.85rem;
-  font-weight: 700;
+  
   color: var(--primary-purple);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -560,7 +560,7 @@
   margin: 0;
   font-size: 1.3rem;
   color: var(--primary-purple);
-  font-weight: 700;
+  
 }
 
 .modalHeader div p {

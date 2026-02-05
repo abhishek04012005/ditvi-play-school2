@@ -135,31 +135,31 @@ const Contact = () => {
     let isValid = true;
 
     if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
+      newErrors.name = t('contact.validation.nameRequired');
       isValid = false;
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = t('contact.validation.emailRequired');
       isValid = false;
     } else if (!validateEmail(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
+      newErrors.email = t('contact.validation.invalidEmail');
       isValid = false;
     }
 
     if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required";
+      newErrors.phone = t('contact.validation.phoneRequired');
       isValid = false;
     } else if (!validatePhone(formData.phone)) {
-      newErrors.phone = "Please enter a valid 10-digit phone number";
+      newErrors.phone = t('contact.validation.invalidPhone');
       isValid = false;
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = "Message is required";
+      newErrors.message = t('contact.validation.messageRequired');
       isValid = false;
     } else if (formData.message.trim().length < 10) {
-      newErrors.message = "Message must be at least 10 characters long";
+      newErrors.message = t('contact.validation.messageMinLength');
       isValid = false;
     }
 
@@ -192,13 +192,13 @@ const Contact = () => {
       ) {
         setErrors((prev) => ({
           ...prev,
-          phone: "Phone number must start with 6, 7, 8, or 9",
+          phone: t('contact.validation.phoneStart'),
         }));
       } else if (truncated.length === 10) {
         if (!validatePhone(truncated)) {
           setErrors((prev) => ({
             ...prev,
-            phone: "Invalid phone number format",
+            phone: t('contact.validation.invalidPhoneFormat'),
           }));
         } else {
           setErrors((prev) => ({
@@ -209,7 +209,7 @@ const Contact = () => {
       } else if (truncated.length > 0 && truncated.length < 10) {
         setErrors((prev) => ({
           ...prev,
-          phone: `Enter ${10 - truncated.length} more digits`,
+          phone: `${t('contact.validation.enterMoreDigits')} ${10 - truncated.length} ${t('contact.validation.digits')}`,
         }));
       }
     } else if (name === "email") {
@@ -260,7 +260,7 @@ const Contact = () => {
         if (value.trim().length < 10) {
           setErrors((prev) => ({
             ...prev,
-            message: "Message must be at least 10 characters",
+            message: t('contact.validation.messageMinLength'),
           }));
         } else {
           setErrors((prev) => ({
@@ -277,8 +277,8 @@ const Contact = () => {
 
     if (!validateForm()) {
       showErrorModal(
-        "Please fill all fields correctly before submitting.",
-        "Validation Error"
+        t('contact.validation.fillAllFields'),
+        t('contact.validation.validationError')
       );
       return;
     }
@@ -305,13 +305,13 @@ const Contact = () => {
 
       // Show success modal with confetti
       showSuccessModal(
-        "We will get back to you soon.",
-        "🎉Thank you!🎉"
+        t('contact.success.message'),
+        t('contact.success.title')
       );
 
       // Show toast notification
       setToastType("success");
-      setToastMessage("Your message has been sent successfully!");
+      setToastMessage(t('contact.success.toastMessage'));
       setShowToast(true);
 
       // Reset form
@@ -325,13 +325,13 @@ const Contact = () => {
 
       // Show error modal
       showErrorModal(
-        "Failed to send your message. Please try again later or contact us directly.",
-        "Failed to Send Message"
+        t('contact.error.message'),
+        t('contact.error.title')
       );
 
       // Show error toast
       setToastType("error");
-      setToastMessage("Failed to send message. Please try again.");
+      setToastMessage(t('contact.error.toastMessage'));
       setShowToast(true);
 
       setTimeout(() => setSubmitStatus("idle"), 3000);
@@ -439,14 +439,14 @@ const Contact = () => {
                 transition={{ delay: 0.2 }}
                 viewport={{ once: true }}
               >
-                <label htmlFor="name">Your Name *</label>
+                <label htmlFor="name">{t('contact.form.name')} *</label>
                 <div className={styles.inputWrapper}>
                   <FaUser className={styles.icon} />
                   <input
                     id="name"
                     type="text"
                     name="name"
-                    placeholder="Enter your name"
+                    placeholder={t('contact.form.namePlaceholder')}
                     value={formData.name}
                     onChange={handleChange}
                     className={errors.name ? styles.inputError : ""}
@@ -471,14 +471,14 @@ const Contact = () => {
                 transition={{ delay: 0.25 }}
                 viewport={{ once: true }}
               >
-                <label htmlFor="email">Your Email *</label>
+                <label htmlFor="email">{t('contact.form.email')} *</label>
                 <div className={styles.inputWrapper}>
                   <FaEnvelope className={styles.icon} />
                   <input
                     id="email"
                     type="email"
                     name="email"
-                    placeholder="Enter your email address"
+                    placeholder={t('contact.form.emailPlaceholder')}
                     value={formData.email}
                     onChange={handleChange}
                     className={errors.email ? styles.inputError : ""}
@@ -503,14 +503,14 @@ const Contact = () => {
                 transition={{ delay: 0.3 }}
                 viewport={{ once: true }}
               >
-                <label htmlFor="phone">Your Phone *</label>
+                <label htmlFor="phone">{t('contact.form.phone')} *</label>
                 <div className={styles.inputWrapper}>
                   <FaPhone className={styles.icon} />
                   <input
                     id="phone"
                     type="tel"
                     name="phone"
-                    placeholder="10-digit mobile number"
+                    placeholder={t('contact.form.phonePlaceholder')}
                     value={formData.phone}
                     onChange={handleChange}
                     maxLength={10}
@@ -541,13 +541,13 @@ const Contact = () => {
                 transition={{ delay: 0.35 }}
                 viewport={{ once: true }}
               >
-                <label htmlFor="message">Your Message *</label>
+                <label htmlFor="message">{t('contact.form.message')} *</label>
                 <div className={styles.inputWrapper}>
                   <FaPen className={styles.icon} />
                   <textarea
                     id="message"
                     name="message"
-                    placeholder="Write your message here..."
+                    placeholder={t('contact.form.messagePlaceholder')}
                     value={formData.message}
                     onChange={handleChange}
                     className={errors.message ? styles.inputError : ""}
@@ -580,16 +580,16 @@ const Contact = () => {
             >
               <span className={styles.buttonText}>
                 {submitStatus === "submitting"
-                  ? "Sending..."
+                  ? t('contact.form.sending')
                   : submitStatus === "success"
-                    ? "Message Sent!"
+                    ? t('contact.form.messageSent')
                     : submitStatus === "error"
-                      ? "Error! Try Again"
-                      : "Send Message"}
+                      ? t('contact.form.error')
+                      : t('contact.form.sendMessage')}
               </span>
             </motion.button>
 
-            <p className={styles.requiredNote}>* Required fields</p>
+            <p className={styles.requiredNote}>* {t('contact.form.requiredFields')}</p>
           </form>
         </motion.div>
       </div>

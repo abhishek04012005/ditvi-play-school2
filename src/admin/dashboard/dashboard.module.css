@@ -116,7 +116,7 @@
 .pageTitle {
   margin: 0;
   font-size: 2.5rem;
-  font-weight: 800;
+  
   color: var(--primary-purple);
   letter-spacing: -0.5px;
 }
@@ -162,7 +162,7 @@
   border-radius: 8px;
   background: #f9f9f9;
   color: var(--text-gray);
-  font-weight: 700;
+  
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -351,7 +351,7 @@
 .customDatePickerModal h3 {
   margin: 0;
   font-size: 1.2rem;
-  font-weight: 700;
+  
   color: var(--black);
 }
 
@@ -562,7 +562,7 @@
   padding: 0.5rem 1rem;
   border-radius: 8px;
   font-size: 0.85rem;
-  font-weight: 700;
+  
   background: #e8f5e9;
   color: #2e7d32;
 }
@@ -611,7 +611,7 @@
 .statCardTitle {
   margin: 0 0 0.25rem 0;
   font-size: 0.95rem;
-  font-weight: 700;
+  
   color: var(--black);
   letter-spacing: -0.3px;
 }
@@ -722,7 +722,7 @@
 .cardHeader h3 {
   margin: 0;
   font-size: 1.2rem;
-  font-weight: 700;
+  
   color: var(--black);
 }
 
@@ -769,7 +769,7 @@
 
 .metricValue {
   font-size: 1.3rem;
-  font-weight: 800;
+  
   color: var(--primary-purple);
 }
 
@@ -790,7 +790,7 @@
 
 .progressValue {
   color: var(--primary-purple);
-  font-weight: 700;
+  
   font-size: 0.95rem;
 }
 
@@ -891,7 +891,7 @@
 .activityTitle h2 {
   margin: 0;
   font-size: 1.4rem;
-  font-weight: 700;
+  
   color: var(--black);
 }
 
@@ -1091,7 +1091,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
+  
   font-size: 1rem;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(106, 76, 147, 0.2);
@@ -1130,7 +1130,7 @@
 .activityInfo h4 {
   margin: 0;
   font-size: 0.95rem;
-  font-weight: 700;
+  
   color: var(--black);
   white-space: nowrap;
   overflow: hidden;
@@ -1198,7 +1198,7 @@
   padding: 0.45rem 0.9rem;
   border-radius: 8px;
   font-size: 0.75rem;
-  font-weight: 700;
+  
   text-transform: capitalize;
   letter-spacing: 0.4px;
   border: 1px solid;
@@ -2056,7 +2056,7 @@
 .summaryHeader h2 {
   margin: 0;
   font-size: 1.4rem;
-  font-weight: 700;
+  
   color: var(--black);
   letter-spacing: -0.3px;
 }
@@ -2112,7 +2112,7 @@
 
 .summaryNumber {
   font-size: 2rem;
-  font-weight: 800;
+  
   color: #6a4c93;
   margin-bottom: 0.25rem;
 }
@@ -2305,7 +2305,7 @@
 .reportingHeader h2 {
   margin: 0;
   font-size: 1.4rem;
-  font-weight: 700;
+  
   color: var(--black);
   letter-spacing: -0.3px;
 }
@@ -2341,7 +2341,7 @@
 .reportingCard h3 {
   margin: 0 0 1.5rem 0;
   font-size: 1.1rem;
-  font-weight: 700;
+  
   color: var(--black);
   letter-spacing: -0.2px;
 }
@@ -2392,7 +2392,7 @@
 
 .metricValue {
   font-size: 0.85rem;
-  font-weight: 700;
+  
   color: var(--text-gray);
   text-align: right;
 }

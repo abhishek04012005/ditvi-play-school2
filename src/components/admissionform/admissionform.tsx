@@ -597,10 +597,10 @@ export default function AdmissionForm() {
             </motion.div>
 
             <h1 className={styles.successTitle}>
-              Admission Request Submitted Successfully!
+              {t('admission.success.title')}
             </h1>
             <p className={styles.successSubtitle}>
-              Your application has been received. 
+              {t('admission.success.subtitle')}
             </p>
 
             <motion.div
@@ -611,7 +611,7 @@ export default function AdmissionForm() {
             >
               <button className={styles.btnPrimary} onClick={downloadPDF}>
                 <FaDownload className={styles.btnIcon} />
-                <span>Download PDF</span>
+                <span>{t('admission.success.downloadPdf')}</span>
               </button>
             </motion.div>
             {/* Confirmation Slip */}
@@ -683,13 +683,13 @@ export default function AdmissionForm() {
           }}
           zIndex={1}
         />
-        <HeadingTitle text="Admission Form" />
+        <HeadingTitle text={t('admission.title')} />
         <div className={styles.container}>
           <div className={styles.formCard}>
             <div className={styles.formLayout}>
               <main className={styles.main}>
                 <p className={styles.subtitle}>
-                  Fill in the details below to apply for admission
+                  {t('admission.subtitle')}
                 </p>
 
                 {/* Progress Bar */}
@@ -703,10 +703,10 @@ export default function AdmissionForm() {
 
                   <div className={styles.pills}>
                     {[
-                      { n: 1, t: "Student", icon: EmojiPeople },
-                      { n: 2, t: "Parents", icon: FamilyRestroom },
-                      { n: 3, t: "Academic", icon: SchoolOutlined },
-                      { n: 4, t: "Upload Documents", icon: DescriptionOutlined },
+                      { n: 1, t: t('admission.steps.student'), icon: EmojiPeople },
+                      { n: 2, t: t('admission.steps.parents'), icon: FamilyRestroom },
+                      { n: 3, t: t('admission.steps.academic'), icon: SchoolOutlined },
+                      { n: 4, t: t('admission.steps.documents'), icon: DescriptionOutlined },
                     ].map((s) => {
                       const IconComponent = s.icon;
                       return (
@@ -742,7 +742,7 @@ export default function AdmissionForm() {
                     >
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
-                          <label>Student's Name *</label>
+                          <label>{t('admission.form.studentName')} *</label>
                           <div className={styles.inputWrapper}>
                             <FaChild className={styles.icon} />
                             <input
@@ -750,7 +750,7 @@ export default function AdmissionForm() {
                               name="child_name"
                               value={formData.child_name}
                               onChange={handleInputChange}
-                              placeholder="Enter student's name"
+                              placeholder={t('admission.form.studentNamePlaceholder')}
                               required
                             />
                           </div>
@@ -762,7 +762,7 @@ export default function AdmissionForm() {
                         </div>
 
                         <div className={styles.formGroup}>
-                          <label>Date of Birth *</label>
+                          <label>{t('admission.form.dob')} *</label>
                           <div className={styles.inputWrapper}>
                             <MdDateRange className={styles.icon} />
                             <input
@@ -783,7 +783,7 @@ export default function AdmissionForm() {
 
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
-                          <label>Gender *</label>
+                          <label>{t('admission.form.gender')} *</label>
                           <div className={styles.radioGroup}>
                             <div className={styles.radioItem}>
                               <input
@@ -799,7 +799,7 @@ export default function AdmissionForm() {
                                 htmlFor="gender_male"
                                 className={styles.radioLabel}
                               >
-                                Male
+                                {t('admission.form.male')}
                               </label>
                             </div>
 
@@ -817,7 +817,7 @@ export default function AdmissionForm() {
                                 htmlFor="gender_female"
                                 className={styles.radioLabel}
                               >
-                                Female
+                                {t('admission.form.female')}
                               </label>
                             </div>
                           </div>
@@ -829,7 +829,7 @@ export default function AdmissionForm() {
                         </div>
 
                         <div className={styles.formGroup}>
-                          <label>Place of Birth *</label>
+                          <label>{t('admission.form.placeOfBirth')} *</label>
                           <div className={styles.inputWrapper}>
                             <FaBirthdayCake className={styles.icon} />
                             <input
@@ -837,7 +837,7 @@ export default function AdmissionForm() {
                               name="child_place_of_birth"
                               value={formData.child_place_of_birth}
                               onChange={handleInputChange}
-                              placeholder="Enter place of birth"
+                              placeholder={t('admission.form.placeOfBirthPlaceholder')}
                               required
                             />
                           </div>
@@ -851,7 +851,7 @@ export default function AdmissionForm() {
 
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
-                          <label>Blood Group (Optional)</label>
+                          <label>{t('admission.form.bloodGroup')}</label>
                           <div className={styles.inputWrapper}>
                             <MdBloodtype className={styles.icon} />
                             <select
@@ -860,7 +860,7 @@ export default function AdmissionForm() {
                               onChange={handleInputChange}
                               className={styles.selectInput}
                             >
-                              <option value="">-- Select Blood Group --</option>
+                              <option value="">{t('admission.form.selectBloodGroup')}</option>
                               <option value="O+">O+</option>
                               <option value="O-">O-</option>
                               <option value="A+">A+</option>
@@ -886,7 +886,7 @@ export default function AdmissionForm() {
                     >
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
-                          <label>Parent's Name *</label>
+                          <label>{t('admission.form.parentName')} *</label>
                           <div className={styles.inputWrapper}>
                             <FaUser className={styles.icon} />
                             <input
@@ -894,7 +894,7 @@ export default function AdmissionForm() {
                               name="parent_name"
                               value={formData.parent_name}
                               onChange={handleInputChange}
-                              placeholder="Enter parent's name"
+                              placeholder={t('admission.form.parentNamePlaceholder')}
                               required
                             />
 
@@ -907,7 +907,7 @@ export default function AdmissionForm() {
                         </div>
 
                         <div className={styles.formGroup}>
-                          <label>Mobile Number *</label>
+                          <label>{t('admission.form.mobileNumber')} *</label>
                           <div className={styles.inputWrapper}>
                             <FaPhone className={styles.icon} />
                             <input
@@ -915,7 +915,7 @@ export default function AdmissionForm() {
                               name="parent_mobile_number"
                               value={formData.parent_mobile_number}
                               onChange={handleInputChange}
-                              placeholder="10-digit mobile number"
+                              placeholder={t('admission.form.mobileNumberPlaceholder')}
                               maxLength={10}
                               pattern="[0-9]{10}"
                               required
@@ -931,7 +931,7 @@ export default function AdmissionForm() {
 
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
-                          <label>Email (Optional)</label>
+                          <label>{t('admission.form.email')}</label>
                           <div className={styles.inputWrapper}>
                             <FaEnvelope className={styles.icon} />
                             <input
@@ -939,19 +939,19 @@ export default function AdmissionForm() {
                               name="parent_email"
                               value={formData.parent_email}
                               onChange={handleInputChange}
-                              placeholder="Enter parent's email"
+                              placeholder={t('admission.form.emailPlaceholder')}
                             />
                           </div>
                         </div>
                         <div className={styles.formGroup}>
-                          <label>Address *</label>
+                          <label>{t('admission.form.address')} *</label>
                           <div className={styles.inputWrapper}>
                             <FaMapMarkerAlt className={styles.icon} />
                             <textarea
                               name="parent_address"
                               value={formData.parent_address}
                               onChange={handleInputChange}
-                              placeholder="Enter complete address"
+                              placeholder={t('admission.form.addressPlaceholder')}
                               rows={3}
                               required
                               className={styles.textarea}
@@ -978,7 +978,7 @@ export default function AdmissionForm() {
                     >
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
-                          <label>Select Program *</label>
+                          <label>{t('admission.form.selectProgram')} *</label>
                           <div className={styles.radioGroup}>
                             {programs.map((program) => (
                               <div className={styles.radioItem} key={program}>
@@ -1008,7 +1008,7 @@ export default function AdmissionForm() {
                         </div>
 
                         <div className={styles.formGroup}>
-                          <label>Previous School (Optional)</label>
+                          <label>{t('admission.form.previousSchool')}</label>
                           <div className={styles.inputWrapper}>
                             <FaSchool className={styles.icon} />
                             <input
@@ -1016,7 +1016,7 @@ export default function AdmissionForm() {
                               name="previous_school"
                               value={formData.previous_school}
                               onChange={handleInputChange}
-                              placeholder="Enter previous school name"
+                              placeholder={t('admission.form.previousSchoolPlaceholder')}
                             />
                           </div>
                         </div>
@@ -1033,7 +1033,7 @@ export default function AdmissionForm() {
                       transition={{ duration: 0.4 }}
                     >
                       <div className={styles.formGroup}>
-                        <label>Selected Files Status</label>
+                        <label>{t('admission.form.selectedFilesStatus')}</label>
                         <div className={styles.selectedFiles}>
                           <div
                             className={`${styles.fileStatusItem} ${filePreviews.photo
@@ -1045,12 +1045,12 @@ export default function AdmissionForm() {
                               {filePreviews.photo ? "✓" : "○"}
                             </span>
                             <span className={styles.fileStatusText}>
-                              Photo:{" "}
+                              {t('admission.form.photoStatus')}
                               {filePreviews.photo
                                 ? filePreviews.photo.startsWith("data:image")
-                                  ? "Image selected"
+                                  ? t('admission.form.imageSelected')
                                   : filePreviews.photo
-                                : "Not uploaded"}
+                                : t('admission.form.photoNotUploaded')}
                             </span>
                           </div>
 
@@ -1064,14 +1064,14 @@ export default function AdmissionForm() {
                               {filePreviews.birth_certificate ? "✓" : "○"}
                             </span>
                             <span className={styles.fileStatusText}>
-                              Birth Certificate:{" "}
+                              {t('admission.form.birthCertificateStatus')}
                               {filePreviews.birth_certificate
                                 ? filePreviews.birth_certificate.startsWith(
                                   "data:image"
                                 )
-                                  ? "Image selected"
+                                  ? t('admission.form.imageSelected')
                                   : filePreviews.birth_certificate
-                                : "Not uploaded"}
+                                : t('admission.form.photoNotUploaded')}
                             </span>
                           </div>
 
@@ -1085,14 +1085,14 @@ export default function AdmissionForm() {
                               {filePreviews.aadhar_card ? "✓" : "○"}
                             </span>
                             <span className={styles.fileStatusText}>
-                              Aadhar Card:{" "}
+                              {t('admission.form.aadharCardStatus')}
                               {filePreviews.aadhar_card
                                 ? filePreviews.aadhar_card.startsWith(
                                   "data:image"
                                 )
-                                  ? "Image selected"
+                                  ? t('admission.form.imageSelected')
                                   : filePreviews.aadhar_card
-                                : "Not uploaded"}
+                                : t('admission.form.photoNotUploaded')}
                             </span>
                           </div>
 
@@ -1106,14 +1106,14 @@ export default function AdmissionForm() {
                               {filePreviews.parent_id_proof ? "✓" : "○"}
                             </span>
                             <span className={styles.fileStatusText}>
-                              Parent ID Proof:{" "}
+                              {t('admission.form.parentIdStatus')}
                               {filePreviews.parent_id_proof
                                 ? filePreviews.parent_id_proof.startsWith(
                                   "data:image"
                                 )
-                                  ? "Image selected"
+                                  ? t('admission.form.imageSelected')
                                   : filePreviews.parent_id_proof
-                                : "Not uploaded"}
+                                : t('admission.form.photoNotUploaded')}
                             </span>
                           </div>
                         </div>
@@ -1122,7 +1122,7 @@ export default function AdmissionForm() {
                       {uploadDocsNow && (
                         <>
                           <FileUploadField
-                            label="Photo (Optional)"
+                            label={t('admission.form.photoLabel')}
                             fieldName="photo"
                             accept="image/*"
                             preview={filePreviews.photo}
@@ -1130,7 +1130,7 @@ export default function AdmissionForm() {
                           />
 
                           <FileUploadField
-                            label="Birth Certificate (Optional)"
+                            label={t('admission.form.birthCertificateLabel')}
                             fieldName="birth_certificate"
                             accept=".pdf,image/*"
                             preview={filePreviews.birth_certificate}
@@ -1140,7 +1140,7 @@ export default function AdmissionForm() {
                           />
 
                           <FileUploadField
-                            label="Aadhar Card (Optional)"
+                            label={t('admission.form.aadharCardLabel')}
                             fieldName="aadhar_card"
                             accept=".pdf,image/*"
                             preview={filePreviews.aadhar_card}
@@ -1148,7 +1148,7 @@ export default function AdmissionForm() {
                           />
 
                           <FileUploadField
-                            label="Parent's ID Proof (Optional)"
+                            label={t('admission.form.parentIdLabel')}
                             fieldName="parent_id_proof"
                             accept=".pdf,image/*"
                             preview={filePreviews.parent_id_proof}
@@ -1169,7 +1169,7 @@ export default function AdmissionForm() {
                         className={styles.prevBtn}
                         onClick={() => setStep(step - 1)}
                       >
-                        ← Previous
+                        ← {t('admission.form.previousButton')}
                       </button>
                     )}
 
@@ -1183,7 +1183,7 @@ export default function AdmissionForm() {
                           }
                         }}
                       >
-                        Next →
+                        {t('admission.form.nextButton')} 
                       </button>
                     ) : (
                       <button
@@ -1195,10 +1195,10 @@ export default function AdmissionForm() {
                         {loading ? (
                           <>
                             <FaSpinner className={styles.spinner} />{" "}
-                            Submitting...
+                            {t('admission.form.submitting')}
                           </>
                         ) : (
-                          "✓ Submit Admission"
+                          `✓ ${t('admission.form.submitButton')}`
                         )}
                       </button>
                     )}

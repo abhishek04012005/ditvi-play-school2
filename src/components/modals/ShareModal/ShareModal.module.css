@@ -62,7 +62,7 @@
 .modalHeader h2 {
     margin: 0;
     font-size: 1.4rem;
-    font-weight: 700;
+    
     color: #6a4c93;
     letter-spacing: -0.3px;
 }
@@ -102,7 +102,7 @@
 .previewTitle {
     margin: 0 0 1rem 0;
     font-size: 0.85rem;
-    font-weight: 700;
+    
     color: #999999;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -149,7 +149,7 @@
     border: 2px solid rgba(106, 76, 147, 0.2);
     background: #ffffff;
     border-radius: 12px;
-    font-weight: 700;
+    
     font-size: 0.8rem;
     color: #6a4c93;
     cursor: pointer;
@@ -187,7 +187,7 @@
 .copyLabel {
     margin: 0 0 1rem 0;
     font-size: 0.85rem;
-    font-weight: 700;
+    
     color: #999999;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -226,7 +226,7 @@
     background: #6a4c93;
     color: #ffffff;
     border-radius: 10px;
-    font-weight: 700;
+    
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -283,7 +283,7 @@
     background: #ffffff;
     color: #6a4c93;
     border-radius: 10px;
-    font-weight: 700;
+    
     font-size: 0.95rem;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

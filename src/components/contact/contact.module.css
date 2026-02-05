@@ -198,7 +198,7 @@
 .infoCard h4 {
     font-size: 1.35rem;
     color: var(--primary-purple);
-    font-weight: 700;
+    
     margin: 0;
     letter-spacing: -0.5px;
     position: relative;
@@ -263,7 +263,7 @@
 .formGroup label {
     font-size: 0.95rem;
     color: var(--primary-purple);
-    font-weight: 700;
+    
     letter-spacing: 0.5px;
     transition: var(--transition);
 }
@@ -373,7 +373,7 @@
 .errorMessage::before {
     content: '⚠';
     font-size: 0.9rem;
-    font-weight: 700;
+    
 }
 
 @keyframes slideDown {
@@ -393,7 +393,7 @@
     right: 1.25rem;
     color: var(--white);
     font-size: 0.75rem;
-    font-weight: 700;
+    
     background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-purple) 100%);
     padding: 0.35rem 0.75rem;
     border-radius: 12px;
@@ -411,7 +411,7 @@
     border: 2px solid var(--primary-purple);
     border-radius: 14px;
     font-size: 1.05rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     box-shadow: 0 12px 30px rgba(106, 76, 147, 0.25);
@@ -468,7 +468,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.8rem;
-    font-weight: 700;
+    
     letter-spacing: 0.5px;
 }
 

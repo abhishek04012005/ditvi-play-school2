@@ -16,14 +16,12 @@
 html {
   scroll-behavior: smooth;
 }
-
+/* 
 html:lang(hi) {
   font-family: 'Noto Sans Devanagari', 'Noto Sans', Arial, Helvetica, sans-serif !important;
 }
+ */
 
-html:lang(en) {
-  font-family: 'Poppins', Arial, Helvetica, sans-serif !important;
-}
 
 html,
 body {

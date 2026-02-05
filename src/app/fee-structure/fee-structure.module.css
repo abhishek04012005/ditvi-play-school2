@@ -47,7 +47,7 @@
   font-size: 2rem;
   margin: 0;
   letter-spacing: 0.4px;
-  font-weight: 700;
+  
 }
 
 /* PDF WRAPPER & PAGES */
@@ -103,13 +103,13 @@
   background-clip: text;
   font-size: 1.4rem;
   margin-bottom: 0.8rem;
-  font-weight: 700;
+  
 }
 
 .coverYear {
   color: var(--primary-purple);
   font-size: 1rem;
-  font-weight: 700;
+  
   letter-spacing: 1px;
 }
 
@@ -168,7 +168,7 @@
   color: var(--primary-purple);
   font-size: 1.2rem;
   margin-bottom: 1rem;
-  font-weight: 800;
+  
   letter-spacing: 0.3px;
 }
 
@@ -221,7 +221,7 @@
   color: var(--primary-purple);
   font-size: 1rem;
   margin-bottom: 0.2rem;
-  font-weight: 800;
+  
 }
 
 .ageText {
@@ -329,7 +329,7 @@
 .feeLabel {
   color: var(--muted);
   font-size: 0.75rem;
-  font-weight: 700;
+  
   margin-bottom: 0.4rem;
   letter-spacing: 0.3px;
   text-transform: uppercase;
@@ -349,7 +349,7 @@
   color: var(--primary-purple);
   font-size: 1rem;
   margin-bottom: 0.5rem;
-  font-weight: 800;
+  
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -418,7 +418,7 @@
 .chargePrice {
   text-align: right;
   color: var(--primary-purple);
-  font-weight: 700;
+  
 }
 
 /* PAYMENT TERMS PAGE */
@@ -480,7 +480,7 @@
   color: var(--primary-purple);
   font-size: 0.95rem;
   margin-bottom: 0.3rem;
-  font-weight: 800;
+  
 }
 
 .paymentCard p {
@@ -544,7 +544,7 @@
   color: var(--primary-purple);
   font-size: 1rem;
   margin-bottom: 0.5rem;
-  font-weight: 800;
+  
   position: relative;
   z-index: 1;
 }

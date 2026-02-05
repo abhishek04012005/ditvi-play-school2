@@ -84,8 +84,7 @@ const ContactDashboard = () => {
 
     const [downloadModalOpen, setDownloadModalOpen] = useState(false);
 
-
-    useEffect(() => {
+    useEffect(() =>{
         fetchContacts();
     }, []);
 
@@ -464,7 +463,7 @@ const ContactDashboard = () => {
 
     return (
         <div className={styles.dashboardWrapper}>
-            <HeadingTitle text='Contact Dashboard' />
+            <HeadingTitle text="Contact Dashboard" />
 
             <motion.div
                 className={styles.statusCardsSection}
@@ -538,7 +537,7 @@ const ContactDashboard = () => {
                             {loading ? (
                                 <tr>
                                     <td colSpan={8} className={styles.loading}>
-                                        <FaSpinner className={styles.loadingIcon} /> Loading contacts...
+                                        <FaSpinner className={styles.loadingIcon} /> Loading
                                     </td>
                                 </tr>
                             ) : sortedAndFilteredContacts.length === 0 ? (
@@ -641,9 +640,7 @@ const ContactDashboard = () => {
                     <div className={styles.paginationSection}>
                         <div className={styles.paginationInfo}>
                             <p className={styles.paginationText}>
-                                Showing <strong>{startIndex + 1}</strong> to{' '}
-                                <strong>{Math.min(endIndex, sortedAndFilteredContacts.length)}</strong> of{' '}
-                                <strong>{sortedAndFilteredContacts.length}</strong> contacts
+                                Showing {startIndex + 1} to {Math.min(endIndex, sortedAndFilteredContacts.length)} of {sortedAndFilteredContacts.length} contacts
                             </p>
                         </div>
 
@@ -728,7 +725,7 @@ const ContactDashboard = () => {
                             {/* Page Info */}
                             <div className={styles.pageInfo}>
                                 <p>
-                                    Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+                                    Page {currentPage} of {totalPages}
                                 </p>
                             </div>
                         </div>

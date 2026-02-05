@@ -177,7 +177,7 @@
     margin: 0;
     color: var(--primary-purple);
     font-size: 1.5rem;
-    font-weight: 800;
+    
     letter-spacing: -0.5px;
     font-family: 'Verdana', sans-serif;
 }
@@ -191,7 +191,7 @@
     color: var(--white);
     border: none;
     border-radius: 10px;
-    font-weight: 700;
+    
     font-size: 0.95rem;
     cursor: pointer;
     transition: var(--transition);
@@ -340,7 +340,7 @@
 .table th {
     padding: 1.25rem 1.5rem;
     text-align: left;
-    font-weight: 700;
+    
     color: var(--primary-purple);
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -384,7 +384,7 @@
 }
 
 .table td:first-child {
-    font-weight: 700;
+    
     color: var(--black);
 }
 
@@ -411,7 +411,7 @@
 }
 
 .studentName {
-    font-weight: 700;
+    
     color: var(--primary-purple);
 }
 
@@ -420,7 +420,7 @@
     padding: 0.5rem 1rem;
     border-radius: 8px;
     font-size: 0.85rem;
-    font-weight: 700;
+    
     text-transform: uppercase;
     letter-spacing: 0.3px;
     border: 1px solid;
@@ -458,7 +458,7 @@
 }
 
 .likes {
-    font-weight: 700;
+    
     color: #ef4444;
     display: inline-flex;
     align-items: center;
@@ -473,7 +473,7 @@
     color: var(--primary-purple);
     border-radius: 8px;
     cursor: pointer;
-    font-weight: 700;
+    
     font-size: 0.9rem;
     display: inline-flex;
     align-items: center;
@@ -506,7 +506,7 @@
     background: var(--white);
     border-radius: 8px;
     cursor: pointer;
-    font-weight: 700;
+    
     font-size: 0.9rem;
     display: inline-flex;
     align-items: center;
@@ -603,7 +603,7 @@
 
 .paginationText strong {
     color: var(--primary-purple);
-    font-weight: 700;
+    
 }
 
 .paginationControls {
@@ -623,7 +623,7 @@
 
 .itemsPerPageSelector label {
     color: var(--text-gray);
-    font-weight: 700;
+    
     font-size: 0.95rem;
     text-transform: uppercase;
     letter-spacing: 0.3px;
@@ -637,7 +637,7 @@
     border-radius: 10px;
     background: var(--white);
     color: var(--primary-purple);
-    font-weight: 700;
+    
     font-size: 0.95rem;
     cursor: pointer;
     transition: var(--transition);
@@ -681,7 +681,7 @@
     border: none;
     border-radius: 10px;
     font-size: 0.95rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     text-transform: uppercase;
@@ -726,7 +726,7 @@
     border: 2px solid var(--border-color);
     border-radius: 8px;
     font-size: 0.95rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     padding: 0;
@@ -778,7 +778,7 @@
 
 .pageInfo strong {
     color: var(--primary-purple);
-    font-weight: 700;
+    
 }
 
 /* ==================== MODALS ==================== */
@@ -863,7 +863,7 @@
 .createModalHeader h2 {
     margin: 0 0 0.5rem 0;
     font-size: 1.4rem;
-    font-weight: 700;
+    
     color: var(--primary-purple);
     letter-spacing: -0.3px;
     font-family: 'Verdana', sans-serif;
@@ -918,7 +918,7 @@
 
 .formGroup label {
     color: var(--primary-purple);
-    font-weight: 700;
+    
     font-size: 1rem;
     letter-spacing: 0.5px;
     font-family: 'Verdana', sans-serif;
@@ -1039,7 +1039,7 @@
     background: linear-gradient(135deg, rgba(106, 76, 147, 0.03), rgba(255, 209, 102, 0.03));
     transition: var(--transition);
     color: var(--primary-purple);
-    font-weight: 700;
+    
 }
 
 .fileLabel:hover .uploadPlaceholder {
@@ -1081,7 +1081,7 @@
 .imagePreviewContainer span {
     font-size: 0.9rem;
     color: var(--primary-purple);
-    font-weight: 700;
+    
     font-family: 'Verdana', sans-serif;
 }
 
@@ -1135,7 +1135,7 @@
     color: var(--primary-purple);
     border: 2px solid var(--border-color);
     border-radius: 10px;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     font-size: 0.95rem;
@@ -1169,7 +1169,7 @@
     color: var(--white);
     border: none;
     border-radius: 10px;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     font-size: 0.95rem;
@@ -1233,7 +1233,7 @@
     margin: 0;
     color: var(--primary-purple);
     font-size: 1.25rem;
-    font-weight: 800;
+    
     font-family: 'Verdana', sans-serif;
 }
 
@@ -1248,7 +1248,7 @@
 
 .modalBody strong {
     color: var(--primary-purple);
-    font-weight: 700;
+    
 }
 
 .modalActions {
@@ -1264,7 +1264,7 @@
     padding: 0.8rem 1.6rem;
     border: none;
     border-radius: 10px;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     display: inline-flex;
@@ -1337,7 +1337,7 @@
 
 .comparisonLabel {
     font-size: 0.75rem;
-    font-weight: 800;
+    
     text-transform: uppercase;
     color: var(--primary-purple);
     letter-spacing: 0.5px;
@@ -1355,7 +1355,7 @@
 }
 
 .comparisonName {
-    font-weight: 700;
+    
     color: var(--primary-purple);
     font-size: 0.9rem;
     text-align: center;
@@ -1373,7 +1373,7 @@
 .comparisonArrow {
     font-size: 2rem;
     color: var(--primary-purple);
-    font-weight: 800;
+    
     animation: pulse 1.5s ease-in-out infinite;
 }
 
