@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
     const child_gender = formData.get('child_gender') as string;
     const child_place_of_birth = formData.get('child_place_of_birth') as string;
     const child_blood_group = (formData.get('child_blood_group') as string) || undefined;
+    const category = (formData.get('category') as string) || undefined;
 
     // Extract parent details
     const father_name = formData.get('father_name') as string;
@@ -240,6 +241,7 @@ export async function POST(request: NextRequest) {
         child_gender,
         child_place_of_birth: child_place_of_birth || '',
         child_blood_group,
+        category,
         father_name,
         mother_name,
         parent_address,

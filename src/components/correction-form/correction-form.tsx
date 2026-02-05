@@ -7,6 +7,8 @@ import styles from './correction-form.module.css';
 import { schoolDetails } from '@/json/schooldetails';
 import schoolDetailsHi from '@/json/schooldetails-hi';
 import Loader from '@/custom/loader/loader';
+import enTranslations from '@/translations/en.json';
+import hiTranslations from '@/translations/hi.json';
 import {
     EmojiPeople,
     FamilyRestroom,
@@ -53,13 +55,19 @@ export default function CorrectionForm({
     }, []);
 
     const currentSchoolDetails = language === 'hi' ? schoolDetailsHi : schoolDetails;
+    const t = language === 'hi' ? hiTranslations.admission.form : enTranslations.admission.form;
+    
+    // Helper to safely access translation keys
+    const getTranslation = (key: string, fallback: string) => {
+        return (t as any)[key] || fallback;
+    };
 
     // Available document fields
     const documentFields = [
-        { field: 'photo', label: 'Child Photo', accept: 'image/*' },
-        { field: 'birth_certificate', label: 'Birth Certificate', accept: 'application/pdf,image/*' },
-        { field: 'aadhar_card', label: 'Aadhar Card', accept: 'application/pdf,image/*' },
-        { field: 'parent_id_proof', label: 'Parent ID Proof', accept: 'application/pdf,image/*' },
+        { field: 'photo', label: getTranslation('childPhoto', 'Child Photo'), accept: 'image/*' },
+        { field: 'birth_certificate', label: getTranslation('birthCertificate', 'Birth Certificate'), accept: 'application/pdf,image/*' },
+        { field: 'aadhar_card', label: getTranslation('aadharCard', 'Aadhar Card'), accept: 'application/pdf,image/*' },
+        { field: 'parent_id_proof', label: getTranslation('parentIdProof', 'Parent ID Proof'), accept: 'application/pdf,image/*' },
     ];
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -245,10 +253,10 @@ export default function CorrectionForm({
                         onClick={onCancel}
                         aria-label="Go back"
                     >
-                        <FaArrowLeft /> Back
+                        <FaArrowLeft /> {getTranslation('back', 'Back')}
                     </button>
-                    <h1>Edit Your Admission Details</h1>
-                    <p>Make the necessary corrections as indicated by the admin remarks</p>
+                    <h1>{getTranslation('editAdmissionTitle', 'Edit Your Admission Details')}</h1>
+                    <p>{getTranslation('editAdmissionSubtitle', 'Make the necessary corrections as indicated by the admin remarks')}</p>
                 </div>
 
                 {/* Remark Box */}
@@ -258,7 +266,7 @@ export default function CorrectionForm({
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                     >
-                        <span className={styles.remarkLabel}>📝 Admin Remarks</span>
+                        <span className={styles.remarkLabel}>📝 {getTranslation('adminRemarks', 'Admin Remarks')}</span>
                         <p className={styles.remarkText}>{remark}</p>
                     </motion.div>
                 )}
@@ -278,11 +286,11 @@ export default function CorrectionForm({
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
                     >
-                        <h3 className={styles.sectionTitle}><EmojiPeople /> Child Details</h3>
+                        <h3 className={styles.sectionTitle}><EmojiPeople /> {getTranslation('childDetailsSection', 'Child Details')}</h3>
                         <div className={styles.formGrid}>
                             <div className={styles.formGroup}>
                                 <label className={styles.label}>
-                                    Child Name <span className={styles.required}>*</span>
+                                    {getTranslation('studentName', 'Student Name')} <span className={styles.required}>*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -290,13 +298,13 @@ export default function CorrectionForm({
                                     value={formData.child_name || ''}
                                     onChange={handleInputChange}
                                     className={styles.input}
-                                    placeholder="Enter child name"
+                                    placeholder={getTranslation('childNamePlaceholder', 'Enter child name')}
                                     disabled={loading}
                                 />
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>Date of Birth</label>
+                                <label className={styles.label}>{getTranslation('dob', 'Date of Birth')}</label>
                                 <input
                                     type="date"
                                     name="child_dob"
@@ -308,7 +316,7 @@ export default function CorrectionForm({
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>Gender</label>
+                                <label className={styles.label}>{getTranslation('gender', 'Gender')}</label>
                                 <select
                                     name="child_gender"
                                     value={formData.child_gender || ''}
@@ -324,20 +332,20 @@ export default function CorrectionForm({
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>Place of Birth</label>
+                                <label className={styles.label}>{getTranslation('placeOfBirth', 'Place of Birth')}</label>
                                 <input
                                     type="text"
                                     name="child_place_of_birth"
                                     value={formData.child_place_of_birth || ''}
                                     onChange={handleInputChange}
                                     className={styles.input}
-                                    placeholder="Enter place of birth"
+                                    placeholder={getTranslation('placeOfBirthPlaceholder', 'Enter place of birth')}
                                     disabled={loading}
                                 />
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>Blood Group</label>
+                                <label className={styles.label}>{getTranslation('bloodGroup', 'Blood Group')}</label>
                                 <select
                                     name="child_blood_group"
                                     value={formData.child_blood_group || ''}
@@ -356,6 +364,23 @@ export default function CorrectionForm({
                                     <option value="AB-">AB-</option>
                                 </select>
                             </div>
+
+                            <div className={styles.formGroup}>
+                                <label className={styles.label}>{getTranslation('category', 'Category')}</label>
+                                <select
+                                    name="category"
+                                    value={formData.category || ''}
+                                    onChange={handleInputChange}
+                                    className={styles.select}
+                                    disabled={loading}
+                                >
+                                    <option value="">-- Select Category --</option>
+                                    <option value="General">General</option>
+                                    <option value="OBC">OBC</option>
+                                    <option value="SC">SC</option>
+                                    <option value="ST">ST</option>
+                                </select>
+                            </div>
                         </div>
                     </motion.div>
 
@@ -366,57 +391,57 @@ export default function CorrectionForm({
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
                     >
-                        <h3 className={styles.sectionTitle}><FamilyRestroom /> Parent Details</h3>
+                        <h3 className={styles.sectionTitle}><FamilyRestroom /> {getTranslation('parentDetailsSection', 'Parent Details')}</h3>
                         <div className={styles.formGrid}>
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>Father Name</label>
+                                <label className={styles.label}>{getTranslation('fatherName', "Father's Name")}</label>
                                 <input
                                     type="text"
                                     name="father_name"
                                     value={formData.father_name || ''}
                                     onChange={handleInputChange}
                                     className={styles.input}
-                                    placeholder="Enter father name"
+                                    placeholder={getTranslation('fatherNamePlaceholder', 'Enter father name')}
                                     disabled={loading}
                                 />
                             </div>
 
-                              <div className={styles.formGroup}>
-                                <label className={styles.label}>Mother Name</label>
+                            <div className={styles.formGroup}>
+                                <label className={styles.label}>{getTranslation('motherName', "Mother's Name")}</label>
                                 <input
                                     type="text"
                                     name="mother_name"
                                     value={formData.mother_name || ''}
                                     onChange={handleInputChange}
                                     className={styles.input}
-                                    placeholder="Enter mother name"
+                                    placeholder={getTranslation('motherNamePlaceholder', 'Enter mother name')}
                                     disabled={loading}
                                 />
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>Email</label>
+                                <label className={styles.label}>{getTranslation('parentEmail', 'Email')}</label>
                                 <input
                                     type="email"
                                     name="parent_email"
                                     value={formData.parent_email || ''}
                                     onChange={handleInputChange}
                                     className={styles.input}
-                                    placeholder="Enter email"
+                                    placeholder={getTranslation('parentEmailPlaceholder', 'Enter email')}
                                     disabled={loading}
                                 />
                             </div>
 
                             <div className={styles.formGroup}>
                                 <label className={styles.label}>
-                                    Address <span className={styles.required}>*</span>
+                                    {getTranslation('parentAddress', 'Address')} <span className={styles.required}>*</span>
                                 </label>
                                 <textarea
                                     name="parent_address"
                                     value={formData.parent_address || ''}
                                     onChange={handleInputChange}
                                     className={styles.textarea}
-                                    placeholder="Enter complete address"
+                                    placeholder={getTranslation('parentAddressPlaceholder', 'Enter complete address')}
                                     disabled={loading}
                                 />
                             </div>
@@ -430,10 +455,10 @@ export default function CorrectionForm({
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
                     >
-                        <h3 className={styles.sectionTitle}><SchoolOutlined/> Program Details</h3>
+                        <h3 className={styles.sectionTitle}><SchoolOutlined/> {getTranslation('programDetailsSection', 'Program Details')}</h3>
                         <div className={styles.formGrid}>
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>Program</label>
+                                <label className={styles.label}>{getTranslation('program', 'Program')}</label>
                                 <select
                                     name="program_name"
                                     value={formData.program_name || ''}
@@ -442,7 +467,7 @@ export default function CorrectionForm({
                                     disabled={loading}
                                 >
                                     <option value="">-- Select Program --</option>
-                                    {currentSchoolDetails.programs.map((program) => (
+                                    {schoolDetails.programs.map((program) => (
                                         <option key={program.name} value={program.name}>
                                             {program.name}
                                         </option>
@@ -451,14 +476,14 @@ export default function CorrectionForm({
                             </div>
 
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>Previous School</label>
+                                <label className={styles.label}>{getTranslation('previousSchool', 'Previous School')}</label>
                                 <input
                                     type="text"
                                     name="previous_school"
                                     value={formData.previous_school || ''}
                                     onChange={handleInputChange}
                                     className={styles.input}
-                                    placeholder="Enter previous school (optional)"
+                                    placeholder={getTranslation('previousSchoolPlaceholder', 'Enter previous school (optional)')}
                                     disabled={loading}
                                 />
                             </div>
@@ -472,9 +497,9 @@ export default function CorrectionForm({
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
                     >
-                        <h3 className={styles.sectionTitle}><DescriptionOutlined/> Documents</h3>
+                        <h3 className={styles.sectionTitle}><DescriptionOutlined/> {getTranslation('documentsSection', 'Documents')}</h3>
                         <p style={{ marginBottom: '1.5rem', color: 'var(--text-gray)', fontSize: '0.9rem' }}>
-                            Upload new documents to replace the previous ones
+                            {getTranslation('uploadNewDocuments', 'Upload new documents to replace the previous ones')}
                         </p>
                         <div className={styles.documentGrid}>
                             {documentFields.map((doc) => {
@@ -492,7 +517,7 @@ export default function CorrectionForm({
                                             <div className={styles.existingDocument}>
                                                 <div className={styles.existingDocumentInfo}>
                                                     <FaFileAlt className={styles.existingDocIcon} />
-                                                    <span className={styles.existingDocLabel}>Current Document</span>
+                                                    <span className={styles.existingDocLabel}>{getTranslation('currentDocument', 'Current Document')}</span>
                                                 </div>
                                                 <div className={styles.existingDocumentActions}>
                                                     <button
@@ -519,7 +544,7 @@ export default function CorrectionForm({
                                                     </a>
                                                 </div>
                                                 <div className={styles.replaceHint}>
-                                                    <p>Select a new file below to replace</p>
+                                                    <p>{getTranslation('selectNewFile', 'Select a new file below to replace')}</p>
                                                 </div>
                                             </div>
                                         )}
@@ -551,7 +576,7 @@ export default function CorrectionForm({
                                                     htmlFor={`file-${doc.field}`}
                                                     className={styles.uploadLabel}
                                                 >
-                                                    <FaUpload /> {existingUrl ? 'Click to replace' : 'Click to upload'}
+                                                    <FaUpload /> {existingUrl ? getTranslation('clickToReplace', 'Click to replace') : getTranslation('clickToUploadFile', 'Click to upload')}
                                                 </label>
                                             </>
                                         )}
@@ -567,6 +592,7 @@ export default function CorrectionForm({
                         onClose={() => setPreviewModal(null)}
                         preview={previewModal}
                         getGoogleDriveURL={getGoogleDriveURL}
+                        getTranslation={getTranslation}
                     />
 
                     {/* Action Buttons */}
@@ -577,7 +603,7 @@ export default function CorrectionForm({
                             onClick={onCancel}
                             disabled={loading}
                         >
-                            Cancel
+                            {getTranslation('cancel', 'Cancel')}
                         </button>
                         <motion.button
                             type="submit"
@@ -589,12 +615,12 @@ export default function CorrectionForm({
                             {loading ? (
                                 <>
                                     <FaSpinner className={styles.spinner} />
-                                    Submitting...
+                                    {getTranslation('submitting', 'Submitting...')}
                                 </>
                             ) : (
                                 <>
                                     <FaUpload />
-                                    Submit Corrections
+                                    {getTranslation('submitCorrections', 'Submit Corrections')}
                                 </>
                             )}
                         </motion.button>
@@ -616,11 +642,13 @@ const DocumentPreviewModal = ({
     onClose,
     preview,
     getGoogleDriveURL,
+    getTranslation,
 }: {
     isOpen: boolean;
     onClose: () => void;
     preview: { url: string; type: 'image' | 'pdf' | 'document'; name: string } | null;
     getGoogleDriveURL: (url: string, type: 'image' | 'pdf' | 'document') => string;
+    getTranslation: (key: string, fallback: string) => string;
 }) => {
     if (!preview) return null;
 
@@ -644,7 +672,7 @@ const DocumentPreviewModal = ({
                     >
                         <div className={styles.modalHeader}>
                             <div>
-                                <h2>📄 Document Preview</h2>
+                                <h2>📄 {getTranslation('documentPreview', 'Document Preview')}</h2>
                                 <p>{preview.name}</p>
                             </div>
                             <button
@@ -685,10 +713,10 @@ const DocumentPreviewModal = ({
                                 rel="noopener noreferrer"
                                 className={styles.downloadLink}
                             >
-                                <FaDownload /> Download
+                                <FaDownload /> {getTranslation('download', 'Download')}
                             </a>
                             <button className={styles.cancelBtn} onClick={onClose}>
-                                <FaTimes /> Close
+                                <FaTimes /> {getTranslation('close', 'Close')}
                             </button>
                         </div>
                     </motion.div>

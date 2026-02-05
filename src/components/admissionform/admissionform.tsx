@@ -65,6 +65,7 @@ interface SubmissionResult {
   child_name: string;
   parent_mobile_number: string;
   program_name: string;
+  parent_email: string;
 }
 
 
@@ -345,6 +346,9 @@ export default function AdmissionForm() {
       );
       if (formData.child_blood_group) {
         formDataToSend.append("child_blood_group", formData.child_blood_group);
+      }
+      if (formData.category) {
+        formDataToSend.append("category", formData.category);
       }
       formDataToSend.append("father_name", formData.father_name);
       formDataToSend.append("mother_name", formData.mother_name);
@@ -879,6 +883,83 @@ export default function AdmissionForm() {
                               <option value="AB+">AB+</option>
                               <option value="AB-">AB-</option>
                             </select>
+                          </div>
+                        </div>
+
+                        <div className={styles.formGroup}>
+                          <label>{t('admission.form.category')}</label>
+                          <div className={styles.radioGroup}>
+                            <div className={styles.radioItem}>
+                              <input
+                                type="radio"
+                                id="category_general"
+                                name="category"
+                                value="General"
+                                checked={formData.category === "General"}
+                                onChange={handleInputChange}
+                                className={styles.radioInput}
+                              />
+                              <label
+                                htmlFor="category_general"
+                                className={styles.radioLabel}
+                              >
+                                General
+                              </label>
+                            </div>
+
+                            <div className={styles.radioItem}>
+                              <input
+                                type="radio"
+                                id="category_obc"
+                                name="category"
+                                value="OBC"
+                                checked={formData.category === "OBC"}
+                                onChange={handleInputChange}
+                                className={styles.radioInput}
+                              />
+                              <label
+                                htmlFor="category_obc"
+                                className={styles.radioLabel}
+                              >
+                                OBC
+                              </label>
+                            </div>
+
+                            <div className={styles.radioItem}>
+                              <input
+                                type="radio"
+                                id="category_sc"
+                                name="category"
+                                value="SC"
+                                checked={formData.category === "SC"}
+                                onChange={handleInputChange}
+                                className={styles.radioInput}
+                              />
+                              <label
+                                htmlFor="category_sc"
+                                className={styles.radioLabel}
+                              >
+                                SC
+                              </label>
+                            </div>
+
+                            <div className={styles.radioItem}>
+                              <input
+                                type="radio"
+                                id="category_st"
+                                name="category"
+                                value="ST"
+                                checked={formData.category === "ST"}
+                                onChange={handleInputChange}
+                                className={styles.radioInput}
+                              />
+                              <label
+                                htmlFor="category_st"
+                                className={styles.radioLabel}
+                              >
+                                ST
+                              </label>
+                            </div>
                           </div>
                         </div>
                       </div>

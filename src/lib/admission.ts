@@ -286,6 +286,7 @@ export const saveAdmissionToDatabase = async (admissionData: {
   child_gender: string;
   child_place_of_birth: string;
   child_blood_group?: string;
+  category?: string;
   father_name: string;
   mother_name: string;
   parent_address: string;

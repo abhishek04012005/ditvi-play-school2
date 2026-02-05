@@ -8,6 +8,7 @@ import en from '@/translations/en.json';
 import hi from '@/translations/hi.json';
 
 interface SubmissionResult {
+    parent_email: string;
     admission_number: string;
     child_name: string;
     parent_mobile_number: string;
@@ -20,6 +21,7 @@ interface FormData {
     child_gender: string;
     child_place_of_birth: string;
     child_blood_group: string;
+    category: string;
     father_name: string;
     mother_name: string;
     parent_address: string;
@@ -221,6 +223,10 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
                         <div className={slipStyles.field}>
                             <label className={slipStyles.fieldLabel}>{t('admissionSlip.mobileNumber')}</label>
                             <div className={slipStyles.fieldValue}>{maskMobileNumber(data.parent_mobile_number)}</div>
+                        </div>
+                        <div className={slipStyles.field}>
+                            <label className={slipStyles.fieldLabel}>{t('admissionSlip.email')}</label>
+                            <div className={slipStyles.fieldValue}>{data.parent_email || 'N/A'}</div>
                         </div>
                     </div>
                     <div className={`${slipStyles.fieldRow} ${slipStyles.fullWidth}`}>

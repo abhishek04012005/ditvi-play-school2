@@ -55,6 +55,7 @@ interface Admission {
     dateOfBirth?: string;
     child_gender: string;
     gender?: string;
+    category?: string;
     child_place_of_birth: string;
     placeOfBirth?: string;
     child_blood_group?: string;
@@ -636,6 +637,7 @@ export default function AdminAdmission() {
                 parent_address: editingData.parent_address,
                 parent_email: editingData.parent_email,
                 program_name: editingData.program_name,
+                category: editingData.category,
                 previous_school: editingData.previous_school,
                 remark: editingData.remark,
             };
@@ -1732,6 +1734,22 @@ const DetailsModal = ({
                                                 ))}
                                             </select>
                                         </div>
+
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Category</span>
+                                            <select
+                                                value={editingData.category || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, category: e.target.value })}
+                                                className={styles.editInput}
+                                            >
+                                                <option value="">-- Select Category --</option>
+                                                <option value="General">General</option>
+                                                <option value="OBC">OBC</option>
+                                                <option value="SC">SC</option>
+                                                <option value="ST">ST</option>
+                                            </select>
+                                        </div>
+
                                         <div className={styles.detailItem}>
                                             <span className={styles.detailLabel}>Previous School</span>
                                             <input
@@ -1756,6 +1774,7 @@ const DetailsModal = ({
                                         <DetailItem label="Email" value={getParentEmail(admission)} />
                                         <DetailItem label="Mobile" value={getParentMobile(admission)} />
                                         <DetailItem label="Program" value={getProgram(admission)} />
+                                        <DetailItem label="Category" value={admission.category || 'N/A'} />
                                         <DetailItem label="Previous School" value={admission.previous_school || 'N/A'} />
                                     </>
                                 )}
