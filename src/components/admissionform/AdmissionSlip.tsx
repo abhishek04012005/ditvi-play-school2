@@ -74,13 +74,13 @@ const getDocumentStatusIcon = (status: 'uploaded' | 'pending' | 'notUploaded') =
 const getDocumentStatusText = (status: 'uploaded' | 'pending' | 'notUploaded'): string => {
     switch (status) {
         case 'uploaded':
-            return 'Uploaded';
+            return 'uploaded';
         case 'pending':
-            return 'Pending';
+            return 'pending';
         case 'notUploaded':
-            return 'Not Uploaded';
+            return 'notUploaded';
         default:
-            return 'Unknown';
+            return 'notUploaded';
     }
 };
 
@@ -111,6 +111,20 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
             value = value?.[k];
         }
         return typeof value === 'string' ? value : key;
+    };
+
+    // Helper function to get translated document status
+    const getTranslatedDocumentStatus = (status: 'uploaded' | 'pending' | 'notUploaded'): string => {
+        switch (status) {
+            case 'uploaded':
+                return t('admissionSlip.uploaded');
+            case 'pending':
+                return t('admissionSlip.pending');
+            case 'notUploaded':
+                return t('admissionSlip.notUploaded');
+            default:
+                return t('admissionSlip.notUploaded');
+        }
     };
 
     const logoSrc = typeof schoolDetails.logo === 'string'
@@ -241,7 +255,7 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
                             </div>
                             <div className={slipStyles.documentInfo}>
                                 <p className={slipStyles.documentName}>{t('admissionSlip.photograph')}</p>
-                                <p className={slipStyles.documentStatus}>{t(`admissionSlip.${getDocumentStatusText(documentStatus.photo).toLowerCase()}`).toLowerCase() === 'uploaded' ? t('admissionSlip.uploaded') : getDocumentStatusText(documentStatus.photo).toLowerCase() === 'pending' ? t('admissionSlip.pending') : t('admissionSlip.notUploaded')}</p>
+                                <p className={slipStyles.documentStatus}>{getTranslatedDocumentStatus(documentStatus.photo)}</p>
                             </div>
                         </div>
                         <div className={slipStyles.documentItem}>
@@ -250,7 +264,7 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
                             </div>
                             <div className={slipStyles.documentInfo}>
                                 <p className={slipStyles.documentName}>{t('admissionSlip.birthCertificate')}</p>
-                                <p className={slipStyles.documentStatus}>{getDocumentStatusText(documentStatus.birth_certificate).toLowerCase() === 'uploaded' ? t('admissionSlip.uploaded') : getDocumentStatusText(documentStatus.birth_certificate).toLowerCase() === 'pending' ? t('admissionSlip.pending') : t('admissionSlip.notUploaded')}</p>
+                                <p className={slipStyles.documentStatus}>{getTranslatedDocumentStatus(documentStatus.birth_certificate)}</p>
                             </div>
                         </div>
                         <div className={slipStyles.documentItem}>
@@ -259,7 +273,7 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
                             </div>
                             <div className={slipStyles.documentInfo}>
                                 <p className={slipStyles.documentName}>{t('admissionSlip.aadharCard')}</p>
-                                <p className={slipStyles.documentStatus}>{getDocumentStatusText(documentStatus.aadhar_card).toLowerCase() === 'uploaded' ? t('admissionSlip.uploaded') : getDocumentStatusText(documentStatus.aadhar_card).toLowerCase() === 'pending' ? t('admissionSlip.pending') : t('admissionSlip.notUploaded')}</p>
+                                <p className={slipStyles.documentStatus}>{getTranslatedDocumentStatus(documentStatus.aadhar_card)}</p>
                             </div>
                         </div>
                         <div className={slipStyles.documentItem}>
@@ -268,7 +282,7 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
                             </div>
                             <div className={slipStyles.documentInfo}>
                                 <p className={slipStyles.documentName}>{t('admissionSlip.parentIdProof')}</p>
-                                <p className={slipStyles.documentStatus}>{getDocumentStatusText(documentStatus.parent_id_proof).toLowerCase() === 'uploaded' ? t('admissionSlip.uploaded') : getDocumentStatusText(documentStatus.parent_id_proof).toLowerCase() === 'pending' ? t('admissionSlip.pending') : t('admissionSlip.notUploaded')}</p>
+                                <p className={slipStyles.documentStatus}>{getTranslatedDocumentStatus(documentStatus.parent_id_proof)}</p>
                             </div>
                         </div>
                     </div>
