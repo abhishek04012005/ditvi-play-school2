@@ -15,6 +15,8 @@ export interface Admission {
     child_place_of_birth: string;
     child_blood_group?: string;
     father_name?: string;
+    mother_name?: string;
+    category?: string;
     parent_first_name?: string;
     parent_last_name?: string;
     parent_address?: string;
@@ -72,22 +74,22 @@ const formatDate = (dateString: string): string => {
 };
 
 const formatDateTime = (isoString: string) => {
-  const date = new Date(isoString);
+    const date = new Date(isoString);
 
-  const formattedDate = date.toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });
+    const formattedDate = date.toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
 
-  const formattedTime = date.toLocaleTimeString('en-IN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true   // ensures AM/PM format
-  });
+    const formattedTime = date.toLocaleTimeString('en-IN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true   // ensures AM/PM format
+    });
 
-  return `${formattedDate} ${formattedTime}`;
+    return `${formattedDate} ${formattedTime}`;
 }
 
 const todayDateTime = formatDateTime(new Date().toISOString());
@@ -261,12 +263,6 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
     const getChildName = () =>
         admission.child_first_name || admission.childFirstName || admission.child_name || 'N/A';
 
-    const getParentName = () => {
-        const firstName = admission.parent_first_name || '';
-        const lastName = admission.parent_last_name || '';
-        return `${firstName} ${lastName}`.trim() || admission.father_name || 'N/A';
-    };
-
     const todayDate = formatDate(new Date().toISOString());
 
     return (
@@ -295,19 +291,22 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
                     <div className={styles.childInfoContent}>
                         <div className={styles.sectionContent}>
                             <FieldRow columns={2}>
-                                <Field label="Student Name:" value={getChildName()} />
+                                <Field label="Student'S Name:" value={getChildName()} />
                                 <Field label="DOB (dd/mm/yyyy):" value={formatDate(admission.child_dob)} />
                             </FieldRow>
                             <FieldRow columns={2}>
                                 <Field label="Gender:" value={admission.child_gender || 'N/A'} />
                                 <Field label="Place of Birth:" value={admission.child_place_of_birth || 'N/A'} />
                             </FieldRow>
-                            <FieldRow columns={2}>
+                            <FieldRow columns={3}>
                                 <Field label="Blood Group:" value={admission.child_blood_group || 'N/A'} />
                                 <Field label="Age Group:" value={calculateAgeGroup(admission.child_dob)} />
+                                <Field label="Category:" value={admission.category || 'N/A'} />
                             </FieldRow>
                         </div>
+                        
                     </div>
+                    
                     <div className={styles.childPhotoWrapper}>
                         {photoUrl && (
                             <PhotoField photoUrl={photoUrl} />
@@ -318,8 +317,9 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
 
             {/* Parent Information */}
             <PDFSection title="2. PARENT/GUARDIAN DETAILS">
-                <FieldRow columns={1}>
-                    <Field label="Name:" value={getParentName()} />
+                <FieldRow columns={2}>
+                    <Field label="Father'S Name:" value={admission.father_name || 'N/A'} />
+                    <Field label="Mother'S Name:" value={admission.mother_name || 'N/A'} />
                 </FieldRow>
                 <FieldRow columns={2}>
                     <Field label="Mobile:" value={admission.parent_mobile_number || 'N/A'} />
@@ -349,8 +349,8 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
                     <p className={styles.consentText}>
                         I hereby declare that the information provided is true and correct. I understand and accept the admission policies of {schoolDetails.name}.
                     </p>
-                        <div className={styles.dateFieldSmall}>Date: __________</div>
-                        <div className={styles.dateFieldSmall}>Place: __________</div>
+                    <div className={styles.dateFieldSmall}>Date: __________</div>
+                    <div className={styles.dateFieldSmall}>Place: __________</div>
                 </div>
 
                 <div className={styles.signatureBoxContainer}>

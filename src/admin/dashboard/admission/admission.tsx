@@ -878,7 +878,6 @@ export default function AdminAdmission() {
                                     Student's Name {getSortIcon('child_name')}
                                 </th>
                                 <th>Father's Name</th>
-                                <th>Mother's Name</th>
                                 <th>Contact</th>
                                 <th onClick={() => handleSort('program_name')}>
                                     Program {getSortIcon('program_name')}
@@ -923,7 +922,6 @@ export default function AdminAdmission() {
                                         <td>{getChildName(admission)}</td>
 
                                         <td>{getFatherName(admission)}</td>
-                                        <td>{getMotherName(admission)}</td>
                                         <td>
                                             <div className={styles.contactLinks}>
                                                 <span>{getParentMobile(admission)}</span>

@@ -52,7 +52,7 @@ export const galleryItems: GalleryItem[] = [
     {
         id: '3',
         title: 'स्वतंत्रता दिवस परेड',
-        description: 'राष्ट्रगान, ध्वज फहराने और छात्र-नेतृत्व वाले कार्यक्रमों के साथ राष्ट्रीय गौरव का प्रदर्शन',
+        description: 'राष्ट्रगान, ध्वज फहराने और छात्र-नेतृत्व वाले प्रोग्रामों के साथ राष्ट्रीय गौरव का प्रदर्शन',
         image: IndependenceDayImage
     },
     {
@@ -74,13 +74,13 @@ export const youtubeVideos: YouTubeVideo[] = [
     {
         id: 'yt-1',
         title: 'वार्षिक दिवस समारोह 2024',
-        description: 'वार्षिक समारोह कार्यक्रम में हमारे अद्भुत छात्रों का प्रदर्शन देखें',
+        description: 'वार्षिक समारोह प्रोग्राम में हमारे अद्भुत छात्रों का प्रदर्शन देखें',
         videoId: 'ViAoI0Oh63U',
     },
     {
         id: 'yt-2',
         title: 'खेल दिवस की हाइलाइट्स',
-        description: 'हमारे खेल दिवस कार्यक्रम के रोमांचक पल',
+        description: 'हमारे खेल दिवस प्रोग्राम के रोमांचक पल',
         videoId: 'MLUg3jEQCqs',
     },
     {
@@ -116,8 +116,8 @@ export const instagramVideos: InstagramVideo[] = [
     },
     {
         id: 'ig-3',
-        title: 'स्कूल के कार्यक्रम',
-        description: 'हमारे स्कूल के कार्यक्रमों से अद्भुत पल',
+        title: 'स्कूल के प्रोग्राम',
+        description: 'हमारे स्कूल के प्रोग्रामों से अद्भुत पल',
         embedUrl: '<iframe src="https://www.instagram.com/p/DN995eEEr4G/embed" width="320" height="500"></iframe>',
         thumbnail: '/assets/gallery/instagrampreview/3.png'
     },

@@ -1,7 +1,7 @@
 import { HeadingTitles } from '@/types/headingtitles-types';
 
 export const headingTitlesHi: HeadingTitles = {
-  programs: 'हमारे कार्यक्रम',
+  programs: 'हमारे प्रोग्राम',
   testimonials: 'माता-पिता क्या कहते हैं',
   contact: 'हमसे संपर्क करें',
   gallery: 'हमारी गैलरी',

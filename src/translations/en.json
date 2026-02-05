@@ -373,6 +373,7 @@
     "admissionNumberHint": "💡 Your admission number was provided in the confirmation email after submitting your application form.",
     "notFound": "Not Found",
     "admissionNotFound": "Admission number not found. Please check and try again.",
+    "search": "Search",
     "tryAgain": "Try Again",
     "admissionNumber": "Admission #",
     "appliedOn": "Applied on",
