@@ -1169,7 +1169,7 @@ export default function AdmissionForm() {
                         className={styles.prevBtn}
                         onClick={() => setStep(step - 1)}
                       >
-                        ← {t('admission.form.previousButton')}
+                         {t('admission.form.previousButton')}
                       </button>
                     )}
 
@@ -1198,7 +1198,7 @@ export default function AdmissionForm() {
                             {t('admission.form.submitting')}
                           </>
                         ) : (
-                          `✓ ${t('admission.form.submitButton')}`
+                          ` ${t('admission.form.submitButton')}`
                         )}
                       </button>
                     )}

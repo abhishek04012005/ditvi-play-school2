@@ -1,9 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import slipStyles from './admissionslip.module.css';
 import { schoolDetails } from '@/json/schooldetails';
 import { FaCheckCircle, FaClock, FaTimesCircle } from 'react-icons/fa';
+import en from '@/translations/en.json';
+import hi from '@/translations/hi.json';
 
 interface SubmissionResult {
     admission_number: string;
@@ -92,6 +94,25 @@ const maskMobileNumber = (phoneNumber: string): string => {
 
 // Main Component
 const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentStatus }) => {
+    const [language, setLanguage] = useState<'en' | 'hi'>('en');
+
+    useEffect(() => {
+        const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+        if (saved && (saved === 'en' || saved === 'hi')) {
+            setLanguage(saved);
+        }
+    }, []);
+
+    const translations = language === 'hi' ? hi : en;
+    const t = (key: string): string => {
+        const keys = key.split('.');
+        let value: any = translations;
+        for (const k of keys) {
+            value = value?.[k];
+        }
+        return typeof value === 'string' ? value : key;
+    };
+
     const logoSrc = typeof schoolDetails.logo === 'string'
         ? schoolDetails.logo
         : (schoolDetails.logo as any)?.src;
@@ -121,48 +142,48 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
                     )} */}
                     <div className={slipStyles.logo}></div>
                 </div>
-                <h2 className={slipStyles.formTitle}>ADMISSION REQUEST SLIP</h2>
+                <h2 className={slipStyles.formTitle}>{t('admissionSlip.title')}</h2>
             </div>
 
             {/* Meta Section - Admission Number */}
             <div className={slipStyles.metaSection}>
                 <div className={slipStyles.metaRow}>
                     <div className={slipStyles.metaItem}>
-                        <span className={slipStyles.metaLabel}>Admission No:</span>
+                        <span className={slipStyles.metaLabel}>{t('admissionSlip.metaAdmissionNo')}</span>
                         <span className={slipStyles.metaValue}>{data.admission_number}</span>
                     </div>
                     <div className={slipStyles.metaItem}>
-                        <span className={slipStyles.metaLabel}>Date:</span>
+                        <span className={slipStyles.metaLabel}>{t('admissionSlip.metaDate')}</span>
                         <span className={slipStyles.metaValue}>{todayDate}</span>
                     </div>
                     <div className={slipStyles.metaItem}>
-                        <span className={slipStyles.metaLabel}>Status:</span>
-                        <span className={slipStyles.metaValue}>Under Review</span>
+                        <span className={slipStyles.metaLabel}>{t('admissionSlip.metaStatus')}</span>
+                        <span className={slipStyles.metaValue}>{t('admissionSlip.metaUnderReview')}</span>
                     </div>
                 </div>
             </div>
 
             {/* Child Information Section */}
             <div className={slipStyles.section}>
-                <h3 className={slipStyles.sectionTitle}>1. STUDENT DETAILS</h3>
+                <h3 className={slipStyles.sectionTitle}>{t('admissionSlip.studentDetails')}</h3>
                 <div className={slipStyles.sectionContent}>
                     <div className={slipStyles.fieldRow}>
                         <div className={slipStyles.field}>
-                            <label className={slipStyles.fieldLabel}>Student Name:</label>
+                            <label className={slipStyles.fieldLabel}>{t('admissionSlip.studentName')}</label>
                             <div className={slipStyles.fieldValue}>{data.child_name || 'N/A'}</div>
                         </div>
                         <div className={slipStyles.field}>
-                            <label className={slipStyles.fieldLabel}>Date of Birth:</label>
+                            <label className={slipStyles.fieldLabel}>{t('admissionSlip.dateOfBirth')}</label>
                             <div className={slipStyles.fieldValue}>{formatDate(formData.child_dob)}</div>
                         </div>
                     </div>
                     <div className={slipStyles.fieldRow}>
                         <div className={slipStyles.field}>
-                            <label className={slipStyles.fieldLabel}>Gender:</label>
+                            <label className={slipStyles.fieldLabel}>{t('admissionSlip.gender')}</label>
                             <div className={slipStyles.fieldValue}>{formData.child_gender || 'N/A'}</div>
                         </div>
                         <div className={slipStyles.field}>
-                            <label className={slipStyles.fieldLabel}>Place of Birth:</label>
+                            <label className={slipStyles.fieldLabel}>{t('admissionSlip.placeOfBirth')}</label>
                             <div className={slipStyles.fieldValue}>{formData.child_place_of_birth || 'N/A'}</div>
                         </div>
                     </div>
@@ -171,21 +192,21 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
 
             {/* Parent Information Section */}
             <div className={slipStyles.section}>
-                <h3 className={slipStyles.sectionTitle}>2. PARENT/GUARDIAN DETAILS</h3>
+                <h3 className={slipStyles.sectionTitle}>{t('admissionSlip.parentDetails')}</h3>
                 <div className={slipStyles.sectionContent}>
                     <div className={slipStyles.fieldRow}>
                         <div className={slipStyles.field}>
-                            <label className={slipStyles.fieldLabel}>Parent Name:</label>
+                            <label className={slipStyles.fieldLabel}>{t('admissionSlip.parentName')}</label>
                             <div className={slipStyles.fieldValue}>{formData.parent_name || 'N/A'}</div>
                         </div>
                         <div className={slipStyles.field}>
-                            <label className={slipStyles.fieldLabel}>Mobile Number:</label>
+                            <label className={slipStyles.fieldLabel}>{t('admissionSlip.mobileNumber')}</label>
                             <div className={slipStyles.fieldValue}>{maskMobileNumber(data.parent_mobile_number)}</div>
                         </div>
                     </div>
                     <div className={`${slipStyles.fieldRow} ${slipStyles.fullWidth}`}>
                         <div className={slipStyles.field}>
-                            <label className={slipStyles.fieldLabel}>Address:</label>
+                            <label className={slipStyles.fieldLabel}>{t('admissionSlip.address')}</label>
                             <div className={slipStyles.fieldValue}>{formData.parent_address || 'N/A'}</div>
                         </div>
                     </div>
@@ -194,15 +215,15 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
 
             {/* Program Details Section */}
             <div className={slipStyles.section}>
-                <h3 className={slipStyles.sectionTitle}>3. PROGRAM & ADMISSION DETAILS</h3>
+                <h3 className={slipStyles.sectionTitle}>{t('admissionSlip.programDetails')}</h3>
                 <div className={slipStyles.sectionContent}>
                     <div className={slipStyles.fieldRow}>
                         <div className={slipStyles.field}>
-                            <label className={slipStyles.fieldLabel}>Program:</label>
+                            <label className={slipStyles.fieldLabel}>{t('admissionSlip.program')}</label>
                             <div className={slipStyles.fieldValue}>{data.program_name || 'N/A'}</div>
                         </div>
                         <div className={slipStyles.field}>
-                            <label className={slipStyles.fieldLabel}>Previous School:</label>
+                            <label className={slipStyles.fieldLabel}>{t('admissionSlip.previousSchool')}</label>
                             <div className={slipStyles.fieldValue}>{formData.previous_school || 'N/A'}</div>
                         </div>
                     </div>
@@ -212,15 +233,15 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
             {/* Document Status Section */}
             {documentStatus && (
                 <div className={slipStyles.section}>
-                    <h3 className={slipStyles.sectionTitle}>4. DOCUMENT STATUS</h3>
+                    <h3 className={slipStyles.sectionTitle}>{t('admissionSlip.documentStatus')}</h3>
                     <div className={slipStyles.documentGrid}>
                         <div className={slipStyles.documentItem}>
                             <div className={slipStyles.documentIcon}>
                                 {getDocumentStatusIcon(documentStatus.photo)}
                             </div>
                             <div className={slipStyles.documentInfo}>
-                                <p className={slipStyles.documentName}>Photograph</p>
-                                <p className={slipStyles.documentStatus}>{getDocumentStatusText(documentStatus.photo)}</p>
+                                <p className={slipStyles.documentName}>{t('admissionSlip.photograph')}</p>
+                                <p className={slipStyles.documentStatus}>{t(`admissionSlip.${getDocumentStatusText(documentStatus.photo).toLowerCase()}`).toLowerCase() === 'uploaded' ? t('admissionSlip.uploaded') : getDocumentStatusText(documentStatus.photo).toLowerCase() === 'pending' ? t('admissionSlip.pending') : t('admissionSlip.notUploaded')}</p>
                             </div>
                         </div>
                         <div className={slipStyles.documentItem}>
@@ -228,8 +249,8 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
                                 {getDocumentStatusIcon(documentStatus.birth_certificate)}
                             </div>
                             <div className={slipStyles.documentInfo}>
-                                <p className={slipStyles.documentName}>Birth Certificate</p>
-                                <p className={slipStyles.documentStatus}>{getDocumentStatusText(documentStatus.birth_certificate)}</p>
+                                <p className={slipStyles.documentName}>{t('admissionSlip.birthCertificate')}</p>
+                                <p className={slipStyles.documentStatus}>{getDocumentStatusText(documentStatus.birth_certificate).toLowerCase() === 'uploaded' ? t('admissionSlip.uploaded') : getDocumentStatusText(documentStatus.birth_certificate).toLowerCase() === 'pending' ? t('admissionSlip.pending') : t('admissionSlip.notUploaded')}</p>
                             </div>
                         </div>
                         <div className={slipStyles.documentItem}>
@@ -237,8 +258,8 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
                                 {getDocumentStatusIcon(documentStatus.aadhar_card)}
                             </div>
                             <div className={slipStyles.documentInfo}>
-                                <p className={slipStyles.documentName}>Aadhar Card</p>
-                                <p className={slipStyles.documentStatus}>{getDocumentStatusText(documentStatus.aadhar_card)}</p>
+                                <p className={slipStyles.documentName}>{t('admissionSlip.aadharCard')}</p>
+                                <p className={slipStyles.documentStatus}>{getDocumentStatusText(documentStatus.aadhar_card).toLowerCase() === 'uploaded' ? t('admissionSlip.uploaded') : getDocumentStatusText(documentStatus.aadhar_card).toLowerCase() === 'pending' ? t('admissionSlip.pending') : t('admissionSlip.notUploaded')}</p>
                             </div>
                         </div>
                         <div className={slipStyles.documentItem}>
@@ -246,8 +267,8 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
                                 {getDocumentStatusIcon(documentStatus.parent_id_proof)}
                             </div>
                             <div className={slipStyles.documentInfo}>
-                                <p className={slipStyles.documentName}>Parent ID Proof</p>
-                                <p className={slipStyles.documentStatus}>{getDocumentStatusText(documentStatus.parent_id_proof)}</p>
+                                <p className={slipStyles.documentName}>{t('admissionSlip.parentIdProof')}</p>
+                                <p className={slipStyles.documentStatus}>{getDocumentStatusText(documentStatus.parent_id_proof).toLowerCase() === 'uploaded' ? t('admissionSlip.uploaded') : getDocumentStatusText(documentStatus.parent_id_proof).toLowerCase() === 'pending' ? t('admissionSlip.pending') : t('admissionSlip.notUploaded')}</p>
                             </div>
                         </div>
                     </div>
@@ -256,37 +277,37 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
 
             {/* Important Instructions Section */}
             <div className={slipStyles.section}>
-                <h3 className={slipStyles.sectionTitle}>5. IMPORTANT INSTRUCTIONS</h3>
+                <h3 className={slipStyles.sectionTitle}>{t('admissionSlip.importantInstructions')}</h3>
                 <div className={slipStyles.instructionsList}>
                     <div className={slipStyles.instructionItem}>
                         <span className={slipStyles.instructionNumber}>•</span>
-                        <span className={slipStyles.instructionText}>Please keep this admission slip safe for future reference</span>
+                        <span className={slipStyles.instructionText}>{t('admissionSlip.instruction1')}</span>
                     </div>
                     <div className={slipStyles.instructionItem}>
                         <span className={slipStyles.instructionNumber}>•</span>
-                        <span className={slipStyles.instructionText}>A detailed admission confirmation will be sent to your registered email</span>
+                        <span className={slipStyles.instructionText}>{t('admissionSlip.instruction2')}</span>
                     </div>
                     <div className={slipStyles.instructionItem}>
                         <span className={slipStyles.instructionNumber}>•</span>
-                        <span className={slipStyles.instructionText}>All submitted documents must be original or self-attested copies</span>
+                        <span className={slipStyles.instructionText}>{t('admissionSlip.instruction3')}</span>
                     </div>
                     <div className={slipStyles.instructionItem}>
                         <span className={slipStyles.instructionNumber}>•</span>
-                        <span className={slipStyles.instructionText}>Contact the school office for any queries or clarifications</span>
+                        <span className={slipStyles.instructionText}>{t('admissionSlip.instruction4')}</span>
                     </div>
                 </div>
             </div>
 
             {/* Contact Information Section */}
             <div className={slipStyles.section}>
-                <h3 className={slipStyles.sectionTitle}>6. SCHOOL CONTACT</h3>
+                <h3 className={slipStyles.sectionTitle}>{t('admissionSlip.schoolContact')}</h3>
                 <div className={slipStyles.contactGrid}>
                     <div className={slipStyles.contactItem}>
-                        <span className={slipStyles.contactLabel}>Phone:</span>
+                        <span className={slipStyles.contactLabel}>{t('admissionSlip.phone')}</span>
                         <span className={slipStyles.contactValue}>{schoolDetails.contact.phone}</span>
                     </div>
                     <div className={slipStyles.contactItem}>
-                        <span className={slipStyles.contactLabel}>Email:</span>
+                        <span className={slipStyles.contactLabel}>{t('admissionSlip.email')}</span>
                         <span className={slipStyles.contactValue}>{schoolDetails.contact.email}</span>
                     </div>
                 </div>
@@ -296,15 +317,15 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
             <div className={slipStyles.footerSection}>
                 <div className={slipStyles.footerContent}>
                     <p className={slipStyles.footerMessage}>
-                        Thank you for choosing {schoolDetails.name}. We look forward to welcoming{' '}
-                        <strong>{data.child_name}</strong> to our school family.
+                        {t('admissionSlip.footerMessage')} {schoolDetails.name}. {t('admissionSlip.footerWelcome')}{' '}
+                        <strong>{data.child_name}</strong> {t('admissionSlip.footerToSchool')}
                     </p>
                     <div className={slipStyles.footerMeta}>
-                        <span className={slipStyles.footerItem}>Doc ID: {data.admission_number}</span>
+                        <span className={slipStyles.footerItem}>{t('admissionSlip.docId')} {data.admission_number}</span>
                         <span className={slipStyles.footerItem}>•</span>
-                        <span className={slipStyles.footerItem}>Generated: {todayDate}</span>
+                        <span className={slipStyles.footerItem}>{t('admissionSlip.generated')} {todayDate}</span>
                         <span className={slipStyles.footerItem}>•</span>
-                        <span className={slipStyles.footerItem}>Official Document</span>
+                        <span className={slipStyles.footerItem}>{t('admissionSlip.officialDocument')}</span>
                     </div>
                 </div>
             </div>
