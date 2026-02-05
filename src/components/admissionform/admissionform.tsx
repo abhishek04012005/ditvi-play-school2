@@ -43,7 +43,8 @@ interface FormData {
   child_gender: string;
   child_place_of_birth: string;
   child_blood_group: string;
-  parent_name: string;
+  father_name: string;
+  mother_name: string;
   parent_address: string;
   parent_mobile_number: string;
   parent_email: string;
@@ -104,7 +105,8 @@ export default function AdmissionForm() {
     child_gender: "",
     child_place_of_birth: "",
     child_blood_group: "",
-    parent_name: "",
+    father_name: "",
+    mother_name: "",
     parent_address: "",
     parent_mobile_number: "",
     parent_email: "",
@@ -156,21 +158,21 @@ export default function AdmissionForm() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    
+
     let processedValue = value;
-    
+
     // Fields that should only contain alphabets and spaces
-    const nameFields = ['child_name', 'parent_name', 'child_place_of_birth'];
+    const nameFields = ['child_name', 'father_name', 'mother_name', 'child_place_of_birth'];
     if (nameFields.includes(name)) {
       processedValue = value.replace(/[^a-zA-Z\s]/g, '');
     }
-    
+
     // Fields that should only contain numbers
     const numberFields = ['parent_mobile_number'];
     if (numberFields.includes(name)) {
       processedValue = value.replace(/[^0-9]/g, '');
     }
-    
+
     setFormData({ ...formData, [name]: processedValue });
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
@@ -285,9 +287,13 @@ export default function AdmissionForm() {
         fieldErrors.child_place_of_birth = "Place of birth is required";
       }
     } else if (stepNum === 2) {
-      if (!formData.parent_name.trim()) {
-        errors.push("Parent name is required");
-        fieldErrors.parent_name = "Parent name is required";
+      if (!formData.father_name.trim()) {
+        errors.push("Father name is required");
+        fieldErrors.father_name = "Father name is required";
+      }
+      if (!formData.mother_name.trim()) {
+        errors.push("Mother name is required");
+        fieldErrors.mother_name = "Mother name is required";
       }
       if (!formData.parent_address.trim()) {
         errors.push("Address is required");
@@ -338,7 +344,8 @@ export default function AdmissionForm() {
       if (formData.child_blood_group) {
         formDataToSend.append("child_blood_group", formData.child_blood_group);
       }
-      formDataToSend.append("parent_name", formData.parent_name);
+      formDataToSend.append("father_name", formData.father_name);
+      formDataToSend.append("mother_name", formData.mother_name);
       formDataToSend.append("parent_address", formData.parent_address);
       formDataToSend.append(
         "parent_mobile_number",
@@ -457,7 +464,7 @@ export default function AdmissionForm() {
       // Create PDF with exact A4 dimensions (210mm x 297mm)
       const pdf = new jsPDF("p", "mm", "a4");
       const imgData = canvas.toDataURL("image/png");
-      
+
       // Add image to fill entire A4 page (0,0 to 210mm,297mm)
       pdf.addImage(imgData, "PNG", 0, 0, 210, 297);
       pdf.save(`Admission_${submissionResult?.admission_number}.pdf`);
@@ -886,21 +893,42 @@ export default function AdmissionForm() {
                     >
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
-                          <label>{t('admission.form.parentName')} *</label>
+                          <label>{t('admission.form.fatherName')} *</label>
                           <div className={styles.inputWrapper}>
                             <FaUser className={styles.icon} />
                             <input
                               type="text"
-                              name="parent_name"
-                              value={formData.parent_name}
+                              name="father_name"
+                              value={formData.father_name}
                               onChange={handleInputChange}
-                              placeholder={t('admission.form.parentNamePlaceholder')}
+                              placeholder={t('admission.form.fatherNamePlaceholder')}
                               required
                             />
 
-                            {errors.parent_name && (
+                            {errors.father_name && (
                               <p className={styles.errorMessage}>
-                                {errors.parent_name}
+                                {errors.father_name}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className={styles.formGroup}>
+                          <label>{t('admission.form.motherName')} *</label>
+                          <div className={styles.inputWrapper}>
+                            <FaUser className={styles.icon} />
+                            <input
+                              type="text"
+                              name="mother_name"
+                              value={formData.mother_name}
+                              onChange={handleInputChange}
+                              placeholder={t('admission.form.motherNamePlaceholder')}
+                              required
+                            />
+
+                            {errors.mother_name && (
+                              <p className={styles.errorMessage}>
+                                {errors.mother_name}
                               </p>
                             )}
                           </div>
@@ -927,9 +955,7 @@ export default function AdmissionForm() {
                             </p>
                           )}
                         </div>
-                      </div>
 
-                      <div className={styles.formRow}>
                         <div className={styles.formGroup}>
                           <label>{t('admission.form.email')}</label>
                           <div className={styles.inputWrapper}>
@@ -943,6 +969,9 @@ export default function AdmissionForm() {
                             />
                           </div>
                         </div>
+                      </div>
+
+                      <div className={styles.formRowFull}>
                         <div className={styles.formGroup}>
                           <label>{t('admission.form.address')} *</label>
                           <div className={styles.inputWrapper}>
@@ -1169,7 +1198,7 @@ export default function AdmissionForm() {
                         className={styles.prevBtn}
                         onClick={() => setStep(step - 1)}
                       >
-                         {t('admission.form.previousButton')}
+                        {t('admission.form.previousButton')}
                       </button>
                     )}
 
@@ -1183,7 +1212,7 @@ export default function AdmissionForm() {
                           }
                         }}
                       >
-                        {t('admission.form.nextButton')} 
+                        {t('admission.form.nextButton')}
                       </button>
                     ) : (
                       <button

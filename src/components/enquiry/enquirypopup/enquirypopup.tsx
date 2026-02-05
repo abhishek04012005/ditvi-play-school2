@@ -356,7 +356,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
                                 transition={{ delay: 0.3 }}
                             >
                                 <form onSubmit={handleSubmit} className={styles.popupForm}>
-                                    {/* Parent Name */}
+                                    {/* Father Name */}
                                     <motion.div
                                         className={styles.formGroup}
                                         initial={{ opacity: 0, y: 10 }}

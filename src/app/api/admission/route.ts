@@ -18,7 +18,7 @@ import {
  * 
  * Expects FormData with:
  * - child_name, child_dob, child_gender, child_place_of_birth
- * - parent_name, parent_mobile_number, parent_email (optional)
+ * - father_name, mother_name, parent_mobile_number, parent_email (optional)
  * - program_name, previous_school (optional)
  * - photo, birth_certificate, aadhar_card, parent_id_proof (files)
  */
@@ -37,7 +37,8 @@ export async function POST(request: NextRequest) {
     const child_blood_group = (formData.get('child_blood_group') as string) || undefined;
 
     // Extract parent details
-    const parent_name = formData.get('parent_name') as string;
+    const father_name = formData.get('father_name') as string;
+    const mother_name = (formData.get('mother_name') as string);
     const parent_address = formData.get('parent_address') as string;
     const parent_mobile_number = formData.get('parent_mobile_number') as string;
     const parent_email = (formData.get('parent_email') as string) || undefined;
@@ -69,7 +70,8 @@ export async function POST(request: NextRequest) {
     if (!child_name?.trim()) errors.push('Child name is required');
     if (!child_dob) errors.push('Child DOB is required');
     if (!child_gender) errors.push('Child gender is required');
-    if (!parent_name?.trim()) errors.push('Parent name is required');
+    if (!father_name?.trim()) errors.push('Father name is required');
+    if (!mother_name?.trim()) errors.push('Mother name is required');
     if (!parent_address?.trim()) errors.push('Parent address is required');
     if (!parent_mobile_number?.trim()) errors.push('Parent mobile number is required');
     if (!program_name) errors.push('Program name is required');
@@ -238,7 +240,8 @@ export async function POST(request: NextRequest) {
         child_gender,
         child_place_of_birth: child_place_of_birth || '',
         child_blood_group,
-        parent_name,
+        father_name,
+        mother_name,
         parent_address,
         parent_mobile_number,
         parent_email,

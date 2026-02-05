@@ -39,7 +39,8 @@ interface AdmissionStatus {
   child_gender?: string;
   child_place_of_birth?: string;
   child_blood_group?: string;
-  parent_name?: string;
+  father_name?: string;
+  mother_name?: string;
   parent_email?: string;
   parent_address?: string;
   previous_school?: string;
@@ -113,8 +114,11 @@ const getChildName = (admission: AdmissionStatus): string => {
     "N/A"
   );
 };
-const getParentName = (admission: AdmissionStatus): string => {
-  return admission.parent_name || "N/A";
+const getFatherName = (admission: AdmissionStatus): string => {
+  return admission.father_name || "N/A";
+}
+const getMotherName = (admission: AdmissionStatus): string => {
+  return admission.mother_name || "N/A";
 }
 const getProgram = (admission: AdmissionStatus): string => {
   return admission.program_name || admission.program || "N/A";
@@ -354,7 +358,8 @@ const StatusResultCard = ({
   const status = admission.admission_status;
   const statusData = getStatusConfig(status);
   const childName = getChildName(admission);
-  const parentName = getParentName(admission);
+  const fatherName = getFatherName(admission);
+  const motherName = getMotherName(admission);
   const program = getProgram(admission);
 
   const createdDate = new Date(admission.created_at).toLocaleDateString(
@@ -415,8 +420,13 @@ const StatusResultCard = ({
           <p>{childName}</p>
         </div>
         <div className={styles.detailCard}>
-          <label>Parent Name</label>
-          <p>{admission.parent_name}</p>
+          <label>Father Name</label>
+          <p>{admission.father_name}</p>
+        </div>
+
+        <div className={styles.detailCard}>
+          <label>Mother Name</label>
+          <p>{admission.mother_name}</p>
         </div>
         <div className={styles.detailCard}>
           <label>Applied Program</label>

@@ -44,7 +44,7 @@ const Navbar = () => {
 
   const isAdminPage = pathname?.startsWith('/admin');
 
-  const currentSchoolDetails = language === 'hi' ? schoolDetailsHi : schoolDetails;
+  const currentSchoolDetails = schoolDetails;
 
   const handleWhatsAppClick = () => {
     window.open(`https://wa.me/${currentSchoolDetails.contact.whatsapp}`, '_blank'); // Replace with your WhatsApp number

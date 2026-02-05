@@ -14,7 +14,7 @@ export interface Admission {
     child_gender: string;
     child_place_of_birth: string;
     child_blood_group?: string;
-    parent_name?: string;
+    father_name?: string;
     parent_first_name?: string;
     parent_last_name?: string;
     parent_address?: string;
@@ -264,7 +264,7 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
     const getParentName = () => {
         const firstName = admission.parent_first_name || '';
         const lastName = admission.parent_last_name || '';
-        return `${firstName} ${lastName}`.trim() || admission.parent_name || 'N/A';
+        return `${firstName} ${lastName}`.trim() || admission.father_name || 'N/A';
     };
 
     const todayDate = formatDate(new Date().toISOString());

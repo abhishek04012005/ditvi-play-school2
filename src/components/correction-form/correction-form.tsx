@@ -68,7 +68,7 @@ export default function CorrectionForm({
         let processedValue = value;
         
         // Fields that should only contain alphabets and spaces
-        const nameFields = ['child_name', 'parent_name', 'child_place_of_birth'];
+        const nameFields = ['child_name', 'father_name', 'child_place_of_birth'];
         if (nameFields.includes(name)) {
             processedValue = value.replace(/[^a-zA-Z\s]/g, '');
         }
@@ -369,14 +369,27 @@ export default function CorrectionForm({
                         <h3 className={styles.sectionTitle}><FamilyRestroom /> Parent Details</h3>
                         <div className={styles.formGrid}>
                             <div className={styles.formGroup}>
-                                <label className={styles.label}>Parent Name</label>
+                                <label className={styles.label}>Father Name</label>
                                 <input
                                     type="text"
-                                    name="parent_name"
-                                    value={formData.parent_name || ''}
+                                    name="father_name"
+                                    value={formData.father_name || ''}
                                     onChange={handleInputChange}
                                     className={styles.input}
-                                    placeholder="Enter parent name"
+                                    placeholder="Enter father name"
+                                    disabled={loading}
+                                />
+                            </div>
+
+                              <div className={styles.formGroup}>
+                                <label className={styles.label}>Mother Name</label>
+                                <input
+                                    type="text"
+                                    name="mother_name"
+                                    value={formData.mother_name || ''}
+                                    onChange={handleInputChange}
+                                    className={styles.input}
+                                    placeholder="Enter mother name"
                                     disabled={loading}
                                 />
                             </div>

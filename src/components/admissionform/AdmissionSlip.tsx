@@ -20,7 +20,8 @@ interface FormData {
     child_gender: string;
     child_place_of_birth: string;
     child_blood_group: string;
-    parent_name: string;
+    father_name: string;
+    mother_name: string;
     parent_address: string;
     parent_mobile_number: string;
     parent_email: string;
@@ -210,8 +211,12 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
                 <div className={slipStyles.sectionContent}>
                     <div className={slipStyles.fieldRow}>
                         <div className={slipStyles.field}>
-                            <label className={slipStyles.fieldLabel}>{t('admissionSlip.parentName')}</label>
-                            <div className={slipStyles.fieldValue}>{formData.parent_name || 'N/A'}</div>
+                            <label className={slipStyles.fieldLabel}>{t('admissionSlip.fatherName')}</label>
+                            <div className={slipStyles.fieldValue}>{formData.father_name || 'N/A'}</div>
+                        </div>
+                        <div className={slipStyles.field}>
+                            <label className={slipStyles.fieldLabel}>{t('admissionSlip.motherName')}</label>
+                            <div className={slipStyles.fieldValue}>{formData.mother_name || 'N/A'}</div>
                         </div>
                         <div className={slipStyles.field}>
                             <label className={slipStyles.fieldLabel}>{t('admissionSlip.mobileNumber')}</label>

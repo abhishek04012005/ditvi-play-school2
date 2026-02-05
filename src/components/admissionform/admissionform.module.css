@@ -434,6 +434,14 @@
   margin-bottom: 1rem;
 }
 
+.formRowFull {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.75rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
 /* ==================== FILE UPLOAD FIELD ==================== */
 .fileUploadField {
   margin-bottom: 1.25rem;

@@ -1,7 +1,7 @@
 -- Create enquiries table (matches admission table structure pattern)
 CREATE TABLE IF NOT EXISTS public.enquiries (
   id uuid NOT NULL DEFAULT extensions.uuid_generate_v4(),
-  parent_name text NOT NULL,
+  father_name text NOT NULL,
   child_name text NOT NULL,
   phone text NOT NULL,
   program text NOT NULL,
