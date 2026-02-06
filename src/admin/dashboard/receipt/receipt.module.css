@@ -19,16 +19,6 @@
 .dashboardWrapper {
     margin: 2rem;
 }
-/* ==================== CONTAINER ==================== */
-.container {
-    width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem;
-    min-height: 100vh;
-    font-family: 'Verdana', sans-serif;
-    background-color: white;
-}
 
 /* ==================== ADMISSION SEARCH SECTION ==================== */
 .searchAdmissionSection {
@@ -471,58 +461,81 @@
 
 /* ==================== TABLE ==================== */
 .tableWrapper {
-    background: var(--white);
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    margin: 1.5rem 0;
-    border: 2px solid var(--border-color);
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.tableWrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.tableWrapper::-webkit-scrollbar-track {
+    background: var(--bg-light);
+    border-radius: 10px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+    transition: var(--transition);
+}
+
+.tableWrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--text-light);
 }
 
 .table {
     width: 100%;
     border-collapse: collapse;
-    font-family: 'Verdana', sans-serif;
+    font-size: 0.95rem;
 }
 
 .table thead {
-    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-purple-light) 100%);
-    color: white;
+    background: var(--bg-light);
+    border-bottom: 2px solid var(--border-color);
 }
 
 .table th {
-    padding: 1.25rem;
+    padding: 1.25rem 1.5rem;
     text-align: left;
-    font-weight: 700;
+    color: var(--primary-purple);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85rem;
     cursor: pointer;
     user-select: none;
-    white-space: nowrap;
     transition: var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
+    white-space: nowrap;
 }
 
 .table th:hover {
-    background: linear-gradient(135deg, #5a3c83 0%, #6e4f95 100%);
+    background: rgba(106, 76, 147, 0.05);
+}
+
+.table th svg {
+    margin-left: 0.5rem;
+    font-size: 0.8rem;
+    opacity: 0.6;
 }
 
 .table tbody tr {
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
     transition: var(--transition);
 }
 
 .table tbody tr:hover {
-    background: rgba(243, 232, 255, 0.3);
+    background: var(--bg-light);
+}
+
+.table tbody tr:last-child {
+    border-bottom: none;
 }
 
 .table td {
-    padding: 1.25rem;
+    padding: 1.2rem 1.5rem;
     color: var(--text-gray);
-    font-size: 0.95rem;
+    font-weight: 500;
 }
 
 .receiptNumber {

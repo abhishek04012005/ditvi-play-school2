@@ -38,12 +38,10 @@ import schoolDetails from '@/json/schooldetails';
 interface ReceiptData {
     id: string;
     student_name: string;
-    student_id: string;
     admission_number: string;
     parent_name: string;
     parent_phone: string;
     program: string;
-    class: string;
     month: string;
     year: number;
     fees_amount: number;
@@ -63,7 +61,6 @@ interface AdmissionData {
     parent_name: string;
     parent_phone: string;
     program: string;
-    class: string;
 }
 
 interface StatusCard {
@@ -111,12 +108,10 @@ const ReceiptDashboard = () => {
     // Form data
     const [formData, setFormData] = useState({
         student_name: '',
-        student_id: '',
         admission_number: '',
         parent_name: '',
         parent_phone: '',
         program: '',
-        class: '',
         month: new Date().toLocaleString('default', { month: 'long' }),
         year: new Date().getFullYear(),
         fees_amount: '',
@@ -202,7 +197,6 @@ const ReceiptDashboard = () => {
                 parent_name: admissionData.father_name || admissionData.parentFirstName || 'N/A',
                 parent_phone: admissionData.parent_mobile_number || admissionData.parentMobile || 'N/A',
                 program: admissionData.program_name || admissionData.program || 'N/A',
-                class: 'N/A',
             });
 
             // Fetch payment history for this admission
@@ -266,7 +260,6 @@ const ReceiptDashboard = () => {
                 parent_name: admissionData.father_name || admissionData.parentFirstName || '',
                 parent_phone: admissionData.parent_mobile_number || admissionData.parentMobile || '',
                 program: admissionData.program_name || admissionData.program || '',
-                class: 'N/A',
             }));
 
             toast.success('✅ Admission details loaded!');
@@ -277,10 +270,6 @@ const ReceiptDashboard = () => {
             setModalAdmissionSearchLoading(false);
         }
     };
-
-    useEffect(() => {
-        fetchReceipts();
-    }, []);
 
     // Create receipt for selected admission
     const handleCreateReceipt = async (e: React.FormEvent) => {
@@ -302,12 +291,10 @@ const ReceiptDashboard = () => {
             const { error } = await supabase.from('fee_receipts').insert([
                 {
                     student_name: formData.student_name,
-                    student_id: formData.student_id,
                     admission_number: formData.admission_number,
                     parent_name: formData.parent_name,
                     parent_phone: formData.parent_phone,
                     program: formData.program,
-                    class: formData.class,
                     month: formData.month,
                     year: formData.year,
                     fees_amount: parseFloat(formData.fees_amount),
@@ -343,12 +330,10 @@ const ReceiptDashboard = () => {
             // Reset form
             setFormData({
                 student_name: selectedAdmission?.student_name || '',
-                student_id: '',
                 admission_number: selectedAdmission?.admission_number || '',
                 parent_name: selectedAdmission?.parent_name || '',
                 parent_phone: selectedAdmission?.parent_phone || '',
                 program: selectedAdmission?.program || '',
-                class: selectedAdmission?.class || '',
                 month: new Date().toLocaleString('default', { month: 'long' }),
                 year: new Date().getFullYear(),
                 fees_amount: '',
@@ -594,12 +579,10 @@ const ReceiptDashboard = () => {
                         onClick={() => {
                             setFormData({
                                 student_name: selectedAdmission.student_name,
-                                student_id: '',
                                 admission_number: selectedAdmission.admission_number,
                                 parent_name: selectedAdmission.parent_name,
                                 parent_phone: selectedAdmission.parent_phone,
                                 program: selectedAdmission.program,
-                                class: selectedAdmission.class,
                                 month: new Date().toLocaleString('default', { month: 'long' }),
                                 year: new Date().getFullYear(),
                                 fees_amount: '',
@@ -1097,6 +1080,7 @@ const ReceiptDashboard = () => {
                             <th onClick={() => handleSort('student_name')}>
                                 Student {getSortIcon('student_name')}
                             </th>
+                            <th>Program</th>
                             <th onClick={() => handleSort('month')}>
                                 Month {getSortIcon('month')}
                             </th>
@@ -1120,16 +1104,16 @@ const ReceiptDashboard = () => {
                                 animate={{ opacity: 1 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                <td className={styles.receiptNumber}>{receipt.receipt_number}</td>
+                                <td>{receipt.receipt_number}</td>
                                 <td>
                                     <div className={styles.studentInfo}>
                                         <FaUser className={styles.icon} />
                                         <div>
                                             <p className={styles.name}>{receipt.student_name}</p>
-                                            <p className={styles.program}>{receipt.program}</p>
                                         </div>
                                     </div>
                                 </td>
+                                <td>{receipt.program}</td>
                                 <td>{receipt.month} {receipt.year}</td>
                                 <td className={styles.amount}>
                                     <FaMoneyBill /> {receipt.fees_amount.toFixed(2)}
@@ -1319,18 +1303,6 @@ const ReceiptDashboard = () => {
                                         />
                                     </div>
                                     <div className={styles.formGroup}>
-                                        <label>Class</label>
-                                        <input
-                                            type="text"
-                                            value={formData.class}
-                                            onChange={(e) =>
-                                                setFormData({ ...formData, class: e.target.value })
-                                            }
-                                            disabled={createLoading}
-                                            className={formData.class && modalAdmissionNumber ? styles.filledField : ''}
-                                        />
-                                    </div>
-                                    <div className={styles.formGroup}>
                                         <label>Fees Amount * <span className={styles.required}>(Required)</span></label>
                                         <input
                                             type="number"
@@ -1491,9 +1463,7 @@ const ReceiptDashboard = () => {
                                     <div className={styles.detailsColumn}>
                                         <h4>Student Details</h4>
                                         <p><strong>Name:</strong> {selectedReceipt.student_name}</p>
-                                        <p><strong>ID:</strong> {selectedReceipt.student_id}</p>
                                         <p><strong>Program:</strong> {selectedReceipt.program}</p>
-                                        <p><strong>Class:</strong> {selectedReceipt.class}</p>
                                     </div>
                                     <div className={styles.detailsColumn}>
                                         <h4>Parent Details</h4>
