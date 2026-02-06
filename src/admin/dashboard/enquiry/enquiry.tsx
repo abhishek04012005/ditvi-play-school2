@@ -29,6 +29,7 @@ import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
 import { DownloadModal } from '../download/DownloadData';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import schoolDetailsEng from '@/json/schooldetails-eng';
 
 
 
@@ -64,6 +65,24 @@ interface StatusCard {
 type SortField = 'created_at' | 'child_name' | 'parent_name' | 'status';
 type SortOrder = 'asc' | 'desc';
 type ItemsPerPage = 20 | 50 | 100;
+
+// Generate WhatsApp message based on status
+const generateWhatsAppMessage = (enquiry: Enquiry): string => {
+    const baseMessage = `Hi ${enquiry.parent_name || 'Parent'},\n`;
+    
+    switch (enquiry.status) {
+        case 'new':
+            return baseMessage + `Thank you for enquiring about our programs at ${schoolDetailsEng.name}. We will contact you soon with more information. 😊`;
+        case 'contacted':
+            return baseMessage + `We appreciate your interest in our school. Our admission team is reviewing your application and will be in touch shortly. 🙏`;
+        case 'enrolled':
+            return baseMessage + `Congratulations! 🎉 You have been successfully enrolled in our program for ${enquiry.program}. We look forward to welcoming your child!`;
+        case 'cancelled':
+            return baseMessage + `Thank you for your interest in Ditvi Play School. Feel free to reach out to us in the future if you'd like to learn more about our programs.`;
+        default:
+            return baseMessage + `Hello! Thank you for your interest in Ditvi Play School.`;
+    }
+};
 
 const EnquiryDashboard = () => {
     const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
@@ -590,11 +609,11 @@ const EnquiryDashboard = () => {
                                                             <FaPhoneAlt />
                                                         </a>
                                                         <a
-                                                            href={`https://wa.me/91${enquiry.phone.replace(/\D/g, '')}`}
+                                                            href={`https://wa.me/91${enquiry.phone.replace(/\D/g, '')}?text=${encodeURIComponent(generateWhatsAppMessage(enquiry))}`}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className={styles.whatsappLink}
-                                                            title="WhatsApp"
+                                                            title={`Send WhatsApp message - Status: ${enquiry.status}`}
                                                         >
                                                             <FaWhatsapp />
                                                         </a>
