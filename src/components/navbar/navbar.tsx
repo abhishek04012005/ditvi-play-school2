@@ -13,6 +13,7 @@ import schoolDetailsHi from '@/json/schooldetails-hi';
 import LanguageToggle from '@/components/LanguageToggle/LanguageToggle';
 import en from '@/translations/en.json';
 import hi from '@/translations/hi.json';
+import whatsappMessages from '@/json/whatsappMessages';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -47,7 +48,8 @@ const Navbar = () => {
   const currentSchoolDetails = schoolDetails;
 
   const handleWhatsAppClick = () => {
-    window.open(`https://wa.me/${currentSchoolDetails.contact.whatsapp}`, '_blank'); // Replace with your WhatsApp number
+    const message = whatsappMessages.contact;
+    window.open(`https://wa.me/${currentSchoolDetails.contact.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   const handleAdmissionClick = () => {
