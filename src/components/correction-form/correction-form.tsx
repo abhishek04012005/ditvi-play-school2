@@ -298,7 +298,7 @@ export default function CorrectionForm({
                                     value={formData.child_name || ''}
                                     onChange={handleInputChange}
                                     className={styles.input}
-                                    placeholder={getTranslation('childNamePlaceholder', 'Enter child name')}
+                                    placeholder={getTranslation('studentNamePlaceholder', 'Enter student name')}
                                     disabled={loading}
                                 />
                             </div>

@@ -51,7 +51,7 @@ const Enquiry = () => {
 
     const [formData, setFormData] = useState({
         parentName: '',
-        childName: '',
+        studentName: '',
         phone: '',
         program: ''
     });
@@ -59,7 +59,7 @@ const Enquiry = () => {
     const [errors, setErrors] = useState({
         phone: '',
         parentName: '',
-        childName: '',
+        studentName: '',
         program: ''
     });
 
@@ -129,7 +129,7 @@ const Enquiry = () => {
             if (alphabetsOnly.trim()) {
                 setErrors(prev => ({ ...prev, parentName: '' }));
             }
-        } else if (name === 'childName') {
+        } else if (name === 'studentName') {
             // Only allow alphabets and spaces for child name
             const alphabetsOnly = value.replace(/[^a-zA-Z\s]/g, '');
             setFormData(prev => ({
@@ -137,7 +137,7 @@ const Enquiry = () => {
                 [name]: alphabetsOnly
             }));
             if (alphabetsOnly.trim()) {
-                setErrors(prev => ({ ...prev, childName: '' }));
+                setErrors(prev => ({ ...prev, studentName: '' }));
             }
         } else if (name === 'program') {
             setFormData(prev => ({
@@ -151,7 +151,7 @@ const Enquiry = () => {
     };
 
     const validateForm = (): boolean => {
-        const newErrors: typeof errors = { phone: '', parentName: '', childName: '', program: '' };
+        const newErrors: typeof errors = { phone: '', parentName: '', studentName: '', program: '' };
         let isValid = true;
 
         if (!formData.parentName.trim()) {
@@ -159,8 +159,8 @@ const Enquiry = () => {
             isValid = false;
         }
 
-        if (!formData.childName.trim()) {
-            newErrors.childName = t('enquiry.form.childNameRequired');
+        if (!formData.studentName.trim()) {
+            newErrors.studentName = t('enquiry.form.childNameRequired');
             isValid = false;
         }
 
@@ -194,7 +194,7 @@ const Enquiry = () => {
         try {
             const result = await saveEnquiryToDatabase({
                 parent_name: formData.parentName,
-                child_name: formData.childName,
+                child_name: formData.studentName,
                 phone: formData.phone,
                 program: formData.program,
                 status: 'new'
@@ -211,11 +211,11 @@ const Enquiry = () => {
 
             setFormData({
                 parentName: '',
-                childName: '',
+                studentName: '',
                 phone: '',
                 program: ''
             });
-            setErrors({ phone: '', parentName: '', childName: '', program: '' });
+            setErrors({ phone: '', parentName: '', studentName: '', program: '' });
         } catch (error) {
             console.error('Error:', error);
 
@@ -370,26 +370,26 @@ const Enquiry = () => {
                                 transition={{ duration: 0.4, delay: 0.15 }}
                                 viewport={{ once: true }}
                             >
-                                <label htmlFor="childName">{t('enquiry.form.childNameLabel')} *</label>
+                                <label htmlFor="studentName">{t('enquiry.form.childNameLabel')} *</label>
                                 <div className={styles.inputWrapper}>
                                     <FaChild className={styles.icon} />
                                     <input
                                         type="text"
-                                        id="childName"
-                                        name="childName"
-                                        placeholder={t('enquiry.form.childNamePlaceholder')}
-                                        value={formData.childName}
+                                        id="studentName"
+                                        name="studentName"
+                                        placeholder={t('enquiry.form.studentNamePlaceholder')}
+                                        value={formData.studentName}
                                         onChange={handleChange}
-                                        className={errors.childName ? styles.inputError : ''}
+                                        className={errors.studentName ? styles.inputError : ''}
                                     />
                                 </div>
-                                {errors.childName && (
+                                {errors.studentName && (
                                     <motion.span
                                         className={styles.errorMessage}
                                         initial={{ opacity: 0, y: -5 }}
                                         animate={{ opacity: 1, y: 0 }}
                                     >
-                                        {errors.childName}
+                                        {errors.studentName}
                                     </motion.span>
                                 )}
                             </motion.div>

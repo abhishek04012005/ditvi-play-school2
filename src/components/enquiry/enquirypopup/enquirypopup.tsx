@@ -39,7 +39,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
 
     const [formData, setFormData] = useState({
         parentName: '',
-        childName: '',
+        studentName: '',
         phone: '',
         program: ''
     });
@@ -47,7 +47,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
     const [errors, setErrors] = useState({
         phone: '',
         parentName: '',
-        childName: '',
+        studentName: '',
         program: ''
     });
 
@@ -147,7 +147,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
             if (alphabetsOnly.trim()) {
                 setErrors(prev => ({ ...prev, parentName: '' }));
             }
-        } else if (name === 'childName') {
+        } else if (name === 'studentName') {
             // Only allow alphabets and spaces for child name
             const alphabetsOnly = value.replace(/[^a-zA-Z\s]/g, '');
             setFormData(prev => ({
@@ -155,7 +155,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
                 [name]: alphabetsOnly
             }));
             if (alphabetsOnly.trim()) {
-                setErrors(prev => ({ ...prev, childName: '' }));
+                setErrors(prev => ({ ...prev, studentName: '' }));
             }
         } else if (name === 'program') {
             setFormData(prev => ({
@@ -172,7 +172,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
         const newErrors: typeof errors = {
             phone: '',
             parentName: '',
-            childName: '',
+            studentName: '',
             program: ''
         };
         let isValid = true;
@@ -182,8 +182,8 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
             isValid = false;
         }
 
-        if (!formData.childName.trim()) {
-            newErrors.childName = t('enquiry.popup.studentNameRequired');
+        if (!formData.studentName.trim()) {
+            newErrors.studentName = t('enquiry.popup.studentNameRequired');
             isValid = false;
         }
 
@@ -217,7 +217,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
         try {
             const result = await saveEnquiryToDatabase({
                 parent_name: formData.parentName,
-                child_name: formData.childName,
+                child_name: formData.studentName,
                 phone: formData.phone,
                 program: formData.program,
                 status: 'new'
@@ -234,11 +234,11 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
 
             setFormData({
                 parentName: '',
-                childName: '',
+                studentName: '',
                 phone: '',
                 program: ''
             });
-            setErrors({ phone: '', parentName: '', childName: '', program: '' });
+            setErrors({ phone: '', parentName: '', studentName: '', program: '' });
 
             // Close popup after successful submission
             setTimeout(() => {
@@ -400,20 +400,20 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
                                             <input
                                                 type="text"
                                                 id="popupChildName"
-                                                name="childName"
+                                                name="studentName"
                                                 placeholder={t('enquiry.popup.studentNamePlaceholder')}
-                                                value={formData.childName}
+                                                value={formData.studentName}
                                                 onChange={handleChange}
-                                                className={errors.childName ? styles.inputError : ''}
+                                                className={errors.studentName ? styles.inputError : ''}
                                             />
                                         </div>
-                                        {errors.childName && (
+                                        {errors.studentName && (
                                             <motion.span
                                                 className={styles.errorMessage}
                                                 initial={{ opacity: 0, y: -5 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                             >
-                                                {errors.childName}
+                                                {errors.studentName}
                                             </motion.span>
                                         )}
                                     </motion.div>

@@ -415,7 +415,7 @@ const StatusResultCard = ({
 }) => {
   const status = admission.admission_status;
   const statusData = statusConfigTranslated[status] || statusConfigTranslated["In Review"];
-  const childName = getChildName(admission);
+  const studentName = getChildName(admission);
   const fatherName = getFatherName(admission);
   const motherName = getMotherName(admission);
   const program = getProgram(admission);
@@ -474,8 +474,8 @@ const StatusResultCard = ({
       {/* Details Grid */}
       <div className={styles.detailsGrid}>
         <div className={styles.detailCard}>
-          <label>{t('admissionStatus.childName')}</label>
-          <p>{childName}</p>
+          <label>{t('admissionStatus.studentName')}</label>
+          <p>{studentName}</p>
         </div>
         <div className={styles.detailCard}>
           <label>{t('admissionStatus.fatherName')}</label>

@@ -302,7 +302,7 @@ export default function AdminAdmission() {
 
     const sortedAndFilteredAdmissions = admissions
         .filter(admission => {
-            const childName = getChildName(admission).toLowerCase();
+            const studentName = getChildName(admission).toLowerCase();
             const fatherName = getFatherName(admission).toLowerCase();
             const motherName = getMotherName(admission).toLowerCase();
             const email = getParentEmail(admission).toLowerCase();
@@ -310,7 +310,7 @@ export default function AdminAdmission() {
             const admissionNumber = String(admission.admission_number).toLowerCase();
 
             const matchesSearch =
-                childName.includes(searchTerm.toLowerCase()) ||
+                studentName.includes(searchTerm.toLowerCase()) ||
                 fatherName.includes(searchTerm.toLowerCase()) ||
                 motherName.includes(searchTerm.toLowerCase()) ||
                 email.includes(searchTerm.toLowerCase()) ||
@@ -836,7 +836,7 @@ export default function AdminAdmission() {
                             <SearchOutlined className={styles.searchIcon} />
                             <input
                                 type="text"
-                                placeholder="Search by child name, admission no., email or phone..."
+                                placeholder="Search by student name, admission no., email or phone..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -1328,7 +1328,7 @@ const NotesModal = ({
     canDeleteNotes?: boolean;
 }) => {
     const isProcessing = savingNote || !!deletingNoteId;
-    const childName = getChildName(admission || {} as Admission);
+    const studentName = getChildName(admission || {} as Admission);
     const fatherName = getFatherName(admission || {} as Admission);
     const motherName = getMotherName(admission || {} as Admission);
 
@@ -1353,7 +1353,7 @@ const NotesModal = ({
                         <div className={styles.modalHeader}>
                             <div>
                                 <h2><EditNoteIcon /> Internal Notes</h2>
-                                <p>{childName} • {fatherName}</p>
+                                <p>{studentName} • {fatherName}</p>
                                 {noteEntries.length > 0 && (
                                     <p className={styles.notesCount}>
                                         <HistoryOutlined /> {noteEntries.length} note{noteEntries.length !== 1 ? 's' : ''} saved
@@ -1519,7 +1519,7 @@ const DetailsModal = ({
 }) => {
     if (!admission) return null;
 
-    const childName = getChildName(admission);
+    const studentName = getChildName(admission);
     const fatherName = getFatherName(admission);
     const motherName = getMotherName(admission);
 
@@ -1544,7 +1544,7 @@ const DetailsModal = ({
                         <div className={styles.modalHeader}>
                             <div>
                                 <h2><PersonOutlined /> Admission Details {editMode && <span style={{ fontSize: '0.75em' }}>• EDIT MODE</span>}</h2>
-                                <p>{admission.admission_number} | {childName}</p>
+                                <p>{admission.admission_number} | {studentName}</p>
                             </div>
                             <div className={styles.headerButtons}>
                                 {!editMode ? (
@@ -1761,7 +1761,7 @@ const DetailsModal = ({
                                     </>
                                 ) : (
                                     <>
-                                        <DetailItem label="Child Name" value={childName} />
+                                        <DetailItem label="Child Name" value={studentName} />
                                         <DetailItem label="Date of Birth" value={admission.child_dob || 'N/A'} />
                                         <DetailItem label="Gender" value={admission.child_gender || 'N/A'} />
                                         <DetailItem label="Place of Birth" value={admission.child_place_of_birth || 'N/A'} />
@@ -2174,8 +2174,8 @@ const PDFPreviewModal = ({
 }) => {
     if (!admission) return null;
 
-    const childName = getChildName(admission);
-    const fileName = `Admission_${childName.replace(/\s+/g, '_')}_${admission.admission_number}.pdf`;
+    const studentName = getChildName(admission);
+    const fileName = `Admission_${studentName.replace(/\s+/g, '_')}_${admission.admission_number}.pdf`;
 
     const handleGeneratePreview = async () => {
         try {
@@ -2306,7 +2306,7 @@ const PDFPreviewModal = ({
                         <div className={styles.modalHeader}>
                             <div>
                                 <h2><DescriptionOutlined /> Admission Form Preview</h2>
-                                <p>{childName} • Admission #{admission.admission_number}</p>
+                                <p>{studentName} • Admission #{admission.admission_number}</p>
                             </div>
                             <button
                                 className={styles.closeBtn}
