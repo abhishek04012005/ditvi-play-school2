@@ -30,6 +30,7 @@ import Loader from '@/custom/loader/loader';
 import { DownloadModal } from '../download/DownloadData';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import schoolDetailsEng from '@/json/schooldetails-eng';
+import whatsappMessages from '@/json/whatsappMessages';
 
 
 
@@ -68,19 +69,19 @@ type ItemsPerPage = 20 | 50 | 100;
 
 // Generate WhatsApp message based on status
 const generateWhatsAppMessage = (enquiry: Enquiry): string => {
-    const baseMessage = `Hi ${enquiry.parent_name || 'Parent'},\n`;
+    const messages = whatsappMessages.enquiry;
     
     switch (enquiry.status) {
         case 'new':
-            return baseMessage + `Thank you for enquiring about our programs at ${schoolDetailsEng.name}. We will contact you soon with more information. 😊`;
+            return messages.new;
         case 'contacted':
-            return baseMessage + `We appreciate your interest in our school. Our admission team is reviewing your application and will be in touch shortly. 🙏`;
+            return messages.contacted;
         case 'enrolled':
-            return baseMessage + `Congratulations! 🎉 You have been successfully enrolled in our program for ${enquiry.program}. We look forward to welcoming your child!`;
+            return messages.enrolled(enquiry.program || 'Our Programs');
         case 'cancelled':
-            return baseMessage + `Thank you for your interest in Ditvi Play School. Feel free to reach out to us in the future if you'd like to learn more about our programs.`;
+            return messages.cancelled;
         default:
-            return baseMessage + `Hello! Thank you for your interest in Ditvi Play School.`;
+            return messages.new;
     }
 };
 

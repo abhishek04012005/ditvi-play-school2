@@ -37,6 +37,7 @@ import EditNoteIcon from '@mui/icons-material/EditNote';
 import AdmissionPDFTemplate from '@/components/admissionpdftemplate/admissionpdftemplate';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import whatsappMessages from '@/json/whatsappMessages';
 
 interface NoteEntry {
     text: string;
@@ -163,6 +164,14 @@ const getAdmissionSource = (admission: Admission): string => {
     };
     const source = admission.admission_source || 'enquiry';
     return sourceMap[source] || 'Unknown';
+};
+
+// Generate WhatsApp message based on admission status
+const generateAdmissionWhatsAppMessage = (admission: Admission): string => {
+    const messages = whatsappMessages.admission;
+    const status = admission.admission_status as keyof typeof messages;
+    const message = messages[status] || messages['In Review'];
+    return typeof message === 'string' ? message : String(message);
 };
 
 export default function AdminAdmission() {
@@ -933,11 +942,11 @@ export default function AdminAdmission() {
                                                     <PhoneOutlined />
                                                 </a>
                                                 <a
-                                                    href={`https://wa.me/91${getParentMobile(admission).replace(/\D/g, '')}`}
+                                                    href={`https://wa.me/91${getParentMobile(admission).replace(/\D/g, '')}?text=${encodeURIComponent(generateAdmissionWhatsAppMessage(admission))}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className={styles.whatsappLink}
-                                                    title="WhatsApp"
+                                                    title={`Send WhatsApp message - Status: ${admission.admission_status}`}
                                                 >
                                                     <WhatsApp />
                                                 </a>
@@ -1558,6 +1567,18 @@ const DetailsModal = ({
                                         >
                                             <DownloadOutlined /> Download
                                         </motion.button>
+                                        {getParentMobile(admission) !== 'N/A' && (
+                                            <a
+                                                href={`https://wa.me/91${getParentMobile(admission).replace(/\D/g, '')}?text=${encodeURIComponent(generateAdmissionWhatsAppMessage(admission))}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className={`${styles.editBtn} ${styles.whatsappBtn}`}
+                                                title={`Send WhatsApp message - Status: ${admission.admission_status}`}
+                                                style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+                                            >
+                                                <WhatsApp /> WhatsApp
+                                            </a>
+                                        )}
                                         <motion.button
                                             className={styles.editBtn}
                                             onClick={() => setEditMode(true)}
