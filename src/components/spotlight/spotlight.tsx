@@ -34,6 +34,7 @@ export interface Award {
     is_show_on_home_page: boolean;
     like_count: number;
     image_url: string;
+    children_photos?: string[]; // Array of children photos
     created_date: string;
 }
 
@@ -849,6 +850,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                         name: '',
                         message: '',
                         image_url: '',
+                        children_photos: [],
                     }}
                     baseUrl={typeof window !== 'undefined' ? window.location.origin : 'https://apollokids.com'}
                 />
@@ -1071,6 +1073,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                     name: '',
                     message: '',
                     image_url: '',
+                    children_photos: [],
                 }}
                 baseUrl={typeof window !== 'undefined' ? window.location.origin : 'https://apollokids.com'}
             />

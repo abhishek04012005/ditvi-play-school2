@@ -49,7 +49,8 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose, customTyp
   // Get the selected award type details with dynamic colors
   const getAwardTypeDetails = () => {
     if (!award) return null;
-    const typeDetails = customTypes.find(t => t.id === award.award_type);
+    // Match by name since award_type stores the name, not the id
+    const typeDetails = customTypes.find(t => t.name === award.award_type);
     if (typeDetails) {
       return {
         name: typeDetails.name,
@@ -58,7 +59,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose, customTyp
         gradient: `linear-gradient(135deg, ${typeDetails.color} 0%, ${shadeColor(typeDetails.color, -30)} 100%)`
       };
     }
-    // Fallback for old hardcoded types
+    // Fallback for old hardcoded types (by id for backward compatibility)
     const defaults: { [key: string]: any } = {
       weekly: { name: 'Star of the Week', emoji: '⭐', color: '#FFD700', gradient: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' },
       monthly: { name: 'Star of the Month', emoji: '🌟', color: '#C0C0C0', gradient: 'linear-gradient(135deg, #C0C0C0 0%, #808080 100%)' },
