@@ -21,7 +21,7 @@ import {
     FaPhone,
     FaBook,
 } from 'react-icons/fa';
-import { 
+import {
     SearchOutlined,
     ArrowUpward,
     ArrowDownward,
@@ -34,6 +34,7 @@ import Loader from '@/custom/loader/loader';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import schoolDetails from '@/json/schooldetails';
+import schoolLogo from '../../../../public/assets/logo/logo.png'
 
 interface ReceiptData {
     id: string;
@@ -88,23 +89,23 @@ const ReceiptDashboard = () => {
     const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState<ItemsPerPage>(20);
-    
+
     // Admission lookup states
     const [admissionNumber, setAdmissionNumber] = useState('');
     const [selectedAdmission, setSelectedAdmission] = useState<AdmissionData | null>(null);
     const [admissionPayments, setAdmissionPayments] = useState<ReceiptData[]>([]);
     const [admissionSearchLoading, setAdmissionSearchLoading] = useState(false);
-    
+
     // Modal states
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showPrintModal, setShowPrintModal] = useState(false);
     const [selectedReceipt, setSelectedReceipt] = useState<ReceiptData | null>(null);
     const [printing, setPrinting] = useState(false);
-    
+
     // Modal form admission search
     const [modalAdmissionNumber, setModalAdmissionNumber] = useState('');
     const [modalAdmissionSearchLoading, setModalAdmissionSearchLoading] = useState(false);
-    
+
     // Form data
     const [formData, setFormData] = useState({
         student_name: '',
@@ -119,7 +120,7 @@ const ReceiptDashboard = () => {
         payment_date: new Date().toISOString().split('T')[0],
         notes: '',
     });
-    
+
     const [createLoading, setCreateLoading] = useState(false);
     const printRef = useRef<HTMLDivElement>(null);
 
@@ -164,7 +165,7 @@ const ReceiptDashboard = () => {
     // Search admission by admission number
     const handleSearchAdmission = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!admissionNumber.trim()) {
             toast.error('Please enter admission number');
             return;
@@ -172,7 +173,7 @@ const ReceiptDashboard = () => {
 
         try {
             setAdmissionSearchLoading(true);
-            
+
             // Search by admission_number
             const { data: admissionData, error: admissionError } = await supabase
                 .from('admission')
@@ -226,7 +227,7 @@ const ReceiptDashboard = () => {
     // Search and auto-fill admission in modal
     const handleModalAdmissionSearch = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!modalAdmissionNumber.trim()) {
             toast.error('Please enter admission number');
             return;
@@ -234,7 +235,7 @@ const ReceiptDashboard = () => {
 
         try {
             setModalAdmissionSearchLoading(true);
-            
+
             // Search by admission_number
             const { data: admissionData, error: admissionError } = await supabase
                 .from('admission')
@@ -315,7 +316,7 @@ const ReceiptDashboard = () => {
 
             toast.success('Receipt created successfully!');
             setShowCreateModal(false);
-            
+
             // Refresh payment history if we're in details view
             if (selectedAdmission) {
                 const { data: paymentsData } = await supabase
@@ -323,7 +324,7 @@ const ReceiptDashboard = () => {
                     .select('*')
                     .eq('admission_number', selectedAdmission.admission_number)
                     .order('payment_date', { ascending: false });
-                
+
                 setAdmissionPayments(paymentsData || []);
             }
 
@@ -341,7 +342,7 @@ const ReceiptDashboard = () => {
                 payment_date: new Date().toISOString().split('T')[0],
                 notes: '',
             });
-            
+
             // Also refresh list view
             await fetchReceipts();
         } catch (err) {
@@ -398,7 +399,8 @@ const ReceiptDashboard = () => {
             const matchesSearch =
                 receipt.student_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 receipt.receipt_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                receipt.parent_name.toLowerCase().includes(searchTerm.toLowerCase());
+                receipt.parent_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                receipt.admission_number.toLowerCase().includes(searchTerm.toLowerCase());
 
             const matchesFilter = filterStatus === 'all' || receipt.status === filterStatus;
 
@@ -565,13 +567,7 @@ const ReceiptDashboard = () => {
                                 <p className={styles.infoValue}>{selectedAdmission.program}</p>
                             </div>
                         </div>
-                        <div className={styles.infoItem}>
-                            <FaBook className={styles.infoIcon} />
-                            <div>
-                                <p className={styles.infoLabel}>Class</p>
-                                <p className={styles.infoValue}>{selectedAdmission.class}</p>
-                            </div>
-                        </div>
+
                     </div>
 
                     <motion.button
@@ -868,7 +864,6 @@ const ReceiptDashboard = () => {
                                             <p><strong>Name:</strong> {selectedReceipt.student_name}</p>
                                             <p><strong>Admission #:</strong> {selectedReceipt.admission_number}</p>
                                             <p><strong>Program:</strong> {selectedReceipt.program}</p>
-                                            <p><strong>Class:</strong> {selectedReceipt.class}</p>
                                         </div>
                                         <div className={styles.detailsColumn}>
                                             <h4>Parent Details</h4>
@@ -1046,7 +1041,7 @@ const ReceiptDashboard = () => {
                     <FaSearch />
                     <input
                         type="text"
-                        placeholder="Search by name, receipt number..."
+                        placeholder="Search by name, receipt number, admission number..."
                         value={searchTerm}
                         onChange={(e) => {
                             setSearchTerm(e.target.value);
@@ -1077,6 +1072,7 @@ const ReceiptDashboard = () => {
                             <th onClick={() => handleSort('receipt_number')}>
                                 Receipt # {getSortIcon('receipt_number')}
                             </th>
+                            <th>Admission #</th>
                             <th onClick={() => handleSort('student_name')}>
                                 Student {getSortIcon('student_name')}
                             </th>
@@ -1105,6 +1101,7 @@ const ReceiptDashboard = () => {
                                 transition={{ duration: 0.3 }}
                             >
                                 <td>{receipt.receipt_number}</td>
+                                <td><strong>{receipt.admission_number}</strong></td>
                                 <td>
                                     <div className={styles.studentInfo}>
                                         <FaUser className={styles.icon} />
@@ -1445,6 +1442,8 @@ const ReceiptDashboard = () => {
 
                             <div className={styles.printContent} ref={printRef}>
                                 <div className={styles.receiptHeader}>
+
+                                    <img src={schoolLogo.src} alt="School Logo" className={styles.schoolLogo} />
                                     <h3>{schoolDetails.name}</h3>
                                     <p>{schoolDetails.address.street}, {schoolDetails.address.city}</p>
                                     <p>Phone: {schoolDetails.contact.phone}</p>
@@ -1462,6 +1461,7 @@ const ReceiptDashboard = () => {
                                 <div className={styles.receiptDetails}>
                                     <div className={styles.detailsColumn}>
                                         <h4>Student Details</h4>
+                                        <p><strong>Admission #:</strong> {selectedReceipt.admission_number}</p>
                                         <p><strong>Name:</strong> {selectedReceipt.student_name}</p>
                                         <p><strong>Program:</strong> {selectedReceipt.program}</p>
                                     </div>
