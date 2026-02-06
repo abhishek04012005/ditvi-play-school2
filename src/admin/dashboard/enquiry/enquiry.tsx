@@ -29,6 +29,8 @@ import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
 import { DownloadModal } from '../download/DownloadData';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import schoolDetailsEng from '@/json/schooldetails-eng';
+import whatsappMessages from '@/json/whatsappMessages';
 
 
 
@@ -40,6 +42,7 @@ interface NoteEntry {
 }
 
 interface Enquiry {
+    enquiry_number: string;
     id: string;
     parent_name: string;
     child_name: string;
@@ -63,6 +66,24 @@ interface StatusCard {
 type SortField = 'created_at' | 'child_name' | 'parent_name' | 'status';
 type SortOrder = 'asc' | 'desc';
 type ItemsPerPage = 20 | 50 | 100;
+
+// Generate WhatsApp message based on status
+const generateWhatsAppMessage = (enquiry: Enquiry): string => {
+    const messages = whatsappMessages.enquiry;
+    
+    switch (enquiry.status) {
+        case 'new':
+            return messages.new;
+        case 'contacted':
+            return messages.contacted;
+        case 'enrolled':
+            return messages.enrolled(enquiry.program || 'Our Programs');
+        case 'cancelled':
+            return messages.cancelled;
+        default:
+            return messages.new;
+    }
+};
 
 const EnquiryDashboard = () => {
     const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
@@ -523,14 +544,15 @@ const EnquiryDashboard = () => {
                     <table className={styles.table}>
                         <thead>
                             <tr>
+                                <th>Enquiry No.</th>
                                 <th onClick={() => handleSort('created_at')}>
                                     Date {getSortIcon('created_at')}
                                 </th>
                                 <th onClick={() => handleSort('child_name')}>
-                                    Child Name {getSortIcon('child_name')}
+                                    Student's Name {getSortIcon('child_name')}
                                 </th>
                                 <th onClick={() => handleSort('parent_name')}>
-                                    Parent Name {getSortIcon('parent_name')}
+                                    Parent's Name {getSortIcon('parent_name')}
                                 </th>
                                 <th>Program</th>
                                 <th>Contact</th>
@@ -563,6 +585,9 @@ const EnquiryDashboard = () => {
                                         transition={{ duration: 0.3 }}
                                     >
                                         <td>
+                                            {enquiry.enquiry_number || "N/A"}
+                                        </td>
+                                        <td>
                                             {new Date(enquiry.created_at).toLocaleDateString('en-US', {
                                                 day: '2-digit',
                                                 month: 'short',
@@ -585,11 +610,11 @@ const EnquiryDashboard = () => {
                                                             <FaPhoneAlt />
                                                         </a>
                                                         <a
-                                                            href={`https://wa.me/91${enquiry.phone.replace(/\D/g, '')}`}
+                                                            href={`https://wa.me/91${enquiry.phone.replace(/\D/g, '')}?text=${encodeURIComponent(generateWhatsAppMessage(enquiry))}`}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className={styles.whatsappLink}
-                                                            title="WhatsApp"
+                                                            title={`Send WhatsApp message - Status: ${enquiry.status}`}
                                                         >
                                                             <FaWhatsapp />
                                                         </a>

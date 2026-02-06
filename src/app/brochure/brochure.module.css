@@ -50,7 +50,7 @@
   font-size: 2rem;
   margin: 0;
   letter-spacing: 0.4px;
-  font-weight: 700;
+  
 }
 
 /* PDF Wrapper & Pages */
@@ -100,7 +100,7 @@
   font-size: 36px;
   margin: 0 0 0.2rem 0;
   letter-spacing: 0.6px;
-  font-weight: 800;
+  
   line-height: 1.1;
 }
 
@@ -151,7 +151,7 @@
 .galleryOverlay h2{
   margin: 0;
   font-size: 1.2rem;
-  font-weight: 800;
+  
   line-height: 1.2;
 }
 
@@ -212,7 +212,7 @@
   margin: 0 0 0.4rem 0;
   color: var(--primary-purple);
   font-size: 0.95rem;
-  font-weight: 700;
+  
 }
 
 .missionBox p{
@@ -247,7 +247,7 @@
   margin: 0;
   color: var(--primary-purple);
   font-size: 0.75rem;
-  font-weight: 700;
+  
 }
 
 /* PAGE 2: ABOUT US & FOUNDER */
@@ -266,7 +266,7 @@
   color: var(--primary-purple);
   font-size: 1.05rem;
   margin: 0 0 0.6rem 0;
-  font-weight: 700;
+  
 }
 
 .aboutText p{
@@ -322,7 +322,7 @@
   color: var(--primary-purple);
   font-size: 0.95rem;
   margin: 0 0 0.6rem 0;
-  font-weight: 700;
+  
 }
 
 /* PAGE 4: GALLERY & TESTIMONIALS & CONTACT */
@@ -334,7 +334,7 @@
   color: var(--primary-purple);
   font-size: 1rem;
   margin: 0 0 0.8rem 0;
-  font-weight: 700;
+  
 }
 
 .testimonialsSection{
@@ -347,13 +347,13 @@
   color: var(--primary-purple);
   font-size: 1rem;
   margin: 0 0 0.8rem 0;
-  font-weight: 700;
+  
 }
 .sectionTitle{
   color: var(--primary-purple);
   font-size: 28px;
   margin: 0 0 0.8rem 0;
-  font-weight: 800;
+  
   letter-spacing: 0.4px;
 }
 
@@ -426,7 +426,7 @@
   margin: 0.5rem 0.6rem 0.2rem;
   color: var(--primary-purple);
   font-size: 0.9rem;
-  font-weight: 800;
+  
 }
 
 .programDesc{
@@ -452,7 +452,7 @@
   margin: 0 0 0.3rem 0;
   color: var(--primary-purple);
   font-size: 0.75rem;
-  font-weight: 700;
+  
 }
 
 .focusArea ul{
@@ -502,7 +502,7 @@
   margin: 0 0 0.8rem 0;
   color: var(--primary-purple);
   font-size: 1rem;
-  font-weight: 700;
+  
 }
 
 .footerGrid{
@@ -531,7 +531,7 @@
 
 .footerItem strong{
   color: var(--primary-purple);
-  font-weight: 700;
+  
 }
 
 /* PAGE 3: EVENTS */
@@ -581,7 +581,7 @@
   color: var(--primary-purple);
   font-size: 1.1rem;
   margin: 0 0 0.8rem 0;
-  font-weight: 700;
+  
 }
 
 .highlightsRow{
@@ -608,7 +608,7 @@
   margin: 0.3rem 0;
   color: var(--primary-purple);
   font-size: 0.8rem;
-  font-weight: 700;
+  
 }
 
 .highlightItem p{
@@ -660,7 +660,7 @@
 .testimonialName{
   margin: 0;
   color: var(--primary-purple);
-  font-weight: 700;
+  
   font-size: 0.75rem;
 }
 
@@ -683,7 +683,7 @@
   color: var(--primary-purple);
   font-size: 1.05rem;
   margin: 0 0 0.6rem 0;
-  font-weight: 700;
+  
 }
 
 .aboutContent p{
@@ -715,7 +715,7 @@
   margin: 0 0 0.3rem 0;
   color: var(--primary-purple);
   font-size: 0.95rem;
-  font-weight: 700;
+  
 }
 
 .ctaFooter p:nth-of-type(1){

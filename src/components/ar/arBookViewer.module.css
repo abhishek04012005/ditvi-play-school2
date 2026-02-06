@@ -58,7 +58,7 @@
     font-size: 1.8rem;
     color: var(--primary-purple);
     margin: 0;
-    font-weight: 700;
+    
 }
 
 .headerInfo p {
@@ -248,7 +248,7 @@
     color: var(--primary-purple);
     border-radius: 25px;
     font-size: 0.75rem;
-    font-weight: 700;
+    
     margin-bottom: 0.75rem;
 }
 
@@ -277,7 +277,7 @@
     font-size: 1.2rem;
     color: white;
     margin: 0 0 0.5rem 0;
-    font-weight: 700;
+    
 }
 
 .bookDescription {
@@ -308,7 +308,7 @@
 
 .metaValue {
     color: white;
-    font-weight: 700;
+    
 }
 
 .bottomSection {
@@ -504,7 +504,7 @@
     color: white;
     border-radius: 20px;
     font-size: 0.65rem;
-    font-weight: 700;
+    
     margin-bottom: 0.3rem;
 }
 
@@ -512,7 +512,7 @@
     font-size: 1rem;
     color: var(--primary-purple);
     margin: 0;
-    font-weight: 700;
+    
 }
 
 .pageContent {
@@ -644,7 +644,7 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 1.1rem;
-    font-weight: 700;
+    
     color: var(--primary-purple);
     background: rgba(255, 255, 255, 0.9);
     padding: 0.75rem 1.5rem;

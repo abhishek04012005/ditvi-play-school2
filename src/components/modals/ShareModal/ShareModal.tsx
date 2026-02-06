@@ -22,6 +22,7 @@ export interface ShareModalProps {
         name: string;
         message: string;
         image_url: string;
+        children_photos?: string[]; // Array of photo URLs
     };
     baseUrl?: string;
 }
@@ -37,7 +38,7 @@ export const ShareModal = ({
 
     // Generate shareable URL
     const shareUrl = `${baseUrl}/spotlight?award=${award.id}`;
-    const shareTitle = `🌟 ${award.name} - Apollo Kids Spotlight`;
+    const shareTitle = `🌟 ${award.name} - Anksquare Kids Spotlight`;
     const shareMessage = `${award.name} was recognized as our Star of the Week! 🏆\n\n"${award.message}"\n\n✨ Check out this amazing achievement!`;
 
     // ✨ COPY TO CLIPBOARD
@@ -55,9 +56,21 @@ export const ShareModal = ({
     // ✨ SHARE VIA WHATSAPP
     const handleShareWhatsApp = () => {
         setSharing(true);
-        const text = encodeURIComponent(
-            `${shareMessage}\n\n${shareUrl}`
-        );
+        
+        // Build message with photos
+        let message = shareMessage;
+        
+        // Add children photos if available
+        if (award.children_photos && award.children_photos.length > 0) {
+            message += '\n\n📸 Children Photos:\n';
+            award.children_photos.forEach((photo, index) => {
+                message += `${photo}\n`;
+            });
+        }
+        
+        message += `\n${shareUrl}`;
+        
+        const text = encodeURIComponent(message);
         const url = `https://wa.me/?text=${text}`;
         window.open(url, '_blank', 'noopener,noreferrer');
         setTimeout(() => setSharing(false), 500);
@@ -165,6 +178,29 @@ export const ShareModal = ({
                                 <strong>{award.name}</strong>
                                 <p>{award.message}</p>
                             </div>
+
+                            {/* Children Photos Gallery */}
+                            {award.children_photos && award.children_photos.length > 0 && (
+                                <div className={styles.childrenPhotosGallery}>
+                                    <p className={styles.childrenPhotosTitle}>Children Photos:</p>
+                                    <div className={styles.photosGrid}>
+                                        {award.children_photos.map((photo, index) => (
+                                            <motion.div
+                                                key={index}
+                                                className={styles.photoThumbnail}
+                                                whileHover={{ scale: 1.05 }}
+                                                transition={{ duration: 0.2 }}
+                                            >
+                                                <img
+                                                    src={photo}
+                                                    alt={`Child ${index + 1}`}
+                                                    className={styles.childPhoto}
+                                                />
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Share Options */}

@@ -1,0 +1,158 @@
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 60px 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header {
+  max-width: 1000px;
+  margin: 0 auto 50px;
+  text-align: center;
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.header h1 {
+  font-size: 42px;
+  color: #667eea;
+  margin: 0 0 15px;
+  
+}
+
+.header p {
+  font-size: 16px;
+  color: #999;
+  margin: 0;
+}
+
+.languageToggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.languageToggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.languageToggle:active {
+  transform: translateY(0);
+}
+
+.content {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.section {
+  background: white;
+  margin-bottom: 30px;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-left: 5px solid #667eea;
+  transition: all 0.3s ease;
+}
+
+.section:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.section h2 {
+  color: #667eea;
+  font-size: 24px;
+  margin: 0 0 20px;
+  
+}
+
+.section p {
+  color: #333;
+  font-size: 16px;
+  line-height: 1.8;
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 30px 15px;
+  }
+
+  .header {
+    padding: 30px 20px;
+    margin-bottom: 30px;
+  }
+
+  .header h1 {
+    font-size: 32px;
+  }
+
+  .languageToggle {
+    position: static;
+    margin-top: 20px;
+    width: 100%;
+  }
+
+  .section {
+    padding: 25px 20px;
+    margin-bottom: 20px;
+  }
+
+  .section h2 {
+    font-size: 20px;
+  }
+
+  .section p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 20px 10px;
+  }
+
+  .header {
+    padding: 20px 15px;
+  }
+
+  .header h1 {
+    font-size: 24px;
+  }
+
+  .header p {
+    font-size: 14px;
+  }
+
+  .section {
+    padding: 20px 15px;
+    border-left-width: 3px;
+  }
+
+  .section h2 {
+    font-size: 18px;
+  }
+
+  .section p {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+}

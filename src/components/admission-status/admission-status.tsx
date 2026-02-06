@@ -1,5 +1,5 @@
 "use client";
-import { JSX, useState } from "react";
+import { JSX, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaSearch,
@@ -9,7 +9,6 @@ import {
   FaTimes,
   FaSpinner,
   FaArrowRight,
-  FaHistory,
   FaExclamationCircle,
   FaEdit,
 } from "react-icons/fa";
@@ -19,6 +18,8 @@ import styles from "./admission-status.module.css";
 import HeadingTitle from "@/components/heading/headingtitle";
 import PhoneVerificationModal from "@/components/modals/phone-verification-modal/phone-verification-modal";
 import CorrectionForm from "@/components/correction-form/correction-form";
+import en from "@/translations/en.json";
+import hi from "@/translations/hi.json";
 
 interface AdmissionStatus {
   id: string;
@@ -37,7 +38,8 @@ interface AdmissionStatus {
   child_gender?: string;
   child_place_of_birth?: string;
   child_blood_group?: string;
-  parent_name?: string;
+  father_name?: string;
+  mother_name?: string;
   parent_email?: string;
   parent_address?: string;
   previous_school?: string;
@@ -111,8 +113,11 @@ const getChildName = (admission: AdmissionStatus): string => {
     "N/A"
   );
 };
-const getParentName = (admission: AdmissionStatus): string => {
-  return admission.parent_name || "N/A";
+const getFatherName = (admission: AdmissionStatus): string => {
+  return admission.father_name || "N/A";
+}
+const getMotherName = (admission: AdmissionStatus): string => {
+  return admission.mother_name || "N/A";
 }
 const getProgram = (admission: AdmissionStatus): string => {
   return admission.program_name || admission.program || "N/A";
@@ -132,12 +137,85 @@ export default function AdmissionStatus() {
   const [error, setError] = useState<string | null>(null);
   const [showPhoneVerification, setShowPhoneVerification] = useState(false);
   const [showCorrectionForm, setShowCorrectionForm] = useState(false);
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+      if (saved && (saved === 'en' || saved === 'hi')) {
+        setLanguage(saved);
+      }
+    } catch (e) {
+      // localStorage not available
+    }
+  }, []);
+
+  const translations = language === 'hi' ? hi : en;
+  const t = (key: string): string => {
+    const keys = key.split('.');
+    let value: any = translations;
+    for (const k of keys) {
+      value = value?.[k];
+    }
+    return typeof value === 'string' ? value : key;
+  };
+
+  const statusConfigTranslated: Record<string, StatusConfig> = {
+    "In Review": {
+      icon: <FaFileAlt />,
+      color: "#3b82f6",
+      bgColor: "#eff6ff",
+      description: t('admissionStatus.inReviewDesc'),
+      step: 1,
+      message: t('admissionStatus.inReviewMsg'),
+    },
+    Reviewed: {
+      icon: <FaCheckCircle />,
+      color: "#f59e0b",
+      bgColor: "#fffbf0",
+      description: t('admissionStatus.reviewedDesc'),
+      step: 2,
+      message: t('admissionStatus.reviewedMsg'),
+    },
+    "Interview Scheduled": {
+      icon: <FaClock />,
+      color: "#8b5cf6",
+      bgColor: "#faf5ff",
+      description: t('admissionStatus.interviewDesc'),
+      step: 3,
+      message: t('admissionStatus.interviewMsg'),
+    },
+    Confirmed: {
+      icon: <FaCheckCircle />,
+      color: "#10b981",
+      bgColor: "#f0fdf4",
+      description: t('admissionStatus.confirmedDesc'),
+      step: 4,
+      message: t('admissionStatus.confirmedMsg'),
+    },
+    Rejected: {
+      icon: <FaTimes />,
+      color: "#ef4444",
+      bgColor: "#fef2f2",
+      description: t('admissionStatus.rejectedDesc'),
+      step: 0,
+      message: t('admissionStatus.rejectedMsg'),
+    },
+    "Under Correction": {
+      icon: <FaEdit />,
+      color: "#8b5cf6",
+      bgColor: "#faf5ff",
+      description: t('admissionStatus.correctionDesc'),
+      step: 2,
+      message: t('admissionStatus.correctionMsg'),
+    },
+  };
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!admissionNumber.trim()) {
-      toast.error("Please enter an admission number");
+      toast.error(t('admissionStatus.enterAdmissionNumber'));
       return;
     }
 
@@ -155,18 +233,18 @@ export default function AdmissionStatus() {
 
       if (supabaseError || !data) {
         setError(
-          "Admission number not found. Please check and try again."
+          t('admissionStatus.admissionNumberNotFound')
         );
-        toast.error("Admission not found");
+        toast.error(t('admissionStatus.admissionNotFound'));
         return;
       }
 
       setAdmissionData(data);
-      toast.success("Admission found!");
+      toast.success(t('admissionStatus.admissionFound'));
     } catch (err) {
       console.error("Error:", err);
-      setError("An error occurred. Please try again.");
-      toast.error("Error searching admission");
+      setError(t('admissionStatus.errorOccurred'));
+      toast.error(t('admissionStatus.errorSearching'));
     } finally {
       setLoading(false);
     }
@@ -187,7 +265,7 @@ export default function AdmissionStatus() {
         <div className={styles.squiggly}></div>
       </div>
 
-      <HeadingTitle text="Check Admission Status" />
+      <HeadingTitle text={t('admissionStatus.checkAdmissionStatus')} />
 
       <div className={styles.container}>
         {/* Search Form */}
@@ -205,7 +283,7 @@ export default function AdmissionStatus() {
                   <FaSearch className={styles.searchIcon} />
                   <input
                     type="text"
-                    placeholder="Enter your admission number (e.g., ADM-2024-001)"
+                    placeholder={t('admissionStatus.enterAdmissionNumber')}
                     value={admissionNumber}
                     onChange={(e) =>
                       setAdmissionNumber(e.target.value.toUpperCase())
@@ -223,11 +301,11 @@ export default function AdmissionStatus() {
                 >
                   {loading ? (
                     <>
-                      <FaSpinner className={styles.spinnerIcon} /> Searching...
+                      <FaSpinner className={styles.spinnerIcon} /> {t('admissionStatus.searching')}
                     </>
                   ) : (
                     <>
-                      <FaSearch /> Search
+                      <FaSearch /> {t('admissionStatus.search')}
                     </>
                   )}
                 </motion.button>
@@ -235,8 +313,7 @@ export default function AdmissionStatus() {
             </form>
 
             <p className={styles.helpText}>
-              💡 Your admission number was provided in the confirmation email
-              after submitting your application form.
+              {t('admissionStatus.admissionNumberHint')}
             </p>
           </div>
         </motion.div>
@@ -261,7 +338,7 @@ export default function AdmissionStatus() {
                     <FaExclamationCircle />
                   </div>
                   <div className={styles.errorContent}>
-                    <h3>Not Found</h3>
+                    <h3>{t('admissionStatus.notFound')}</h3>
                     <p>{error}</p>
                   </div>
                   <motion.button
@@ -270,7 +347,7 @@ export default function AdmissionStatus() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    Try Again
+                    {t('admissionStatus.tryAgain')}
                   </motion.button>
                 </motion.div>
               ) : admissionData ? (
@@ -287,6 +364,9 @@ export default function AdmissionStatus() {
                   <StatusResultCard
                     admission={admissionData}
                     onReset={handleReset}
+                    language={language}
+                    t={t}
+                    statusConfigTranslated={statusConfigTranslated}
                     onEditClick={() => {
                       if (admissionData.admission_status === "Under Correction") {
                         setShowPhoneVerification(true);
@@ -321,16 +401,23 @@ export default function AdmissionStatus() {
 const StatusResultCard = ({
   admission,
   onReset,
+  language,
+  t,
   onEditClick,
+  statusConfigTranslated,
 }: {
   admission: AdmissionStatus;
   onReset: () => void;
+  language: 'en' | 'hi';
+  t: (key: string) => string;
   onEditClick?: () => void;
+  statusConfigTranslated: Record<string, StatusConfig>;
 }) => {
   const status = admission.admission_status;
-  const statusData = getStatusConfig(status);
-  const childName = getChildName(admission);
-  const parentName = getParentName(admission);
+  const statusData = statusConfigTranslated[status] || statusConfigTranslated["In Review"];
+  const studentName = getChildName(admission);
+  const fatherName = getFatherName(admission);
+  const motherName = getMotherName(admission);
   const program = getProgram(admission);
 
   const createdDate = new Date(admission.created_at).toLocaleDateString(
@@ -354,9 +441,9 @@ const StatusResultCard = ({
         <div className={styles.resultHeaderLeft}>
 
           <div>
-            <h2>Admission #{admission.admission_number}</h2>
+            <h2>{language === 'hi' ? t('admissionStatus.admissionNumber') : 'Admission'} #{admission.admission_number}</h2>
             <p className={styles.applicationDate}>
-              Applied on {createdDate}
+              {t('admissionStatus.appliedOn')} {createdDate}
             </p>
           </div>
         </div>
@@ -376,7 +463,7 @@ const StatusResultCard = ({
               className={styles.editBtn}
               onClick={onEditClick}
             >
-              <FaEdit /> Edit Details
+              <FaEdit /> {t('admissionStatus.editDetails')}
             </div>
           )}
 
@@ -387,15 +474,20 @@ const StatusResultCard = ({
       {/* Details Grid */}
       <div className={styles.detailsGrid}>
         <div className={styles.detailCard}>
-          <label>Child Name</label>
-          <p>{childName}</p>
+          <label>{t('admissionStatus.studentName')}</label>
+          <p>{studentName}</p>
         </div>
         <div className={styles.detailCard}>
-          <label>Parent Name</label>
-          <p>{admission.parent_name}</p>
+          <label>{t('admissionStatus.fatherName')}</label>
+          <p>{admission.father_name}</p>
+        </div>
+
+        <div className={styles.detailCard}>
+          <label>{t('admissionStatus.motherName')}</label>
+          <p>{admission.mother_name}</p>
         </div>
         <div className={styles.detailCard}>
-          <label>Applied Program</label>
+          <label>{t('admissionStatus.appliedProgram')}</label>
           <p>{program}</p>
         </div>
       </div>
@@ -423,10 +515,10 @@ const StatusResultCard = ({
       </motion.div>
 
       {/* Timeline */}
-      <StatusTimeline status={status} />
+      <StatusTimeline status={status} language={language} t={t} />
 
       {/* Next Steps */}
-      <NextStepsSection status={status} />
+      <NextStepsSection status={status} language={language} t={t} />
 
       {/* Contact Section */}
       <motion.div
@@ -435,14 +527,13 @@ const StatusResultCard = ({
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
       >
-        <h4>Need Help?</h4>
+        <h4>{t('admissionStatus.needHelp')}</h4>
         <p>
-          If you have any questions about your admission status, please contact
-          us:
+          {t('admissionStatus.helpText')}
         </p>
         <div className={styles.contactLinks}>
           <a href="tel:+919876543210" className={styles.contactLink}>
-            📞 Call Us
+            {t('admissionStatus.callUs')}
           </a>
           <a
             href="https://wa.me/919876543210"
@@ -450,10 +541,10 @@ const StatusResultCard = ({
             rel="noopener noreferrer"
             className={styles.contactLink}
           >
-            💬 WhatsApp
+            {t('admissionStatus.whatsapp')}
           </a>
           <a href="mailto:admissions@ditvi.com" className={styles.contactLink}>
-            ✉️ Email Us
+            {t('admissionStatus.emailUs')}
           </a>
         </div>
       </motion.div>
@@ -461,19 +552,19 @@ const StatusResultCard = ({
   );
 };
 
-const StatusTimeline = ({ status }: { status: string }) => {
+const StatusTimeline = ({ status, language, t }: { status: string; language: 'en' | 'hi'; t: (key: string) => string }) => {
   const steps = [
-    { label: "In Review", completed: true },
+    { label: t('admissionStatus.inReview'), completed: true },
     {
-      label: "Reviewed",
+      label: t('admissionStatus.reviewed'),
       completed: status !== "In Review" && status !== "Rejected",
     },
     {
-      label: "Interview",
+      label: t('admissionStatus.interview'),
       completed:
         status === "Interview Scheduled" || status === "Confirmed",
     },
-    { label: "Confirmed", completed: status === "Confirmed" },
+    { label: t('admissionStatus.confirmed'), completed: status === "Confirmed" },
   ];
 
   return (
@@ -483,7 +574,7 @@ const StatusTimeline = ({ status }: { status: string }) => {
       animate={{ opacity: 1 }}
       transition={{ delay: 0.2 }}
     >
-      <h4>Application Timeline</h4>
+      <h4>{language === 'hi' ? t('admissionStatus.applicationTimeline') : 'Application Timeline'}</h4>
       <div className={styles.timeline}>
         {steps.map((step, index) => (
           <motion.div
@@ -505,18 +596,14 @@ const StatusTimeline = ({ status }: { status: string }) => {
   );
 };
 
-const NextStepsSection = ({ status }: { status: string }) => {
+const NextStepsSection = ({ status, language, t }: { status: string; language: 'en' | 'hi'; t: (key: string) => string }) => {
   const nextSteps: Record<string, string> = {
-    "In Review":
-      "Please wait while we review your application. We will send you an email update within 3-5 business days.",
-    Reviewed:
-      "Congratulations! Your application has passed the initial review. You will receive an interview schedule email soon.",
-    "Interview Scheduled":
-      "Get ready for your interview! Please check your email for the interview date, time, and meeting link.",
-    Confirmed:
-      "Wonderful! Your admission has been confirmed. You will receive further instructions regarding enrollment and class schedules.",
-    Rejected:
-      "We appreciate your interest. Feel free to reapply next year with updated information.",
+    "In Review": t('admissionStatus.inReviewMsg'),
+    Reviewed: t('admissionStatus.reviewedMsg'),
+    "Interview Scheduled": t('admissionStatus.interviewMsg'),
+    Confirmed: t('admissionStatus.confirmedMsg'),
+    Rejected: t('admissionStatus.rejectedMsg'),
+    "Under Correction": t('admissionStatus.correctionMsg'),
   };
 
   return (
@@ -528,7 +615,7 @@ const NextStepsSection = ({ status }: { status: string }) => {
     >
       <div className={styles.nextStepsHeader}>
         <FaArrowRight />
-        <h4>Next Steps</h4>
+        <h4>{t('admissionStatus.nextSteps')}</h4>
       </div>
       <p>
         {nextSteps[status] || "Please contact us for more information."}

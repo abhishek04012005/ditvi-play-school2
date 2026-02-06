@@ -273,7 +273,7 @@
 .table th {
     padding: 1.25rem 1.5rem;
     text-align: left;
-    font-weight: 700;
+    
     color: var(--primary-purple);
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -315,7 +315,7 @@
 }
 
 .table td:first-child {
-    font-weight: 700;
+    
     color: var(--black);
 }
 
@@ -397,7 +397,7 @@
     padding: 0.5rem 1rem;
     border-radius: 8px;
     font-size: 0.85rem;
-    font-weight: 700;
+    
     text-transform: capitalize;
     letter-spacing: 0.3px;
     border: 1px solid;
@@ -538,7 +538,7 @@
     align-items: center;
     justify-content: center;
     font-size: 0.65rem;
-    font-weight: 700;
+    
     animation: pulse-indicator 2s ease-in-out infinite;
 }
 
@@ -607,7 +607,7 @@
 .modalHeader h2 {
     margin: 0 0 0.5rem 0;
     font-size: 1.4rem;
-    font-weight: 700;
+    
     color: var(--primary-purple);
     letter-spacing: -0.3px;
 }
@@ -701,7 +701,7 @@
 .notesHistoryTitle {
     margin: 0 0 1.25rem 0;
     font-size: 1rem;
-    font-weight: 700;
+    
     color: var(--primary-purple);
     display: flex;
     align-items: center;
@@ -771,7 +771,7 @@
     padding: 0.35rem 0.7rem;
     border-radius: 6px;
     font-size: 0.75rem;
-    font-weight: 700;
+    
     text-transform: uppercase;
     letter-spacing: 0.3px;
 }
@@ -859,7 +859,7 @@
 .newNoteTitle {
     margin: 0 0 1rem 0;
     font-size: 1rem;
-    font-weight: 700;
+    
     color: var(--primary-purple);
     display: flex;
     align-items: center;
@@ -922,7 +922,7 @@
     border: none;
     border-radius: 10px;
     font-size: 0.95rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     font-family: 'Verdana', sans-serif;
@@ -1715,7 +1715,7 @@
 
 .paginationText strong {
     color: var(--primary-purple);
-    font-weight: 700;
+    
 }
 
 .paginationControls {
@@ -1735,7 +1735,7 @@
 
 .itemsPerPageSelector label {
     color: var(--text-gray);
-    font-weight: 700;
+    
     font-size: 0.95rem;
     text-transform: uppercase;
     letter-spacing: 0.3px;
@@ -1748,7 +1748,7 @@
     border-radius: 10px;
     background: var(--white);
     color: var(--primary-purple);
-    font-weight: 700;
+    
     font-size: 0.95rem;
     cursor: pointer;
     transition: var(--transition);
@@ -1792,7 +1792,7 @@
     border: none;
     border-radius: 10px;
     font-size: 0.95rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     text-transform: uppercase;
@@ -1837,7 +1837,7 @@
     border: 2px solid var(--border-color);
     border-radius: 8px;
     font-size: 0.95rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     padding: 0;
@@ -1887,7 +1887,7 @@
 
 .pageInfo strong {
     color: var(--primary-purple);
-    font-weight: 700;
+    
 }
 
 /* ==================== RESPONSIVE - TABLET 1024px ==================== */
@@ -2106,7 +2106,7 @@
     border: none;
     border-radius: 10px;
     font-size: 0.95rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     text-transform: uppercase;

@@ -37,6 +37,7 @@ import EditNoteIcon from '@mui/icons-material/EditNote';
 import AdmissionPDFTemplate from '@/components/admissionpdftemplate/admissionpdftemplate';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import whatsappMessages from '@/json/whatsappMessages';
 
 interface NoteEntry {
     text: string;
@@ -55,10 +56,12 @@ interface Admission {
     dateOfBirth?: string;
     child_gender: string;
     gender?: string;
+    category?: string;
     child_place_of_birth: string;
     placeOfBirth?: string;
     child_blood_group?: string;
-    parent_name?: string;
+    father_name?: string;
+    mother_name?: string;
     parentFirstName?: string;
     parentLastName?: string;
     parent_first_name?: string;
@@ -128,10 +131,12 @@ const getChildName = (admission: Admission): string => {
     return admission.child_first_name || admission.childFirstName || admission.child_name || 'N/A';
 };
 
-const getParentName = (admission: Admission): string => {
-    const firstName = admission.parent_first_name || admission.parentFirstName || '';
-    const lastName = admission.parent_last_name || admission.parentLastName || '';
-    return `${firstName} ${lastName}`.trim() || admission.parent_name || 'N/A';
+const getFatherName = (admission: Admission): string => {
+    return admission.father_name || 'N/A';
+};
+
+const getMotherName = (admission: Admission): string => {
+    return admission.mother_name || 'N/A';
 };
 
 const getParentEmail = (admission: Admission): string => {
@@ -159,6 +164,14 @@ const getAdmissionSource = (admission: Admission): string => {
     };
     const source = admission.admission_source || 'enquiry';
     return sourceMap[source] || 'Unknown';
+};
+
+// Generate WhatsApp message based on admission status
+const generateAdmissionWhatsAppMessage = (admission: Admission): string => {
+    const messages = whatsappMessages.admission;
+    const status = admission.admission_status as keyof typeof messages;
+    const message = messages[status] || messages['In Review'];
+    return typeof message === 'string' ? message : String(message);
 };
 
 export default function AdminAdmission() {
@@ -298,15 +311,17 @@ export default function AdminAdmission() {
 
     const sortedAndFilteredAdmissions = admissions
         .filter(admission => {
-            const childName = getChildName(admission).toLowerCase();
-            const parentName = getParentName(admission).toLowerCase();
+            const studentName = getChildName(admission).toLowerCase();
+            const fatherName = getFatherName(admission).toLowerCase();
+            const motherName = getMotherName(admission).toLowerCase();
             const email = getParentEmail(admission).toLowerCase();
             const mobile = getParentMobile(admission);
             const admissionNumber = String(admission.admission_number).toLowerCase();
 
             const matchesSearch =
-                childName.includes(searchTerm.toLowerCase()) ||
-                parentName.includes(searchTerm.toLowerCase()) ||
+                studentName.includes(searchTerm.toLowerCase()) ||
+                fatherName.includes(searchTerm.toLowerCase()) ||
+                motherName.includes(searchTerm.toLowerCase()) ||
                 email.includes(searchTerm.toLowerCase()) ||
                 admissionNumber.includes(searchTerm.toLowerCase()) ||
                 mobile.includes(searchTerm);
@@ -626,10 +641,12 @@ export default function AdminAdmission() {
                 child_gender: editingData.child_gender,
                 child_place_of_birth: editingData.child_place_of_birth,
                 child_blood_group: editingData.child_blood_group,
-                parent_name: editingData.parent_name,
+                father_name: editingData.father_name,
+                mother_name: editingData.mother_name,
                 parent_address: editingData.parent_address,
                 parent_email: editingData.parent_email,
                 program_name: editingData.program_name,
+                category: editingData.category,
                 previous_school: editingData.previous_school,
                 remark: editingData.remark,
             };
@@ -828,7 +845,7 @@ export default function AdminAdmission() {
                             <SearchOutlined className={styles.searchIcon} />
                             <input
                                 type="text"
-                                placeholder="Search by child name, admission no., parent name, email or phone..."
+                                placeholder="Search by student name, admission no., email or phone..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -869,7 +886,7 @@ export default function AdminAdmission() {
                                 <th onClick={() => handleSort('child_name')}>
                                     Student's Name {getSortIcon('child_name')}
                                 </th>
-                                <th>Parent's Name</th>
+                                <th>Father's Name</th>
                                 <th>Contact</th>
                                 <th onClick={() => handleSort('program_name')}>
                                     Program {getSortIcon('program_name')}
@@ -913,7 +930,7 @@ export default function AdminAdmission() {
                                         </td>
                                         <td>{getChildName(admission)}</td>
 
-                                        <td>{getParentName(admission)}</td>
+                                        <td>{getFatherName(admission)}</td>
                                         <td>
                                             <div className={styles.contactLinks}>
                                                 <span>{getParentMobile(admission)}</span>
@@ -925,11 +942,11 @@ export default function AdminAdmission() {
                                                     <PhoneOutlined />
                                                 </a>
                                                 <a
-                                                    href={`https://wa.me/91${getParentMobile(admission).replace(/\D/g, '')}`}
+                                                    href={`https://wa.me/91${getParentMobile(admission).replace(/\D/g, '')}?text=${encodeURIComponent(generateAdmissionWhatsAppMessage(admission))}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className={styles.whatsappLink}
-                                                    title="WhatsApp"
+                                                    title={`Send WhatsApp message - Status: ${admission.admission_status}`}
                                                 >
                                                     <WhatsApp />
                                                 </a>
@@ -1221,7 +1238,8 @@ export default function AdminAdmission() {
                     { key: 'child_dob', label: 'Date of Birth' },
                     { key: 'child_gender', label: 'Gender' },
                     { key: 'child_place_of_birth', label: 'Place of Birth' },
-                    { key: 'parent_name', label: 'Parent Name' },
+                    { key: 'father_name', label: 'Father Name' },
+                    { key: 'mother_name', label: 'Mother Name' },
                     { key: 'parent_email', label: 'Email' },
                     { key: 'parent_mobile_number', label: 'Mobile' },
                     { key: 'program_name', label: 'Program' },
@@ -1319,8 +1337,9 @@ const NotesModal = ({
     canDeleteNotes?: boolean;
 }) => {
     const isProcessing = savingNote || !!deletingNoteId;
-    const childName = getChildName(admission || {} as Admission);
-    const parentName = getParentName(admission || {} as Admission);
+    const studentName = getChildName(admission || {} as Admission);
+    const fatherName = getFatherName(admission || {} as Admission);
+    const motherName = getMotherName(admission || {} as Admission);
 
     return (
         <AnimatePresence>
@@ -1343,7 +1362,7 @@ const NotesModal = ({
                         <div className={styles.modalHeader}>
                             <div>
                                 <h2><EditNoteIcon /> Internal Notes</h2>
-                                <p>{childName} • {parentName}</p>
+                                <p>{studentName} • {fatherName}</p>
                                 {noteEntries.length > 0 && (
                                     <p className={styles.notesCount}>
                                         <HistoryOutlined /> {noteEntries.length} note{noteEntries.length !== 1 ? 's' : ''} saved
@@ -1509,8 +1528,9 @@ const DetailsModal = ({
 }) => {
     if (!admission) return null;
 
-    const childName = getChildName(admission);
-    const parentName = getParentName(admission);
+    const studentName = getChildName(admission);
+    const fatherName = getFatherName(admission);
+    const motherName = getMotherName(admission);
 
     return (
         <AnimatePresence>
@@ -1533,7 +1553,7 @@ const DetailsModal = ({
                         <div className={styles.modalHeader}>
                             <div>
                                 <h2><PersonOutlined /> Admission Details {editMode && <span style={{ fontSize: '0.75em' }}>• EDIT MODE</span>}</h2>
-                                <p>{admission.admission_number} | {childName}</p>
+                                <p>{admission.admission_number} | {studentName}</p>
                             </div>
                             <div className={styles.headerButtons}>
                                 {!editMode ? (
@@ -1545,8 +1565,20 @@ const DetailsModal = ({
                                             whileTap={{ scale: 0.95 }}
                                             title="Preview and download admission form"
                                         >
-                                            <DownloadOutlined /> Download    
+                                            <DownloadOutlined /> Download
                                         </motion.button>
+                                        {getParentMobile(admission) !== 'N/A' && (
+                                            <a
+                                                href={`https://wa.me/91${getParentMobile(admission).replace(/\D/g, '')}?text=${encodeURIComponent(generateAdmissionWhatsAppMessage(admission))}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className={`${styles.editBtn} ${styles.whatsappBtn}`}
+                                                title={`Send WhatsApp message - Status: ${admission.admission_status}`}
+                                                style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+                                            >
+                                                <WhatsApp /> WhatsApp
+                                            </a>
+                                        )}
                                         <motion.button
                                             className={styles.editBtn}
                                             onClick={() => setEditMode(true)}
@@ -1664,15 +1696,27 @@ const DetailsModal = ({
                                             </select>
                                         </div>
                                         <div className={styles.detailItem}>
-                                            <span className={styles.detailLabel}>Parent Name</span>
+                                            <span className={styles.detailLabel}>Father Name</span>
                                             <input
                                                 type="text"
-                                                value={editingData.parent_name || ''}
-                                                onChange={(e) => setEditingData({ ...editingData, parent_name: e.target.value })}
+                                                value={editingData.father_name || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, father_name: e.target.value })}
                                                 className={styles.editInput}
-                                                placeholder="Parent name"
+                                                placeholder="Father name"
                                             />
                                         </div>
+
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Mother Name</span>
+                                            <input
+                                                type="text"
+                                                value={editingData.mother_name || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, mother_name: e.target.value })}
+                                                className={styles.editInput}
+                                                placeholder="Mother name"
+                                            />
+                                        </div>
+
                                         <div className={styles.detailItem}>
                                             <span className={styles.detailLabel}>Address</span>
                                             <textarea
@@ -1709,6 +1753,22 @@ const DetailsModal = ({
                                                 ))}
                                             </select>
                                         </div>
+
+                                        <div className={styles.detailItem}>
+                                            <span className={styles.detailLabel}>Category</span>
+                                            <select
+                                                value={editingData.category || ''}
+                                                onChange={(e) => setEditingData({ ...editingData, category: e.target.value })}
+                                                className={styles.editInput}
+                                            >
+                                                <option value="">-- Select Category --</option>
+                                                <option value="General">General</option>
+                                                <option value="OBC">OBC</option>
+                                                <option value="SC">SC</option>
+                                                <option value="ST">ST</option>
+                                            </select>
+                                        </div>
+
                                         <div className={styles.detailItem}>
                                             <span className={styles.detailLabel}>Previous School</span>
                                             <input
@@ -1722,16 +1782,18 @@ const DetailsModal = ({
                                     </>
                                 ) : (
                                     <>
-                                        <DetailItem label="Child Name" value={childName} />
+                                        <DetailItem label="Child Name" value={studentName} />
                                         <DetailItem label="Date of Birth" value={admission.child_dob || 'N/A'} />
                                         <DetailItem label="Gender" value={admission.child_gender || 'N/A'} />
                                         <DetailItem label="Place of Birth" value={admission.child_place_of_birth || 'N/A'} />
                                         <DetailItem label="Blood Group" value={admission.child_blood_group || 'N/A'} />
-                                        <DetailItem label="Parent Name" value={parentName} />
+                                        <DetailItem label="Father Name" value={fatherName} />
+                                        <DetailItem label="Mother Name" value={motherName} />
                                         <DetailItem label="Address" value={admission.parent_address || 'N/A'} />
                                         <DetailItem label="Email" value={getParentEmail(admission)} />
                                         <DetailItem label="Mobile" value={getParentMobile(admission)} />
                                         <DetailItem label="Program" value={getProgram(admission)} />
+                                        <DetailItem label="Category" value={admission.category || 'N/A'} />
                                         <DetailItem label="Previous School" value={admission.previous_school || 'N/A'} />
                                     </>
                                 )}
@@ -2133,8 +2195,8 @@ const PDFPreviewModal = ({
 }) => {
     if (!admission) return null;
 
-    const childName = getChildName(admission);
-    const fileName = `Admission_${childName.replace(/\s+/g, '_')}_${admission.admission_number}.pdf`;
+    const studentName = getChildName(admission);
+    const fileName = `Admission_${studentName.replace(/\s+/g, '_')}_${admission.admission_number}.pdf`;
 
     const handleGeneratePreview = async () => {
         try {
@@ -2265,7 +2327,7 @@ const PDFPreviewModal = ({
                         <div className={styles.modalHeader}>
                             <div>
                                 <h2><DescriptionOutlined /> Admission Form Preview</h2>
-                                <p>{childName} • Admission #{admission.admission_number}</p>
+                                <p>{studentName} • Admission #{admission.admission_number}</p>
                             </div>
                             <button
                                 className={styles.closeBtn}

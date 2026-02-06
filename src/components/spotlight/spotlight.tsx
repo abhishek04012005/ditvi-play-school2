@@ -20,6 +20,10 @@ import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
 import Confetti from '@/components/confetti/confetti';
 import LineArt from '@/custom/lineart/lineart';
 import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined';
+import en from '@/translations/en.json';
+import hi from '@/translations/hi.json';
+import { headingTitlesEng } from '@/data/headingtitles-eng';
+import { headingTitlesHi } from '@/data/headingtitles-hi';
 
 export interface Award {
     id: string;
@@ -30,6 +34,7 @@ export interface Award {
     is_show_on_home_page: boolean;
     like_count: number;
     image_url: string;
+    children_photos?: string[]; // Array of children photos
     created_date: string;
 }
 
@@ -68,6 +73,29 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
     const [showPopup, setShowPopup] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
     const [confettiKey, setConfettiKey] = useState(0);
+    const [language, setLanguage] = useState<'en' | 'hi'>('en');
+
+    useEffect(() => {
+      try {
+        const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+        if (saved && (saved === 'en' || saved === 'hi')) {
+          setLanguage(saved);
+        }
+      } catch (e) {
+        // localStorage not available
+      }
+    }, []);
+
+    const translations = language === 'hi' ? hi : en;
+  const headingTitles = language === 'hi' ? headingTitlesHi : headingTitlesEng;
+    const t = (key: string): string => {
+      const keys = key.split('.');
+      let value: any = translations;
+      for (const k of keys) {
+        value = value?.[k];
+      }
+      return typeof value === 'string' ? value : key;
+    };
 
     // ✨ SCROLL POPUP STATE ✨
     const [showScrollPopup, setShowScrollPopup] = useState(false);
@@ -590,7 +618,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                             transition={{ duration: 0.6 }}
                             viewport={{ once: true }}
                         >
-                            <HeadingTitle text="Spotlight" />
+                            <HeadingTitle text={headingTitles.spotlight} />
                         </motion.div>
 
                         <div
@@ -822,6 +850,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                         name: '',
                         message: '',
                         image_url: '',
+                        children_photos: [],
                     }}
                     baseUrl={typeof window !== 'undefined' ? window.location.origin : 'https://apollokids.com'}
                 />
@@ -870,7 +899,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                     zIndex={1}
                 />
                 <div className={styles.container}>
-                    <HeadingTitle text="Spotlight" />
+                    <HeadingTitle text={headingTitles.spotlight} />
 
                     {/* Grid */}
                     <motion.div
@@ -1044,6 +1073,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                     name: '',
                     message: '',
                     image_url: '',
+                    children_photos: [],
                 }}
                 baseUrl={typeof window !== 'undefined' ? window.location.origin : 'https://apollokids.com'}
             />

@@ -10,6 +10,9 @@ import styles from './enquirypopup.module.css';
 import DoneOutlinedIcon from '@mui/icons-material/DoneOutlined';
 import Loader from '@/custom/loader/loader';
 import { schoolDetails } from '@/json/schooldetails';
+import schoolDetailsHi from '@/json/schooldetails-hi';
+import en from '@/translations/en.json';
+import hi from '@/translations/hi.json';
 
 
 interface EnquiryPopupProps {
@@ -21,6 +24,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
     const [showPopup, setShowPopup] = useState(false);
     const [popupDismissed, setPopupDismissed] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [language, setLanguage] = useState<'en' | 'hi'>('en');
 
     // Toast state
     const [showToast, setShowToast] = useState(false);
@@ -35,7 +39,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
 
     const [formData, setFormData] = useState({
         parentName: '',
-        childName: '',
+        studentName: '',
         phone: '',
         program: ''
     });
@@ -43,10 +47,29 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
     const [errors, setErrors] = useState({
         phone: '',
         parentName: '',
-        childName: '',
+        studentName: '',
         program: ''
     });
-    const programs = schoolDetails.programs.map(p => p.name);
+
+    useEffect(() => {
+        const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+        if (saved && (saved === 'en' || saved === 'hi')) {
+            setLanguage(saved);
+        }
+    }, []);
+
+    const translations = language === 'hi' ? hi : en;
+    const t = (key: string): string => {
+        const keys = key.split('.');
+        let value: any = translations;
+        for (const k of keys) {
+            value = value?.[k];
+        }
+        return typeof value === 'string' ? value : key;
+    };
+
+    const currentSchoolDetails = language === 'hi' ? schoolDetailsHi : schoolDetails;
+    const programs = currentSchoolDetails.programs.map(p => p.name);
 
     // Show popup after delay on page load
     useEffect(() => {
@@ -97,13 +120,13 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
             } else if (truncated.length === 1 && !['6', '7', '8', '9'].includes(truncated)) {
                 setErrors(prev => ({
                     ...prev,
-                    phone: 'Phone number must start with 6, 7, 8, or 9'
+                    phone: t('enquiry.popup.phoneStart')
                 }));
             } else if (truncated.length === 10) {
                 if (!validatePhone(truncated)) {
                     setErrors(prev => ({
                         ...prev,
-                        phone: 'Invalid phone number format'
+                        phone: t('enquiry.popup.phoneFormat')
                     }));
                 } else {
                     setErrors(prev => ({ ...prev, phone: '' }));
@@ -111,7 +134,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
             } else if (truncated.length > 0 && truncated.length < 10) {
                 setErrors(prev => ({
                     ...prev,
-                    phone: `Enter ${10 - truncated.length} more digits`
+                    phone: `${t('enquiry.popup.enterMoreDigits')} ${10 - truncated.length} ${t('enquiry.popup.digits')}`
                 }));
             }
         } else if (name === 'parentName') {
@@ -124,7 +147,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
             if (alphabetsOnly.trim()) {
                 setErrors(prev => ({ ...prev, parentName: '' }));
             }
-        } else if (name === 'childName') {
+        } else if (name === 'studentName') {
             // Only allow alphabets and spaces for child name
             const alphabetsOnly = value.replace(/[^a-zA-Z\s]/g, '');
             setFormData(prev => ({
@@ -132,7 +155,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
                 [name]: alphabetsOnly
             }));
             if (alphabetsOnly.trim()) {
-                setErrors(prev => ({ ...prev, childName: '' }));
+                setErrors(prev => ({ ...prev, studentName: '' }));
             }
         } else if (name === 'program') {
             setFormData(prev => ({
@@ -149,28 +172,28 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
         const newErrors: typeof errors = {
             phone: '',
             parentName: '',
-            childName: '',
+            studentName: '',
             program: ''
         };
         let isValid = true;
 
         if (!formData.parentName.trim()) {
-            newErrors.parentName = 'Parent name is required';
+            newErrors.parentName = t('enquiry.popup.parentNameRequired');
             isValid = false;
         }
 
-        if (!formData.childName.trim()) {
-            newErrors.childName = 'Student name is required';
+        if (!formData.studentName.trim()) {
+            newErrors.studentName = t('enquiry.popup.studentNameRequired');
             isValid = false;
         }
 
         if (!formData.program) {
-            newErrors.program = 'Please select a program';
+            newErrors.program = t('enquiry.popup.programRequired');
             isValid = false;
         }
 
         if (!validatePhone(formData.phone)) {
-            newErrors.phone = 'Please enter a valid 10-digit phone number';
+            newErrors.phone = t('enquiry.popup.phoneRequired');
             isValid = false;
         }
 
@@ -182,7 +205,10 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
         e.preventDefault();
 
         if (!validateForm()) {
-            showErrorModal('Please fill all fields correctly', 'Validation Error');
+            showErrorModal(
+                t('enquiry.validation.fillAllFields'),
+                t('enquiry.validation.validationError')
+            );
             return;
         }
 
@@ -191,28 +217,28 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
         try {
             const result = await saveEnquiryToDatabase({
                 parent_name: formData.parentName,
-                child_name: formData.childName,
+                child_name: formData.studentName,
                 phone: formData.phone,
                 program: formData.program,
                 status: 'new'
             });
 
             showSuccessModal(
-                `Thank you for your enquiry! Your Enquiry Number: ${result.enquiry_number}\n\nOur admission team will contact you soon to discuss your student's admission.`,
-                'Enquiry Submitted Successfully! 🎉'
+                `${t('enquiry.success.message')}${result.enquiry_number}${t('enquiry.success.messageSuffix')}`,
+                t('enquiry.success.title')
             );
 
             setToastType('success');
-            setToastMessage('Your enquiry has been submitted successfully!');
+            setToastMessage(t('enquiry.success.toastMessage'));
             setShowToast(true);
 
             setFormData({
                 parentName: '',
-                childName: '',
+                studentName: '',
                 phone: '',
                 program: ''
             });
-            setErrors({ phone: '', parentName: '', childName: '', program: '' });
+            setErrors({ phone: '', parentName: '', studentName: '', program: '' });
 
             // Close popup after successful submission
             setTimeout(() => {
@@ -222,12 +248,12 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
             console.error('Error:', error);
 
             showErrorModal(
-                'Failed to submit your enquiry. Please try again or contact us directly.',
-                'Failed to Submit Enquiry'
+                t('enquiry.error.message'),
+                t('enquiry.error.title')
             );
 
             setToastType('error');
-            setToastMessage('Failed to submit enquiry. Please try again.');
+            setToastMessage(t('enquiry.error.toastMessage'));
             setShowToast(true);
         } finally {
             setLoading(false);
@@ -312,13 +338,13 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.2 }}
                             >
-                                <div className={styles.popupBadge}>🎓 Limited Seats Only</div>
-                                <h2 className={styles.popupTitle}>Start Your Child's Journey Today!</h2>
+                                <div className={styles.popupBadge}>{t('enquiry.popup.badge')}</div>
+                                <h2 className={styles.popupTitle}>{t('enquiry.popup.title')}</h2>
                                 <p className={styles.popupSubtitle}>
-                                    Join 500+ happy families.
+                                    {t('enquiry.popup.subtitle1')}
                                 </p >
                                 <p className={styles.popupSubtitle}>
-                                    <strong>Enquire today, get 10% off your first month admission!</strong>
+                                    <strong>{t('enquiry.popup.subtitle2')}</strong>
                                 </p>
                             </motion.div>
 
@@ -330,21 +356,21 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
                                 transition={{ delay: 0.3 }}
                             >
                                 <form onSubmit={handleSubmit} className={styles.popupForm}>
-                                    {/* Parent Name */}
+                                    {/* Father Name */}
                                     <motion.div
                                         className={styles.formGroup}
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.35 }}
                                     >
-                                        <label htmlFor="popupParentName">Parent's Name *</label>
+                                        <label htmlFor="popupParentName">{t('enquiry.popup.parentNameLabel')} *</label>
                                         <div className={styles.inputWrapper}>
                                             <FaUser className={styles.icon} />
                                             <input
                                                 type="text"
                                                 id="popupParentName"
                                                 name="parentName"
-                                                placeholder="Enter parent's name"
+                                                placeholder={t('enquiry.popup.parentNamePlaceholder')}
                                                 value={formData.parentName}
                                                 onChange={handleChange}
                                                 className={errors.parentName ? styles.inputError : ''}
@@ -368,26 +394,26 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.4 }}
                                     >
-                                        <label htmlFor="popupChildName">Student's Name *</label>
+                                        <label htmlFor="popupChildName">{t('enquiry.popup.studentNameLabel')} *</label>
                                         <div className={styles.inputWrapper}>
                                             <FaChild className={styles.icon} />
                                             <input
                                                 type="text"
                                                 id="popupChildName"
-                                                name="childName"
-                                                placeholder="Enter student's name"
-                                                value={formData.childName}
+                                                name="studentName"
+                                                placeholder={t('enquiry.popup.studentNamePlaceholder')}
+                                                value={formData.studentName}
                                                 onChange={handleChange}
-                                                className={errors.childName ? styles.inputError : ''}
+                                                className={errors.studentName ? styles.inputError : ''}
                                             />
                                         </div>
-                                        {errors.childName && (
+                                        {errors.studentName && (
                                             <motion.span
                                                 className={styles.errorMessage}
                                                 initial={{ opacity: 0, y: -5 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                             >
-                                                {errors.childName}
+                                                {errors.studentName}
                                             </motion.span>
                                         )}
                                     </motion.div>
@@ -399,14 +425,14 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.45 }}
                                     >
-                                        <label htmlFor="popupPhone">Phone Number *</label>
+                                        <label htmlFor="popupPhone">{t('enquiry.popup.phoneLabel')} *</label>
                                         <div className={styles.inputWrapper}>
                                             <FaPhone className={styles.icon} />
                                             <input
                                                 type="tel"
                                                 id="popupPhone"
                                                 name="phone"
-                                                placeholder="10-digit mobile number"
+                                                placeholder={t('enquiry.popup.phonePlaceholder')}
                                                 value={formData.phone}
                                                 onChange={handleChange}
                                                 maxLength={10}
@@ -436,7 +462,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.5 }}
                                     >
-                                        <label htmlFor="popupProgram">Select Program *</label>
+                                        <label htmlFor="popupProgram">{t('enquiry.popup.programLabel')} *</label>
                                         <div className={styles.inputWrapper}>
                                             <PiGraduationCapBold className={styles.icon} />
                                             <select
@@ -446,7 +472,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
                                                 onChange={handleChange}
                                                 className={errors.program ? styles.inputError : ''}
                                             >
-                                                <option value="">-- Select Program --</option>
+                                                <option value="">{t('enquiry.popup.programPlaceholder')}</option>
                                                 {programs.map((program) => (
                                                     <option key={program} value={program}>
                                                         {program}
@@ -480,10 +506,10 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
                                             {loading ? (
                                                 <>
                                                     <span className={styles.spinner}></span>
-                                                    Submitting...
+                                                    {t('enquiry.popup.submitting')}
                                                 </>
                                             ) : (
-                                                'Submit Enquiry'
+                                                t('enquiry.popup.submitButton')
                                             )}
                                         </span>
                                     </motion.button>
@@ -497,7 +523,7 @@ const EnquiryPopup = ({ delay = 5000, onClose }: EnquiryPopupProps) => {
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.6 }}
                             >
-                                <p className={styles.popupSecure}> <DoneOutlinedIcon /> 100% Secure • <DoneOutlinedIcon /> Quick Response • <DoneOutlinedIcon /> No Spam</p>
+                                <p className={styles.popupSecure}> <DoneOutlinedIcon /> {t('enquiry.popup.secure')} • <DoneOutlinedIcon /> {t('enquiry.popup.quickResponse')} • <DoneOutlinedIcon /> {t('enquiry.popup.noSpam')}</p>
                             </motion.div>
                         </motion.div>
                     </motion.div>

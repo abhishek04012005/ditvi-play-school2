@@ -159,7 +159,7 @@
     border: none;
     border-radius: 14px;
     font-size: 1rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     box-shadow: 0 10px 25px rgba(106, 76, 147, 0.25);
@@ -223,7 +223,7 @@
     margin: 0 0 1rem 0;
     font-size: 1.5rem;
     color: var(--primary-purple);
-    font-weight: 700;
+    
 }
 
 .emptyState p {
@@ -268,7 +268,7 @@
     margin: 0 0 0.5rem 0;
     font-size: 1.3rem;
     color: var(--error-red);
-    font-weight: 700;
+    
 }
 
 .errorContent p {
@@ -285,7 +285,7 @@
     border: none;
     border-radius: 10px;
     font-size: 0.95rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
@@ -338,7 +338,7 @@
     border: none;
     border-radius: 50px;
     font-size: 0.9rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     text-transform: uppercase;
@@ -384,7 +384,7 @@
     margin: 0 0 0.5rem 0;
     font-size: 1.6rem;
     color: var(--primary-purple);
-    font-weight: 700;
+    
     letter-spacing: -0.3px;
 }
 
@@ -405,7 +405,7 @@
     border: 2px solid var(--border-color);
     border-radius: 10px;
     font-size: 0.9rem;
-    font-weight: 700;
+    
     cursor: pointer;
     transition: var(--transition);
     text-transform: uppercase;
@@ -448,7 +448,7 @@
     color: var(--primary-purple);
     font-size: 0.9rem;
     margin-bottom: 0.75rem;
-    font-weight: 700;
+    
 }
 
 .remarkBoxStatus p {
@@ -504,7 +504,7 @@
     display: block;
     font-size: 0.8rem;
     color: var(--text-light);
-    font-weight: 700;
+    
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 0.5rem;
@@ -542,7 +542,7 @@
 .statusMessage h4 {
     margin: 0 0 0.5rem 0;
     font-size: 1.1rem;
-    font-weight: 700;
+    
 }
 
 .statusMessage p {
@@ -565,7 +565,7 @@
     margin: 0 0 1.5rem 0;
     font-size: 1.05rem;
     color: var(--primary-purple);
-    font-weight: 700;
+    
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -637,7 +637,7 @@
 
 .timelineStep.completed p {
     color: var(--success-green);
-    font-weight: 700;
+    
 }
 
 /* ==================== Next Steps Section ==================== */
@@ -666,7 +666,7 @@
     margin: 0;
     font-size: 1.05rem;
     color: var(--primary-purple);
-    font-weight: 700;
+    
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -690,7 +690,7 @@
     margin: 0 0 0.75rem 0;
     font-size: 1.05rem;
     color: var(--primary-purple);
-    font-weight: 700;
+    
 }
 
 .contactSection>p {
@@ -715,7 +715,7 @@
     text-decoration: none;
     border-radius: 10px;
     font-size: 0.95rem;
-    font-weight: 700;
+    
     transition: var(--transition);
     box-shadow: 0 4px 12px rgba(106, 76, 147, 0.2);
 }

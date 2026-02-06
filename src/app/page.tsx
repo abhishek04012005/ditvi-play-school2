@@ -8,7 +8,6 @@ import Hero from "@/components/hero/hero";
 import Program from "@/components/program/program";
 import Testimonials from "@/components/testimonials/testimonials";
 import ARBooks from "@/components/ar/arbooks";
-import { galleryItems } from "@/json/gallery";
 
 export const metadata: Metadata = {
   title: "Home | Ditvi Play School",
@@ -30,10 +29,6 @@ export default function Home() {
       <Program />
       <Awards isHomePage={true} />
       <Gallery
-        items={galleryItems}
-        youtubeVideos={[]}
-        instagramVideos={[]}
-        normalVideos={[]}
         isHomePage={true}
       />
       <Testimonials />

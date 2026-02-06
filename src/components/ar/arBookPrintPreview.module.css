@@ -53,7 +53,7 @@
     margin: 0;
     font-size: 1.8rem;
     color: var(--black);
-    font-weight: 700;
+    
 }
 
 .titleSection p {
@@ -158,7 +158,7 @@
     margin: 0 0 1rem;
     font-size: 1.1rem;
     color: var(--primary-purple);
-    font-weight: 700;
+    
 }
 
 .infoBox ul {
@@ -181,7 +181,7 @@
     position: absolute;
     left: 0;
     color: var(--primary-yellow);
-    font-weight: 700;
+    
     font-size: 1.2rem;
 }
 

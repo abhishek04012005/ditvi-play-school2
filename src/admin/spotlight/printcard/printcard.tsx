@@ -49,7 +49,8 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose, customTyp
   // Get the selected award type details with dynamic colors
   const getAwardTypeDetails = () => {
     if (!award) return null;
-    const typeDetails = customTypes.find(t => t.id === award.award_type);
+    // Match by name since award_type stores the name, not the id
+    const typeDetails = customTypes.find(t => t.name === award.award_type);
     if (typeDetails) {
       return {
         name: typeDetails.name,
@@ -58,7 +59,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose, customTyp
         gradient: `linear-gradient(135deg, ${typeDetails.color} 0%, ${shadeColor(typeDetails.color, -30)} 100%)`
       };
     }
-    // Fallback for old hardcoded types
+    // Fallback for old hardcoded types (by id for backward compatibility)
     const defaults: { [key: string]: any } = {
       weekly: { name: 'Star of the Week', emoji: '⭐', color: '#FFD700', gradient: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' },
       monthly: { name: 'Star of the Month', emoji: '🌟', color: '#C0C0C0', gradient: 'linear-gradient(135deg, #C0C0C0 0%, #808080 100%)' },
@@ -314,7 +315,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose, customTyp
               margin: 8mm 0;
               font-size: 11pt;
               color: #2b2b2b;
-              font-weight: 700;
+              
               line-height: 1.8;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
@@ -339,7 +340,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose, customTyp
               padding: 6mm 8mm;
               margin: 8mm 0;
               font-size: 11pt;
-              font-weight: 800;
+              
               font-style: italic;
               color: #6a4c93;
               line-height: 1.6;
@@ -369,7 +370,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose, customTyp
 
             .label {
               font-size: 8pt;
-              font-weight: 700;
+              
               color: #666;
               text-transform: uppercase;
               letter-spacing: 0.5px;
@@ -381,7 +382,7 @@ const PrintCard: React.FC<PrintCardProps> = ({ award, isOpen, onClose, customTyp
             .date {
               font-size: 11pt;
               color: #6a4c93;
-              font-weight: 800;
+              
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { MdDateRange } from "react-icons/md";
@@ -29,9 +29,12 @@ import {
 import LineArt from "@/custom/lineart/lineart";
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import { schoolDetails } from "@/json/schooldetails";
+import schoolDetailsHi from "@/json/schooldetails-hi";
 import Loader from "@/custom/loader/loader";
 import { MdBloodtype } from "react-icons/md";
 import AdmissionSlip from "./AdmissionSlip";
+import en from "@/translations/en.json";
+import hi from "@/translations/hi.json";
 
 
 interface FormData {
@@ -40,7 +43,9 @@ interface FormData {
   child_gender: string;
   child_place_of_birth: string;
   child_blood_group: string;
-  parent_name: string;
+  category: string;
+  father_name: string;
+  mother_name: string;
   parent_address: string;
   parent_mobile_number: string;
   parent_email: string;
@@ -60,6 +65,7 @@ interface SubmissionResult {
   child_name: string;
   parent_mobile_number: string;
   program_name: string;
+  parent_email: string;
 }
 
 
@@ -72,6 +78,28 @@ export default function AdmissionForm() {
     useState<SubmissionResult | null>(null);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [uploadDocsNow, setUploadDocsNow] = useState(true);
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+      if (saved && (saved === 'en' || saved === 'hi')) {
+        setLanguage(saved);
+      }
+    } catch (e) {
+      // localStorage not available
+    }
+  }, []);
+
+  const translations = language === 'hi' ? hi : en;
+  const t = (key: string): string => {
+    const keys = key.split('.');
+    let value: any = translations;
+    for (const k of keys) {
+      value = value?.[k];
+    }
+    return typeof value === 'string' ? value : key;
+  };
 
   const [formData, setFormData] = useState<FormData>({
     child_name: "",
@@ -79,7 +107,9 @@ export default function AdmissionForm() {
     child_gender: "",
     child_place_of_birth: "",
     child_blood_group: "",
-    parent_name: "",
+    category: "",
+    father_name: "",
+    mother_name: "",
     parent_address: "",
     parent_mobile_number: "",
     parent_email: "",
@@ -124,27 +154,28 @@ export default function AdmissionForm() {
 
   const pdfRef = useRef<HTMLDivElement>(null);
 
-  const programs = schoolDetails.programs.map(p => p.name);
+  const currentSchoolDetails = language === 'hi' ? schoolDetailsHi : schoolDetails;
+  const programs = currentSchoolDetails.programs.map(p => p.name);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    
+
     let processedValue = value;
-    
+
     // Fields that should only contain alphabets and spaces
-    const nameFields = ['child_name', 'parent_name', 'child_place_of_birth'];
+    const nameFields = ['child_name', 'father_name', 'mother_name', 'child_place_of_birth'];
     if (nameFields.includes(name)) {
       processedValue = value.replace(/[^a-zA-Z\s]/g, '');
     }
-    
+
     // Fields that should only contain numbers
     const numberFields = ['parent_mobile_number'];
     if (numberFields.includes(name)) {
       processedValue = value.replace(/[^0-9]/g, '');
     }
-    
+
     setFormData({ ...formData, [name]: processedValue });
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
@@ -259,9 +290,13 @@ export default function AdmissionForm() {
         fieldErrors.child_place_of_birth = "Place of birth is required";
       }
     } else if (stepNum === 2) {
-      if (!formData.parent_name.trim()) {
-        errors.push("Parent name is required");
-        fieldErrors.parent_name = "Parent name is required";
+      if (!formData.father_name.trim()) {
+        errors.push("Father name is required");
+        fieldErrors.father_name = "Father name is required";
+      }
+      if (!formData.mother_name.trim()) {
+        errors.push("Mother name is required");
+        fieldErrors.mother_name = "Mother name is required";
       }
       if (!formData.parent_address.trim()) {
         errors.push("Address is required");
@@ -312,7 +347,11 @@ export default function AdmissionForm() {
       if (formData.child_blood_group) {
         formDataToSend.append("child_blood_group", formData.child_blood_group);
       }
-      formDataToSend.append("parent_name", formData.parent_name);
+      if (formData.category) {
+        formDataToSend.append("category", formData.category);
+      }
+      formDataToSend.append("father_name", formData.father_name);
+      formDataToSend.append("mother_name", formData.mother_name);
       formDataToSend.append("parent_address", formData.parent_address);
       formDataToSend.append(
         "parent_mobile_number",
@@ -431,7 +470,7 @@ export default function AdmissionForm() {
       // Create PDF with exact A4 dimensions (210mm x 297mm)
       const pdf = new jsPDF("p", "mm", "a4");
       const imgData = canvas.toDataURL("image/png");
-      
+
       // Add image to fill entire A4 page (0,0 to 210mm,297mm)
       pdf.addImage(imgData, "PNG", 0, 0, 210, 297);
       pdf.save(`Admission_${submissionResult?.admission_number}.pdf`);
@@ -472,7 +511,7 @@ export default function AdmissionForm() {
   };
 
   const handleShare = async () => {
-    const text = `I have successfully submitted my admission application to ${schoolDetails.name}! Admission Number: ${submissionResult?.admission_number}`;
+    const text = `I have successfully submitted my admission application to ${currentSchoolDetails.name}! Admission Number: ${submissionResult?.admission_number}`;
 
     if (navigator.share) {
       try {
@@ -571,10 +610,10 @@ export default function AdmissionForm() {
             </motion.div>
 
             <h1 className={styles.successTitle}>
-              Admission Request Submitted Successfully!
+              {t('admission.success.title')}
             </h1>
             <p className={styles.successSubtitle}>
-              Your application has been received. 
+              {t('admission.success.subtitle')}
             </p>
 
             <motion.div
@@ -585,7 +624,7 @@ export default function AdmissionForm() {
             >
               <button className={styles.btnPrimary} onClick={downloadPDF}>
                 <FaDownload className={styles.btnIcon} />
-                <span>Download PDF</span>
+                <span>{t('admission.success.downloadPdf')}</span>
               </button>
             </motion.div>
             {/* Confirmation Slip */}
@@ -657,13 +696,13 @@ export default function AdmissionForm() {
           }}
           zIndex={1}
         />
-        <HeadingTitle text="Admission Form" />
+        <HeadingTitle text={t('admission.title')} />
         <div className={styles.container}>
           <div className={styles.formCard}>
             <div className={styles.formLayout}>
               <main className={styles.main}>
                 <p className={styles.subtitle}>
-                  Fill in the details below to apply for admission
+                  {t('admission.subtitle')}
                 </p>
 
                 {/* Progress Bar */}
@@ -677,14 +716,10 @@ export default function AdmissionForm() {
 
                   <div className={styles.pills}>
                     {[
-                      { n: 1, t: "Student Details", icon: EmojiPeople },
-                      { n: 2, t: "Parent's Details", icon: FamilyRestroom },
-                      { n: 3, t: "Academic Details", icon: SchoolOutlined },
-                      {
-                        n: 4,
-                        t: "Upload Documents",
-                        icon: DescriptionOutlined,
-                      },
+                      { n: 1, t: t('admission.steps.student'), icon: EmojiPeople },
+                      { n: 2, t: t('admission.steps.parents'), icon: FamilyRestroom },
+                      { n: 3, t: t('admission.steps.academic'), icon: SchoolOutlined },
+                      { n: 4, t: t('admission.steps.documents'), icon: DescriptionOutlined },
                     ].map((s) => {
                       const IconComponent = s.icon;
                       return (
@@ -720,7 +755,7 @@ export default function AdmissionForm() {
                     >
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
-                          <label>Student's Name *</label>
+                          <label>{t('admission.form.studentName')} *</label>
                           <div className={styles.inputWrapper}>
                             <FaChild className={styles.icon} />
                             <input
@@ -728,7 +763,7 @@ export default function AdmissionForm() {
                               name="child_name"
                               value={formData.child_name}
                               onChange={handleInputChange}
-                              placeholder="Enter student's name"
+                              placeholder={t('admission.form.studentNamePlaceholder')}
                               required
                             />
                           </div>
@@ -740,7 +775,7 @@ export default function AdmissionForm() {
                         </div>
 
                         <div className={styles.formGroup}>
-                          <label>Date of Birth *</label>
+                          <label>{t('admission.form.dob')} *</label>
                           <div className={styles.inputWrapper}>
                             <MdDateRange className={styles.icon} />
                             <input
@@ -761,7 +796,7 @@ export default function AdmissionForm() {
 
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
-                          <label>Gender *</label>
+                          <label>{t('admission.form.gender')} *</label>
                           <div className={styles.radioGroup}>
                             <div className={styles.radioItem}>
                               <input
@@ -777,7 +812,7 @@ export default function AdmissionForm() {
                                 htmlFor="gender_male"
                                 className={styles.radioLabel}
                               >
-                                Male
+                                {t('admission.form.male')}
                               </label>
                             </div>
 
@@ -795,7 +830,7 @@ export default function AdmissionForm() {
                                 htmlFor="gender_female"
                                 className={styles.radioLabel}
                               >
-                                Female
+                                {t('admission.form.female')}
                               </label>
                             </div>
                           </div>
@@ -807,7 +842,7 @@ export default function AdmissionForm() {
                         </div>
 
                         <div className={styles.formGroup}>
-                          <label>Place of Birth *</label>
+                          <label>{t('admission.form.placeOfBirth')} *</label>
                           <div className={styles.inputWrapper}>
                             <FaBirthdayCake className={styles.icon} />
                             <input
@@ -815,7 +850,7 @@ export default function AdmissionForm() {
                               name="child_place_of_birth"
                               value={formData.child_place_of_birth}
                               onChange={handleInputChange}
-                              placeholder="Enter place of birth"
+                              placeholder={t('admission.form.placeOfBirthPlaceholder')}
                               required
                             />
                           </div>
@@ -829,7 +864,7 @@ export default function AdmissionForm() {
 
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
-                          <label>Blood Group (Optional)</label>
+                          <label>{t('admission.form.bloodGroup')}</label>
                           <div className={styles.inputWrapper}>
                             <MdBloodtype className={styles.icon} />
                             <select
@@ -838,7 +873,7 @@ export default function AdmissionForm() {
                               onChange={handleInputChange}
                               className={styles.selectInput}
                             >
-                              <option value="">-- Select Blood Group --</option>
+                              <option value="">{t('admission.form.selectBloodGroup')}</option>
                               <option value="O+">O+</option>
                               <option value="O-">O-</option>
                               <option value="A+">A+</option>
@@ -848,6 +883,83 @@ export default function AdmissionForm() {
                               <option value="AB+">AB+</option>
                               <option value="AB-">AB-</option>
                             </select>
+                          </div>
+                        </div>
+
+                        <div className={styles.formGroup}>
+                          <label>{t('admission.form.category')}</label>
+                          <div className={styles.radioGroup}>
+                            <div className={styles.radioItem}>
+                              <input
+                                type="radio"
+                                id="category_general"
+                                name="category"
+                                value="General"
+                                checked={formData.category === "General"}
+                                onChange={handleInputChange}
+                                className={styles.radioInput}
+                              />
+                              <label
+                                htmlFor="category_general"
+                                className={styles.radioLabel}
+                              >
+                                General
+                              </label>
+                            </div>
+
+                            <div className={styles.radioItem}>
+                              <input
+                                type="radio"
+                                id="category_obc"
+                                name="category"
+                                value="OBC"
+                                checked={formData.category === "OBC"}
+                                onChange={handleInputChange}
+                                className={styles.radioInput}
+                              />
+                              <label
+                                htmlFor="category_obc"
+                                className={styles.radioLabel}
+                              >
+                                OBC
+                              </label>
+                            </div>
+
+                            <div className={styles.radioItem}>
+                              <input
+                                type="radio"
+                                id="category_sc"
+                                name="category"
+                                value="SC"
+                                checked={formData.category === "SC"}
+                                onChange={handleInputChange}
+                                className={styles.radioInput}
+                              />
+                              <label
+                                htmlFor="category_sc"
+                                className={styles.radioLabel}
+                              >
+                                SC
+                              </label>
+                            </div>
+
+                            <div className={styles.radioItem}>
+                              <input
+                                type="radio"
+                                id="category_st"
+                                name="category"
+                                value="ST"
+                                checked={formData.category === "ST"}
+                                onChange={handleInputChange}
+                                className={styles.radioInput}
+                              />
+                              <label
+                                htmlFor="category_st"
+                                className={styles.radioLabel}
+                              >
+                                ST
+                              </label>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -864,28 +976,49 @@ export default function AdmissionForm() {
                     >
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
-                          <label>Parent's Name *</label>
+                          <label>{t('admission.form.fatherName')} *</label>
                           <div className={styles.inputWrapper}>
                             <FaUser className={styles.icon} />
                             <input
                               type="text"
-                              name="parent_name"
-                              value={formData.parent_name}
+                              name="father_name"
+                              value={formData.father_name}
                               onChange={handleInputChange}
-                              placeholder="Enter parent's name"
+                              placeholder={t('admission.form.fatherNamePlaceholder')}
                               required
                             />
 
-                            {errors.parent_name && (
+                            {errors.father_name && (
                               <p className={styles.errorMessage}>
-                                {errors.parent_name}
+                                {errors.father_name}
                               </p>
                             )}
                           </div>
                         </div>
 
                         <div className={styles.formGroup}>
-                          <label>Mobile Number *</label>
+                          <label>{t('admission.form.motherName')} *</label>
+                          <div className={styles.inputWrapper}>
+                            <FaUser className={styles.icon} />
+                            <input
+                              type="text"
+                              name="mother_name"
+                              value={formData.mother_name}
+                              onChange={handleInputChange}
+                              placeholder={t('admission.form.motherNamePlaceholder')}
+                              required
+                            />
+
+                            {errors.mother_name && (
+                              <p className={styles.errorMessage}>
+                                {errors.mother_name}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className={styles.formGroup}>
+                          <label>{t('admission.form.mobileNumber')} *</label>
                           <div className={styles.inputWrapper}>
                             <FaPhone className={styles.icon} />
                             <input
@@ -893,7 +1026,7 @@ export default function AdmissionForm() {
                               name="parent_mobile_number"
                               value={formData.parent_mobile_number}
                               onChange={handleInputChange}
-                              placeholder="10-digit mobile number"
+                              placeholder={t('admission.form.mobileNumberPlaceholder')}
                               maxLength={10}
                               pattern="[0-9]{10}"
                               required
@@ -905,11 +1038,9 @@ export default function AdmissionForm() {
                             </p>
                           )}
                         </div>
-                      </div>
 
-                      <div className={styles.formRow}>
                         <div className={styles.formGroup}>
-                          <label>Email (Optional)</label>
+                          <label>{t('admission.form.email')}</label>
                           <div className={styles.inputWrapper}>
                             <FaEnvelope className={styles.icon} />
                             <input
@@ -917,19 +1048,22 @@ export default function AdmissionForm() {
                               name="parent_email"
                               value={formData.parent_email}
                               onChange={handleInputChange}
-                              placeholder="Enter parent's email"
+                              placeholder={t('admission.form.emailPlaceholder')}
                             />
                           </div>
                         </div>
+                      </div>
+
+                      <div className={styles.formRowFull}>
                         <div className={styles.formGroup}>
-                          <label>Address *</label>
+                          <label>{t('admission.form.address')} *</label>
                           <div className={styles.inputWrapper}>
                             <FaMapMarkerAlt className={styles.icon} />
                             <textarea
                               name="parent_address"
                               value={formData.parent_address}
                               onChange={handleInputChange}
-                              placeholder="Enter complete address"
+                              placeholder={t('admission.form.addressPlaceholder')}
                               rows={3}
                               required
                               className={styles.textarea}
@@ -956,7 +1090,7 @@ export default function AdmissionForm() {
                     >
                       <div className={styles.formRow}>
                         <div className={styles.formGroup}>
-                          <label>Select Program *</label>
+                          <label>{t('admission.form.selectProgram')} *</label>
                           <div className={styles.radioGroup}>
                             {programs.map((program) => (
                               <div className={styles.radioItem} key={program}>
@@ -986,7 +1120,7 @@ export default function AdmissionForm() {
                         </div>
 
                         <div className={styles.formGroup}>
-                          <label>Previous School (Optional)</label>
+                          <label>{t('admission.form.previousSchool')}</label>
                           <div className={styles.inputWrapper}>
                             <FaSchool className={styles.icon} />
                             <input
@@ -994,7 +1128,7 @@ export default function AdmissionForm() {
                               name="previous_school"
                               value={formData.previous_school}
                               onChange={handleInputChange}
-                              placeholder="Enter previous school name"
+                              placeholder={t('admission.form.previousSchoolPlaceholder')}
                             />
                           </div>
                         </div>
@@ -1011,7 +1145,7 @@ export default function AdmissionForm() {
                       transition={{ duration: 0.4 }}
                     >
                       <div className={styles.formGroup}>
-                        <label>Selected Files Status</label>
+                        <label>{t('admission.form.selectedFilesStatus')}</label>
                         <div className={styles.selectedFiles}>
                           <div
                             className={`${styles.fileStatusItem} ${filePreviews.photo
@@ -1023,12 +1157,12 @@ export default function AdmissionForm() {
                               {filePreviews.photo ? "✓" : "○"}
                             </span>
                             <span className={styles.fileStatusText}>
-                              Photo:{" "}
+                              {t('admission.form.photoStatus')}
                               {filePreviews.photo
                                 ? filePreviews.photo.startsWith("data:image")
-                                  ? "Image selected"
+                                  ? t('admission.form.imageSelected')
                                   : filePreviews.photo
-                                : "Not uploaded"}
+                                : t('admission.form.photoNotUploaded')}
                             </span>
                           </div>
 
@@ -1042,14 +1176,14 @@ export default function AdmissionForm() {
                               {filePreviews.birth_certificate ? "✓" : "○"}
                             </span>
                             <span className={styles.fileStatusText}>
-                              Birth Certificate:{" "}
+                              {t('admission.form.birthCertificateStatus')}
                               {filePreviews.birth_certificate
                                 ? filePreviews.birth_certificate.startsWith(
                                   "data:image"
                                 )
-                                  ? "Image selected"
+                                  ? t('admission.form.imageSelected')
                                   : filePreviews.birth_certificate
-                                : "Not uploaded"}
+                                : t('admission.form.photoNotUploaded')}
                             </span>
                           </div>
 
@@ -1063,14 +1197,14 @@ export default function AdmissionForm() {
                               {filePreviews.aadhar_card ? "✓" : "○"}
                             </span>
                             <span className={styles.fileStatusText}>
-                              Aadhar Card:{" "}
+                              {t('admission.form.aadharCardStatus')}
                               {filePreviews.aadhar_card
                                 ? filePreviews.aadhar_card.startsWith(
                                   "data:image"
                                 )
-                                  ? "Image selected"
+                                  ? t('admission.form.imageSelected')
                                   : filePreviews.aadhar_card
-                                : "Not uploaded"}
+                                : t('admission.form.photoNotUploaded')}
                             </span>
                           </div>
 
@@ -1084,14 +1218,14 @@ export default function AdmissionForm() {
                               {filePreviews.parent_id_proof ? "✓" : "○"}
                             </span>
                             <span className={styles.fileStatusText}>
-                              Parent ID Proof:{" "}
+                              {t('admission.form.parentIdStatus')}
                               {filePreviews.parent_id_proof
                                 ? filePreviews.parent_id_proof.startsWith(
                                   "data:image"
                                 )
-                                  ? "Image selected"
+                                  ? t('admission.form.imageSelected')
                                   : filePreviews.parent_id_proof
-                                : "Not uploaded"}
+                                : t('admission.form.photoNotUploaded')}
                             </span>
                           </div>
                         </div>
@@ -1100,7 +1234,7 @@ export default function AdmissionForm() {
                       {uploadDocsNow && (
                         <>
                           <FileUploadField
-                            label="Photo (Optional)"
+                            label={t('admission.form.photoLabel')}
                             fieldName="photo"
                             accept="image/*"
                             preview={filePreviews.photo}
@@ -1108,7 +1242,7 @@ export default function AdmissionForm() {
                           />
 
                           <FileUploadField
-                            label="Birth Certificate (Optional)"
+                            label={t('admission.form.birthCertificateLabel')}
                             fieldName="birth_certificate"
                             accept=".pdf,image/*"
                             preview={filePreviews.birth_certificate}
@@ -1118,7 +1252,7 @@ export default function AdmissionForm() {
                           />
 
                           <FileUploadField
-                            label="Aadhar Card (Optional)"
+                            label={t('admission.form.aadharCardLabel')}
                             fieldName="aadhar_card"
                             accept=".pdf,image/*"
                             preview={filePreviews.aadhar_card}
@@ -1126,7 +1260,7 @@ export default function AdmissionForm() {
                           />
 
                           <FileUploadField
-                            label="Parent's ID Proof (Optional)"
+                            label={t('admission.form.parentIdLabel')}
                             fieldName="parent_id_proof"
                             accept=".pdf,image/*"
                             preview={filePreviews.parent_id_proof}
@@ -1147,7 +1281,7 @@ export default function AdmissionForm() {
                         className={styles.prevBtn}
                         onClick={() => setStep(step - 1)}
                       >
-                        ← Previous
+                        {t('admission.form.previousButton')}
                       </button>
                     )}
 
@@ -1161,7 +1295,7 @@ export default function AdmissionForm() {
                           }
                         }}
                       >
-                        Next →
+                        {t('admission.form.nextButton')}
                       </button>
                     ) : (
                       <button
@@ -1173,10 +1307,10 @@ export default function AdmissionForm() {
                         {loading ? (
                           <>
                             <FaSpinner className={styles.spinner} />{" "}
-                            Submitting...
+                            {t('admission.form.submitting')}
                           </>
                         ) : (
-                          "✓ Submit Admission"
+                          ` ${t('admission.form.submitButton')}`
                         )}
                       </button>
                     )}

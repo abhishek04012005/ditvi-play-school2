@@ -37,7 +37,7 @@ interface Contact {
 
 interface Enquiry {
     id: string;
-    parent_name: string;
+    father_name: string;
     child_name: string;
     phone: string;
     program: string;

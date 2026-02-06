@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import styles from './admissionpdftemplate.module.css';
 import { schoolDetails } from '@/json/schooldetails';
+import enTranslations from '@/translations/en.json';
+import hiTranslations from '@/translations/hi.json';
 
 export interface Admission {
     admission_number: any;
@@ -14,7 +16,9 @@ export interface Admission {
     child_gender: string;
     child_place_of_birth: string;
     child_blood_group?: string;
-    parent_name?: string;
+    father_name?: string;
+    mother_name?: string;
+    category?: string;
     parent_first_name?: string;
     parent_last_name?: string;
     parent_address?: string;
@@ -72,22 +76,22 @@ const formatDate = (dateString: string): string => {
 };
 
 const formatDateTime = (isoString: string) => {
-  const date = new Date(isoString);
+    const date = new Date(isoString);
 
-  const formattedDate = date.toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });
+    const formattedDate = date.toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
 
-  const formattedTime = date.toLocaleTimeString('en-IN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true   // ensures AM/PM format
-  });
+    const formattedTime = date.toLocaleTimeString('en-IN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true   // ensures AM/PM format
+    });
 
-  return `${formattedDate} ${formattedTime}`;
+    return `${formattedDate} ${formattedTime}`;
 }
 
 const todayDateTime = formatDateTime(new Date().toISOString());
@@ -139,7 +143,7 @@ const getGoogleDriveImageURL = (url: string): string => {
 };
 
 // Header Component
-const PDFHeader: React.FC<{ logoUrl: string | null }> = ({ logoUrl }) => {
+const PDFHeader: React.FC<{ logoUrl: string | null; t: (key: string) => string }> = ({ logoUrl, t }) => {
     return (
         <div className={styles.header}>
             <div className={styles.headerTop}>
@@ -156,14 +160,11 @@ const PDFHeader: React.FC<{ logoUrl: string | null }> = ({ logoUrl }) => {
                         Phone: {schoolDetails.contact.phone} | Email: {schoolDetails.contact.email} | Website: {schoolDetails.website}
                     </p>
                 </div>
-                {/* {logoUrl && (
-                    <img src={logoUrl} alt="School Logo" className={styles.logoRight} />
-                )} */}
                 <div className={styles.logo}>
 
                 </div>
             </div>
-            <h2 className={styles.formTitle}>ADMISSION FORM</h2>
+            <h2 className={styles.formTitle}>{t('admissionPDF.formTitle')}</h2>
         </div>
     );
 };
@@ -184,15 +185,15 @@ const FieldRow: React.FC<{ children: React.ReactNode; columns?: 1 | 2 | 3 }> = (
 );
 
 // Field Component
-const Field: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+const Field: React.FC<{ label: string; value: string; t: (key: string) => string }> = ({ label, value, t }) => (
     <div className={styles.field}>
         <label className={styles.fieldLabel}>{label}</label>
-        <div className={styles.fieldValue}>{value || 'N/A'}</div>
+        <div className={styles.fieldValue}>{value || t('admissionPDF.na')}</div>
     </div>
 );
 
 // Photo Field Component
-const PhotoField: React.FC<{ photoUrl?: string | null }> = ({ photoUrl }) => {
+const PhotoField: React.FC<{ photoUrl?: string | null; t: (key: string) => string }> = ({ photoUrl, t }) => {
     const [photoError, setPhotoError] = useState(false);
     const convertedPhotoUrl = photoUrl ? getGoogleDriveImageURL(photoUrl) : null;
 
@@ -202,7 +203,7 @@ const PhotoField: React.FC<{ photoUrl?: string | null }> = ({ photoUrl }) => {
 
     return (
         <div className={styles.photoField}>
-            <label className={styles.fieldLabel}>Photo</label>
+            <label className={styles.fieldLabel}>{t('admissionPDF.photo')}</label>
             <div className={styles.childPhotoContainer}>
                 <img
                     src={convertedPhotoUrl}
@@ -229,8 +230,26 @@ const PhotoField: React.FC<{ photoUrl?: string | null }> = ({ photoUrl }) => {
 const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, isPrinting = false }) => {
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
     const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+    const [language, setLanguage] = useState<'en' | 'hi'>('en');
+
+    // Get translations based on language
+    const allTranslations = language === 'hi' ? hiTranslations : enTranslations;
+    const t = (key: string): string => {
+        const keys = key.split('.');
+        let value: any = allTranslations;
+        for (const k of keys) {
+            value = value?.[k];
+        }
+        return value || key;
+    };
 
     useEffect(() => {
+        // Detect language from localStorage
+        const savedLanguage = localStorage.getItem('language') as 'en' | 'hi' | null;
+        if (savedLanguage === 'hi' || savedLanguage === 'en') {
+            setLanguage(savedLanguage);
+        }
+
         const loadAssets = async () => {
             try {
                 // Load Logo
@@ -261,110 +280,112 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
     const getChildName = () =>
         admission.child_first_name || admission.childFirstName || admission.child_name || 'N/A';
 
-    const getParentName = () => {
-        const firstName = admission.parent_first_name || '';
-        const lastName = admission.parent_last_name || '';
-        return `${firstName} ${lastName}`.trim() || admission.parent_name || 'N/A';
-    };
-
     const todayDate = formatDate(new Date().toISOString());
 
     return (
         <div className={styles.pdfContainer}>
             {/* Header with Logo */}
-            <PDFHeader logoUrl={logoUrl} />
+            <PDFHeader logoUrl={logoUrl} t={t} />
 
             {/* Admission Number & Date */}
             <div className={styles.metaSection}>
                 <div className={styles.metaRow}>
                     <div className={styles.metaItem}>
-                        <span className={styles.metaLabel}>Admission No:</span>
-                        <span className={styles.metaValue}>{admission.admission_number?.toString() || 'N/A'}</span>
+                        <span className={styles.metaLabel}>{t('admissionPDF.admissionNo')}</span>
+                        <span className={styles.metaValue}>{admission.admission_number?.toString() || t('admissionPDF.na')}</span>
                     </div>
                     <div className={styles.metaItem}>
-                        <span className={styles.metaLabel}>Session:</span>
-                        <span className={styles.metaValue}>{schoolDetails.session || 'N/A'}</span>
+                        <span className={styles.metaLabel}>{t('admissionPDF.session')}</span>
+                        <span className={styles.metaValue}>{schoolDetails.session || t('admissionPDF.na')}</span>
                     </div>
                 </div>
             </div>
 
             {/* Child Information */}
             <div className={styles.section}>
-                <h3 className={styles.sectionTitle}>1. STUDENT DETAILS</h3>
+                <h3 className={styles.sectionTitle}>{t('admissionPDF.studentDetails')}</h3>
                 <div className={styles.childInfoContainer}>
                     <div className={styles.childInfoContent}>
                         <div className={styles.sectionContent}>
                             <FieldRow columns={2}>
-                                <Field label="Student Name:" value={getChildName()} />
-                                <Field label="DOB (dd/mm/yyyy):" value={formatDate(admission.child_dob)} />
+                                <Field label={t('admissionPDF.studentName')} value={getChildName()} t={t} />
+                                <Field label={t('admissionPDF.dob')} value={formatDate(admission.child_dob)} t={t} />
                             </FieldRow>
                             <FieldRow columns={2}>
-                                <Field label="Gender:" value={admission.child_gender || 'N/A'} />
-                                <Field label="Place of Birth:" value={admission.child_place_of_birth || 'N/A'} />
+                                <Field label={t('admissionPDF.gender')} value={admission.child_gender || t('admissionPDF.na')} t={t} />
+                                <Field label={t('admissionPDF.placeOfBirth')} value={admission.child_place_of_birth || t('admissionPDF.na')} t={t} />
                             </FieldRow>
-                            <FieldRow columns={2}>
-                                <Field label="Blood Group:" value={admission.child_blood_group || 'N/A'} />
-                                <Field label="Age Group:" value={calculateAgeGroup(admission.child_dob)} />
+                            <FieldRow columns={3}>
+                                <Field label={t('admissionPDF.bloodGroup')} value={admission.child_blood_group || t('admissionPDF.na')} t={t} />
+                                <Field label={t('admissionPDF.ageGroup')} value={calculateAgeGroup(admission.child_dob)} t={t} />
+                                <Field label={t('admissionPDF.category')} value={admission.category || t('admissionPDF.na')} t={t} />
                             </FieldRow>
                         </div>
+                        
                     </div>
+                    
                     <div className={styles.childPhotoWrapper}>
                         {photoUrl && (
-                            <PhotoField photoUrl={photoUrl} />
+                            <PhotoField photoUrl={photoUrl} t={t} />
                         )}
                     </div>
                 </div>
             </div>
 
             {/* Parent Information */}
-            <PDFSection title="2. PARENT/GUARDIAN DETAILS">
-                <FieldRow columns={1}>
-                    <Field label="Name:" value={getParentName()} />
-                </FieldRow>
-                <FieldRow columns={2}>
-                    <Field label="Mobile:" value={admission.parent_mobile_number || 'N/A'} />
-                    <Field label="Email:" value={admission.parent_email || 'N/A'} />
-                </FieldRow>
-                <FieldRow columns={1}>
-                    <Field label="Address:" value={admission.parent_address || 'N/A'} />
-                </FieldRow>
-            </PDFSection>
+            <div className={styles.section}>
+                <h3 className={styles.sectionTitle}>{t('admissionPDF.parentDetails')}</h3>
+                <div className={styles.sectionContent}>
+                    <FieldRow columns={2}>
+                        <Field label={t('admissionPDF.fatherName')} value={admission.father_name || t('admissionPDF.na')} t={t} />
+                        <Field label={t('admissionPDF.motherName')} value={admission.mother_name || t('admissionPDF.na')} t={t} />
+                    </FieldRow>
+                    <FieldRow columns={2}>
+                        <Field label={t('admissionPDF.mobile')} value={admission.parent_mobile_number || t('admissionPDF.na')} t={t} />
+                        <Field label={t('admissionPDF.email')} value={admission.parent_email || t('admissionPDF.na')} t={t} />
+                    </FieldRow>
+                    <FieldRow columns={1}>
+                        <Field label={t('admissionPDF.address')} value={admission.parent_address || t('admissionPDF.na')} t={t} />
+                    </FieldRow>
+                </div>
+            </div>
 
             {/* Program & Admission Details */}
-            <PDFSection title="3. PROGRAM DETAILS">
-                <FieldRow columns={2}>
-                    <Field label="Program:" value={admission.program_name || 'N/A'} />
-                    <Field label="Previous School:" value={admission.previous_school || 'N/A'} />
-                </FieldRow>
-                <FieldRow columns={1}>
-                    <Field label="Status:" value={admission.admission_status || 'N/A'} />
-                </FieldRow>
-            </PDFSection>
+            <div className={styles.section}>
+                <h3 className={styles.sectionTitle}>{t('admissionPDF.programDetails')}</h3>
+                <div className={styles.sectionContent}>
+                    <FieldRow columns={2}>
+                        <Field label={t('admissionPDF.program')} value={admission.program_name || t('admissionPDF.na')} t={t} />
+                        <Field label={t('admissionPDF.previousSchool')} value={admission.previous_school || t('admissionPDF.na')} t={t} />
+                    </FieldRow>
+                    <FieldRow columns={1}>
+                        <Field label={t('admissionPDF.status')} value={admission.admission_status || t('admissionPDF.na')} t={t} />
+                    </FieldRow>
+                </div>
+            </div>
 
             {/* Consent & Signatures */}
             <div className={styles.signatureSection}>
-                <h3 className={styles.sectionTitle}>4. SIGNATURES & DECLARATION</h3>
+                <h3 className={styles.sectionTitle}>{t('admissionPDF.signaturesTitle')}</h3>
 
                 <div className={styles.consentBox}>
                     <p className={styles.consentText}>
-                        I hereby declare that the information provided is true and correct. I understand and accept the admission policies of {schoolDetails.name}.
+                        {t('admissionPDF.consentText')} {schoolDetails.name}.
                     </p>
-                        <div className={styles.dateFieldSmall}>Date: __________</div>
-                        <div className={styles.dateFieldSmall}>Place: __________</div>
+                    <div className={styles.dateFieldSmall}>{t('admissionPDF.date')} __________</div>
+                    <div className={styles.dateFieldSmall}>{t('admissionPDF.place')} __________</div>
                 </div>
 
                 <div className={styles.signatureBoxContainer}>
                     <div className={styles.signatureBox}>
                         <div className={styles.signatureSpace}></div>
-                        <div className={styles.signatureLabel}>Parent/Guardian</div>
-                        {/* <div className={styles.dateFieldSmall}>Date: __________</div> */}
+                        <div className={styles.signatureLabel}>{t('admissionPDF.parentGuardian')}</div>
                     </div>
-
 
                     <div className={styles.signatureBox}>
                         <div className={styles.signatureName}>{schoolDetails.admissionAuthority || ''}</div>
                         <div className={styles.signatureSpace}></div>
-                        <div className={styles.signatureLabel}>Admission Authority</div>
+                        <div className={styles.signatureLabel}>{t('admissionPDF.admissionAuthority')}</div>
                     </div>
                 </div>
             </div>
@@ -372,9 +393,9 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
             {/* Footer */}
             <div className={styles.footerSection}>
                 <div className={styles.footerContent}>
-                    <span className={styles.footerItem}>Doc ID: {admission.admission_number}</span>
+                    <span className={styles.footerItem}>{t('admissionPDF.docId')} {admission.admission_number}</span>
                     <span className={styles.footerItem}>•</span>
-                    <span className={styles.footerItem}>Generated At: {todayDateTime}</span>
+                    <span className={styles.footerItem}>{t('admissionPDF.generatedAt')} {todayDateTime}</span>
                 </div>
             </div>
         </div>

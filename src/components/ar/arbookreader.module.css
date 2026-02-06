@@ -176,7 +176,7 @@
     margin: 0 0 1rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    font-weight: 700;
+    
 }
 
 .modeButtons {
@@ -224,7 +224,7 @@
     margin: 0 0 1rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    font-weight: 700;
+    
 }
 
 .pagesList {
@@ -259,7 +259,7 @@
 .pageNum {
     display: block;
     font-size: 0.75rem;
-    font-weight: 700;
+    
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 0.25rem;
@@ -436,7 +436,7 @@
 }
 
 .pageIndicator {
-    font-weight: 700;
+    
     color: var(--text-gray);
     font-size: 0.95rem;
     padding: 0.5rem 1rem;

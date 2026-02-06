@@ -94,7 +94,7 @@ body {
 
 .schoolName {
     font-size: 15pt;
-    font-weight: 700;
+    
     color: var(--primary-purple);
     margin: 0;
     line-height: 1;
@@ -123,7 +123,7 @@ body {
 
 .formTitle {
     font-size: 14pt;
-    font-weight: 700;
+    
     color: var(--primary-purple);
     text-align: center;
     margin: 0.2cm 0;
@@ -158,14 +158,14 @@ body {
 
 .metaLabel {
     font-size: 8pt;
-    font-weight: 700;
+    
     color: var(--primary-purple);
     text-transform: uppercase;
 }
 
 .metaValue {
     font-size: 10pt;
-    font-weight: 700;
+    
     color: var(--color-text-dark);
     font-family: 'Courier New', monospace;
     letter-spacing: 0.3px;
@@ -179,7 +179,7 @@ body {
 
 .sectionTitle {
     font-size: 9.5pt;
-    font-weight: 700;
+    
     color: var(--color-text-white);
     background-color: var(--primary-purple);
     padding: 0.3cm 0.4cm;
@@ -225,7 +225,7 @@ body {
 
 .fieldLabel {
     font-size: 8pt;
-    font-weight: 700;
+    
     color: var(--primary-purple);
     text-transform: uppercase;
     letter-spacing: 0.2px;
@@ -324,7 +324,7 @@ body {
 
 .signatureName {
     font-size: 7.5pt;
-    font-weight: 700;
+    
     color: var(--primary-purple);
     text-align: center;
     text-transform: uppercase;

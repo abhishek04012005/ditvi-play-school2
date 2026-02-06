@@ -1,48 +1,49 @@
 'use client';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import styles from './about.module.css';
-import CreativeLearingIcon from '@mui/icons-material/EmojiObjects';
-import SafeEnvironmentIcon from '@mui/icons-material/Favorite';
-import ExpertTeacherIcon from '@mui/icons-material/School';
-import FunActivitiesIcon from '@mui/icons-material/Celebration';
 import FounderImage from '../../../public/assets/about/director.jpg'
 import HeadingTitle from '../heading/headingtitle';
 import schoolDetails from '@/json/schooldetails';
+import schoolDetailsHi from '@/json/schooldetails-hi';
 import LineArt from '@/custom/lineart/lineart';
 import LocalFloristOutlinedIcon from '@mui/icons-material/LocalFloristOutlined';
+import en from '@/translations/en.json';
+import hi from '@/translations/hi.json';
+import { aboutFeaturesEng, founderMessageEng } from '@/data/about-eng';
+import { aboutFeaturesHi, founderMessageHi } from '@/data/about-hi';
+import { sectionTitlesEng } from '@/data/sectiontitles-eng';
+import { sectionTitlesHi } from '@/data/sectiontitles-hi';
 
 
 const About = () => {
-  const features = [
-    {
-      icon: CreativeLearingIcon,
-      title: 'Creative Learning',
-      description: 'Engaging activities that spark imagination and curiosity'
-    },
-    {
-      icon: SafeEnvironmentIcon,
-      title: 'Safe Environment',
-      description: 'Secure and nurturing space for your child'
-    },
-    {
-      icon: ExpertTeacherIcon,
-      title: 'Expert Teachers',
-      description: 'Experienced and caring education professionals'
-    },
-    {
-      icon: FunActivitiesIcon,
-      title: 'Fun Activities',
-      description: 'Balanced mix of learning and playtime activities'
-    }
-  ];
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
 
-  const founderMessage = {
-    name: `${schoolDetails.director.name}`,
-    position: `${schoolDetails.director.designation}`,
-    message: `As an educator with over 15 years of experience, I founded ${schoolDetails.name} with a vision to create a space where children can learn, grow, and thrive. Our approach combines modern educational methods with traditional values, ensuring each child receives the foundation they need for future success.`,
-    image: FounderImage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('language') as 'en' | 'hi' | null;
+      if (saved && (saved === 'en' || saved === 'hi')) {
+        setLanguage(saved);
+      }
+    } catch (e) {
+      // localStorage not available
+    }
+  }, []);
+
+  const translations = language === 'hi' ? hi : en;
+  const t = (key: string): string => {
+    const keys = key.split('.');
+    let value: any = translations;
+    for (const k of keys) {
+      value = value?.[k];
+    }
+    return typeof value === 'string' ? value : key;
   };
+
+  const features = language === 'hi' ? aboutFeaturesHi : aboutFeaturesEng;
+  const founderMessage = language === 'hi' ? founderMessageHi : founderMessageEng;
+  const sectionTitles = language === 'hi' ? sectionTitlesHi : sectionTitlesEng;
 
 
 
@@ -92,11 +93,9 @@ const About = () => {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <HeadingTitle text='About Us' />
+          <HeadingTitle text={t('about.title')} />
           <p className={styles.aboutDescription}>
-            At {schoolDetails.name}, we believe in nurturing young minds through a perfect blend of
-            education and play. Our innovative approach to early childhood development ensures
-            that every child receives the attention and guidance they need to flourish.
+            {t('about.description')}
           </p>
         </motion.div>
 
@@ -150,7 +149,7 @@ const About = () => {
             />
           </div>
           <div className={styles.founderMessage}>
-            <h2 className={styles.sectionTitle}>Message from Our Founder</h2>
+            <h2 className={styles.sectionTitle}>{sectionTitles.founderMessage}</h2>
             <p className={styles.messageText}>{founderMessage.message}</p>
             <div className={styles.founderInfo}>
               <h3>{founderMessage.name}</h3>

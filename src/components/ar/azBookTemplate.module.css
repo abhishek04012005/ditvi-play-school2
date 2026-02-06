@@ -28,7 +28,7 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    font-weight: 700;
+    
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -50,7 +50,7 @@
     margin: 0;
     font-size: 2rem;
     color: var(--primary-purple);
-    font-weight: 800;
+    
 }
 
 .titleSection p {
@@ -72,7 +72,7 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    font-weight: 700;
+    
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -133,7 +133,7 @@
 .schoolNameCover {
     margin: 0;
     font-size: 1.4rem;
-    font-weight: 800;
+    
     color: var(--primary-purple);
     letter-spacing: 1px;
 }
@@ -241,14 +241,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 800;
+    
     font-size: 1.2rem;
     box-shadow: 0 4px 12px rgba(106, 76, 147, 0.2);
 }
 
 .previewDots {
     font-size: 1.5rem;
-    font-weight: 800;
+    
     color: var(--text-gray);
 }
 
@@ -278,7 +278,7 @@
 .coverFooter {
     margin: 1rem 0 0;
     font-size: 1.2rem;
-    font-weight: 700;
+    
     color: var(--primary-purple);
 }
 
@@ -307,7 +307,7 @@
     padding: 0.5rem 1rem;
     border-radius: 20px;
     font-size: 0.9rem;
-    font-weight: 700;
+    
     color: var(--black);
     backdrop-filter: blur(10px);
 }
@@ -474,7 +474,7 @@
     margin: 0 0 1rem;
     font-size: 1.3rem;
     color: var(--primary-purple);
-    font-weight: 700;
+    
 }
 
 .backInfo ul {
@@ -505,14 +505,14 @@
 
 .schoolInfo p:first-child {
     font-size: 1.1rem;
-    font-weight: 700;
+    
     margin-bottom: 0.8rem;
 }
 
 .backFooter {
     margin-top: 2rem;
     font-size: 1.3rem;
-    font-weight: 800;
+    
     color: var(--primary-purple);
 }
 
@@ -535,7 +535,7 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    font-weight: 700;
+    
     font-size: 1rem;
     transition: all 0.3s ease;
     flex-shrink: 0;

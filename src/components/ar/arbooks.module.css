@@ -70,7 +70,7 @@
 
 .highlight {
     color: var(--primary-purple);
-    font-weight: 700;
+    
     padding: 0.2rem 0.6rem;
     border-radius: 4px;
     background-color: white;
@@ -134,7 +134,7 @@
 
 .pageHeader h1 {
     font-size: 2.8rem;
-    font-weight: 800;
+    
     color: var(--black);
     margin: 0.5rem 0;
     letter-spacing: -0.5px;
@@ -209,7 +209,7 @@
 
 .filterHeader {
     font-size: 1.25rem;
-    font-weight: 700;
+    
     color: var(--black);
     margin-bottom: 1.5rem;
     display: flex;
@@ -329,7 +329,7 @@
     padding: 0.6rem 1.2rem;
     border-radius: 24px;
     font-size: 0.8rem;
-    font-weight: 800;
+    
     box-shadow: 0 4px 16px rgba(255, 191, 0, 0.35);
     text-transform: uppercase;
     letter-spacing: 0.6px;
@@ -403,7 +403,7 @@
     border: none;
     padding: 0.85rem 1.8rem;
     border-radius: 12px;
-    font-weight: 700;
+    
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -431,7 +431,7 @@
     color: var(--primary-purple);
     text-transform: uppercase;
     letter-spacing: 0.6px;
-    font-weight: 700;
+    
     margin-bottom: 0.75rem;
     display: flex;
     align-items: center;
@@ -444,7 +444,7 @@
     font-size: 1.2rem;
     color: var(--black);
     margin: 0.5rem 0;
-    font-weight: 700;
+    
     line-height: 1.4;
     transition: color 0.3s ease;
 }
@@ -547,7 +547,7 @@
     font-size: 1.8rem;
     color: var(--text-gray);
     margin-bottom: 0.75rem;
-    font-weight: 700;
+    
 }
 
 .emptyState p {
@@ -584,7 +584,7 @@
     color: var(--white);
     border: none;
     border-radius: 14px;
-    font-weight: 700;
+    
     font-size: 1.05rem;
     cursor: pointer;
     display: flex;
