@@ -37,7 +37,7 @@ export const ShareModal = ({
 
     // Generate shareable URL
     const shareUrl = `${baseUrl}/spotlight?award=${award.id}`;
-    const shareTitle = `🌟 ${award.name} - Apollo Kids Spotlight`;
+    const shareTitle = `🌟 ${award.name} - Anksquare Kids Spotlight`;
     const shareMessage = `${award.name} was recognized as our Star of the Week! 🏆\n\n"${award.message}"\n\n✨ Check out this amazing achievement!`;
 
     // ✨ COPY TO CLIPBOARD

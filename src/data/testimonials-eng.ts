@@ -11,7 +11,7 @@ export const testimonialsEng: TestimonialItem[] = [
     name: 'Shivam Sharma',
     role: 'Parent of Rahul, Age 2',
     image: Image1,
-    quote: `The progress Rahul has made since joining Apollo Kids is incredible. He's more curious and confident every day.`,
+    quote: `The progress Rahul has made since joining Anksquare Kids is incredible. He's more curious and confident every day.`,
     rating: 5
   },
   {
@@ -19,7 +19,7 @@ export const testimonialsEng: TestimonialItem[] = [
     name: 'Ritika Kumari',
     role: 'Parent of Riya, Age 3',
     image: Image2,
-    quote: `Riya absolutely loves going to Apollo Kids. The playful learning approach keeps her engaged and happy.`,
+    quote: `Riya absolutely loves going to Anksquare Kids. The playful learning approach keeps her engaged and happy.`,
     rating: 5
   },
   {
@@ -27,7 +27,7 @@ export const testimonialsEng: TestimonialItem[] = [
     name: 'Akash Verma',
     role: 'Parent of Samarth, Age 2',
     image: Image3,
-    quote: `Apollo Kids has created a nurturing space where Samarth feels safe and excited to learn new things and explore.`,
+    quote: `Anksquare Kids has created a nurturing space where Samarth feels safe and excited to learn new things and explore.`,
     rating: 5
   },
   {
@@ -35,7 +35,7 @@ export const testimonialsEng: TestimonialItem[] = [
     name: 'Neha Singh',
     role: 'Parent of Khushal, Age 4',
     image: Image4,
-    quote: `The staff at Apollo Kids are incredibly supportive. Khushal's communication skills have improved so much.`,
+    quote: `The staff at Anksquare Kids are incredibly supportive. Khushal's communication skills have improved so much.`,
     rating: 5
   },
   {
@@ -43,7 +43,7 @@ export const testimonialsEng: TestimonialItem[] = [
     name: 'Prerna Shah',
     role: 'Parent of Kiyansh, Age 4',
     image: Image5,
-    quote: `We're thrilled with Kiyansh's development. Apollo Kids blends fun and learning in the best way possible.`,
+    quote: `We're thrilled with Kiyansh's development. Anksquare Kids blends fun and learning in the best way possible.`,
     rating: 5
   },
 ];

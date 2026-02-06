@@ -40,6 +40,7 @@ interface NoteEntry {
 }
 
 interface Enquiry {
+    enquiry_number: string;
     id: string;
     parent_name: string;
     child_name: string;
@@ -523,14 +524,15 @@ const EnquiryDashboard = () => {
                     <table className={styles.table}>
                         <thead>
                             <tr>
+                                <th>Enquiry No.</th>
                                 <th onClick={() => handleSort('created_at')}>
                                     Date {getSortIcon('created_at')}
                                 </th>
                                 <th onClick={() => handleSort('child_name')}>
-                                    Child Name {getSortIcon('child_name')}
+                                    Student's Name {getSortIcon('child_name')}
                                 </th>
                                 <th onClick={() => handleSort('parent_name')}>
-                                    Parent Name {getSortIcon('parent_name')}
+                                    Parent's Name {getSortIcon('parent_name')}
                                 </th>
                                 <th>Program</th>
                                 <th>Contact</th>
@@ -562,6 +564,9 @@ const EnquiryDashboard = () => {
                                         animate={{ opacity: 1 }}
                                         transition={{ duration: 0.3 }}
                                     >
+                                        <td>
+                                            {enquiry.enquiry_number || "N/A"}
+                                        </td>
                                         <td>
                                             {new Date(enquiry.created_at).toLocaleDateString('en-US', {
                                                 day: '2-digit',
