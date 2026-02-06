@@ -29,6 +29,7 @@ import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
 import { DownloadModal } from '../download/DownloadData';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import whatsappMessages from '@/json/whatsappMessages';
 
 
 interface NoteEntry {
@@ -62,6 +63,11 @@ interface StatusCard {
 type SortField = 'created_at' | 'name' | 'status';
 type SortOrder = 'asc' | 'desc';
 type ItemsPerPage = 20 | 50 | 100;
+
+// Generate WhatsApp message for contact
+const generateContactWhatsAppMessage = (): string => {
+    return whatsappMessages.contact;
+};
 
 const ContactDashboard = () => {
     const [contacts, setContacts] = useState<Contact[]>([]);
@@ -582,11 +588,11 @@ const ContactDashboard = () => {
                                                     <FaPhoneAlt />
                                                 </a>
                                                 <a
-                                                    href={`https://wa.me/91${contact.phone.replace(/\D/g, '')}`}
+                                                    href={`https://wa.me/91${contact.phone.replace(/\D/g, '')}?text=${encodeURIComponent(generateContactWhatsAppMessage())}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className={styles.whatsappLink}
-                                                    title="WhatsApp"
+                                                    title="Send WhatsApp message"
                                                 >
                                                     <FaWhatsapp />
                                                 </a>

@@ -14,7 +14,8 @@ const whatsappMessages = {
         'Confirmed': `Excellent! 🎊 Your admission to ${schoolDetailsEng.name} School has been confirmed. We look forward to welcoming your child!`,
         'Rejected': `Thank you for your interest in ${schoolDetailsEng.name} School. We encourage you to connect with us for future opportunities.`,
         'Under Correction': `We need some clarifications on your application. Please check your email for details and resubmit the required corrections. ✏️`,
-    }
+    },
+    contact: `Thank you for reaching out to ${schoolDetailsEng.name} School! We have received your message and will get back to you as soon as possible. 📧`,
 };
 
 export default whatsappMessages;
