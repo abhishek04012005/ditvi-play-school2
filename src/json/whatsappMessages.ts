@@ -11,7 +11,7 @@ const whatsappMessages = {
         'In Review': `Thank you for submitting your application to ${schoolDetailsEng.name} School. We are reviewing your documents and will contact you soon. 📋`,
         'Reviewed': `Great news! Your application has been reviewed. Our admission team will be in touch with the next steps. 👍`,
         'Interview Scheduled': `Congratulations! 🎉 Your interview has been scheduled at ${schoolDetailsEng.name} School. Please check your email for details and timings.`,
-        'Confirmed': `Excellent! 🎊 Your admission to ${schoolDetailsEng.name} School has been confirmed. We look forward to welcoming your child!`,
+        'Confirmed': `Congratulation! 🎊 Your admission to ${schoolDetailsEng.name} School has been confirmed. We look forward to welcoming your child!`,
         'Rejected': `Thank you for your interest in ${schoolDetailsEng.name} School. We encourage you to connect with us for future opportunities.`,
         'Under Correction': `We need some clarifications on your application. Please check your email for details and resubmit the required corrections. ✏️`,
     },
