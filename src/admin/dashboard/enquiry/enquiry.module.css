@@ -391,6 +391,34 @@
     transform: scale(0.95);
 }
 
+/* ==================== SMS Link ==================== */
+.smsLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: #007bff;
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+    cursor: pointer;
+    margin: 0 4px;
+}
+
+.smsLink:hover {
+    background: #0056b3;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.smsLink:active {
+    transform: scale(0.95);
+}
+
 /* ==================== Status Badge ==================== */
 .status {
     display: inline-block;

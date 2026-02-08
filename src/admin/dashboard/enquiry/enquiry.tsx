@@ -20,7 +20,8 @@ import {
     FaTrash,
     FaChevronLeft,
     FaChevronRight,
-    FaDownload
+    FaDownload,
+    FaComments,
 } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
@@ -608,6 +609,13 @@ const EnquiryDashboard = () => {
                                                             title="Call"
                                                         >
                                                             <FaPhoneAlt />
+                                                        </a>
+                                                        <a
+                                                            href={`sms:${enquiry.phone.replace(/\D/g, '')}?body=${encodeURIComponent(generateWhatsAppMessage(enquiry))}`}
+                                                            className={styles.smsLink}
+                                                            title={`Send SMS - Status: ${enquiry.status}`}
+                                                        >
+                                                            <FaComments />
                                                         </a>
                                                         <a
                                                             href={`https://wa.me/91${enquiry.phone.replace(/\D/g, '')}?text=${encodeURIComponent(generateWhatsAppMessage(enquiry))}`}
