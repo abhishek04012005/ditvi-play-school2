@@ -171,7 +171,9 @@ const generateAdmissionWhatsAppMessage = (admission: Admission): string => {
     const messages = whatsappMessages.admission;
     const status = admission.admission_status as keyof typeof messages;
     const message = messages[status] || messages['In Review'];
-    return typeof message === 'string' ? message : String(message);
+    const childName = getChildName(admission);
+    const admissionNumber = String(admission.admission_number);
+    return typeof message === 'function' ? message(childName, admissionNumber) : String(message);
 };
 
 export default function AdminAdmission() {

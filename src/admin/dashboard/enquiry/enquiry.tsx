@@ -73,15 +73,15 @@ const generateWhatsAppMessage = (enquiry: Enquiry): string => {
     
     switch (enquiry.status) {
         case 'new':
-            return messages.new;
+            return messages.new(enquiry.child_name, enquiry.enquiry_number);
         case 'contacted':
-            return messages.contacted;
+            return messages.contacted(enquiry.child_name, enquiry.enquiry_number);
         case 'enrolled':
-            return messages.enrolled(enquiry.program || 'Our Programs');
+            return messages.enrolled(enquiry.child_name, enquiry.program || 'Our Programs', enquiry.enquiry_number);
         case 'cancelled':
-            return messages.cancelled;
+            return messages.cancelled(enquiry.child_name, enquiry.enquiry_number);
         default:
-            return messages.new;
+            return messages.new(enquiry.child_name, enquiry.enquiry_number);
     }
 };
 
