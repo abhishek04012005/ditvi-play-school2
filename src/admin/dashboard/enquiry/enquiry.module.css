@@ -993,6 +993,77 @@
     cursor: not-allowed;
 }
 
+/* ==================== BROCHURE SELECTION MODAL ==================== */
+.brochureModalContent {
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+.brochureSelectionTitle {
+    margin: 0 0 2rem 0;
+    font-size: 1.1rem;
+    color: var(--black);
+    font-weight: 600;
+    text-align: center;
+}
+
+.brochureOptionsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.brochureOption {
+    background: var(--white);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.brochureOption:hover {
+    border-color: var(--primary-purple);
+    background: rgba(106, 76, 147, 0.05);
+    box-shadow: 0 8px 20px rgba(106, 76, 147, 0.1);
+}
+
+.brochureOption:active {
+    transform: scale(0.98);
+}
+
+.brochureOptionIcon {
+    font-size: 2.5rem;
+    color: var(--primary-purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: rgba(106, 76, 147, 0.1);
+    border-radius: 10px;
+}
+
+.brochureOption h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--black);
+    font-weight: 700;
+}
+
+.brochureOption p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-gray);
+    line-height: 1.4;
+}
+
 /* ==================== RESPONSIVE - TABLET 1200px ==================== */
 @media (max-width: 1200px) {
     .statusCardsSection {

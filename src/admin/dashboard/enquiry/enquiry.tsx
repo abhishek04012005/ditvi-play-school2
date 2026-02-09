@@ -108,6 +108,11 @@ const EnquiryDashboard = () => {
 
     const [downloadModalOpen, setDownloadModalOpen] = useState(false);
 
+    // ✨ BROCHURE SELECTION STATE ✨
+    const [brochureModalOpen, setBrochureModalOpen] = useState(false);
+    const [selectedBrochureEnquiry, setSelectedBrochureEnquiry] = useState<Enquiry | null>(null);
+    const [brochureMessageType, setBrochureMessageType] = useState<'sms' | 'whatsapp' | null>(null);
+
 
     useEffect(() => {
         fetchEnquiries();
@@ -322,6 +327,49 @@ const EnquiryDashboard = () => {
         setNewNoteText('');
         setIsEditingNewNote(false);
         setDeletingNoteId(null);
+    };
+
+    // ✨ BROCHURE SELECTION HANDLERS ✨
+    const openBrochureModal = (enquiry: Enquiry, messageType: 'sms' | 'whatsapp') => {
+        setSelectedBrochureEnquiry(enquiry);
+        setBrochureMessageType(messageType);
+        setBrochureModalOpen(true);
+    };
+
+    const closeBrochureModal = () => {
+        setBrochureModalOpen(false);
+        setSelectedBrochureEnquiry(null);
+        setBrochureMessageType(null);
+    };
+
+    const sendBrochureMessage = (brochureType: 'brochure' | 'fees') => {
+        if (!selectedBrochureEnquiry || !brochureMessageType) return;
+
+        const enquiry = selectedBrochureEnquiry;
+        const phone = enquiry.phone.replace(/\D/g, '');
+        const baseMessage = whatsappMessages.brochure(enquiry.child_name, enquiry.enquiry_number);
+        
+        let brochureLink = '';
+        if (brochureType === 'brochure') {
+            brochureLink = `${window.location.origin}/brochure?name=${encodeURIComponent(enquiry.child_name)}&enquiry_number=${encodeURIComponent(enquiry.enquiry_number)}`;
+        } else {
+            brochureLink = `${window.location.origin}/fees-structure`;
+        }
+
+        const fullMessage = `${baseMessage}\n\n${brochureType === 'brochure' ? 'Brochure' : 'Fee Structure'} Link: ${brochureLink}`;
+
+        if (brochureMessageType === 'sms') {
+            window.location.href = `sms:${phone}?body=${encodeURIComponent(fullMessage)}`;
+        } else if (brochureMessageType === 'whatsapp') {
+            window.open(
+                `https://wa.me/91${phone}?text=${encodeURIComponent(fullMessage)}`,
+                '_blank',
+                'noopener,noreferrer'
+            );
+        }
+
+        closeBrochureModal();
+        toast.success(`${brochureType === 'brochure' ? 'Brochure' : 'Fee Structure'} link sent!`);
     };
 
     const saveNewNote = async () => {
@@ -636,22 +684,20 @@ const EnquiryDashboard = () => {
                                             <div className={styles.contactLinks}>
                                                 {enquiry.phone && (
                                                     <>
-                                                        <a
-                                                            href={`sms:${enquiry.phone.replace(/\D/g, '')}?body=${encodeURIComponent(whatsappMessages.brochure(enquiry.child_name, enquiry.enquiry_number) + '\n\nBrochure Link: ' + window.location.origin + '/brochure?name=' + encodeURIComponent(enquiry.child_name) + '&enquiry_number=' + encodeURIComponent(enquiry.enquiry_number))}`}
+                                                        <button
+                                                            onClick={() => openBrochureModal(enquiry, 'sms')}
                                                             className={styles.smsLink}
                                                             title={`Send Brochure via SMS`}
                                                         >
                                                             <FaComments />
-                                                        </a>
-                                                        <a
-                                                            href={`https://wa.me/91${enquiry.phone.replace(/\D/g, '')}?text=${encodeURIComponent(whatsappMessages.brochure(enquiry.child_name, enquiry.enquiry_number) + '\n\nBrochure Link: ' + window.location.origin + '/brochure?name=' + encodeURIComponent(enquiry.child_name) + '&enquiry_number=' + encodeURIComponent(enquiry.enquiry_number))}`}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
+                                                        </button>
+                                                        <button
+                                                            onClick={() => openBrochureModal(enquiry, 'whatsapp')}
                                                             className={styles.whatsappLink}
                                                             title={`Send Brochure via WhatsApp`}
                                                         >
                                                             <FaWhatsapp />
-                                                        </a>
+                                                        </button>
                                                     </>
                                                 )}
                                             </div>
@@ -827,6 +873,14 @@ const EnquiryDashboard = () => {
                 onDateRangeChange={handleEnquiryDownload}
                 title="Download Enquiry Data"
                 description="Select a date range and format to download your admission records"
+            />
+
+            <BrochureSelectionModal
+                isOpen={brochureModalOpen}
+                onClose={closeBrochureModal}
+                enquiry={selectedBrochureEnquiry}
+                messageType={brochureMessageType}
+                onSelectBrochure={sendBrochureMessage}
             />
         </div>
     );
@@ -1064,6 +1118,101 @@ const StatusCardComponent = ({
                 </div>
             </div>
         </motion.div>
+    );
+};
+
+const BrochureSelectionModal = ({
+    isOpen,
+    onClose,
+    enquiry,
+    messageType,
+    onSelectBrochure,
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+    enquiry: Enquiry | null;
+    messageType: 'sms' | 'whatsapp' | null;
+    onSelectBrochure: (type: 'brochure' | 'fees') => void;
+}) => {
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <>
+                    <motion.div
+                        className={styles.modalOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                    />
+                    <motion.div
+                        className={styles.modal}
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    >
+                        <div className={styles.modalHeader}>
+                            <div>
+                                <h2>
+                                    {messageType === 'sms' ? <FaComments /> : <FaWhatsapp />}
+                                    Send Brochure to {enquiry?.child_name}
+                                </h2>
+                                <p>{enquiry?.parent_name} • {enquiry?.phone}</p>
+                            </div>
+                            <button
+                                className={styles.closeBtn}
+                                onClick={onClose}
+                                aria-label="Close"
+                            >
+                                <FaTimes />
+                            </button>
+                        </div>
+
+                        <div className={styles.brochureModalContent}>
+                            <p className={styles.brochureSelectionTitle}>Select which brochure to send:</p>
+                            
+                            <div className={styles.brochureOptionsGrid}>
+                                <motion.button
+                                    className={styles.brochureOption}
+                                    onClick={() => onSelectBrochure('brochure')}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    <div className={styles.brochureOptionIcon}>
+                                        <FaBook />
+                                    </div>
+                                    <h3>School Brochure</h3>
+                                    <p>Overview of programs, facilities & admission info</p>
+                                </motion.button>
+
+                                <motion.button
+                                    className={styles.brochureOption}
+                                    onClick={() => onSelectBrochure('fees')}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    <div className={styles.brochureOptionIcon}>
+                                        <FaBook />
+                                    </div>
+                                    <h3>Fee Structure</h3>
+                                    <p>Detailed fees, charges, discounts & payment policies</p>
+                                </motion.button>
+                            </div>
+                        </div>
+
+                        <div className={styles.modalFooter}>
+                            <button
+                                className={styles.cancelBtn}
+                                onClick={onClose}
+                            >
+                                <FaTimes /> Cancel
+                            </button>
+                        </div>
+                    </motion.div>
+                </>
+            )}
+        </AnimatePresence>
     );
 };
 

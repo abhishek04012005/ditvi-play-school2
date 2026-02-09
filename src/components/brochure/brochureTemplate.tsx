@@ -245,6 +245,62 @@ const BrochureTemplate = ({ enquiryData }: BrochureTemplateProps) => {
         </div>
       </section>
 
+      {/* Fees Structure Section */}
+      <section className={styles.section}>
+        <div className={styles.sectionContainer}>
+          <div className={styles.sectionHeader}>
+            <h2>Transparent Fee Structure</h2>
+          </div>
+          <p className={styles.sectionDescription}>
+            Want to learn more about our fees? Check out our detailed fees structure with all payment options and discounts.
+          </p>
+          <div style={{ textAlign: 'center', marginTop: '30px' }}>
+            <a href="/fees-structure" className={styles.ctaButton}>
+              View Complete Fees Structure →
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section className={styles.section}>
+        <div className={styles.sectionContainer}>
+          <div className={styles.sectionHeader}>
+            <h2>Get In Touch</h2>
+          </div>
+          <div className={styles.contactCardsGrid}>
+            <div className={styles.contactCard}>
+              <div className={styles.contactIcon}>📱</div>
+              <h3>Phone</h3>
+              <p>{schoolDetails.contact.phone}</p>
+            </div>
+            <div className={styles.contactCard}>
+              <div className={styles.contactIcon}>✉️</div>
+              <h3>Email</h3>
+              <p>{schoolDetails.contact.email}</p>
+            </div>
+            <div className={styles.contactCard}>
+              <div className={styles.contactIcon}>💬</div>
+              <h3>WhatsApp</h3>
+              <p>{schoolDetails.contact.whatsapp}</p>
+            </div>
+          </div>
+
+          <div className={styles.addressCard}>
+            <h3>📍 Our Location</h3>
+            <p className={styles.addressText}>
+              {schoolDetails.address.street}<br />
+              {schoolDetails.address.city}, {schoolDetails.address.state} - {schoolDetails.address.pincode}<br />
+              {schoolDetails.address.country}
+            </p>
+          </div>
+
+          <div className={styles.ctaBox}>
+            <p>Visit us today and discover why {schoolDetails.name} is the perfect choice for your child's early education.</p>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className={styles.footer}>
         <p>&copy; 2026 {schoolDetails.name}. All rights reserved.</p>
