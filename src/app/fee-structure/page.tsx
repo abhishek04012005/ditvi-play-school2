@@ -1,6 +1,5 @@
 "use client"
 
-import React from 'react'
 import styles from './fee-structure.module.css'
 import generatePdf from '../../lib/generatePdf'
 import { schoolDetails } from '@/json/schooldetails'

@@ -19,7 +19,7 @@ export default function RootLayoutClient({
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
   const isAdminRoute = pathname.startsWith('/admin');
   const isBrochureRoute = pathname.startsWith('/brochure');
-  const isFeesStructureRoute = pathname.startsWith('/fees-structure');
+  const isFeesStructureRoute = pathname.startsWith('/fees-structure') || pathname.startsWith('/fee-structure');
 
   useEffect(() => {
     // Load language from localStorage on mount
