@@ -255,7 +255,10 @@ const BrochureTemplate = ({ enquiryData }: BrochureTemplateProps) => {
             Want to learn more about our fees? Check out our detailed fees structure with all payment options and discounts.
           </p>
           <div style={{ textAlign: 'center', marginTop: '30px' }}>
-            <a href="/fees-structure" className={styles.ctaButton}>
+            <a 
+              href={`/fees-structure?${enquiryData ? `name=${encodeURIComponent(enquiryData.child_name)}&parent_name=${encodeURIComponent(enquiryData.parent_name)}&enquiry_number=${encodeURIComponent(enquiryData.enquiry_number)}&phone=${encodeURIComponent(enquiryData.phone)}&program=${encodeURIComponent(enquiryData.program)}` : ''}`}
+              className={styles.ctaButton}
+            >
               View Complete Fees Structure →
             </a>
           </div>

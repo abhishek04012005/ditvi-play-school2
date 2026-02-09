@@ -353,7 +353,7 @@ const EnquiryDashboard = () => {
         if (brochureType === 'brochure') {
             brochureLink = `${window.location.origin}/brochure?name=${encodeURIComponent(enquiry.child_name)}&enquiry_number=${encodeURIComponent(enquiry.enquiry_number)}`;
         } else {
-            brochureLink = `${window.location.origin}/fees-structure`;
+            brochureLink = `${window.location.origin}/fees-structure?name=${encodeURIComponent(enquiry.child_name)}&parent_name=${encodeURIComponent(enquiry.parent_name)}&enquiry_number=${encodeURIComponent(enquiry.enquiry_number)}&phone=${encodeURIComponent(enquiry.phone)}&program=${encodeURIComponent(enquiry.program)}`;
         }
 
         const fullMessage = `${baseMessage}\n\n${brochureType === 'brochure' ? 'Brochure' : 'Fee Structure'} Link: ${brochureLink}`;
@@ -689,14 +689,14 @@ const EnquiryDashboard = () => {
                                                             className={styles.smsLink}
                                                             title={`Send Brochure via SMS`}
                                                         >
-                                                            <FaComments />
+                                                            <FaComments /> SMS
                                                         </button>
                                                         <button
                                                             onClick={() => openBrochureModal(enquiry, 'whatsapp')}
                                                             className={styles.whatsappLink}
                                                             title={`Send Brochure via WhatsApp`}
                                                         >
-                                                            <FaWhatsapp />
+                                                            <FaWhatsapp /> WhatsApp
                                                         </button>
                                                     </>
                                                 )}

@@ -13,6 +13,8 @@
   max-width: 1400px;
   margin: 0 auto;
   background: transparent;
+  display: flex;
+  justify-content: center;
 }
 
 .actionRow {
@@ -60,7 +62,7 @@
 
 .pdfPage {
   width: 210mm;
-  height: 297mm;
+  height: auto;
   background: #fff;
   margin: 0;
   padding: 12mm;

@@ -77,6 +77,7 @@ interface Admission {
     previousSchool?: string;
     admission_status: 'In Review' | 'Reviewed' | 'Interview Scheduled' | 'Confirmed' | 'Rejected' | 'Under Correction';
     admission_source?: 'enquiry' | 'social_media' | 'web' | 'offline';
+    brochure_sent?: 'brochure' | 'fees' | null;
     remark?: string;
     notes?: NoteEntry[] | null;
     created_at: string;
@@ -208,6 +209,11 @@ export default function AdminAdmission() {
     const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false);
     const [pdfPreviewUrl, setPdfPreviewUrl] = useState<string | null>(null);
     const [previewAdmission, setPreviewAdmission] = useState<Admission | null>(null);
+
+    // ✨ BROCHURE MODAL STATE ✨
+    const [brochureModalOpen, setBrochureModalOpen] = useState(false);
+    const [selectedBrochureAdmission, setSelectedBrochureAdmission] = useState<Admission | null>(null);
+    const [brochureMessageType, setBrochureMessageType] = useState<'sms' | 'whatsapp' | null>(null);
 
     useEffect(() => {
         const initializePage = async () => {
@@ -815,6 +821,71 @@ export default function AdminAdmission() {
         }
     };
 
+    // ✨ BROCHURE MODAL HANDLERS ✨
+    const openBrochureModal = (admission: Admission, messageType: 'sms' | 'whatsapp') => {
+        setSelectedBrochureAdmission(admission);
+        setBrochureMessageType(messageType);
+        setBrochureModalOpen(true);
+    };
+
+    const closeBrochureModal = () => {
+        setBrochureModalOpen(false);
+        setSelectedBrochureAdmission(null);
+        setBrochureMessageType(null);
+    };
+
+    const sendBrochureMessage = (brochureType: 'brochure' | 'fees') => {
+        if (!selectedBrochureAdmission || !brochureMessageType) return;
+
+        const phone = getParentMobile(selectedBrochureAdmission).replace(/\D/g, '');
+        const childName = getChildName(selectedBrochureAdmission);
+        const admissionNumber = String(selectedBrochureAdmission.admission_number);
+        
+        // Get base message from whatsappMessages
+        const baseMessage = whatsappMessages.brochure(childName, admissionNumber);
+        
+        // Get shareable link with parameters
+        let brochureLink = '';
+        if (brochureType === 'brochure') {
+            brochureLink = `${window.location.origin}/brochure?name=${encodeURIComponent(childName)}&admission_number=${encodeURIComponent(admissionNumber)}`;
+        } else {
+            const parentName = selectedBrochureAdmission.parent_first_name || selectedBrochureAdmission.parentFirstName || 'Parent';
+            const program = getProgram(selectedBrochureAdmission);
+            brochureLink = `${window.location.origin}/fee-structure?name=${encodeURIComponent(childName)}&parent_name=${encodeURIComponent(parentName)}&admission_number=${encodeURIComponent(admissionNumber)}&phone=${encodeURIComponent(getParentMobile(selectedBrochureAdmission))}&program=${encodeURIComponent(program)}`;
+        }
+
+        // Create message with link (same format as enquiry)
+        const fullMessage = `${baseMessage}\n\n${brochureType === 'brochure' ? 'Brochure' : 'Fee Structure'} Link: ${brochureLink}`;
+
+        if (brochureMessageType === 'sms') {
+            window.location.href = `sms:${phone}?body=${encodeURIComponent(fullMessage)}`;
+        } else if (brochureMessageType === 'whatsapp') {
+            window.open(
+                `https://wa.me/91${phone}?text=${encodeURIComponent(fullMessage)}`,
+                '_blank',
+                'noopener,noreferrer'
+            );
+        }
+
+        // Update brochure_sent field
+        supabase
+            .from('admission')
+            .update({ brochure_sent: brochureType })
+            .eq('id', selectedBrochureAdmission.id)
+            .then(() => {
+                setAdmissions(prev => 
+                    prev.map(adm => 
+                        adm.id === selectedBrochureAdmission.id 
+                            ? { ...adm, brochure_sent: brochureType }
+                            : adm
+                    )
+                );
+            });
+
+        closeBrochureModal();
+        toast.success(`✅ ${brochureType === 'brochure' ? 'Brochure' : 'Fee structure'} sent via ${brochureMessageType}!`);
+    };
+
     if (pageLoading) {
         return <Loader isVisible={true} message="Loading Admissions..." fullScreen={true} />;
     }
@@ -894,6 +965,7 @@ export default function AdminAdmission() {
                                     Program {getSortIcon('program_name')}
                                 </th>
                                 <th>Source</th>
+                                <th>Brochure</th>
                                 <th>Notes</th>
                                 <th onClick={() => handleSort('admission_status')}>
                                     Status {getSortIcon('admission_status')}
@@ -904,13 +976,13 @@ export default function AdminAdmission() {
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan={9} className={styles.loading}>
+                                    <td colSpan={11} className={styles.loading}>
                                         <CircularProgress size={18} sx={{ mr: 1 }} /> Loading admissions...
                                     </td>
                                 </tr>
                             ) : sortedAndFilteredAdmissions.length === 0 ? (
                                 <tr>
-                                    <td colSpan={9} className={styles.noResults}>
+                                    <td colSpan={11} className={styles.noResults}>
                                         No admissions found
                                     </td>
                                 </tr>
@@ -966,6 +1038,38 @@ export default function AdminAdmission() {
                                                 <option value="web">Web</option>
                                                 <option value="offline">Offline</option>
                                             </select>
+                                        </td>
+                                        <td>
+                                            <div className={styles.brochureCell}>
+                                                {admission.parent_mobile_number && (
+                                                    <div className={styles.contactLinks}>
+                                                        <button
+                                                            onClick={() => openBrochureModal(admission, 'sms')}
+                                                            className={styles.smsLink}
+                                                            title="Send Brochure via SMS"
+                                                        >
+                                                            📨 SMS
+                                                        </button>
+                                                        <button
+                                                            onClick={() => openBrochureModal(admission, 'whatsapp')}
+                                                            className={styles.whatsappLink}
+                                                            title="Send Brochure via WhatsApp"
+                                                        >
+                                                            💬 WhatsApp
+                                                        </button>
+                                                    </div>
+                                                )}
+                                                {admission.brochure_sent && (
+                                                    <div style={{ marginTop: '8px' }}>
+                                                        {admission.brochure_sent === 'brochure' && (
+                                                            <span className={styles.brochureBadge} title="School Brochure sent">📄 Sent</span>
+                                                        )}
+                                                        {admission.brochure_sent === 'fees' && (
+                                                            <span className={styles.feesBadge} title="Fee Structure sent">💰 Sent</span>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </td>
                                         <td>
                                             <button
@@ -1227,6 +1331,15 @@ export default function AdminAdmission() {
                 onClose={() => setPdfPreviewOpen(false)}
                 pdfUrl={pdfPreviewUrl}
                 admission={previewAdmission}
+            />
+
+            {/* Brochure Selection Modal */}
+            <BrochureSelectionModal
+                isOpen={brochureModalOpen}
+                onClose={closeBrochureModal}
+                admission={selectedBrochureAdmission}
+                messageType={brochureMessageType}
+                onSelectBrochure={sendBrochureMessage}
             />
 
             <DownloadModal
@@ -2363,6 +2476,131 @@ const PDFPreviewModal = ({
                             >
                                 <CloseOutlined /> Close
                             </motion.button>
+                        </div>
+                    </motion.div>
+                </>
+            )}
+        </AnimatePresence>
+    );
+};
+
+// ✨ BROCHURE SELECTION MODAL COMPONENT ✨
+const BrochureSelectionModal = ({
+    isOpen,
+    onClose,
+    admission,
+    messageType,
+    onSelectBrochure,
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+    admission: Admission | null;
+    messageType: 'sms' | 'whatsapp' | null;
+    onSelectBrochure: (type: 'brochure' | 'fees') => void;
+}) => {
+    if (!admission) return null;
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <>
+                    <motion.div
+                        className={styles.modalOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                    />
+                    <motion.div
+                        className={styles.modal}
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    >
+                        <div className={styles.modalHeader}>
+                            <div>
+                                <h2>
+                                    {messageType === 'sms' ? '📨' : '💬'} Send Brochure to {getChildName(admission)}
+                                </h2>
+                                <p>{admission.parent_first_name || 'Parent'} • {getParentMobile(admission)}</p>
+                            </div>
+                            <button
+                                className={styles.closeBtn}
+                                onClick={onClose}
+                                aria-label="Close"
+                            >
+                                <CloseOutlined />
+                            </button>
+                        </div>
+
+                        <div className={styles.modalContent}>
+                            <p style={{ marginBottom: '20px', fontWeight: 500 }}>Select which brochure to send:</p>
+                            
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                <motion.button
+                                    onClick={() => onSelectBrochure('brochure')}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    style={{
+                                        padding: '20px',
+                                        border: '2px solid #ddd',
+                                        borderRadius: '12px',
+                                        background: '#fff',
+                                        cursor: 'pointer',
+                                        textAlign: 'center',
+                                        transition: 'all 0.3s ease',
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.borderColor = '#667eea';
+                                        e.currentTarget.style.backgroundColor = '#f8f9ff';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.borderColor = '#ddd';
+                                        e.currentTarget.style.backgroundColor = '#fff';
+                                    }}
+                                >
+                                    <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📄</div>
+                                    <h3 style={{ margin: '8px 0 4px', fontSize: '1.1rem', fontWeight: 600 }}>School Brochure</h3>
+                                    <p style={{ margin: 0, fontSize: '0.9rem', color: '#666' }}>Overview of programs & facilities</p>
+                                </motion.button>
+
+                                <motion.button
+                                    onClick={() => onSelectBrochure('fees')}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    style={{
+                                        padding: '20px',
+                                        border: '2px solid #ddd',
+                                        borderRadius: '12px',
+                                        background: '#fff',
+                                        cursor: 'pointer',
+                                        textAlign: 'center',
+                                        transition: 'all 0.3s ease',
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.borderColor = '#667eea';
+                                        e.currentTarget.style.backgroundColor = '#f8f9ff';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.borderColor = '#ddd';
+                                        e.currentTarget.style.backgroundColor = '#fff';
+                                    }}
+                                >
+                                    <div style={{ fontSize: '2rem', marginBottom: '8px' }}>💰</div>
+                                    <h3 style={{ margin: '8px 0 4px', fontSize: '1.1rem', fontWeight: 600 }}>Fee Structure</h3>
+                                    <p style={{ margin: 0, fontSize: '0.9rem', color: '#666' }}>Fees, charges & payment policies</p>
+                                </motion.button>
+                            </div>
+                        </div>
+
+                        <div className={styles.modalFooter}>
+                            <button
+                                className={styles.cancelBtn}
+                                onClick={onClose}
+                            >
+                                <CloseOutlined /> Cancel
+                            </button>
                         </div>
                     </motion.div>
                 </>

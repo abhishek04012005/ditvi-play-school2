@@ -1784,3 +1784,447 @@
     padding: 15px;
   }
 }
+
+/* Mobile Optimizations for Fees Page - 768px and below */
+@media (max-width: 768px) {
+  .heroSection {
+    min-height: 500px;
+    height: auto;
+  }
+
+  .heroTextContent {
+    padding: 30px 20px;
+  }
+
+  .logoBox {
+    gap: 15px;
+  }
+
+  .heroTitle {
+    font-size: clamp(24px, 7vw, 32px);
+  }
+
+  .heroSubtitle {
+    font-size: clamp(14px, 4vw, 18px) !important;
+  }
+
+  .studentInfo {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px !important;
+    margin-top: 20px;
+  }
+
+  .infoBadge {
+    min-width: 200px;
+    text-align: center;
+  }
+
+  .section {
+    padding: 40px 15px;
+  }
+
+  .sectionContainer {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .sectionHeader h2 {
+    font-size: clamp(20px, 5vw, 28px);
+  }
+
+  .sectionDescription {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .feesGrid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .feesCard {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .feesTable {
+    font-size: 13px;
+  }
+
+  .feesTable th,
+  .feesTable td {
+    padding: 10px 8px;
+  }
+
+  .periodName {
+    font-size: 13px;
+  }
+
+  .periodDesc {
+    font-size: 11px;
+  }
+
+  .amountCell {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .highlights {
+    gap: 8px;
+  }
+
+  .highlight {
+    font-size: 12px;
+    padding: 6px 0;
+  }
+
+  .additionalGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  .additionalItem {
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  .additionalName {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .additionalAmount {
+    font-size: 16px;
+    font-weight: 700;
+    color: #FFD700;
+    margin-bottom: 4px;
+  }
+
+  .additionalDesc {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  .additionalFreq {
+    font-size: 11px;
+  }
+
+  .discountsGrid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  .discountItem {
+    padding: 15px;
+    text-align: center;
+    border-radius: 8px;
+  }
+
+  .discountBadge {
+    font-size: 24px;
+    font-weight: 700;
+    color: #FFD700;
+    margin-bottom: 8px;
+  }
+
+  .discountItem h4 {
+    font-size: 14px;
+    margin: 8px 0 6px 0;
+  }
+
+  .discountItem p {
+    font-size: 12px;
+    margin: 0;
+  }
+
+  .policiesList {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .policiesList li {
+    font-size: 13px;
+    padding: 12px 12px !important;
+  }
+
+  .contactCardsGrid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .contactCard {
+    padding: 18px;
+    border-radius: 12px;
+    text-align: center;
+  }
+
+  .contactIcon {
+    font-size: 2rem !important;
+    margin-bottom: 12px;
+  }
+
+  .contactCard h3 {
+    font-size: 16px;
+    margin: 12px 0 8px 0;
+  }
+
+  .contactCard p {
+    font-size: 14px;
+    margin: 0;
+  }
+
+  .addressCard {
+    padding: 18px;
+    border-radius: 12px;
+  }
+
+  .addressCard h3 {
+    font-size: 16px;
+    margin: 0 0 12px 0;
+  }
+
+  .addressText {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .ctaBox {
+    padding: 20px;
+    border-radius: 12px;
+    margin: 30px 0;
+  }
+
+  .ctaBox p {
+    font-size: 14px;
+    margin: 0;
+  }
+
+  .footer {
+    padding: 20px 15px;
+  }
+
+  .footer p {
+    font-size: 12px;
+  }
+}
+
+/* Mobile Optimizations for small phones - 480px and below */
+@media (max-width: 480px) {
+  .heroSection {
+    min-height: 450px;
+    padding: 0;
+  }
+
+  .heroTextContent {
+    padding: 20px 15px;
+    gap: 15px;
+  }
+
+  .logoBox {
+    gap: 12px;
+  }
+
+  .heroLogo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .heroTitle {
+    font-size: 22px;
+  }
+
+  .heroSubtitle {
+    font-size: 14px !important;
+  }
+
+  .studentInfo {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px !important;
+  }
+
+  .infoBadge {
+    width: 100%;
+    max-width: none;
+    padding: 10px 12px !important;
+    border-radius: 10px;
+  }
+
+  .badgeLabel {
+    font-size: 11px !important;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .badgeValue {
+    font-size: 13px !important;
+    display: block;
+  }
+
+  .section {
+    padding: 30px 12px;
+  }
+
+  .sectionHeader h2 {
+    font-size: 20px;
+  }
+
+  .sectionDescription {
+    font-size: 13px;
+  }
+
+  .feesGrid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .feesCard {
+    border-radius: 10px;
+  }
+
+  .feesCard > div:first-child {
+    height: 150px;
+  }
+
+  .feesHeader {
+    padding: 12px;
+  }
+
+  .feesTable {
+    font-size: 12px;
+  }
+
+  .feesTable th {
+    font-size: 11px;
+    padding: 8px 6px;
+  }
+
+  .feesTable td {
+    padding: 8px 6px;
+  }
+
+  .periodName {
+    font-size: 12px;
+  }
+
+  .periodDesc {
+    font-size: 10px;
+  }
+
+  .amountCell {
+    font-size: 12px;
+  }
+
+  .highlights {
+    gap: 6px;
+  }
+
+  .highlight {
+    font-size: 11px;
+  }
+
+  .additionalGrid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .additionalItem {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .additionalName {
+    font-size: 13px;
+  }
+
+  .additionalAmount {
+    font-size: 16px;
+  }
+
+  .additionalDesc {
+    font-size: 11px;
+  }
+
+  .discountsGrid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .discountItem {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .discountBadge {
+    font-size: 20px;
+  }
+
+  .discountItem h4 {
+    font-size: 13px;
+  }
+
+  .discountItem p {
+    font-size: 11px;
+  }
+
+  .policiesList {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .policiesList li {
+    font-size: 12px;
+    padding: 10px 10px !important;
+  }
+
+  .contactCardsGrid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .contactCard {
+    padding: 15px;
+  }
+
+  .contactIcon {
+    font-size: 1.8rem !important;
+  }
+
+  .contactCard h3 {
+    font-size: 14px;
+  }
+
+  .contactCard p {
+    font-size: 13px;
+  }
+
+  .addressCard {
+    padding: 15px;
+  }
+
+  .addressCard h3 {
+    font-size: 14px;
+  }
+
+  .addressText {
+    font-size: 12px;
+  }
+
+  .ctaBox {
+    padding: 15px;
+    margin: 20px 0;
+  }
+
+  .ctaBox p {
+    font-size: 13px;
+  }
+
+  .footer {
+    padding: 15px 10px;
+  }
+
+  .footer p {
+    font-size: 11px;
+  }
+}

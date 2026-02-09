@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import FeesPageTemplate from '@/components/brochure/feesPageTemplate';
 
 export const metadata = {
@@ -5,6 +6,14 @@ export const metadata = {
   description: 'View our transparent and flexible fee structure for all programs',
 };
 
-export default function FeesStructurePage() {
+function FeesStructureContent() {
   return <FeesPageTemplate />;
+}
+
+export default function FeesStructurePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <FeesStructureContent />
+    </Suspense>
+  );
 }
