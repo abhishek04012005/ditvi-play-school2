@@ -31,6 +31,9 @@ import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
 import { DownloadModal } from '../download/DownloadData';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import PhoneIcon from '@mui/icons-material/Phone';
+import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import schoolDetailsEng from '@/json/schooldetails-eng';
 import whatsappMessages from '@/json/whatsappMessages';
 
@@ -351,9 +354,9 @@ const EnquiryDashboard = () => {
         
         let brochureLink = '';
         if (brochureType === 'brochure') {
-            brochureLink = `${window.location.origin}/brochure?name=${encodeURIComponent(enquiry.child_name)}&enquiry_number=${encodeURIComponent(enquiry.enquiry_number)}`;
+            brochureLink = `${window.location.origin}/brochure?studentName=${encodeURIComponent(enquiry.child_name)}&enquiryNumber=${encodeURIComponent(enquiry.enquiry_number)}`;
         } else {
-            brochureLink = `${window.location.origin}/fees-structure?name=${encodeURIComponent(enquiry.child_name)}&parent_name=${encodeURIComponent(enquiry.parent_name)}&enquiry_number=${encodeURIComponent(enquiry.enquiry_number)}&phone=${encodeURIComponent(enquiry.phone)}&program=${encodeURIComponent(enquiry.program)}`;
+            brochureLink = `${window.location.origin}/fee-structure?studentName=${encodeURIComponent(enquiry.child_name)}&parentName=${encodeURIComponent(enquiry.parent_name)}&enquiryNumber=${encodeURIComponent(enquiry.enquiry_number)}&program=${encodeURIComponent(enquiry.program)}&createdAt=${encodeURIComponent(enquiry.created_at)}`;
         }
 
         const fullMessage = `${baseMessage}\n\n${brochureType === 'brochure' ? 'Brochure' : 'Fee Structure'} Link: ${brochureLink}`;
@@ -658,14 +661,14 @@ const EnquiryDashboard = () => {
                                                             className={styles.phoneLink}
                                                             title="Call"
                                                         >
-                                                            <FaPhoneAlt />
+                                                            <PhoneIcon />
                                                         </a>
                                                         <a
                                                             href={`sms:${enquiry.phone.replace(/\D/g, '')}?body=${encodeURIComponent(generateWhatsAppMessage(enquiry))}`}
                                                             className={styles.smsLink}
                                                             title={`Send SMS - Status: ${enquiry.status}`}
                                                         >
-                                                            <FaComments />
+                                                            <MessageOutlinedIcon />
                                                         </a>
                                                         <a
                                                             href={`https://wa.me/91${enquiry.phone.replace(/\D/g, '')}?text=${encodeURIComponent(generateWhatsAppMessage(enquiry))}`}
@@ -674,7 +677,7 @@ const EnquiryDashboard = () => {
                                                             className={styles.whatsappLink}
                                                             title={`Send WhatsApp message - Status: ${enquiry.status}`}
                                                         >
-                                                            <FaWhatsapp />
+                                                            <WhatsAppIcon />
                                                         </a>
                                                     </>
                                                 )}
@@ -689,14 +692,14 @@ const EnquiryDashboard = () => {
                                                             className={styles.smsLink}
                                                             title={`Send Brochure via SMS`}
                                                         >
-                                                            <FaComments /> SMS
+                                                            <MessageOutlinedIcon /> 
                                                         </button>
                                                         <button
                                                             onClick={() => openBrochureModal(enquiry, 'whatsapp')}
                                                             className={styles.whatsappLink}
                                                             title={`Send Brochure via WhatsApp`}
                                                         >
-                                                            <FaWhatsapp /> WhatsApp
+                                                            <WhatsAppIcon /> 
                                                         </button>
                                                     </>
                                                 )}

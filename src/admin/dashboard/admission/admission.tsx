@@ -847,11 +847,12 @@ export default function AdminAdmission() {
         // Get shareable link with parameters
         let brochureLink = '';
         if (brochureType === 'brochure') {
-            brochureLink = `${window.location.origin}/brochure?name=${encodeURIComponent(childName)}&admission_number=${encodeURIComponent(admissionNumber)}`;
+            brochureLink = `${window.location.origin}/brochure?studentName=${encodeURIComponent(childName)}&admissionNumber=${encodeURIComponent(admissionNumber)}`;
         } else {
             const parentName = selectedBrochureAdmission.parent_first_name || selectedBrochureAdmission.parentFirstName || 'Parent';
             const program = getProgram(selectedBrochureAdmission);
-            brochureLink = `${window.location.origin}/fee-structure?name=${encodeURIComponent(childName)}&parent_name=${encodeURIComponent(parentName)}&admission_number=${encodeURIComponent(admissionNumber)}&phone=${encodeURIComponent(getParentMobile(selectedBrochureAdmission))}&program=${encodeURIComponent(program)}`;
+            const createdAt = selectedBrochureAdmission.created_at || '';
+            brochureLink = `${window.location.origin}/fee-structure?studentName=${encodeURIComponent(childName)}&parentName=${encodeURIComponent(parentName)}&admissionNumber=${encodeURIComponent(admissionNumber)}&program=${encodeURIComponent(program)}&createdAt=${encodeURIComponent(createdAt)}`;
         }
 
         // Create message with link (same format as enquiry)

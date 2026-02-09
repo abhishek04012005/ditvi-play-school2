@@ -7,7 +7,21 @@ import HeroImage1 from '../../../public/assets/hero/1.jpg';
 import FounderImage from '../../../public/assets/about/director.jpg';
 import Logo from '../../../public/assets/logo/logo.png';
 import schoolDetails from '@/json/schooldetails';
-import { FaStar } from 'react-icons/fa';
+import schoolDetailsEng from '@/json/schooldetails-eng';
+import StarIcon from '@mui/icons-material/Star';
+import PaletteIcon from '@mui/icons-material/Palette';
+import ShieldIcon from '@mui/icons-material/Shield';
+import SchoolIcon from '@mui/icons-material/School';
+import CelebrationIcon from '@mui/icons-material/Celebration';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import PhoneIcon from '@mui/icons-material/Phone';
+import EmailIcon from '@mui/icons-material/Email';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import EventIcon from '@mui/icons-material/Event';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 interface TestimonialItem {
   name: string;
@@ -44,6 +58,14 @@ const BrochureTemplate = ({ enquiryData }: BrochureTemplateProps) => {
       quote: `${schoolDetails.name} has created a nurturing space where Samarth feels safe and excited to learn new things.`
     }
   ];
+
+  const getPaymentIcon = (term: string) => {
+    const lowerTerm = term.toLowerCase();
+    if (lowerTerm.includes('monthly')) return <AttachMoneyIcon sx={{ fontSize: 28, color: '#6a4c93' }} />;
+    if (lowerTerm.includes('quarterly')) return <EventIcon sx={{ fontSize: 28, color: '#6a4c93' }} />;
+    if (lowerTerm.includes('annual')) return <AccountBalanceIcon sx={{ fontSize: 28, color: '#6a4c93' }} />;
+    return <CreditCardIcon sx={{ fontSize: 28, color: '#6a4c93' }} />;
+  };
 
   const features = [
     {
@@ -123,10 +145,10 @@ const BrochureTemplate = ({ enquiryData }: BrochureTemplateProps) => {
             {features.map((feature, index) => (
               <div key={index} className={styles.highlightCard}>
                 <div className={styles.highlightIcon}>
-                  {index === 0 && '🎨'}
-                  {index === 1 && '🛡️'}
-                  {index === 2 && '👨‍🏫'}
-                  {index === 3 && '🎉'}
+                  {index === 0 && <PaletteIcon sx={{ fontSize: 36, color: '#6a4c93' }} />}
+                  {index === 1 && <ShieldIcon sx={{ fontSize: 36, color: '#6a4c93' }} />}
+                  {index === 2 && <SchoolIcon sx={{ fontSize: 36, color: '#6a4c93' }} />}
+                  {index === 3 && <CelebrationIcon sx={{ fontSize: 36, color: '#6a4c93' }} />}
                 </div>
                 <h3>{feature.title}</h3>
                 <p>{feature.description}</p>
@@ -136,20 +158,42 @@ const BrochureTemplate = ({ enquiryData }: BrochureTemplateProps) => {
         </div>
       </section>
 
-      {/* Programs Section */}
+      {/* Programs Overview Section */}
       <section className={styles.section}>
         <div className={styles.sectionContainer}>
           <div className={styles.sectionHeader}>
             <h2>Our Programs</h2>
           </div>
-          <div className={styles.programsContainer}>
-            {schoolDetails.programs.map((program, index) => (
-              <div key={index} className={styles.programItem}>
-                <div className={styles.programBullet}>{index + 1}</div>
-                <div className={styles.programContent}>
-                  <h3>{program.name}</h3>
-                  <p>{program.description}</p>
+          <div className={styles.programsOverviewGrid}>
+            {schoolDetailsEng.feeStructure?.programs?.map((program) => (
+              <div key={program.name} className={styles.programOverviewCard}>
+                <div className={styles.programOverviewIcon}>
+                  <MenuBookIcon sx={{ fontSize: 32, color: '#6a4c93' }} />
                 </div>
+                <h3 className={styles.programOverviewName}>{program.name}</h3>
+                <p className={styles.programAgeGroup}>{program.ageGroup}</p>
+                <p className={styles.programDescriptionBrochure}>{program.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Programs Details Section */}
+      <section className={styles.section} style={{ backgroundColor: '#f9f9f9' }}>
+        <div className={styles.sectionContainer}>
+          <div className={styles.sectionHeader}>
+            <h2>What's Included in Every Program</h2>
+          </div>
+          <div className={styles.programsDetailsGrid}>
+            {schoolDetailsEng.feeStructure?.programs?.map((program) => (
+              <div key={program.name} className={styles.programDetailCard}>
+                <h3>{program.name}</h3>
+                <ul className={styles.includesListBrochure}>
+                  {program.includes.slice(0, 4).map((item, idx) => (
+                    <li key={idx}> {item}</li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
@@ -194,7 +238,7 @@ const BrochureTemplate = ({ enquiryData }: BrochureTemplateProps) => {
               <div key={index} className={styles.testimonialItem}>
                 <div className={styles.starsRow}>
                   {[...Array(5)].map((_, i) => (
-                    <FaStar key={i} className={styles.starIcon} />
+                    <StarIcon key={i} className={styles.starIcon} sx={{ fontSize: 16, color: '#6a4c93' }} />
                   ))}
                 </div>
                 <p className={styles.testimonialText}>&quot;{testimonial.quote}&quot;</p>
@@ -214,24 +258,30 @@ const BrochureTemplate = ({ enquiryData }: BrochureTemplateProps) => {
           </div>
           <div className={styles.contactCardsGrid}>
             <div className={styles.contactCard}>
-              <div className={styles.contactIcon}>📱</div>
+              <div className={styles.contactIcon}>
+                <PhoneIcon sx={{ fontSize: 28, color: '#6a4c93' }} />
+              </div>
               <h3>Phone</h3>
               <p>{schoolDetails.contact.phone}</p>
             </div>
             <div className={styles.contactCard}>
-              <div className={styles.contactIcon}>✉️</div>
+              <div className={styles.contactIcon}>
+                <EmailIcon sx={{ fontSize: 28, color: '#6a4c93' }} />
+              </div>
               <h3>Email</h3>
               <p>{schoolDetails.contact.email}</p>
             </div>
             <div className={styles.contactCard}>
-              <div className={styles.contactIcon}>💬</div>
+              <div className={styles.contactIcon}>
+                <WhatsAppIcon sx={{ fontSize: 28, color: '#6a4c93' }} />
+              </div>
               <h3>WhatsApp</h3>
               <p>{schoolDetails.contact.whatsapp}</p>
             </div>
           </div>
 
           <div className={styles.addressCard}>
-            <h3>📍 Our Location</h3>
+            <h3><LocationOnIcon sx={{ fontSize: 18, color: '#6a4c93', marginRight: '8px', verticalAlign: 'middle' }} /> Address</h3>
             <p className={styles.addressText}>
               {schoolDetails.address.street}<br />
               {schoolDetails.address.city}, {schoolDetails.address.state} - {schoolDetails.address.pincode}<br />
@@ -245,65 +295,7 @@ const BrochureTemplate = ({ enquiryData }: BrochureTemplateProps) => {
         </div>
       </section>
 
-      {/* Fees Structure Section */}
-      <section className={styles.section}>
-        <div className={styles.sectionContainer}>
-          <div className={styles.sectionHeader}>
-            <h2>Transparent Fee Structure</h2>
-          </div>
-          <p className={styles.sectionDescription}>
-            Want to learn more about our fees? Check out our detailed fees structure with all payment options and discounts.
-          </p>
-          <div style={{ textAlign: 'center', marginTop: '30px' }}>
-            <a 
-              href={`/fees-structure?${enquiryData ? `name=${encodeURIComponent(enquiryData.child_name)}&parent_name=${encodeURIComponent(enquiryData.parent_name)}&enquiry_number=${encodeURIComponent(enquiryData.enquiry_number)}&phone=${encodeURIComponent(enquiryData.phone)}&program=${encodeURIComponent(enquiryData.program)}` : ''}`}
-              className={styles.ctaButton}
-            >
-              View Complete Fees Structure →
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section className={styles.section}>
-        <div className={styles.sectionContainer}>
-          <div className={styles.sectionHeader}>
-            <h2>Get In Touch</h2>
-          </div>
-          <div className={styles.contactCardsGrid}>
-            <div className={styles.contactCard}>
-              <div className={styles.contactIcon}>📱</div>
-              <h3>Phone</h3>
-              <p>{schoolDetails.contact.phone}</p>
-            </div>
-            <div className={styles.contactCard}>
-              <div className={styles.contactIcon}>✉️</div>
-              <h3>Email</h3>
-              <p>{schoolDetails.contact.email}</p>
-            </div>
-            <div className={styles.contactCard}>
-              <div className={styles.contactIcon}>💬</div>
-              <h3>WhatsApp</h3>
-              <p>{schoolDetails.contact.whatsapp}</p>
-            </div>
-          </div>
-
-          <div className={styles.addressCard}>
-            <h3>📍 Our Location</h3>
-            <p className={styles.addressText}>
-              {schoolDetails.address.street}<br />
-              {schoolDetails.address.city}, {schoolDetails.address.state} - {schoolDetails.address.pincode}<br />
-              {schoolDetails.address.country}
-            </p>
-          </div>
-
-          <div className={styles.ctaBox}>
-            <p>Visit us today and discover why {schoolDetails.name} is the perfect choice for your child's early education.</p>
-          </div>
-        </div>
-      </section>
-
+      
       {/* Footer */}
       <footer className={styles.footer}>
         <p>&copy; 2026 {schoolDetails.name}. All rights reserved.</p>

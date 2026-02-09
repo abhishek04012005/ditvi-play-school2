@@ -146,7 +146,7 @@ export default function BrochurePage({
   }
 
   return (
-    <main className={styles.container}>
+    <main>
       <BrochureTemplate enquiryData={enquiryData || undefined} />
     </main>
   )

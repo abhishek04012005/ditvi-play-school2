@@ -8,6 +8,47 @@
   --card-shadow-sm: 0 4px 12px rgba(106, 76, 147, 0.08);
 }
 
+.studentInfoHeader {
+  background: linear-gradient(135deg, var(--primary-purple) 0%, #7a5a9e 100%);
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.studentInfoBox {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: var(--card-shadow-sm);
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.infoItem label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary-purple);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.4rem;
+}
+
+.infoItem p {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d2d2d;
+  margin: 0;
+}
+
 .container {
   padding: 2rem;
   max-width: 1400px;
@@ -63,7 +104,7 @@
 .pdfPage {
   width: 210mm;
   height: auto;
-  background: #fff;
+  background: rgb(252, 252, 252);
   margin: 0;
   padding: 12mm;
   box-sizing: border-box;
@@ -74,6 +115,7 @@
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--card-shadow);
 }
 
 /* PAGE 1: COVER */
@@ -117,8 +159,6 @@
 
 /* Hero gallery for fee-structure cover */
 .heroGalleryGrid{
-  display: grid;
-  grid-template-columns: 2fr 1fr;
   grid-template-rows: 140px 100px;
   gap: 0.6rem;
   margin: 0.8rem 0;
@@ -131,6 +171,10 @@
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.heroImage {
+  width: 100%;
 }
 
 .heroSmall img{

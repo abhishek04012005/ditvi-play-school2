@@ -1,5 +1,7 @@
 "use client"
 
+import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 import styles from './fee-structure.module.css'
 import generatePdf from '../../lib/generatePdf'
 import { schoolDetails } from '@/json/schooldetails'
@@ -8,7 +10,16 @@ const PROGRAMS_WITH_FEES = schoolDetails.feeStructure?.programs || []
 const PAYMENT_TERMS = schoolDetails.feeStructure?.paymentTerms || []
 const POLICIES = schoolDetails.feeStructure?.policies || []
 
-export default function FeeStructurePage() {
+function FeeStructureContent() {
+  const searchParams = useSearchParams()
+  // Handle both old and new parameter names for compatibility
+  const studentName = searchParams.get('studentName') || searchParams.get('child_name') || searchParams.get('name')
+  const parentName = searchParams.get('parentName') || searchParams.get('parent_name')
+  const enquiryNumber = searchParams.get('enquiryNumber') || searchParams.get('enquiry_number')
+  const admissionNumber = searchParams.get('admissionNumber') || searchParams.get('admission_number')
+  const createdAt = searchParams.get('createdAt') || searchParams.get('created_at')
+  const program = searchParams.get('program')
+
   async function handleDownload() {
     try {
       await generatePdf('pdf-fee-content', 'ditvi-fee-structure.pdf')
@@ -19,11 +30,58 @@ export default function FeeStructurePage() {
     }
   }
 
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return ''
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })
+  }
+
   return (
     <main className={styles.container}>
-      
-
       <div id="pdf-fee-content" className={styles.pdfWrapper}>
+        {/* Student Information Header */}
+        {(studentName || parentName || enquiryNumber || admissionNumber) && (
+          <article className={styles.pdfPage}>
+            <div className={styles.studentInfoHeader}>
+              <div className={styles.studentInfoBox}>
+                <div className={styles.infoGrid}>
+                  {studentName && (
+                    <div className={styles.infoItem}>
+                      <label>Student Name</label>
+                      <p>{studentName}</p>
+                    </div>
+                  )}
+                  {parentName && (
+                    <div className={styles.infoItem}>
+                      <label>Parent Name</label>
+                      <p>{parentName}</p>
+                    </div>
+                  )}
+                  {(enquiryNumber || admissionNumber) && (
+                    <div className={styles.infoItem}>
+                      <label>{enquiryNumber ? 'Enquiry Number' : 'Admission Number'}</label>
+                      <p>{enquiryNumber || admissionNumber}</p>
+                    </div>
+                  )}
+                  {program && (
+                    <div className={styles.infoItem}>
+                      <label>Program</label>
+                      <p>{program}</p>
+                    </div>
+                  )}
+                  {createdAt && (
+                    <div className={styles.infoItem}>
+                      <label>Date</label>
+                      <p>{formatDate(createdAt)}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </article>
+        )}
+
+
         {/* Page 1: Cover & Overview */}
         <article className={styles.pdfPage}>
           <div className={styles.coverSection}>
@@ -34,13 +92,7 @@ export default function FeeStructurePage() {
             {/* Hero gallery to visually match site branding and provide cover imagery */}
             <div className={styles.heroGalleryGrid}>
               <div className={styles.heroLarge}>
-                <img src="/assets/hero/1.jpg" alt="hero-1" />
-              </div>
-              <div className={styles.heroSmall}>
-                <img src="/assets/hero/2.jpg" alt="hero-2" />
-              </div>
-              <div className={styles.heroSmall}>
-                <img src="/assets/hero/3.jpg" alt="hero-3" />
+                <img src="/assets/hero/1.jpg" alt="hero-1" className={styles.heroImage} />
               </div>
             </div>
 
@@ -141,30 +193,6 @@ export default function FeeStructurePage() {
 
         {/* Page 6: Payment Terms & Policies */}
         <article className={styles.pdfPage}>
-          <h2 className={styles.sectionTitle}>Payment Terms & Policies</h2>
-
-          <div className={styles.section}>
-            <h3>Payment Options</h3>
-            <div className={styles.paymentGrid}>
-              {PAYMENT_TERMS.map((option) => (
-                <div key={option.term} className={styles.paymentCard}>
-                  <div className={styles.paymentIcon}>{option.icon}</div>
-                  <h4>{option.term}</h4>
-                  <p>{option.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className={styles.section}>
-            <h3>Important Policies</h3>
-            <ul className={styles.policiesList}>
-              {POLICIES.map((policy) => (
-                <li key={policy}>{policy}</li>
-              ))}
-            </ul>
-          </div>
-
           <div className={styles.contactBox}>
             <h3>Questions?</h3>
             <p><strong>Contact Admissions:</strong></p>
@@ -175,5 +203,13 @@ export default function FeeStructurePage() {
         </article>
       </div>
     </main>
+  )
+}
+
+export default function FeeStructurePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <FeeStructureContent />
+    </Suspense>
   )
 }
