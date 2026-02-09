@@ -22,6 +22,7 @@ import {
     FaChevronRight,
     FaDownload,
     FaComments,
+    FaBook,
 } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
@@ -557,6 +558,7 @@ const EnquiryDashboard = () => {
                                 </th>
                                 <th>Program</th>
                                 <th>Contact</th>
+                                <th>Brochure</th>
                                 <th>Notes</th>
                                 <th onClick={() => handleSort('status')}>
                                     Status {getSortIcon('status')}
@@ -567,13 +569,13 @@ const EnquiryDashboard = () => {
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan={8} className={styles.loading}>
+                                    <td colSpan={10} className={styles.loading}>
                                         <FaSpinner className={styles.loadingIcon} /> Loading enquiries...
                                     </td>
                                 </tr>
                             ) : sortedAndFilteredEnquiries.length === 0 ? (
                                 <tr>
-                                    <td colSpan={8} className={styles.noResults}>
+                                    <td colSpan={10} className={styles.noResults}>
                                         No enquiries found
                                     </td>
                                 </tr>
@@ -623,6 +625,30 @@ const EnquiryDashboard = () => {
                                                             rel="noopener noreferrer"
                                                             className={styles.whatsappLink}
                                                             title={`Send WhatsApp message - Status: ${enquiry.status}`}
+                                                        >
+                                                            <FaWhatsapp />
+                                                        </a>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div className={styles.contactLinks}>
+                                                {enquiry.phone && (
+                                                    <>
+                                                        <a
+                                                            href={`sms:${enquiry.phone.replace(/\D/g, '')}?body=${encodeURIComponent(whatsappMessages.brochure(enquiry.child_name, enquiry.enquiry_number) + '\n\nBrochure Link: ' + window.location.origin + '/brochure?name=' + encodeURIComponent(enquiry.child_name) + '&enquiry_number=' + encodeURIComponent(enquiry.enquiry_number))}`}
+                                                            className={styles.smsLink}
+                                                            title={`Send Brochure via SMS`}
+                                                        >
+                                                            <FaComments />
+                                                        </a>
+                                                        <a
+                                                            href={`https://wa.me/91${enquiry.phone.replace(/\D/g, '')}?text=${encodeURIComponent(whatsappMessages.brochure(enquiry.child_name, enquiry.enquiry_number) + '\n\nBrochure Link: ' + window.location.origin + '/brochure?name=' + encodeURIComponent(enquiry.child_name) + '&enquiry_number=' + encodeURIComponent(enquiry.enquiry_number))}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className={styles.whatsappLink}
+                                                            title={`Send Brochure via WhatsApp`}
                                                         >
                                                             <FaWhatsapp />
                                                         </a>

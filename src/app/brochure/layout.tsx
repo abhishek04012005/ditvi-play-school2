@@ -1,24 +1,18 @@
 'use client';
 
-import { useState, useEffect, ReactNode } from 'react';
-import { usePathname } from 'next/navigation';
-import Navbar from '@/components/navbar/navbar';
-import AdminNavbar from '@/admin/navbar/navbar';
-import Footer from '@/components/footer/footer';
+import React, { ReactNode } from 'react';
+import { useState, useEffect } from 'react';
 import Loader from '@/custom/loader/loader';
 import { Toaster } from 'react-hot-toast';
 import { LanguageProvider } from '@/context/LanguageContext';
 
-export default function RootLayoutClient({ 
-  children 
-}: { 
-  children: ReactNode 
+export default function BrochureLayout({
+  children,
+}: {
+  children: ReactNode;
 }) {
-  const pathname = usePathname();
   const [pageLoading, setPageLoading] = useState(true);
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
-  const isAdminRoute = pathname.startsWith('/admin');
-  const isBrochureRoute = pathname.startsWith('/brochure');
 
   useEffect(() => {
     // Load language from localStorage on mount
@@ -45,13 +39,13 @@ export default function RootLayoutClient({
     // Show loader on initial load
     setPageLoading(true);
     
-    // Simulate page load - adjust timing as needed
+    // Simulate page load
     const timer = setTimeout(() => {
       setPageLoading(false);
-    }, 1200);
+    }, 800);
 
     return () => clearTimeout(timer);
-  }, [pathname]);
+  }, []);
 
   return (
     <LanguageProvider>
@@ -70,19 +64,10 @@ export default function RootLayoutClient({
           gutter={8}
         />
 
-        {/* Admin Navbar - Only on /admin/* routes */}
-        {isAdminRoute && <AdminNavbar />}
-
-        {/* Public Navbar - Only on non-admin and non-brochure routes */}
-        {!isAdminRoute && !isBrochureRoute && <Navbar />}
-
-        {/* Main Content */}
+        {/* Main Content - No Navbar or Footer */}
         <main>
           {children}
         </main>
-
-        {/* Footer - Only on non-admin and non-brochure routes */}
-        {!isAdminRoute && !isBrochureRoute && <Footer />}
       </>
     </LanguageProvider>
   );

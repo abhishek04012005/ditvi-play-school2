@@ -7,6 +7,7 @@ const whatsappMessages = {
         enrolled: (childName: string, program: string, enquiryNumber: string) => `Congratulations! 🎉 ${childName} has been successfully enrolled in our program for ${program}. Your Enquiry #: ${enquiryNumber}. We look forward to welcoming your child!`,
         cancelled: (childName: string, enquiryNumber: string) => `Thank you for your interest in ${schoolDetailsEng.name} School for ${childName}. Your Enquiry #: ${enquiryNumber}. Feel free to reach out to us in the future if you'd like to learn more about our programs.`,
     },
+    brochure: (childName: string, enquiryNumber: string) => `Dear ${childName}'s Parent, Here is our school brochure for your reference. Your Enquiry #: ${enquiryNumber}. For more details, please visit our website. Thank you! 📚`,
     admission: {
         'In Review': (childName: string, admissionNumber: string) => `Thank you for submitting the application for ${childName} to ${schoolDetailsEng.name} School. Your Admission #: ${admissionNumber}. We are reviewing your documents and will contact you soon. 📋`,
         'Reviewed': (childName: string, admissionNumber: string) => `Great news! The application for ${childName} has been reviewed. Your Admission #: ${admissionNumber}. Our admission team will be in touch with the next steps. 👍`,
