@@ -6,10 +6,10 @@ export const schoolDetailsEng: SchoolDetails = {
     logo: LogoImage,
     session: "2026-27",
     admissionAuthority: "Shashi Sharma",
-    website: "www.apollokids.com",
+    website: "www.anksquare.com",
     contact: {
         phone: "+91 9263767441",
-        email: "admission@apollokids.com",
+        email: "admission@anksquare.com",
         whatsapp: "+919263767441"
     },
     address: {

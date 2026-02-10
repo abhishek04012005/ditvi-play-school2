@@ -19,6 +19,46 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* ==================== LANGUAGE TOGGLE SECTION ==================== */
+.languageToggleSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  margin-bottom: 16px;
+}
+
+.languageButton {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  font-weight: normal;
+  background-color: white;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.languageButton:hover {
+  border-color: #6a4c93;
+  background-color: #f0f0f0;
+}
+
+.languageButton.active {
+  border: 2px solid #6a4c93;
+  background-color: #e6f2ff;
+  color: #6a4c93;
+  font-weight: bold;
+}
+
 /* ==================== A4 PAGE BASE ==================== */
 .brochure>* {
   width: 210mm;

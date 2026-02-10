@@ -62,18 +62,18 @@ export interface SchoolDetailsHi {
 }
 
 export const schoolDetailsHi: SchoolDetailsHi = {
-    name: "अपोलो किड्स",
+    name: "अंक स्क्वायर किड्स",
     logo: LogoImage,
     session: "2026-27",
     admissionAuthority: "शाशी शर्मा",
-    website: "www.apollokids.com",
+    website: "www.anksquare.com",
     contact: {
         phone: "+91 9263767441",
-        email: "admission@apollokids.com",
+        email: "admission@anksquare.com",
         whatsapp: "+919263767441"
     },
     address: {
-        street: "अपोलो किड्स प्ले स्कूल, बोरिंग रोड",
+        street: "अंक स्क्वायर किड्स प्ले स्कूल, बोरिंग रोड",
         city: "पटना",
         state: "बिहार",
         pincode: "800013",
