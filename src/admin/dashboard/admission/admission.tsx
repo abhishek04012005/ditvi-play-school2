@@ -221,6 +221,10 @@ export default function AdminAdmission() {
     const [selectedBrochureAdmission, setSelectedBrochureAdmission] = useState<Admission | null>(null);
     const [brochureMessageType, setBrochureMessageType] = useState<'sms' | 'whatsapp' | null>(null);
 
+    // ✨ WHATSAPP CONTACT MODAL STATE ✨
+    const [whatsappContactModalOpen, setWhatsappContactModalOpen] = useState(false);
+    const [selectedWhatsappAdmission, setSelectedWhatsappAdmission] = useState<Admission | null>(null);
+
     useEffect(() => {
         const initializePage = async () => {
             setPageLoading(true);
@@ -840,6 +844,25 @@ export default function AdminAdmission() {
         setBrochureMessageType(null);
     };
 
+    // ✨ WHATSAPP CONTACT MODAL HANDLERS ✨
+    const sendStatusBasedWhatsAppMessage = (admission?: Admission) => {
+        const admissionToUse = admission || selectedWhatsappAdmission;
+        if (!admissionToUse) return;
+
+        const phone = getParentMobile(admissionToUse).replace(/\D/g, '');
+        const message = generateAdmissionWhatsAppMessage(admissionToUse);
+
+        window.open(
+            `https://wa.me/91${phone}?text=${encodeURIComponent(message)}`,
+            '_blank',
+            'noopener,noreferrer'
+        );
+
+        setWhatsappContactModalOpen(false);
+        setSelectedWhatsappAdmission(null);
+        toast.success('✅ Opening WhatsApp with status message!');
+    };
+
     const sendBrochureMessage = (brochureType: 'brochure' | 'fees') => {
         if (!selectedBrochureAdmission || !brochureMessageType) return;
 
@@ -1022,6 +1045,13 @@ export default function AdminAdmission() {
                                                 >
                                                     <PhoneOutlined />
                                                 </a>
+                                                <button
+                                                    onClick={() => sendStatusBasedWhatsAppMessage(admission)}
+                                                    className={styles.whatsappLink}
+                                                    title="WhatsApp"
+                                                >
+                                                    <WhatsApp />
+                                                </button>
                                             </div>
                                         </td>
                                         <td>{getProgram(admission)}</td>
@@ -1329,6 +1359,17 @@ export default function AdminAdmission() {
                 admission={selectedBrochureAdmission}
                 messageType={brochureMessageType}
                 onSelectBrochure={sendBrochureMessage}
+            />
+
+            {/* ✨ WHATSAPP CONTACT MESSAGE MODAL ✨ */}
+            <WhatsAppContactModal
+                isOpen={whatsappContactModalOpen}
+                onClose={() => {
+                    setWhatsappContactModalOpen(false);
+                    setSelectedWhatsappAdmission(null);
+                }}
+                admission={selectedWhatsappAdmission}
+                onSend={sendStatusBasedWhatsAppMessage}
             />
 
             <DownloadModal
@@ -2577,6 +2618,98 @@ const BrochureSelectionModal = ({
                                 onClick={onClose}
                             >
                                 <CloseOutlined /> Cancel
+                            </button>
+                        </div>
+                    </motion.div>
+                </>
+            )}
+        </AnimatePresence>
+    );
+};
+
+// ✨ WHATSAPP CONTACT MESSAGE MODAL COMPONENT ✨
+const WhatsAppContactModal = ({
+    isOpen,
+    onClose,
+    admission,
+    onSend,
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+    admission: Admission | null;
+    onSend: () => void;
+}) => {
+    if (!admission) return null;
+
+    const studentName = getChildName(admission);
+    const message = generateAdmissionWhatsAppMessage(admission);
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <>
+                    <motion.div
+                        className={styles.modalOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                    />
+                    <motion.div
+                        className={styles.modal}
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    >
+                        <div className={styles.modalHeader}>
+                            <div>
+                                <h2 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <WhatsApp style={{ color: '#25d366' }} />
+                                    WhatsApp Message
+                                </h2>
+                                <p style={{ margin: '4px 0 0', fontSize: '0.9rem', color: '#666' }}>For: {studentName}</p>
+                            </div>
+                            <button
+                                className={styles.closeBtn}
+                                onClick={onClose}
+                                aria-label="Close"
+                            >
+                                <CloseOutlined />
+                            </button>
+                        </div>
+
+                        <div className={styles.modalContent}>
+                            <p style={{ margin: 0, color: '#666', fontSize: '0.95rem' }}>
+                                Send a status-based message to {studentName}'s parent via WhatsApp
+                            </p>
+                        </div>
+
+                        <div className={styles.modalFooter}>
+                            <button
+                                className={styles.cancelBtn}
+                                onClick={onClose}
+                            >
+                                <CloseOutlined /> Cancel
+                            </button>
+                            <button
+                                className={styles.primaryBtn}
+                                onClick={onSend}
+                                style={{
+                                    backgroundColor: '#25d366',
+                                    color: '#fff',
+                                    border: 'none',
+                                    padding: '8px 16px',
+                                    borderRadius: '6px',
+                                    cursor: 'pointer',
+                                    fontSize: '0.95rem',
+                                    fontWeight: 500,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                }}
+                            >
+                                <WhatsApp /> Send via WhatsApp
                             </button>
                         </div>
                     </motion.div>
