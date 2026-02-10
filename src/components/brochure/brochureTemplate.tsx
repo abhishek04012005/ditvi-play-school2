@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 import styles from './brochureTemplate.module.css';
 import HeroImage1 from '../../../public/assets/hero/1.jpg';
 import FounderImage from '../../../public/assets/about/director.jpg';
@@ -32,7 +33,8 @@ interface TestimonialItem {
 
 interface BrochureTemplateProps {
   enquiryData?: {
-    enquiry_number: string
+    enquiry_number?: string
+    admission_number?: string
     parent_name: string
     child_name: string
     phone: string
@@ -44,6 +46,7 @@ interface BrochureTemplateProps {
 const BrochureTemplate = ({ enquiryData }: BrochureTemplateProps) => {
   const [language, setLanguage] = useState<'en' | 'hi'>('en')
   const [mounted, setMounted] = useState(false)
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     const saved = localStorage.getItem('language') as 'en' | 'hi' | null
@@ -59,6 +62,13 @@ const BrochureTemplate = ({ enquiryData }: BrochureTemplateProps) => {
   }
 
   if (!mounted) return <div>Loading...</div>
+
+  // Get student data from props or URL parameters
+  const studentName = enquiryData?.child_name || searchParams?.get('child_name') || searchParams?.get('studentName') || ''
+  const parentName = enquiryData?.parent_name || searchParams?.get('parent_name') || searchParams?.get('parentName') || ''
+  const enquiryNumber = enquiryData?.enquiry_number || searchParams?.get('enquiry_number') || searchParams?.get('enquiryNumber') || ''
+  const admissionNumber = enquiryData?.admission_number || searchParams?.get('admission_number') || searchParams?.get('admissionNumber') || ''
+  const program = enquiryData?.program || searchParams?.get('program') || ''
 
   const currentSchoolDetails = language === 'en' ? schoolDetailsEng : schoolDetailsHi
   const testimonials: TestimonialItem[] = [
@@ -153,20 +163,20 @@ const BrochureTemplate = ({ enquiryData }: BrochureTemplateProps) => {
             </div>
             <h1 className={styles.heroTitle}>{currentSchoolDetails.name}</h1>
             <p className={styles.heroSubtitle}>{language === 'en' ? 'Play School' : 'प्ले स्कूल'}</p>
-            {enquiryData && (
-              <div className={styles.studentInfo}>
-                <div className={styles.infoBadge}>
-                  <span className={styles.badgeLabel}>Welcome</span>
-                  <span className={styles.badgeValue}>{enquiryData.child_name}</span>
-                </div>
-                <div className={styles.infoBadge}>
-                  <span className={styles.badgeLabel}>Program</span>
-                  <span className={styles.badgeValue}>{enquiryData.program}</span>
-                </div>
-                <div className={styles.infoBadge}>
-                  <span className={styles.badgeLabel}>Enquiry ID</span>
-                  <span className={styles.badgeValue}>{enquiryData.enquiry_number}</span>
-                </div>
+            {(studentName || admissionNumber || enquiryNumber) && (
+              <div className={styles.studentInfo} style={{ display: 'block', margin: '1.5rem 0', padding: '1rem', backgroundColor: 'rgba(0, 0, 0, 0.2)', borderRadius: '8px' }}>
+                {studentName && (
+                  <p style={{ fontSize: '1.2rem', fontWeight: 600, color: 'white', marginBottom: '1rem', textAlign: 'center' }}>
+                    {language === 'en' 
+                      ? `Welcome ${studentName}, We appreciate you. ${admissionNumber ? 'Admission' : 'Enquiry'} No: ${admissionNumber || enquiryNumber}`
+                      : `${studentName} का स्वागत है, हम आपकी सराहना करते हैं। ${admissionNumber ? 'प्रवेश' : 'पूछताछ'} क्रमांक: ${admissionNumber || enquiryNumber}`}
+                  </p>
+                )}
+                {program && (
+                  <p style={{ fontSize: '1rem', color: 'white', marginBottom: '0', textAlign: 'center' }}>
+                    {language === 'en' ? 'Program' : 'कार्यक्रम'}: <strong>{program}</strong>
+                  </p>
+                )}
               </div>
             )}
             <p className={styles.heroTagline}>{language === 'en' ? 'Where Learning Meets Fun and Adventure' : 'जहाँ सीखना मजे और रोमांच से मिलता है'}</p>

@@ -232,6 +232,41 @@
     box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
 }
 
+/* ==================== Toggle View Button ==================== */
+.toggleViewBtn {
+    padding: 0.85rem 1.5rem;
+    background: linear-gradient(135deg, #e0d4f7 0%, #f0e8ff 100%);
+    color: var(--primary-purple);
+    border: 2px solid var(--primary-purple);
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Verdana', sans-serif;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.toggleViewBtn:hover {
+    background: linear-gradient(135deg, #d4c5e2 0%, #e0d4f7 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(106, 76, 147, 0.2);
+}
+
+.toggleViewBtn.active {
+    background: linear-gradient(135deg, #6a4c93 0%, #8b5cf6 100%);
+    color: white;
+    border-color: #6a4c93;
+}
+
+.toggleViewBtn.active:hover {
+    box-shadow: 0 8px 20px rgba(106, 76, 147, 0.35);
+    transform: translateY(-3px);
+}
+
 /* ==================== Table Wrapper ==================== */
 .tableWrapper {
     overflow-x: auto;

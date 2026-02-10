@@ -25,6 +25,12 @@ import {
     HistoryOutlined,
     AddOutlined,
     DashboardOutlined,
+    MessageOutlined,
+    SmartphoneOutlined,
+    LanguageOutlined,
+    BusinessOutlined,
+    AttachMoneyOutlined,
+    AssignmentOutlined,
 } from '@mui/icons-material';
 import { supabase } from '@/lib/supabase';
 import { schoolDetails } from '@/json/schooldetails';
@@ -156,12 +162,12 @@ const getStatus = (admission: Admission): Admission['admission_status'] => {
     return admission.admission_status || 'In Review';
 };
 
-const getAdmissionSource = (admission: Admission): string => {
-    const sourceMap: { [key: string]: string } = {
-        'enquiry': '📞 Enquiry',
-        'social_media': '📱 Social Media',
-        'web': '🌐 Web',
-        'offline': '🏢 Offline'
+const getAdmissionSource = (admission: Admission): React.ReactNode => {
+    const sourceMap: { [key: string]: React.ReactNode } = {
+        'enquiry': <><PhoneOutlined style={{ fontSize: '0.9rem', marginRight: '4px' }} /> Enquiry</>,
+        'social_media': <><SmartphoneOutlined style={{ fontSize: '0.9rem', marginRight: '4px' }} /> Social Media</>,
+        'web': <><LanguageOutlined style={{ fontSize: '0.9rem', marginRight: '4px' }} /> Web</>,
+        'offline': <><BusinessOutlined style={{ fontSize: '0.9rem', marginRight: '4px' }} /> Offline</>
     };
     const source = admission.admission_source || 'enquiry';
     return sourceMap[source] || 'Unknown';
@@ -1016,15 +1022,6 @@ export default function AdminAdmission() {
                                                 >
                                                     <PhoneOutlined />
                                                 </a>
-                                                <a
-                                                    href={`https://wa.me/91${getParentMobile(admission).replace(/\D/g, '')}?text=${encodeURIComponent(generateAdmissionWhatsAppMessage(admission))}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className={styles.whatsappLink}
-                                                    title={`Send WhatsApp message - Status: ${admission.admission_status}`}
-                                                >
-                                                    <WhatsApp />
-                                                </a>
                                             </div>
                                         </td>
                                         <td>{getProgram(admission)}</td>
@@ -1049,27 +1046,18 @@ export default function AdminAdmission() {
                                                             className={styles.smsLink}
                                                             title="Send Brochure via SMS"
                                                         >
-                                                            📨 SMS
+                                                            <MessageOutlined />
                                                         </button>
                                                         <button
                                                             onClick={() => openBrochureModal(admission, 'whatsapp')}
                                                             className={styles.whatsappLink}
                                                             title="Send Brochure via WhatsApp"
                                                         >
-                                                            💬 WhatsApp
+                                                            <WhatsApp />
                                                         </button>
                                                     </div>
                                                 )}
-                                                {admission.brochure_sent && (
-                                                    <div style={{ marginTop: '8px' }}>
-                                                        {admission.brochure_sent === 'brochure' && (
-                                                            <span className={styles.brochureBadge} title="School Brochure sent">📄 Sent</span>
-                                                        )}
-                                                        {admission.brochure_sent === 'fees' && (
-                                                            <span className={styles.feesBadge} title="Fee Structure sent">💰 Sent</span>
-                                                        )}
-                                                    </div>
-                                                )}
+                                                
                                             </div>
                                         </td>
                                         <td>
@@ -1683,20 +1671,8 @@ const DetailsModal = ({
                                         >
                                             <DownloadOutlined /> Download
                                         </motion.button>
-                                        {getParentMobile(admission) !== 'N/A' && (
-                                            <a
-                                                href={`https://wa.me/91${getParentMobile(admission).replace(/\D/g, '')}?text=${encodeURIComponent(generateAdmissionWhatsAppMessage(admission))}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className={`${styles.editBtn} ${styles.whatsappBtn}`}
-                                                title={`Send WhatsApp message - Status: ${admission.admission_status}`}
-                                                style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
-                                            >
-                                                <WhatsApp /> WhatsApp
-                                            </a>
-                                        )}
                                         <motion.button
-                                            className={styles.editBtn}
+                                            className={styles.downloadBtn}
                                             onClick={() => setEditMode(true)}
                                             whileHover={{ scale: 1.05 }}
                                             whileTap={{ scale: 0.95 }}
@@ -2561,7 +2537,7 @@ const BrochureSelectionModal = ({
                                         e.currentTarget.style.backgroundColor = '#fff';
                                     }}
                                 >
-                                    <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📄</div>
+                                    <AssignmentOutlined style={{ fontSize: '2rem', marginBottom: '8px', display: 'block', color: '#6a4c93' }} />
                                     <h3 style={{ margin: '8px 0 4px', fontSize: '1.1rem', fontWeight: 600 }}>School Brochure</h3>
                                     <p style={{ margin: 0, fontSize: '0.9rem', color: '#666' }}>Overview of programs & facilities</p>
                                 </motion.button>
@@ -2588,7 +2564,7 @@ const BrochureSelectionModal = ({
                                         e.currentTarget.style.backgroundColor = '#fff';
                                     }}
                                 >
-                                    <div style={{ fontSize: '2rem', marginBottom: '8px' }}>💰</div>
+                                    <AttachMoneyOutlined style={{ fontSize: '2rem', marginBottom: '8px', display: 'block', color: '#6a4c93' }} />
                                     <h3 style={{ margin: '8px 0 4px', fontSize: '1.1rem', fontWeight: 600 }}>Fee Structure</h3>
                                     <p style={{ margin: 0, fontSize: '0.9rem', color: '#666' }}>Fees, charges & payment policies</p>
                                 </motion.button>

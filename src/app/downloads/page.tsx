@@ -136,9 +136,9 @@ export default function DownloadsPage(){
         </motion.div>
       )}
 
-      {/* Documents Grid */}
+      {/* Documents List */}
       <motion.div
-        className={styles.grid}
+        className={styles.listContainer}
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -157,38 +157,43 @@ export default function DownloadsPage(){
           filteredDocs.map((d, index) => {
             const isNew = new Date(d.uploaded_at).getTime() > Date.now() - 7 * 24 * 60 * 60 * 1000;
             return (
-              <motion.div key={d.id} className={styles.card} variants={itemVariants} whileHover={{ y: -8 }}>
+              <motion.div key={d.id} className={styles.listRow} variants={itemVariants} whileHover={{ backgroundColor: '#f9f5ff' }}>
                 {isNew && <div className={styles.newBadge}>{language === 'hi' ? 'नया' : 'New'}</div>}
-                <div className={styles.cardHeader}>
-                  <div className={styles.cardIcon}>
-                    <ArticleIcon sx={{ fontSize: '1.5rem', color: '#6a4c93' }} />
-                  </div>
-                  <div className={styles.cardTitle}>{d.details}</div>
+                
+                <div className={styles.rowIcon}>
+                  <ArticleIcon sx={{ fontSize: '1.5rem', color: '#6a4c93' }} />
                 </div>
-                <div className={styles.cardBody}>
-                  <div className={styles.metaItem}>
-                    <StorageIcon sx={{ fontSize: '1.1rem', flexShrink: 0 }} />
-                    <span>{formatFileSize(d.file_size)}</span>
-                  </div>
-                  <div className={styles.metaItem}>
-                    <AccessTimeIcon sx={{ fontSize: '1.1rem', flexShrink: 0 }} />
-                    <span>
-                      {new Date(d.uploaded_at).toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
-                    </span>
+
+                <div className={styles.rowContent}>
+                  <div className={styles.fileName}>{d.details}</div>
+                  <div className={styles.rowMeta}>
+                    <div className={styles.metaItem}>
+                      <StorageIcon sx={{ fontSize: '0.9rem' }} />
+                      <span>{formatFileSize(d.file_size)}</span>
+                    </div>
+                    <div className={styles.separator}>•</div>
+                    <div className={styles.metaItem}>
+                      <AccessTimeIcon sx={{ fontSize: '0.9rem' }} />
+                      <span>
+                        {new Date(d.uploaded_at).toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </span>
+                    </div>
                   </div>
                 </div>
+
                 <motion.a
                   href={d.url}
                   download
-                  className={styles.downloadBtn}
+                  className={styles.downloadBtnRow}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <FileDownloadIcon sx={{ fontSize: '1rem' }} /> {language === 'hi' ? 'डाउनलोड करें' : 'Download'}
+                  <FileDownloadIcon sx={{ fontSize: '1rem' }} />
+                  <span>{language === 'hi' ? 'डाउनलोड करें' : 'Download'}</span>
                 </motion.a>
               </motion.div>
             );

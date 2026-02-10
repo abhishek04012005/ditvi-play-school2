@@ -362,6 +362,35 @@
     font-size: 0.9rem;
 }
 
+/* ==================== SMS Link ==================== */
+.smsLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: #f59e0b;
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+    cursor: pointer;
+    border: none;
+    padding: 0;
+}
+
+.smsLink:hover {
+    background: #d97706;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.smsLink:active {
+    transform: scale(0.95);
+}
+
 /* ==================== WhatsApp Link ==================== */
 .whatsappLink {
     display: inline-flex;

@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import About from "@/components/about/about";
 import Awards from "@/components/spotlight/spotlight";
 import Contact from "@/components/contact/contact";
-import EnquiryPopup from "@/components/enquiry/enquirypopup/enquirypopup";
+import DynamicPopupSelector from "@/components/enquiry/dynamicpopupselector/dynamicpopupselector";
 import Gallery from "@/components/gallery/gallery";
 import Hero from "@/components/hero/hero";
 import Program from "@/components/program/program";
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <div>
-      <EnquiryPopup delay={1000} />
+      <DynamicPopupSelector />
       <Hero />
       <About />
       <Program />

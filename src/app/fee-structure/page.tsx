@@ -101,7 +101,7 @@ function FeeStructureContent() {
 
             <div className={styles.enquiryInfo}>
               <div>
-                <p>{language === 'en' ? 'Enquiry No' : 'पूछताछ क्रमांक'}: <span className={styles.enquiryField}>{enquiryNumber}</span></p>
+                <p>{admissionNumber ? (language === 'en' ? 'Admission No' : 'प्रवेश क्रमांक') : (language === 'en' ? 'Enquiry No' : 'पूछताछ क्रमांक')}: <span className={styles.enquiryField}>{admissionNumber || enquiryNumber}</span></p>
               </div>
               <div>
                 <p>{language === 'en' ? 'Dated' : 'दिनांक'}: <span className={styles.enquiryField}>{new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</span></p>
