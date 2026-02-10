@@ -33,4 +33,27 @@ export interface SchoolDetails {
         icon?: string;
         description?: string;
     }[];
+    feeStructure?: {
+        programs: {
+            name: string;
+            ageGroup: string;
+            icon: string;
+            img: string;
+            monthlyFee: string;
+            annualFee: string;
+            registrationFee: string;
+            description: string;
+            includes: string[];
+            additionalCharges: {
+                name: string;
+                price: string;
+            }[];
+        }[];
+        paymentTerms: {
+            term: string;
+            description: string;
+            icon: string;
+        }[];
+        policies: string[];
+    };
 }

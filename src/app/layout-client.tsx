@@ -18,6 +18,8 @@ export default function RootLayoutClient({
   const [pageLoading, setPageLoading] = useState(true);
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
   const isAdminRoute = pathname.startsWith('/admin');
+  const isBrochureRoute = pathname.startsWith('/brochure');
+  const isFeesStructureRoute = pathname.startsWith('/fees-structure') || pathname.startsWith('/fee-structure');
 
   useEffect(() => {
     // Load language from localStorage on mount
@@ -72,16 +74,16 @@ export default function RootLayoutClient({
         {/* Admin Navbar - Only on /admin/* routes */}
         {isAdminRoute && <AdminNavbar />}
 
-        {/* Public Navbar - Only on non-admin routes */}
-        {!isAdminRoute && <Navbar />}
+        {/* Public Navbar - Only on non-admin, non-brochure, and non-fees-structure routes */}
+        {!isAdminRoute && !isBrochureRoute && !isFeesStructureRoute && <Navbar />}
 
         {/* Main Content */}
         <main>
           {children}
         </main>
 
-        {/* Footer - Only on non-admin routes */}
-        {!isAdminRoute && <Footer />}
+        {/* Footer - Only on non-admin, non-brochure, and non-fees-structure routes */}
+        {!isAdminRoute && !isBrochureRoute && !isFeesStructureRoute && <Footer />}
       </>
     </LanguageProvider>
   );

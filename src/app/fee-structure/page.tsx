@@ -1,125 +1,54 @@
 "use client"
 
-import React from 'react'
+import { useSearchParams } from 'next/navigation'
+import { Suspense, useState, useEffect } from 'react'
 import styles from './fee-structure.module.css'
 import generatePdf from '../../lib/generatePdf'
+import { schoolDetailsEng } from '@/json/schooldetails-eng'
+import { schoolDetailsHi } from '@/json/schooldetails-hi'
 
-const PROGRAMS_WITH_FEES = [
-  {
-    name: 'Toddlers',
-    ageGroup: 'Ages 2–3',
-    icon: '👶',
-    img: '/assets/programs/toddler.jpg',
-    monthlyFee: '₹8,500',
-    annualFee: '₹1,02,000',
-    registrationFee: '₹2,000',
-    description: 'Sensory play & bonding with certified caregivers',
-    includes: [
-      'Daily play-based learning activities',
-      'Snacks & meals included',
-      'Diaper changing & basic care',
-      'Monthly progress reports',
-      'Parent-teacher meetings',
-      'Outdoor play time',
-    ],
-    additionalCharges: [
-      { name: 'Extra class (per month)', price: '₹500' },
-      { name: 'Special workshop', price: '₹1,000' },
-      { name: 'Field trips', price: '₹2,000–₹3,000' },
-    ],
-  },
-  {
-    name: 'Nursery',
-    ageGroup: 'Ages 3–4',
-    icon: '🧒',
-    img: '/assets/programs/nursery.jpg',
-    monthlyFee: '₹10,000',
-    annualFee: '₹1,20,000',
-    registrationFee: '₹2,000',
-    description: 'Foundation learning & routine building',
-    includes: [
-      'Structured daily routines',
-      'Alphabet & number introduction',
-      'Art, crafts & creative activities',
-      'Story time & music sessions',
-      'Snacks & lunch included',
-      'Playground access',
-      'Monthly assessments',
-    ],
-    additionalCharges: [
-      { name: 'Extra class (per month)', price: '₹600' },
-      { name: 'Art supplies kit', price: '₹1,500' },
-      { name: 'Educational games', price: '₹500–₹1,000' },
-    ],
-  },
-  {
-    name: 'Pre-Kindergarten',
-    ageGroup: 'Ages 4–5',
-    icon: '📚',
-    img: '/assets/programs/prekg.jpg',
-    monthlyFee: '₹12,000',
-    annualFee: '₹1,44,000',
-    registrationFee: '₹2,500',
-    description: 'Pre-academics & literacy foundation',
-    includes: [
-      'Phonics & pre-reading program',
-      'Basic mathematics & number skills',
-      'STEM exploration activities',
-      'Art, music & physical education',
-      'Lunch & healthy snacks',
-      'Bi-weekly skills assessment',
-      'Parent-teacher conferences',
-    ],
-    additionalCharges: [
-      { name: 'Advanced STEM kit', price: '₹1,500–₹2,000' },
-      { name: 'Special classes (per month)', price: '₹700' },
-      { name: 'School events & excursions', price: '₹2,500–₹4,000' },
-    ],
-  },
-  {
-    name: 'Kindergarten',
-    ageGroup: 'Ages 5–6',
-    icon: '🎓',
-    img: '/assets/programs/kg.jpg',
-    monthlyFee: '₹14,000',
-    annualFee: '₹1,68,000',
-    registrationFee: '₹3,000',
-    description: 'School readiness & academic skills',
-    includes: [
-      'English, Math & Science curriculum',
-      'Reading & writing program',
-      'Problem-solving activities',
-      'Computer basics introduction',
-      'Sports & physical activities',
-      'Creative projects & competitions',
-      'Monthly progress tracking',
-      'School readiness preparation',
-    ],
-    additionalCharges: [
-      { name: 'Tech classes (per month)', price: '₹800' },
-      { name: 'Competitive exam prep', price: '₹1,000–₹1,500' },
-      { name: 'Annual day & events', price: '₹5,000–₹7,000' },
-    ],
-  },
-]
+const PROGRAMS_WITH_FEES_EN = schoolDetailsEng.feeStructure?.programs || []
+const PAYMENT_TERMS_EN = schoolDetailsEng.feeStructure?.paymentTerms || []
+const POLICIES_EN = schoolDetailsEng.feeStructure?.policies || []
 
-const PAYMENT_TERMS = [
-  { term: 'Monthly', description: 'Pay monthly fees', icon: '📅' },
-  { term: 'Quarterly', description: '3-month advance (5% discount)', icon: '📊' },
-  { term: 'Semi-Annual', description: '6-month advance (8% discount)', icon: '💰' },
-  { term: 'Annual', description: 'Full year upfront (12% discount)', icon: '⭐' },
-]
+// For Hindi, we use Hindi school details which now has feeStructure
+const PROGRAMS_WITH_FEES_HI = schoolDetailsHi.feeStructure?.programs || []
+const PAYMENT_TERMS_HI = schoolDetailsHi.feeStructure?.paymentTerms || []
+const POLICIES_HI = schoolDetailsHi.feeStructure?.policies || []
 
-const POLICIES = [
-  'Registration fee is non-refundable',
-  'One month notice required for withdrawal',
-  'Fee increase annually (April)',
-  'Late fee: ₹500 per day after due date',
-  'Sibling discount: 10% on second child',
-  'Multiple year enrollment discount available',
-]
+function FeeStructureContent() {
+  const [language, setLanguage] = useState<'en' | 'hi'>('en')
+  const [mounted, setMounted] = useState(false)
+  const searchParams = useSearchParams()
 
-export default function FeeStructurePage() {
+  useEffect(() => {
+    const saved = localStorage.getItem('language') as 'en' | 'hi' | null
+    if (saved && (saved === 'en' || saved === 'hi')) {
+      setLanguage(saved)
+    }
+    setMounted(true)
+  }, [])
+
+  const handleLanguageSwitch = (lang: 'en' | 'hi') => {
+    setLanguage(lang)
+    localStorage.setItem('language', lang)
+  }
+
+  if (!mounted) return <div>Loading...</div>
+
+  // Use appropriate school details based on language
+  const schoolDetailsBase = language === 'en' ? schoolDetailsEng : schoolDetailsHi
+  const schoolDetailsForTranslations = language === 'en' ? schoolDetailsEng : schoolDetailsHi
+  const PROGRAMS_WITH_FEES = language === 'en' ? PROGRAMS_WITH_FEES_EN : PROGRAMS_WITH_FEES_HI
+
+  // Handle both old and new parameter names for compatibility
+  const studentName = searchParams.get('studentName') || searchParams.get('child_name') || searchParams.get('name')
+  const parentName = searchParams.get('parentName') || searchParams.get('parent_name')
+  const enquiryNumber = searchParams.get('enquiryNumber') || searchParams.get('enquiry_number')
+  const admissionNumber = searchParams.get('admissionNumber') || searchParams.get('admission_number')
+  const createdAt = searchParams.get('createdAt') || searchParams.get('created_at')
+  const program = searchParams.get('program')
+
   async function handleDownload() {
     try {
       await generatePdf('pdf-fee-content', 'ditvi-fee-structure.pdf')
@@ -130,43 +59,97 @@ export default function FeeStructurePage() {
     }
   }
 
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return ''
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })
+  }
+
+  const formatAddress = () => {
+    const addr = schoolDetailsBase.address
+    if (!addr) return 'N/A'
+    const parts = [addr.street, addr.city, addr.state, addr.pincode].filter(Boolean)
+    return parts.join(', ')
+  }
+
   return (
     <main className={styles.container}>
-      <div className={styles.actionRow}>
-        <h2 className={styles.title}>Fee Structure — Download PDF</h2>
-        <button className={styles.downloadBtn} onClick={handleDownload}>Download PDF</button>
+      {/* Language Toggle Button */}
+      <div className={styles.languageToggleSection}>
+        <button
+          onClick={() => handleLanguageSwitch('en')}
+          className={`${styles.languageButton} ${language === 'en' ? styles.active : ''}`}
+        >
+          English
+        </button>
+        <button
+          onClick={() => handleLanguageSwitch('hi')}
+          className={`${styles.languageButton} ${language === 'hi' ? styles.active : ''}`}
+        >
+          हिन्दी
+        </button>
       </div>
-
       <div id="pdf-fee-content" className={styles.pdfWrapper}>
         {/* Page 1: Cover & Overview */}
         <article className={styles.pdfPage}>
+          <div className={styles.coverHeader}>
+            <div className={styles.studentInfoHeaderOverlay}>
+              <img src="/assets/logo/logo.png" alt="School logo" className={styles.headerLogo} />
+              <h1 className={styles.headerTitle}>{schoolDetailsForTranslations.name}</h1>
+            </div>
+            <p className={styles.headerSubtitle}>{language === 'en' ? 'Fee Structure' : 'शुल्क संरचना'}</p>
+
+            <div className={styles.enquiryInfo}>
+              <div>
+                <p>{admissionNumber ? (language === 'en' ? 'Admission No' : 'प्रवेश क्रमांक') : (language === 'en' ? 'Enquiry No' : 'पूछताछ क्रमांक')}: <span className={styles.enquiryField}>{admissionNumber || enquiryNumber}</span></p>
+              </div>
+              <div>
+                <p>{language === 'en' ? 'Dated' : 'दिनांक'}: <span className={styles.enquiryField}>{new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</span></p>
+              </div>
+            </div>
+          </div>
+
           <div className={styles.coverSection}>
-            <img src="/assets/logo/logo.png" alt="School logo" className={styles.logo} />
-            <h1 className={styles.coverTitle}>Ditvi Play School</h1>
-            <p className={styles.coverSubtitle}>Fee Structure & Payment Information</p>
-            <p className={styles.coverYear}>{new Date().getFullYear()}</p>
-            {/* Hero gallery to visually match site branding and provide cover imagery */}
             <div className={styles.heroGalleryGrid}>
               <div className={styles.heroLarge}>
-                <img src="/assets/hero/1.jpg" alt="hero-1" />
-              </div>
-              <div className={styles.heroSmall}>
-                <img src="/assets/hero/2.jpg" alt="hero-2" />
-              </div>
-              <div className={styles.heroSmall}>
-                <img src="/assets/hero/3.jpg" alt="hero-3" />
+                <img src="/assets/hero/1.jpg" alt="hero-1" className={styles.heroImage} />
               </div>
             </div>
 
-            {/* <div className={styles.heroThumbs}>
-              <div className={styles.heroThumb}><img src="/assets/programs/toddler.jpg" alt="Toddlers" /></div>
-              <div className={styles.heroThumb}><img src="/assets/programs/nursery.jpg" alt="Nursery" /></div>
-              <div className={styles.heroThumb}><img src="/assets/gallery/independenceday.png" alt="Independence Day" /></div>
-            </div> */}
           </div>
 
+          {/* Student Information Header - Overlaid on Hero Image */}
+          {(studentName || parentName || enquiryNumber || admissionNumber) && (
+            <div className={styles.overviewCard}>
+              <div className={styles.studentInfoBox}>
+                <p className={styles.detailedMessage}>
+                  {language === 'en' ? (
+                    <>
+                      We are delighted to acknowledge your enquiry with us. The enquiry, registered under{' '}
+                      <strong>
+                        {enquiryNumber ? `Enquiry No ${enquiryNumber}` : `Admission No ${admissionNumber}`}
+                      </strong>
+                      , has been created on <strong>{formatDate(createdAt)}</strong> for the student{' '}
+                      <strong>{studentName}</strong>, child of <strong>{parentName}</strong>. The requested program is{' '}
+                      <strong>{program}</strong>, and our admissions team will be happy to assist you further with the next steps.
+                    </>
+                  ) : (
+                    <>
+                      हम आपकी पूछताछ को स्वीकार करते हुए प्रसन्न हैं। पूछताछ, जो &nbsp;
+                      <strong>
+                         {enquiryNumber ? `पूछताछ क्रमांक ${enquiryNumber}` : `प्रवेश क्रमांक ${admissionNumber}`}
+                      </strong>
+                      के तहत पंजीकृत है, को <strong>{formatDate(createdAt)}</strong> को छात्र <strong>{studentName}</strong>, <strong>{parentName}</strong> के बच्चे के लिए बनाया गया है। अनुरोधित कार्यक्रम <strong>{program}</strong> है, और हमारी प्रवेश टीम आपको अगले चरणों में सहायता करने के लिए खुश होगी।
+                    </>
+                  )}
+                </p>
+              </div>
+            </div>
+          )}
+
+
           <div className={styles.overviewBox}>
-            <h2>Program Overview</h2>
+            <h2>{language === 'en' ? 'Program Overview' : 'कार्यक्रम अवलोकन'}</h2>
             <div className={styles.overviewGrid}>
               {PROGRAMS_WITH_FEES.map((prog) => (
                 <div key={prog.name} className={styles.overviewCard}>
@@ -187,7 +170,7 @@ export default function FeeStructurePage() {
           </div>
 
           <div className={styles.footerNote}>
-            <p><strong>Note:</strong> All fees are inclusive of meals, snacks, and basic supplies. Additional charges apply for special activities.</p>
+            <p><strong>{language === 'en' ? 'Note:' : 'नोट:'}</strong> {language === 'en' ? 'All fees are inclusive of meals, snacks, and basic supplies. Additional charges apply for special activities.' : 'सभी शुल्क भोजन, नाश्ते और बुनियादी आपूर्तियों सहित हैं। विशेष गतिविधियों के लिए अतिरिक्त शुल्क लागू होते हैं।'}</p>
           </div>
         </article>
 
@@ -210,26 +193,26 @@ export default function FeeStructurePage() {
 
             <div className={styles.feeBox}>
               <div className={styles.feeItem}>
-                <span className={styles.feeLabel}>Monthly Fee</span>
+                <span className={styles.feeLabel}>{language === 'en' ? 'Monthly Fee' : 'मासिक शुल्क'}</span>
                 <span className={styles.feeAmount}>{program.monthlyFee}</span>
               </div>
               <div className={styles.feeItem}>
-                <span className={styles.feeLabel}>Annual Fee</span>
+                <span className={styles.feeLabel}>{language === 'en' ? 'Annual Fee' : 'वार्षिक शुल्क'}</span>
                 <span className={styles.feeAmount}>{program.annualFee}</span>
               </div>
               <div className={styles.feeItem}>
-                <span className={styles.feeLabel}>Registration</span>
+                <span className={styles.feeLabel}>{language === 'en' ? 'Registration' : 'पंजीकरण'}</span>
                 <span className={styles.feeAmount}>{program.registrationFee}</span>
               </div>
             </div>
 
             <div className={styles.section}>
-              <h3>Program Description</h3>
+              <h3>{language === 'en' ? "Program Description" : "कार्यक्रम विवरण"}</h3>
               <p>{program.description}</p>
             </div>
 
             <div className={styles.section}>
-              <h3>What's Included</h3>
+              <h3>{language === 'en' ? "What's Included" : "क्या शामिल है"}</h3>
               <ul className={styles.includesList}>
                 {program.includes.map((item) => (
                   <li key={item}>{item}</li>
@@ -238,7 +221,7 @@ export default function FeeStructurePage() {
             </div>
 
             <div className={styles.section}>
-              <h3>Additional Charges</h3>
+              <h3>{language === 'en' ? "Additional Charges" : "अतिरिक्त शुल्क"}</h3>
               <table className={styles.chargesTable}>
                 <tbody>
                   {program.additionalCharges.map((charge) => (
@@ -255,39 +238,23 @@ export default function FeeStructurePage() {
 
         {/* Page 6: Payment Terms & Policies */}
         <article className={styles.pdfPage}>
-          <h2 className={styles.sectionTitle}>Payment Terms & Policies</h2>
-
-          <div className={styles.section}>
-            <h3>Payment Options</h3>
-            <div className={styles.paymentGrid}>
-              {PAYMENT_TERMS.map((option) => (
-                <div key={option.term} className={styles.paymentCard}>
-                  <div className={styles.paymentIcon}>{option.icon}</div>
-                  <h4>{option.term}</h4>
-                  <p>{option.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className={styles.section}>
-            <h3>Important Policies</h3>
-            <ul className={styles.policiesList}>
-              {POLICIES.map((policy) => (
-                <li key={policy}>{policy}</li>
-              ))}
-            </ul>
-          </div>
-
           <div className={styles.contactBox}>
-            <h3>Questions?</h3>
-            <p><strong>Contact Admissions:</strong></p>
-            <p>📞 Phone: (555) 123-4567</p>
-            <p>✉️ Email: admissions@ditvi.school</p>
-            <p>📍 Address: 123 Main Street, Your City</p>
+            <h3>{language === 'en' ? 'Questions?' : 'सवाल?'}</h3>
+            <p><strong>{language === 'en' ? 'Contact Admissions:' : 'प्रवेश से संपर्क करें:'}</strong></p>
+            <p>📞 {language === 'en' ? 'Phone' : 'फोन'}: {schoolDetailsBase.contact?.phone || 'N/A'}</p>
+            <p>✉️ {language === 'en' ? 'Email' : 'ईमेल'}: {schoolDetailsBase.contact?.email || 'N/A'}</p>
+            <p>📍 {language === 'en' ? 'Address' : 'पता'}: {formatAddress()}</p>
           </div>
         </article>
       </div>
     </main>
+  )
+}
+
+export default function FeeStructurePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <FeeStructureContent />
+    </Suspense>
   )
 }

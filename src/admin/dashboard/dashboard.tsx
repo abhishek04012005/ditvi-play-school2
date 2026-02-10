@@ -24,6 +24,7 @@ import toast from 'react-hot-toast';
 import styles from './dashboard.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
+import PopupManagement from '@/components/admin/popupmanagement/popupmanagement';
 
 interface Contact {
     id: string;
@@ -1165,6 +1166,15 @@ const Dashboard = () => {
                         </div>
                     </div>
                 </div>
+            </motion.div>
+
+            {/* Popup Management Section */}
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.6 }}
+            >
+                <PopupManagement />
             </motion.div>
 
             {/* Recent Activity Section */}

@@ -8,11 +8,120 @@
   --card-shadow-sm: 0 4px 12px rgba(106, 76, 147, 0.08);
 }
 
+/* Cover Header - School Name & Logo at Top */
+.coverHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  background: linear-gradient(135deg, #f9f7f4 0%, #f5f3f0 100%);
+  border-bottom: 3px solid var(--primary-purple);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.headerLogo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.headerTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-purple);
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.5px;
+}
+
+.headerSubtitle {
+  font-size: 1.2rem;
+  color: var(--muted);
+  margin: 0;
+  font-weight: 500;
+}
+
+.studentInfoHeader {
+  background: transparent;
+  padding: 0;
+  border: none;
+  margin: 0;
+}
+
+.studentInfoHeaderOverlay {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.enquiryInfo {
+  margin-top: 1rem;
+  color: var(--primary-purple);
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.enquiryField {
+  font-weight: 600;
+  color: var(--primary-yellow);
+}
+
+.studentInfoBox {
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.detailedMessage {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #2d2d2d;
+  margin: 0;
+  text-align: left;
+}
+
+.detailedMessage strong {
+  color: var(--primary-purple);
+  font-weight: 700;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.infoItem label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary-purple);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.4rem;
+}
+
+.infoItem p {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d2d2d;
+  margin: 0;
+}
+
 .container {
   padding: 2rem;
   max-width: 1400px;
   margin: 0 auto;
   background: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .actionRow {
@@ -47,7 +156,7 @@
   font-size: 2rem;
   margin: 0;
   letter-spacing: 0.4px;
-  
+
 }
 
 /* PDF WRAPPER & PAGES */
@@ -55,14 +164,18 @@
   background: transparent;
   border-radius: 0;
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .pdfPage {
   width: 210mm;
-  height: 297mm;
-  background: #fff;
-  margin: 0;
+  height: auto;
+  background: rgb(252, 252, 252);
+  margin: 0 auto 1rem auto;
   padding: 12mm;
   box-sizing: border-box;
   page-break-after: always;
@@ -72,14 +185,25 @@
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--card-shadow);
 }
 
 /* PAGE 1: COVER */
 .coverSection {
+  position: relative;
   text-align: center;
   margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
+}
+
+.schoolInfoSection {
+  position: relative;
+  z-index: 5;
+  padding-top: 1.5rem;
+  margin-top: -2rem;
+  text-align: center;
+  background: white;
   border-bottom: 3px solid var(--primary-yellow);
+  padding-bottom: 1rem;
 }
 
 .logo {
@@ -103,56 +227,58 @@
   background-clip: text;
   font-size: 1.4rem;
   margin-bottom: 0.8rem;
-  
 }
 
 .coverYear {
   color: var(--primary-purple);
   font-size: 1rem;
-  
   letter-spacing: 1px;
 }
 
 /* Hero gallery for fee-structure cover */
-.heroGalleryGrid{
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-template-rows: 140px 100px;
+.heroGalleryGrid {
+  position: relative;
+  grid-template-rows: 280px;
   gap: 0.6rem;
-  margin: 0.8rem 0;
+  margin: 0;
   border-radius: 10px;
   overflow: hidden;
+  display: grid;
 }
 
-.heroLarge img{
+.heroLarge img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.heroSmall img{
+.heroImage {
+  width: 100%;
+}
+
+.heroSmall img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.heroThumbs{
+.heroThumbs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem;
   margin-top: 0.6rem;
 }
 
-.heroThumb{
+.heroThumb {
   border-radius: 8px;
   overflow: hidden;
   background: #fff;
   box-shadow: var(--card-shadow-sm);
 }
 
-.heroThumb img{
+.heroThumb img {
   width: 100%;
   height: 72px;
   object-fit: cover;
@@ -167,8 +293,8 @@
 .overviewBox h2 {
   color: var(--primary-purple);
   font-size: 1.2rem;
-  margin-bottom: 1rem;
-  
+  margin-block: 1rem;
+
   letter-spacing: 0.3px;
 }
 
@@ -221,7 +347,7 @@
   color: var(--primary-purple);
   font-size: 1rem;
   margin-bottom: 0.2rem;
-  
+
 }
 
 .ageText {
@@ -329,7 +455,7 @@
 .feeLabel {
   color: var(--muted);
   font-size: 0.75rem;
-  
+
   margin-bottom: 0.4rem;
   letter-spacing: 0.3px;
   text-transform: uppercase;
@@ -349,7 +475,7 @@
   color: var(--primary-purple);
   font-size: 1rem;
   margin-bottom: 0.5rem;
-  
+
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -418,7 +544,7 @@
 .chargePrice {
   text-align: right;
   color: var(--primary-purple);
-  
+
 }
 
 /* PAYMENT TERMS PAGE */
@@ -480,7 +606,7 @@
   color: var(--primary-purple);
   font-size: 0.95rem;
   margin-bottom: 0.3rem;
-  
+
 }
 
 .paymentCard p {
@@ -544,7 +670,7 @@
   color: var(--primary-purple);
   font-size: 1rem;
   margin-bottom: 0.5rem;
-  
+
   position: relative;
   z-index: 1;
 }
@@ -560,7 +686,16 @@
 }
 
 /* RESPONSIVE */
-@media (max-width: 1100px) {
+@media (max-width: 1200px) {
+  .container {
+    padding: 1.5rem;
+  }
+
+  .pdfPage {
+    width: 100%;
+    padding: 1.5rem;
+  }
+
   .overviewGrid,
   .feeBox,
   .paymentGrid {
@@ -570,33 +705,342 @@
   .includesList {
     grid-template-columns: 1fr;
   }
-}
-
-@media (max-width: 900px) {
-  .container {
-    padding: 1.5rem;
-  }
-
-  .actionRow {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 
   .title {
     font-size: 1.5rem;
   }
+
+  .downloadBtn {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+  }
 }
 
-@media print {
-  .pdfWrapper {
-    box-shadow: none;
-    background: #fff;
+@media (max-width: 768px) {
+  .studentInfoHeaderOverlay {
+    display: block;
+  }
+
+  .container {
+    padding: 1rem;
   }
 
   .pdfPage {
-    box-shadow: none;
-    margin: 0;
-    border-radius: 0;
+    width: 100%;
+    padding: 1rem;
+    padding-top: 1.5rem;
+  }
+
+  .actionRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .downloadBtn {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 0.95rem;
+  }
+
+  .coverTitle {
+    font-size: 1.8rem;
+  }
+
+  .coverSubtitle {
+    font-size: 1.1rem;
+  }
+
+  .heroGalleryGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    gap: 0.5rem;
+  }
+
+  .overviewBox h2 {
+    font-size: 1rem;
+  }
+
+  .overviewGrid {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+
+  .programHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .programIcon {
+    width: 60px;
+    height: 60px;
+    font-size: 2.4rem;
+  }
+
+  .programHeader h2 {
+    font-size: 1.4rem;
+  }
+
+  .feeBox {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .feeItem {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .chargesTable {
+    font-size: 0.85rem;
+  }
+
+  .chargesTable td {
+    padding: 0.6rem;
+  }
+
+  .paymentGrid {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .paymentCard {
+    padding: 0.9rem;
+  }
+
+  .paymentIcon {
+    font-size: 2rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .paymentCard h4 {
+    font-size: 0.95rem;
+  }
+
+  .paymentCard p {
+    font-size: 0.8rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.3rem;
+  }
+
+  .section h3 {
+    font-size: 1rem;
+  }
+
+  .includesList,
+  .policiesList {
+    font-size: 0.85rem;
+    gap: 0.4rem;
+  }
+
+  .includesList li,
+  .policiesList li {
+    padding-left: 1.2rem;
+  }
+
+  .contactBox {
+    padding: 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  .contactBox h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .contactBox p {
+    font-size: 0.8rem;
   }
 }
 
+@media (max-width: 480px) {
+  .container {
+    padding: 0.5rem;
+  }
+
+  .pdfPage {
+    padding: 0.8rem;
+  }
+
+  .title {
+    font-size: 1.1rem;
+  }
+
+  .coverTitle {
+    font-size: 1.4rem;
+  }
+
+  .coverSubtitle {
+    font-size: 0.9rem;
+  }
+
+  .coverYear {
+    font-size: 0.8rem;
+  }
+
+  .heroGalleryGrid {
+    margin: 0.5rem 0;
+  }
+
+  .overviewGrid {
+    gap: 0.4rem;
+  }
+
+  .overviewCard {
+    padding: 0.8rem;
+  }
+
+  .cardIcon {
+    font-size: 2.2rem;
+  }
+
+  .overviewCard h3 {
+    font-size: 0.9rem;
+  }
+
+  .ageText {
+    font-size: 0.7rem;
+  }
+
+  .feeHighlight {
+    font-size: 1.1rem;
+  }
+
+  .programHeader h2 {
+    font-size: 1.2rem;
+  }
+
+  .programHeader {
+    margin-bottom: 1rem;
+  }
+
+  .feeBox {
+    gap: 0.6rem;
+  }
+
+  .feeItem {
+    padding: 0.6rem;
+  }
+
+  .feeLabel {
+    font-size: 0.75rem;
+  }
+
+  .feeAmount {
+    font-size: 1rem;
+  }
+
+  .section {
+    margin-bottom: 1rem;
+  }
+
+  .section h3 {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .chargesTable {
+    font-size: 0.8rem;
+  }
+
+  .chargesTable td {
+    padding: 0.4rem;
+  }
+
+  .paymentGrid {
+    gap: 0.6rem;
+  }
+
+  .paymentCard {
+    padding: 0.7rem;
+  }
+
+  .paymentIcon {
+    font-size: 1.8rem;
+  }
+
+  .paymentCard h4 {
+    font-size: 0.9rem;
+    margin: 0.3rem 0;
+  }
+
+  .paymentCard p {
+    font-size: 0.7rem;
+  }
+
+  .includesList,
+  .policiesList {
+    font-size: 0.8rem;
+    gap: 0.3rem;
+  }
+
+  .includesList li::before,
+  .policiesList li::before {
+    margin-right: 0.5rem;
+  }
+
+  .contactBox {
+    padding: 0.8rem;
+    margin-top: 1rem;
+  }
+
+  .contactBox h3 {
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .contactBox p {
+    font-size: 0.75rem;
+    margin: 0.2rem 0;
+  }
+}
+
+/* Language Toggle Section */
+.languageToggleSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 100;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 2rem;
+}
+
+.languageButton {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  font-weight: normal;
+  background-color: white;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.languageButton:hover {
+  border-color: #0066cc;
+  background-color: #f0f0f0;
+}
+
+.languageButton.active {
+  padding: 8px 16px;
+  border: 2px solid #0066cc;
+  border-radius: 4px;
+  background-color: #e6f2ff;
+  color: #0066cc;
+  font-weight: bold;
+}

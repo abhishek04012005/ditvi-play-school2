@@ -52,6 +52,8 @@ const Footer = () => {
     { text: t('nav.gallery'), href: '/gallery' },
     { text: t('nav.contact'), href: '/contact' },
     { text: t('nav.admissionStatus'), href: '/admission-status' },
+    { text: t('nav.downloads') || 'Downloads', href: '/downloads' },
+
   ];
 
   const links = [
@@ -59,10 +61,12 @@ const Footer = () => {
     { text: t('footer.termsOfService'), href: '/terms' },
   ]
 
-   const arBooks = [
+  const arBooks = [
     { text: t('arBooks.arAlphabates'), href: '/ar-books/book-001/user' },
     { text: t('arBooks.arAnimals'), href: '/ar-books/book-002/user' },
   ]
+
+  
 
   const currentSchoolDetails = language === 'hi' ? schoolDetailsHi : schoolDetails;
 
@@ -167,7 +171,7 @@ const Footer = () => {
             </ul>
           </motion.div>
 
-
+         
           <motion.div
             className={styles.linksSection}
             initial={{ opacity: 0, y: 20 }}

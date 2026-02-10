@@ -20,7 +20,9 @@ import {
     FaTrash,
     FaChevronLeft,
     FaChevronRight,
-    FaDownload
+    FaDownload,
+    FaComments,
+    FaBook,
 } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
@@ -29,8 +31,12 @@ import HeadingTitle from '@/components/heading/headingtitle';
 import Loader from '@/custom/loader/loader';
 import { DownloadModal } from '../download/DownloadData';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import PhoneIcon from '@mui/icons-material/Phone';
+import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import schoolDetailsEng from '@/json/schooldetails-eng';
 import whatsappMessages from '@/json/whatsappMessages';
+import PopupManagement from '@/components/admin/popupmanagement/popupmanagement';
 
 
 
@@ -73,15 +79,15 @@ const generateWhatsAppMessage = (enquiry: Enquiry): string => {
     
     switch (enquiry.status) {
         case 'new':
-            return messages.new;
+            return messages.new(enquiry.child_name, enquiry.enquiry_number);
         case 'contacted':
-            return messages.contacted;
+            return messages.contacted(enquiry.child_name, enquiry.enquiry_number);
         case 'enrolled':
-            return messages.enrolled(enquiry.program || 'Our Programs');
+            return messages.enrolled(enquiry.child_name, enquiry.program || 'Our Programs', enquiry.enquiry_number);
         case 'cancelled':
-            return messages.cancelled;
+            return messages.cancelled(enquiry.child_name, enquiry.enquiry_number);
         default:
-            return messages.new;
+            return messages.new(enquiry.child_name, enquiry.enquiry_number);
     }
 };
 
@@ -106,6 +112,13 @@ const EnquiryDashboard = () => {
 
     const [downloadModalOpen, setDownloadModalOpen] = useState(false);
 
+    // ✨ BROCHURE SELECTION STATE ✨
+    const [brochureModalOpen, setBrochureModalOpen] = useState(false);
+    const [selectedBrochureEnquiry, setSelectedBrochureEnquiry] = useState<Enquiry | null>(null);
+    const [brochureMessageType, setBrochureMessageType] = useState<'sms' | 'whatsapp' | null>(null);
+
+    // ✨ POPUP MANAGEMENT TOGGLE STATE ✨
+    const [showPopupManagement, setShowPopupManagement] = useState(false);
 
     useEffect(() => {
         fetchEnquiries();
@@ -322,6 +335,49 @@ const EnquiryDashboard = () => {
         setDeletingNoteId(null);
     };
 
+    // ✨ BROCHURE SELECTION HANDLERS ✨
+    const openBrochureModal = (enquiry: Enquiry, messageType: 'sms' | 'whatsapp') => {
+        setSelectedBrochureEnquiry(enquiry);
+        setBrochureMessageType(messageType);
+        setBrochureModalOpen(true);
+    };
+
+    const closeBrochureModal = () => {
+        setBrochureModalOpen(false);
+        setSelectedBrochureEnquiry(null);
+        setBrochureMessageType(null);
+    };
+
+    const sendBrochureMessage = (brochureType: 'brochure' | 'fees') => {
+        if (!selectedBrochureEnquiry || !brochureMessageType) return;
+
+        const enquiry = selectedBrochureEnquiry;
+        const phone = enquiry.phone.replace(/\D/g, '');
+        const baseMessage = whatsappMessages.brochure(enquiry.child_name, enquiry.enquiry_number);
+        
+        let brochureLink = '';
+        if (brochureType === 'brochure') {
+            brochureLink = `${window.location.origin}/brochure?studentName=${encodeURIComponent(enquiry.child_name)}&enquiryNumber=${encodeURIComponent(enquiry.enquiry_number)}`;
+        } else {
+            brochureLink = `${window.location.origin}/fee-structure?studentName=${encodeURIComponent(enquiry.child_name)}&parentName=${encodeURIComponent(enquiry.parent_name)}&enquiryNumber=${encodeURIComponent(enquiry.enquiry_number)}&program=${encodeURIComponent(enquiry.program)}&createdAt=${encodeURIComponent(enquiry.created_at)}`;
+        }
+
+        const fullMessage = `${baseMessage}\n\n${brochureType === 'brochure' ? 'Brochure' : 'Fee Structure'} Link: ${brochureLink}`;
+
+        if (brochureMessageType === 'sms') {
+            window.location.href = `sms:${phone}?body=${encodeURIComponent(fullMessage)}`;
+        } else if (brochureMessageType === 'whatsapp') {
+            window.open(
+                `https://wa.me/91${phone}?text=${encodeURIComponent(fullMessage)}`,
+                '_blank',
+                'noopener,noreferrer'
+            );
+        }
+
+        closeBrochureModal();
+        toast.success(`${brochureType === 'brochure' ? 'Brochure' : 'Fee Structure'} link sent!`);
+    };
+
     const saveNewNote = async () => {
         if (!selectedEnquiryId) {
             console.error('❌ No enquiry selected');
@@ -508,160 +564,206 @@ const EnquiryDashboard = () => {
             <div className={styles.dashboard}>
                 <div className={styles.header}>
                     <div className={styles.controls}>
-                        <div className={styles.searchBar}>
-                            <FaSearch className={styles.searchIcon} />
-                            <input
-                                type="text"
-                                placeholder="Search by name or phone..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                        </div>
                         <motion.button
-                            className={styles.downloadBtn}
-                            onClick={() => setDownloadModalOpen(true)}
-                            title="Download admission data"
+                            className={`${styles.toggleViewBtn} ${showPopupManagement ? styles.active : ''}`}
+                            onClick={() => setShowPopupManagement(!showPopupManagement)}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
+                            title={showPopupManagement ? 'Show Enquiries' : 'Show Popup Settings'}
                         >
-                            <FaDownload /> Download Data
+                            {showPopupManagement ? '👥 View Enquiries' : '⚙️ Popup Settings'}
                         </motion.button>
-                        <select
-                            value={filter}
-                            onChange={(e) => setFilter(e.target.value as any)}
-                            className={styles.filterSelect}
-                        >
-                            <option value="all">All Status</option>
-                            <option value="new">New</option>
-                            <option value="contacted">Contacted</option>
-                            <option value="enrolled">Enrolled</option>
-                            <option value="cancelled">Cancelled</option>
-                        </select>
+                        
+                        {!showPopupManagement && (
+                            <>
+                                <div className={styles.searchBar}>
+                                    <FaSearch className={styles.searchIcon} />
+                                    <input
+                                        type="text"
+                                        placeholder="Search by name or phone..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+                                <motion.button
+                                    className={styles.downloadBtn}
+                                    onClick={() => setDownloadModalOpen(true)}
+                                    title="Download admission data"
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    <FaDownload /> Download Data
+                                </motion.button>
+                                <select
+                                    value={filter}
+                                    onChange={(e) => setFilter(e.target.value as any)}
+                                    className={styles.filterSelect}
+                                >
+                                    <option value="all">All Status</option>
+                                    <option value="new">New</option>
+                                    <option value="contacted">Contacted</option>
+                                    <option value="enrolled">Enrolled</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </>
+                        )}
                     </div>
                 </div>
 
-                <div className={styles.tableWrapper}>
-                    <table className={styles.table}>
-                        <thead>
-                            <tr>
-                                <th>Enquiry No.</th>
-                                <th onClick={() => handleSort('created_at')}>
-                                    Date {getSortIcon('created_at')}
-                                </th>
-                                <th onClick={() => handleSort('child_name')}>
-                                    Student's Name {getSortIcon('child_name')}
-                                </th>
-                                <th onClick={() => handleSort('parent_name')}>
-                                    Parent's Name {getSortIcon('parent_name')}
-                                </th>
-                                <th>Program</th>
-                                <th>Contact</th>
-                                <th>Notes</th>
-                                <th onClick={() => handleSort('status')}>
-                                    Status {getSortIcon('status')}
-                                </th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {loading ? (
-                                <tr>
-                                    <td colSpan={8} className={styles.loading}>
-                                        <FaSpinner className={styles.loadingIcon} /> Loading enquiries...
-                                    </td>
-                                </tr>
-                            ) : sortedAndFilteredEnquiries.length === 0 ? (
-                                <tr>
-                                    <td colSpan={8} className={styles.noResults}>
-                                        No enquiries found
-                                    </td>
-                                </tr>
-                            ) : (
-                                paginatedEnquiries.map((enquiry) => (
-                                    <motion.tr
-                                        key={enquiry.id}
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ duration: 0.3 }}
-                                    >
-                                        <td>
-                                            {enquiry.enquiry_number || "N/A"}
-                                        </td>
-                                        <td>
-                                            {new Date(enquiry.created_at).toLocaleDateString('en-US', {
-                                                day: '2-digit',
-                                                month: 'short',
-                                                year: 'numeric',
-                                            })}
-                                        </td>
-                                        <td>{enquiry.child_name || 'N/A'}</td>
-                                        <td>{enquiry.parent_name || 'N/A'}</td>
-                                        <td>{enquiry.program || 'N/A'}</td>
-                                        <td>
-                                            <div className={styles.contactLinks}>
-                                                <span>{enquiry.phone || 'N/A'}</span>
-                                                {enquiry.phone && (
-                                                    <>
-                                                        <a
-                                                            href={`tel:${enquiry.phone}`}
-                                                            className={styles.phoneLink}
-                                                            title="Call"
-                                                        >
-                                                            <FaPhoneAlt />
-                                                        </a>
-                                                        <a
-                                                            href={`https://wa.me/91${enquiry.phone.replace(/\D/g, '')}?text=${encodeURIComponent(generateWhatsAppMessage(enquiry))}`}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className={styles.whatsappLink}
-                                                            title={`Send WhatsApp message - Status: ${enquiry.status}`}
-                                                        >
-                                                            <FaWhatsapp />
-                                                        </a>
-                                                    </>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <button
-                                                className={`${styles.notesBtn} ${enquiry.notes && enquiry.notes.length > 0 ? styles.hasNotes : ''}`}
-                                                onClick={() => openNotesModal(enquiry)}
-                                                title={enquiry.notes && enquiry.notes.length > 0 ? `${enquiry.notes.length} notes` : 'Add note'}
+                {!showPopupManagement ? (
+                    <>
+                        <div className={styles.tableWrapper}>
+                            <table className={styles.table}>
+                                <thead>
+                                    <tr>
+                                        <th>Enquiry No.</th>
+                                        <th onClick={() => handleSort('created_at')}>
+                                            Date {getSortIcon('created_at')}
+                                        </th>
+                                        <th onClick={() => handleSort('child_name')}>
+                                            Student's Name {getSortIcon('child_name')}
+                                        </th>
+                                        <th onClick={() => handleSort('parent_name')}>
+                                            Parent's Name {getSortIcon('parent_name')}
+                                        </th>
+                                        <th>Program</th>
+                                        <th>Contact</th>
+                                        <th>Brochure</th>
+                                        <th>Notes</th>
+                                        <th onClick={() => handleSort('status')}>
+                                            Status {getSortIcon('status')}
+                                        </th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {loading ? (
+                                        <tr>
+                                            <td colSpan={10} className={styles.loading}>
+                                                <FaSpinner className={styles.loadingIcon} /> Loading enquiries...
+                                            </td>
+                                        </tr>
+                                    ) : sortedAndFilteredEnquiries.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={10} className={styles.noResults}>
+                                                No enquiries found
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        paginatedEnquiries.map((enquiry) => (
+                                            <motion.tr
+                                                key={enquiry.id}
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                transition={{ duration: 0.3 }}
                                             >
-                                                <FaStickyNote />
-                                                {enquiry.notes && enquiry.notes.length > 0 && (
-                                                    <span className={styles.notesIndicator}>{enquiry.notes.length}</span>
-                                                )}
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <span className={`${styles.status} ${styles[enquiry.status]}`}>
-                                                {enquiry.status}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <select
-                                                value={enquiry.status}
-                                                onChange={(e) =>
-                                                    updateStatus(enquiry.id, e.target.value as Enquiry['status'])
-                                                }
-                                                className={styles.statusSelect}
-                                            >
-                                                <option value="new">New</option>
-                                                <option value="contacted">Contacted</option>
-                                                <option value="enrolled">Enrolled</option>
-                                                <option value="cancelled">Cancelled</option>
-                                            </select>
-                                        </td>
-                                    </motion.tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                                                <td>
+                                                    {enquiry.enquiry_number || "N/A"}
+                                                </td>
+                                                <td>
+                                                    {new Date(enquiry.created_at).toLocaleDateString('en-US', {
+                                                        day: '2-digit',
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                    })}
+                                                </td>
+                                                <td>{enquiry.child_name || 'N/A'}</td>
+                                                <td>{enquiry.parent_name || 'N/A'}</td>
+                                                <td>{enquiry.program || 'N/A'}</td>
+                                                <td>
+                                                    <div className={styles.contactLinks}>
+                                                        <span>{enquiry.phone || 'N/A'}</span>
+                                                        {enquiry.phone && (
+                                                            <>
+                                                                <a
+                                                                    href={`tel:${enquiry.phone}`}
+                                                                    className={styles.phoneLink}
+                                                                    title="Call"
+                                                                >
+                                                                    <PhoneIcon />
+                                                                </a>
+                                                                <a
+                                                                    href={`sms:${enquiry.phone.replace(/\D/g, '')}?body=${encodeURIComponent(generateWhatsAppMessage(enquiry))}`}
+                                                                    className={styles.smsLink}
+                                                                    title={`Send SMS - Status: ${enquiry.status}`}
+                                                                >
+                                                                    <MessageOutlinedIcon />
+                                                                </a>
+                                                                <a
+                                                                    href={`https://wa.me/91${enquiry.phone.replace(/\D/g, '')}?text=${encodeURIComponent(generateWhatsAppMessage(enquiry))}`}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className={styles.whatsappLink}
+                                                                    title={`Send WhatsApp message - Status: ${enquiry.status}`}
+                                                                >
+                                                                    <WhatsAppIcon />
+                                                                </a>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className={styles.contactLinks}>
+                                                        {enquiry.phone && (
+                                                            <>
+                                                                <button
+                                                                    onClick={() => openBrochureModal(enquiry, 'sms')}
+                                                                    className={styles.smsLink}
+                                                                    title={`Send Brochure via SMS`}
+                                                                >
+                                                                    <MessageOutlinedIcon /> 
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => openBrochureModal(enquiry, 'whatsapp')}
+                                                                    className={styles.whatsappLink}
+                                                                    title={`Send Brochure via WhatsApp`}
+                                                                >
+                                                                    <WhatsAppIcon /> 
+                                                                </button>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <button
+                                                        className={`${styles.notesBtn} ${enquiry.notes && enquiry.notes.length > 0 ? styles.hasNotes : ''}`}
+                                                        onClick={() => openNotesModal(enquiry)}
+                                                        title={enquiry.notes && enquiry.notes.length > 0 ? `${enquiry.notes.length} notes` : 'Add note'}
+                                                    >
+                                                        <FaStickyNote />
+                                                        {enquiry.notes && enquiry.notes.length > 0 && (
+                                                            <span className={styles.notesIndicator}>{enquiry.notes.length}</span>
+                                                        )}
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <span className={`${styles.status} ${styles[enquiry.status]}`}>
+                                                        {enquiry.status}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <select
+                                                        value={enquiry.status}
+                                                        onChange={(e) =>
+                                                            updateStatus(enquiry.id, e.target.value as Enquiry['status'])
+                                                        }
+                                                        className={styles.statusSelect}
+                                                    >
+                                                        <option value="new">New</option>
+                                                        <option value="contacted">Contacted</option>
+                                                        <option value="enrolled">Enrolled</option>
+                                                        <option value="cancelled">Cancelled</option>
+                                                    </select>
+                                                </td>
+                                            </motion.tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
 
-                {/* ✨ PAGINATION SECTION ✨ */}
-                {sortedAndFilteredEnquiries.length > 0 && (
+                        {/* ✨ PAGINATION SECTION ✨ */}
+                        {sortedAndFilteredEnquiries.length > 0 && (
                     <div className={styles.paginationSection}>
                         <div className={styles.paginationInfo}>
                             <p className={styles.paginationText}>
@@ -754,7 +856,18 @@ const EnquiryDashboard = () => {
                                 </p>
                             </div>
                         </div>
-                    </div>
+                        </div>
+                    )}
+                    </>
+                ) : (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <PopupManagement />
+                    </motion.div>
                 )}
             </div>
 
@@ -793,6 +906,14 @@ const EnquiryDashboard = () => {
                 onDateRangeChange={handleEnquiryDownload}
                 title="Download Enquiry Data"
                 description="Select a date range and format to download your admission records"
+            />
+
+            <BrochureSelectionModal
+                isOpen={brochureModalOpen}
+                onClose={closeBrochureModal}
+                enquiry={selectedBrochureEnquiry}
+                messageType={brochureMessageType}
+                onSelectBrochure={sendBrochureMessage}
             />
         </div>
     );
@@ -1030,6 +1151,101 @@ const StatusCardComponent = ({
                 </div>
             </div>
         </motion.div>
+    );
+};
+
+const BrochureSelectionModal = ({
+    isOpen,
+    onClose,
+    enquiry,
+    messageType,
+    onSelectBrochure,
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+    enquiry: Enquiry | null;
+    messageType: 'sms' | 'whatsapp' | null;
+    onSelectBrochure: (type: 'brochure' | 'fees') => void;
+}) => {
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <>
+                    <motion.div
+                        className={styles.modalOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                    />
+                    <motion.div
+                        className={styles.modal}
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    >
+                        <div className={styles.modalHeader}>
+                            <div>
+                                <h2>
+                                    {messageType === 'sms' ? <FaComments /> : <FaWhatsapp />}
+                                    Send Brochure to {enquiry?.child_name}
+                                </h2>
+                                <p>{enquiry?.parent_name} • {enquiry?.phone}</p>
+                            </div>
+                            <button
+                                className={styles.closeBtn}
+                                onClick={onClose}
+                                aria-label="Close"
+                            >
+                                <FaTimes />
+                            </button>
+                        </div>
+
+                        <div className={styles.brochureModalContent}>
+                            <p className={styles.brochureSelectionTitle}>Select which brochure to send:</p>
+                            
+                            <div className={styles.brochureOptionsGrid}>
+                                <motion.button
+                                    className={styles.brochureOption}
+                                    onClick={() => onSelectBrochure('brochure')}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    <div className={styles.brochureOptionIcon}>
+                                        <FaBook />
+                                    </div>
+                                    <h3>School Brochure</h3>
+                                    <p>Overview of programs, facilities & admission info</p>
+                                </motion.button>
+
+                                <motion.button
+                                    className={styles.brochureOption}
+                                    onClick={() => onSelectBrochure('fees')}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    <div className={styles.brochureOptionIcon}>
+                                        <FaBook />
+                                    </div>
+                                    <h3>Fee Structure</h3>
+                                    <p>Detailed fees, charges, discounts & payment policies</p>
+                                </motion.button>
+                            </div>
+                        </div>
+
+                        <div className={styles.modalFooter}>
+                            <button
+                                className={styles.cancelBtn}
+                                onClick={onClose}
+                            >
+                                <FaTimes /> Cancel
+                            </button>
+                        </div>
+                    </motion.div>
+                </>
+            )}
+        </AnimatePresence>
     );
 };
 

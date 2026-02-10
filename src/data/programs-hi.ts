@@ -6,7 +6,7 @@ import KGProgramImage from '../../public/assets/programs/kg.jpg'
 
 export const programsHi: ProgramItem[] = [
     {
-        title: "प्ले ग्रुप",
+        title: "Play Group",
         ageGroup: "1.5 - 2.5 वर्ष",
         description: "बच्चों के लिए खोजपूर्ण खेल-आधारित सीखने का वातावरण जहां मोटर कौशल, सामाजिक संपर्क और प्रारंभिक भाषा विकास को प्रोत्साहित किया जाता है।",
         features: [
@@ -20,7 +20,7 @@ export const programsHi: ProgramItem[] = [
         color: "var(--primary-yellow)"
     },
     {
-        title: "नर्सरी",
+        title: "Nursery",
         ageGroup: "2.5 - 3.5 वर्ष",
         description: "संरचित लेकिन लचकदार पाठ्यक्रम जो संज्ञानात्मक विकास, भाषा कौशल और स्वतंत्रता पर केंद्रित है। कला, संगीत और बाहरी खेल शामिल हैं।",
         features: [
@@ -34,7 +34,7 @@ export const programsHi: ProgramItem[] = [
         color: "var(--primary-yellow)"
     },
     {
-        title: "जूनियर किंडरगार्टन",
+        title: "Junior Kindergarten",
         ageGroup: "3.5 - 4.5 वर्ष",
         description: "पूर्व-शैक्षणिक आधार प्रोग्राम जो एकाग्रता, सहयोग और प्रारंभिक शैक्षणिक कौशल को खेल-आधारित गतिविधियों के माध्यम से विकसित करता है।",
         features: [
@@ -48,7 +48,7 @@ export const programsHi: ProgramItem[] = [
         color: "var(--primary-yellow)"
     },
     {
-        title: "सीनियर किंडरगार्टन",
+        title: "Senior Kindergarten",
         ageGroup: "4.5 - 5.5 वर्ष",
         description: "केंद्रित तैयारी पाठ्यक्रम जो बच्चों को आत्मविश्वास, स्वतंत्रता और किंडरगार्टन में सुचारू संक्रमण के लिए आवश्यक शैक्षणिक कौशल प्रदान करता है।",
         features: [

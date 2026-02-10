@@ -852,7 +852,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                         image_url: '',
                         children_photos: [],
                     }}
-                    baseUrl={typeof window !== 'undefined' ? window.location.origin : 'https://apollokids.com'}
+                    baseUrl={typeof window !== 'undefined' ? window.location.origin : 'https://anksquare.com'}
                 />
             </>
         );
@@ -1075,7 +1075,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                     image_url: '',
                     children_photos: [],
                 }}
-                baseUrl={typeof window !== 'undefined' ? window.location.origin : 'https://apollokids.com'}
+                baseUrl={typeof window !== 'undefined' ? window.location.origin : 'https://anksquare.com'}
             />
         </>
     );

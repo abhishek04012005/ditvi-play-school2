@@ -232,6 +232,41 @@
     box-shadow: 0 0 0 4px rgba(106, 76, 147, 0.1);
 }
 
+/* ==================== Toggle View Button ==================== */
+.toggleViewBtn {
+    padding: 0.85rem 1.5rem;
+    background: linear-gradient(135deg, #e0d4f7 0%, #f0e8ff 100%);
+    color: var(--primary-purple);
+    border: 2px solid var(--primary-purple);
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Verdana', sans-serif;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.toggleViewBtn:hover {
+    background: linear-gradient(135deg, #d4c5e2 0%, #e0d4f7 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(106, 76, 147, 0.2);
+}
+
+.toggleViewBtn.active {
+    background: linear-gradient(135deg, #6a4c93 0%, #8b5cf6 100%);
+    color: white;
+    border-color: #6a4c93;
+}
+
+.toggleViewBtn.active:hover {
+    box-shadow: 0 8px 20px rgba(106, 76, 147, 0.35);
+    transform: translateY(-3px);
+}
+
 /* ==================== Table Wrapper ==================== */
 .tableWrapper {
     overflow-x: auto;
@@ -388,6 +423,34 @@
 }
 
 .whatsappLink:active {
+    transform: scale(0.95);
+}
+
+/* ==================== SMS Link ==================== */
+.smsLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: #007bff;
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+    cursor: pointer;
+    margin: 0 4px;
+}
+
+.smsLink:hover {
+    background: #0056b3;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.smsLink:active {
     transform: scale(0.95);
 }
 
@@ -963,6 +1026,77 @@
 .saveBtn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+/* ==================== BROCHURE SELECTION MODAL ==================== */
+.brochureModalContent {
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+.brochureSelectionTitle {
+    margin: 0 0 2rem 0;
+    font-size: 1.1rem;
+    color: var(--black);
+    font-weight: 600;
+    text-align: center;
+}
+
+.brochureOptionsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.brochureOption {
+    background: var(--white);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.brochureOption:hover {
+    border-color: var(--primary-purple);
+    background: rgba(106, 76, 147, 0.05);
+    box-shadow: 0 8px 20px rgba(106, 76, 147, 0.1);
+}
+
+.brochureOption:active {
+    transform: scale(0.98);
+}
+
+.brochureOptionIcon {
+    font-size: 2.5rem;
+    color: var(--primary-purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: rgba(106, 76, 147, 0.1);
+    border-radius: 10px;
+}
+
+.brochureOption h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--black);
+    font-weight: 700;
+}
+
+.brochureOption p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-gray);
+    line-height: 1.4;
 }
 
 /* ==================== RESPONSIVE - TABLET 1200px ==================== */

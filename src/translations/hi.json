@@ -51,10 +51,10 @@
   "programs": {
     "title": "हमारे प्रोग्राम",
     "subtitle": "हर चरण के लिए डिज़ाइन किया गया",
-    "playgroup": "प्ले ग्रुप",
-    "nursery": "नर्सरी",
-    "kindergarten": "किंडरगार्टन",
-    "preschool": "प्री स्कूल"
+    "playgroup": "Play Group",
+    "nursery": "Nursery",
+    "kindergarten": "Junior Kindergarten",
+    "preschool": "Senior Kindergarten"
   },
   "admission": {
     "title": "प्रवेश फॉर्म",

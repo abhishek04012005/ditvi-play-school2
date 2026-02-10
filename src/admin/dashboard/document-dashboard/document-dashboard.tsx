@@ -27,6 +27,7 @@ interface Document {
     drive_file_id: string;
     uploaded_at: string;
     file_size?: number;
+    is_public?: boolean;
 }
 
 interface StatusCard {
@@ -54,6 +55,7 @@ const formatFileSize = (bytes?: number): string => {
 const DocumentDashboard = () => {
     const [details, setDetails] = useState('');
     const [file, setFile] = useState<File | null>(null);
+    const [isPublic, setIsPublic] = useState(false);
     const [loading, setLoading] = useState(true);
     const [documents, setDocuments] = useState<Document[]>([]);
     const [roleId, setRoleId] = useState<number | null>(null);
@@ -94,7 +96,7 @@ const DocumentDashboard = () => {
     const fetchDocuments = async () => {
         try {
             setLoading(true);
-            const res = await fetch('/api/public/downloads');
+            const res = await fetch('/api/admin/all-documents');
             const json = await res.json();
             if (json?.success) setDocuments(json.data || []);
             else setDocuments([]);
@@ -117,6 +119,7 @@ const DocumentDashboard = () => {
             const fd = new FormData();
             fd.append('details', details);
             fd.append('file', file);
+            fd.append('is_public', String(isPublic));
 
             const res = await fetch('/api/admin/upload-document', { method: 'POST', body: fd });
             const json = await res.json();
@@ -132,6 +135,34 @@ const DocumentDashboard = () => {
         } catch (err) {
             console.error(err);
             toast.error('Upload failed');
+        } finally {
+            setUploadLoading(false);
+        }
+    };
+
+    const handleTogglePublic = async (doc: Document) => {
+        setUploadLoading(true);
+        try {
+            const newStatus = !doc.is_public;
+            const res = await fetch('/api/admin/update-document', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: doc.id, is_public: newStatus }),
+            });
+            const json = await res.json();
+            if (json?.success) {
+                toast.success(
+                    newStatus
+                        ? 'Document is now public'
+                        : 'Document is now private'
+                );
+                await fetchDocuments();
+            } else {
+                toast.error(json?.error || 'Update failed');
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error('Update failed');
         } finally {
             setUploadLoading(false);
         }
@@ -310,6 +341,18 @@ const DocumentDashboard = () => {
                                             </span>
                                         </label>
                                     </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label className={styles.checkboxLabel}>
+                                            <input
+                                                type="checkbox"
+                                                checked={isPublic}
+                                                onChange={(e) => setIsPublic(e.target.checked)}
+                                                className={styles.checkboxInput}
+                                            />
+                                            <span>Make this document public (visible to users)</span>
+                                        </label>
+                                    </div>
                                 </div>
 
                                 <div className={styles.modalFooter}>
@@ -386,13 +429,14 @@ const DocumentDashboard = () => {
                                     Document Name {getSortIcon('details')}
                                 </th>
                                 <th>Size</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {sortedAndFilteredDocuments.length === 0 ? (
                                 <tr>
-                                    <td colSpan={4} className={styles.noResults}>
+                                    <td colSpan={5} className={styles.noResults}>
                                         No documents found
                                     </td>
                                 </tr>
@@ -420,6 +464,22 @@ const DocumentDashboard = () => {
                                             </div>
                                         </td>
                                         <td className={styles.documentCell}>{formatFileSize(doc.file_size)}</td>
+                                        <td>
+                                            <select
+                                                value={doc.is_public ? 'public' : 'private'}
+                                                onChange={(e) => {
+                                                    const newStatus = e.target.value === 'public';
+                                                    if (newStatus !== doc.is_public) {
+                                                        handleTogglePublic(doc);
+                                                    }
+                                                }}
+                                                className={styles.statusDropdown}
+                                                title="Change document visibility"
+                                            >
+                                                <option value="public">Public</option>
+                                                <option value="private">Private</option>
+                                            </select>
+                                        </td>
                                         <td className={styles.actionCell}>
                                             <div className={styles.actionButtons}>
                                                 <motion.button

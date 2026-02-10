@@ -31,7 +31,7 @@ export const ShareModal = ({
     isOpen,
     onClose,
     award,
-    baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://apollokids.com',
+    baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://anksquare.com',
 }: ShareModalProps) => {
     const [copied, setCopied] = useState(false);
     const [sharing, setSharing] = useState(false);
@@ -92,7 +92,7 @@ export const ShareModal = ({
         const text = encodeURIComponent(
             `${award.name} was recognized as our Star of the Week! 🌟\n\n"${award.message}"\n\n✨ Check out this amazing achievement!\n\n${shareUrl}`
         );
-        const url = `https://twitter.com/intent/tweet?text=${text}&hashtags=ApolloKids,StarOfTheWeek,Excellence`;
+        const url = `https://twitter.com/intent/tweet?text=${text}&hashtags=anksquare,StarOfTheWeek,Excellence`;
         window.open(url, '_blank', 'noopener,noreferrer,width=600,height=400');
         setTimeout(() => setSharing(false), 500);
     };

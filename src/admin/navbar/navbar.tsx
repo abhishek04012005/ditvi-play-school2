@@ -63,6 +63,10 @@ const AdminNavbar = () => {
         {
             label: 'Spotlight Dashboard',
             href: '/admin/dashboard/spotlight',
+        },
+        {
+            label: 'Receipt Dashboard',
+            href: '/admin/dashboard/receipt',
         }
     ];
 
