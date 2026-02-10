@@ -120,6 +120,7 @@
   margin: 0 auto;
   background: transparent;
   display: flex;
+  flex-direction: column;
   justify-content: center;
 }
 
@@ -163,14 +164,18 @@
   background: transparent;
   border-radius: 0;
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .pdfPage {
   width: 210mm;
   height: auto;
   background: rgb(252, 252, 252);
-  margin: 0;
+  margin: 0 auto 1rem auto;
   padding: 12mm;
   box-sizing: border-box;
   page-break-after: always;
@@ -1016,5 +1021,46 @@
   .actionRow {
     display: none;
   }
+}
+
+/* Language Toggle Section */
+.languageToggleSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 100;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 2rem;
+}
+
+.languageButton {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  font-weight: normal;
+  background-color: white;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.languageButton:hover {
+  border-color: #0066cc;
+  background-color: #f0f0f0;
+}
+
+.languageButton.active {
+  padding: 8px 16px;
+  border: 2px solid #0066cc;
+  border-radius: 4px;
+  background-color: #e6f2ff;
+  color: #0066cc;
+  font-weight: bold;
 }
 

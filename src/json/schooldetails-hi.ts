@@ -36,6 +36,29 @@ export interface SchoolDetailsHi {
         icon?: string;
         description?: string;
     }[];
+    feeStructure?: {
+        programs: {
+            name: string;
+            ageGroup: string;
+            icon: string;
+            img: string;
+            monthlyFee: string;
+            annualFee: string;
+            registrationFee: string;
+            description: string;
+            includes: string[];
+            additionalCharges: {
+                name: string;
+                price: string;
+            }[];
+        }[];
+        paymentTerms: {
+            term: string;
+            description: string;
+            icon: string;
+        }[];
+        policies: string[];
+    };
 }
 
 export const schoolDetailsHi: SchoolDetailsHi = {
@@ -85,7 +108,121 @@ export const schoolDetailsHi: SchoolDetailsHi = {
             name: "सीनियर केजी",
             description: "आयु: 4.5 - 5.5 वर्ष"
         }
-    ]
+    ],
+    feeStructure: {
+        programs: [
+            {
+                name: "शिशु समूह",
+                ageGroup: "आयु 2–3",
+                icon: "👶",
+                img: "/assets/programs/toddler.jpg",
+                monthlyFee: "₹8,500",
+                annualFee: "₹1,02,000",
+                registrationFee: "₹2,000",
+                description: "संवेदनशील खेल और प्रमाणित देखभालकर्ताओं के साथ बंधन",
+                includes: [
+                    "दैनिक खेल आधारित सीखने की गतिविधियाँ",
+                    "नाश्ता और भोजन शामिल",
+                    "डायपर परिवर्तन और बुनियादी देखभाल",
+                    "मासिक प्रगति रिपोर्ट",
+                    "अभिभावक-शिक्षक बैठकें",
+                    "बाहरी खेल का समय",
+                ],
+                additionalCharges: [
+                    { name: "अतिरिक्त कक्षा (प्रति माह)", price: "₹500" },
+                    { name: "विशेष कार्यशाला", price: "₹1,000" },
+                    { name: "फील्ड ट्रिप", price: "₹2,000–₹3,000" },
+                ],
+            },
+            {
+                name: "नर्सरी",
+                ageGroup: "आयु 3–4",
+                icon: "🧒",
+                img: "/assets/programs/nursery.jpg",
+                monthlyFee: "₹10,000",
+                annualFee: "₹1,20,000",
+                registrationFee: "₹2,000",
+                description: "नींव सीखना और दिनचर्या निर्माण",
+                includes: [
+                    "संरचित दैनिक दिनचर्या",
+                    "वर्णमाला और संख्या परिचय",
+                    "कला, शिल्प और रचनात्मक गतिविधियाँ",
+                    "कहानी समय और संगीत सत्र",
+                    "नाश्ता और दोपहर का भोजन शामिल",
+                    "खेल के मैदान तक पहुंच",
+                    "मासिक मूल्यांकन",
+                ],
+                additionalCharges: [
+                    { name: "अतिरिक्त कक्षा (प्रति माह)", price: "₹600" },
+                    { name: "कला आपूर्ति किट", price: "₹1,500" },
+                    { name: "शैक्षणिक खेल", price: "₹500–₹1,000" },
+                ],
+            },
+            {
+                name: "प्री-किंडरगार्टन",
+                ageGroup: "आयु 4–5",
+                icon: "📚",
+                img: "/assets/programs/prekg.jpg",
+                monthlyFee: "₹12,000",
+                annualFee: "₹1,44,000",
+                registrationFee: "₹2,500",
+                description: "पूर्व-शिक्षाविदों और साक्षरता की नींव",
+                includes: [
+                    "फोनिक्स और पूर्व-पढ़ने का कार्यक्रम",
+                    "बुनियादी गणित और संख्या कौशल",
+                    "STEM अन्वेषण गतिविधियाँ",
+                    "कला, संगीत और शारीरिक शिक्षा",
+                    "दोपहर का भोजन और स्वस्थ नाश्ता",
+                    "द्वि-साप्ताहिक कौशल मूल्यांकन",
+                    "अभिभावक-शिक्षक सम्मेलन",
+                ],
+                additionalCharges: [
+                    { name: "उन्नत STEM किट", price: "₹1,500–₹2,000" },
+                    { name: "विशेष कक्षाएं (प्रति माह)", price: "₹700" },
+                    { name: "स्कूल कार्यक्रम और भ्रमण", price: "₹2,500–₹4,000" },
+                ],
+            },
+            {
+                name: "किंडरगार्टन",
+                ageGroup: "आयु 5–6",
+                icon: "🎓",
+                img: "/assets/programs/kg.jpg",
+                monthlyFee: "₹14,000",
+                annualFee: "₹1,68,000",
+                registrationFee: "₹3,000",
+                description: "स्कूल की तैयारी और शैक्षणिक कौशल",
+                includes: [
+                    "अंग्रेजी, गणित और विज्ञान पाठ्यक्रम",
+                    "पढ़ने और लिखने का कार्यक्रम",
+                    "समस्या समाधान गतिविधियाँ",
+                    "कंप्यूटर बेसिक्स परिचय",
+                    "खेल और शारीरिक गतिविधियाँ",
+                    "रचनात्मक परियोजनाएं और प्रतियोगिताएं",
+                    "मासिक प्रगति ट्रैकिंग",
+                    "स्कूल की तैयारी की तैयारी",
+                ],
+                additionalCharges: [
+                    { name: "टेक कक्षाएं (प्रति माह)", price: "₹800" },
+                    { name: "प्रतिस्पर्धी परीक्षा की तैयारी", price: "₹1,000–₹1,500" },
+                    { name: "वार्षिक दिवस और कार्यक्रम", price: "₹5,000–₹7,000" },
+                ],
+            },
+        ],
+        paymentTerms: [
+            { term: "मासिक", description: "मासिक शुल्क का भुगतान करें", icon: "📅" },
+            { term: "त्रैमासिक", description: "3 महीने की अग्रिम (5% छूट)", icon: "📊" },
+            { term: "अर्धवार्षिक", description: "6 महीने की अग्रिम (8% छूट)", icon: "💰" },
+            { term: "वार्षिक", description: "पूरा साल अग्रिम (12% छूट)", icon: "⭐" },
+        ],
+        policies: [
+            "पंजीकरण शुल्क गैर-वापसी योग्य है",
+            "निकासी के लिए एक महीने की सूचना आवश्यक है",
+            "वार्षिक शुल्क वृद्धि (अप्रैल)",
+            "देरी शुल्क: ₹500 प्रति दिन देय तारीख के बाद",
+            "भाई-बहन की छूट: दूसरे बच्चे पर 10%",
+            "एकाधिक वर्ष नामांकन छूट उपलब्ध है",
+        ],
+    }
 };
 
 export default schoolDetailsHi;

@@ -1,17 +1,46 @@
 "use client"
 
 import { useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import styles from './fee-structure.module.css'
 import generatePdf from '../../lib/generatePdf'
 import { schoolDetailsEng } from '@/json/schooldetails-eng'
+import { schoolDetailsHi } from '@/json/schooldetails-hi'
 
-const PROGRAMS_WITH_FEES = schoolDetailsEng.feeStructure?.programs || []
-const PAYMENT_TERMS = schoolDetailsEng.feeStructure?.paymentTerms || []
-const POLICIES = schoolDetailsEng.feeStructure?.policies || []
+const PROGRAMS_WITH_FEES_EN = schoolDetailsEng.feeStructure?.programs || []
+const PAYMENT_TERMS_EN = schoolDetailsEng.feeStructure?.paymentTerms || []
+const POLICIES_EN = schoolDetailsEng.feeStructure?.policies || []
+
+// For Hindi, we use Hindi school details which now has feeStructure
+const PROGRAMS_WITH_FEES_HI = schoolDetailsHi.feeStructure?.programs || []
+const PAYMENT_TERMS_HI = schoolDetailsHi.feeStructure?.paymentTerms || []
+const POLICIES_HI = schoolDetailsHi.feeStructure?.policies || []
 
 function FeeStructureContent() {
+  const [language, setLanguage] = useState<'en' | 'hi'>('en')
+  const [mounted, setMounted] = useState(false)
   const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const saved = localStorage.getItem('language') as 'en' | 'hi' | null
+    if (saved && (saved === 'en' || saved === 'hi')) {
+      setLanguage(saved)
+    }
+    setMounted(true)
+  }, [])
+
+  const handleLanguageSwitch = (lang: 'en' | 'hi') => {
+    setLanguage(lang)
+    localStorage.setItem('language', lang)
+  }
+
+  if (!mounted) return <div>Loading...</div>
+
+  // Use appropriate school details based on language
+  const schoolDetailsBase = language === 'en' ? schoolDetailsEng : schoolDetailsHi
+  const schoolDetailsForTranslations = language === 'en' ? schoolDetailsEng : schoolDetailsHi
+  const PROGRAMS_WITH_FEES = language === 'en' ? PROGRAMS_WITH_FEES_EN : PROGRAMS_WITH_FEES_HI
+
   // Handle both old and new parameter names for compatibility
   const studentName = searchParams.get('studentName') || searchParams.get('child_name') || searchParams.get('name')
   const parentName = searchParams.get('parentName') || searchParams.get('parent_name')
@@ -37,7 +66,7 @@ function FeeStructureContent() {
   }
 
   const formatAddress = () => {
-    const addr = schoolDetailsEng.address
+    const addr = schoolDetailsBase.address
     if (!addr) return 'N/A'
     const parts = [addr.street, addr.city, addr.state, addr.pincode].filter(Boolean)
     return parts.join(', ')
@@ -45,22 +74,37 @@ function FeeStructureContent() {
 
   return (
     <main className={styles.container}>
+      {/* Language Toggle Button */}
+      <div className={styles.languageToggleSection}>
+        <button
+          onClick={() => handleLanguageSwitch('en')}
+          className={`${styles.languageButton} ${language === 'en' ? styles.active : ''}`}
+        >
+          English
+        </button>
+        <button
+          onClick={() => handleLanguageSwitch('hi')}
+          className={`${styles.languageButton} ${language === 'hi' ? styles.active : ''}`}
+        >
+          हिन्दी
+        </button>
+      </div>
       <div id="pdf-fee-content" className={styles.pdfWrapper}>
         {/* Page 1: Cover & Overview */}
         <article className={styles.pdfPage}>
           <div className={styles.coverHeader}>
             <div className={styles.studentInfoHeaderOverlay}>
               <img src="/assets/logo/logo.png" alt="School logo" className={styles.headerLogo} />
-              <h1 className={styles.headerTitle}>{schoolDetailsEng.name}</h1>
+              <h1 className={styles.headerTitle}>{schoolDetailsForTranslations.name}</h1>
             </div>
-            <p className={styles.headerSubtitle}>Fee Structure</p>
+            <p className={styles.headerSubtitle}>{language === 'en' ? 'Fee Structure' : 'शुल्क संरचना'}</p>
 
             <div className={styles.enquiryInfo}>
               <div>
-                <p>Enquiry No: <span className={styles.enquiryField}>{enquiryNumber}</span></p>
+                <p>{language === 'en' ? 'Enquiry No' : 'पूछताछ क्रमांक'}: <span className={styles.enquiryField}>{enquiryNumber}</span></p>
               </div>
               <div>
-                <p>Dated: <span className={styles.enquiryField}>{new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</span></p>
+                <p>{language === 'en' ? 'Dated' : 'दिनांक'}: <span className={styles.enquiryField}>{new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</span></p>
               </div>
             </div>
           </div>
@@ -79,13 +123,25 @@ function FeeStructureContent() {
             <div className={styles.overviewCard}>
               <div className={styles.studentInfoBox}>
                 <p className={styles.detailedMessage}>
-                  We are delighted to acknowledge your enquiry with us. The enquiry, registered under{' '}
-                  <strong>
-                    {enquiryNumber ? `Enquiry No ${enquiryNumber}` : `Admission No ${admissionNumber}`}
-                  </strong>
-                  , has been created on <strong>{formatDate(createdAt)}</strong> for the student{' '}
-                  <strong>{studentName}</strong>, child of <strong>{parentName}</strong>. The requested program is{' '}
-                  <strong>{program}</strong>, and our admissions team will be happy to assist you further with the next steps.
+                  {language === 'en' ? (
+                    <>
+                      We are delighted to acknowledge your enquiry with us. The enquiry, registered under{' '}
+                      <strong>
+                        {enquiryNumber ? `Enquiry No ${enquiryNumber}` : `Admission No ${admissionNumber}`}
+                      </strong>
+                      , has been created on <strong>{formatDate(createdAt)}</strong> for the student{' '}
+                      <strong>{studentName}</strong>, child of <strong>{parentName}</strong>. The requested program is{' '}
+                      <strong>{program}</strong>, and our admissions team will be happy to assist you further with the next steps.
+                    </>
+                  ) : (
+                    <>
+                      हम आपकी पूछताछ को स्वीकार करते हुए प्रसन्न हैं। पूछताछ, जो &nbsp;
+                      <strong>
+                         {enquiryNumber ? `पूछताछ क्रमांक ${enquiryNumber}` : `प्रवेश क्रमांक ${admissionNumber}`}
+                      </strong>
+                      के तहत पंजीकृत है, को <strong>{formatDate(createdAt)}</strong> को छात्र <strong>{studentName}</strong>, <strong>{parentName}</strong> के बच्चे के लिए बनाया गया है। अनुरोधित कार्यक्रम <strong>{program}</strong> है, और हमारी प्रवेश टीम आपको अगले चरणों में सहायता करने के लिए खुश होगी।
+                    </>
+                  )}
                 </p>
               </div>
             </div>
@@ -93,7 +149,7 @@ function FeeStructureContent() {
 
 
           <div className={styles.overviewBox}>
-            <h2>Program Overview</h2>
+            <h2>{language === 'en' ? 'Program Overview' : 'कार्यक्रम अवलोकन'}</h2>
             <div className={styles.overviewGrid}>
               {PROGRAMS_WITH_FEES.map((prog) => (
                 <div key={prog.name} className={styles.overviewCard}>
@@ -114,7 +170,7 @@ function FeeStructureContent() {
           </div>
 
           <div className={styles.footerNote}>
-            <p><strong>Note:</strong> All fees are inclusive of meals, snacks, and basic supplies. Additional charges apply for special activities.</p>
+            <p><strong>{language === 'en' ? 'Note:' : 'नोट:'}</strong> {language === 'en' ? 'All fees are inclusive of meals, snacks, and basic supplies. Additional charges apply for special activities.' : 'सभी शुल्क भोजन, नाश्ते और बुनियादी आपूर्तियों सहित हैं। विशेष गतिविधियों के लिए अतिरिक्त शुल्क लागू होते हैं।'}</p>
           </div>
         </article>
 
@@ -137,26 +193,26 @@ function FeeStructureContent() {
 
             <div className={styles.feeBox}>
               <div className={styles.feeItem}>
-                <span className={styles.feeLabel}>Monthly Fee</span>
+                <span className={styles.feeLabel}>{language === 'en' ? 'Monthly Fee' : 'मासिक शुल्क'}</span>
                 <span className={styles.feeAmount}>{program.monthlyFee}</span>
               </div>
               <div className={styles.feeItem}>
-                <span className={styles.feeLabel}>Annual Fee</span>
+                <span className={styles.feeLabel}>{language === 'en' ? 'Annual Fee' : 'वार्षिक शुल्क'}</span>
                 <span className={styles.feeAmount}>{program.annualFee}</span>
               </div>
               <div className={styles.feeItem}>
-                <span className={styles.feeLabel}>Registration</span>
+                <span className={styles.feeLabel}>{language === 'en' ? 'Registration' : 'पंजीकरण'}</span>
                 <span className={styles.feeAmount}>{program.registrationFee}</span>
               </div>
             </div>
 
             <div className={styles.section}>
-              <h3>Program Description</h3>
+              <h3>{language === 'en' ? "Program Description" : "कार्यक्रम विवरण"}</h3>
               <p>{program.description}</p>
             </div>
 
             <div className={styles.section}>
-              <h3>What's Included</h3>
+              <h3>{language === 'en' ? "What's Included" : "क्या शामिल है"}</h3>
               <ul className={styles.includesList}>
                 {program.includes.map((item) => (
                   <li key={item}>{item}</li>
@@ -165,7 +221,7 @@ function FeeStructureContent() {
             </div>
 
             <div className={styles.section}>
-              <h3>Additional Charges</h3>
+              <h3>{language === 'en' ? "Additional Charges" : "अतिरिक्त शुल्क"}</h3>
               <table className={styles.chargesTable}>
                 <tbody>
                   {program.additionalCharges.map((charge) => (
@@ -183,11 +239,11 @@ function FeeStructureContent() {
         {/* Page 6: Payment Terms & Policies */}
         <article className={styles.pdfPage}>
           <div className={styles.contactBox}>
-            <h3>Questions?</h3>
-            <p><strong>Contact Admissions:</strong></p>
-            <p>📞 Phone: {schoolDetailsEng.contact?.phone || 'N/A'}</p>
-            <p>✉️ Email: {schoolDetailsEng.contact?.email || 'N/A'}</p>
-            <p>📍 Address: {formatAddress()}</p>
+            <h3>{language === 'en' ? 'Questions?' : 'सवाल?'}</h3>
+            <p><strong>{language === 'en' ? 'Contact Admissions:' : 'प्रवेश से संपर्क करें:'}</strong></p>
+            <p>📞 {language === 'en' ? 'Phone' : 'फोन'}: {schoolDetailsBase.contact?.phone || 'N/A'}</p>
+            <p>✉️ {language === 'en' ? 'Email' : 'ईमेल'}: {schoolDetailsBase.contact?.email || 'N/A'}</p>
+            <p>📍 {language === 'en' ? 'Address' : 'पता'}: {formatAddress()}</p>
           </div>
         </article>
       </div>
