@@ -8,18 +8,83 @@
   --card-shadow-sm: 0 4px 12px rgba(106, 76, 147, 0.08);
 }
 
-.studentInfoHeader {
-  background: linear-gradient(135deg, var(--primary-purple) 0%, #7a5a9e 100%);
-  padding: 2rem;
-  border-radius: 12px;
+/* Cover Header - School Name & Logo at Top */
+.coverHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  background: linear-gradient(135deg, #f9f7f4 0%, #f5f3f0 100%);
+  border-bottom: 3px solid var(--primary-purple);
   margin-bottom: 2rem;
+  text-align: center;
+}
+
+.headerLogo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.headerTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-purple);
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.5px;
+}
+
+.headerSubtitle {
+  font-size: 1.2rem;
+  color: var(--muted);
+  margin: 0;
+  font-weight: 500;
+}
+
+.studentInfoHeader {
+  background: transparent;
+  padding: 0;
+  border: none;
+  margin: 0;
+}
+
+.studentInfoHeaderOverlay {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.enquiryInfo {
+  margin-top: 1rem;
+  color: var(--primary-purple);
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.enquiryField {
+  font-weight: 600;
+  color: var(--primary-yellow);
 }
 
 .studentInfoBox {
-  background: white;
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: var(--card-shadow-sm);
+}
+
+.detailedMessage {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #2d2d2d;
+  margin: 0;
+  text-align: left;
+}
+
+.detailedMessage strong {
+  color: var(--primary-purple);
+  font-weight: 700;
 }
 
 .infoGrid {
@@ -120,10 +185,20 @@
 
 /* PAGE 1: COVER */
 .coverSection {
+  position: relative;
   text-align: center;
   margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
+}
+
+.schoolInfoSection {
+  position: relative;
+  z-index: 5;
+  padding-top: 1.5rem;
+  margin-top: -2rem;
+  text-align: center;
+  background: white;
   border-bottom: 3px solid var(--primary-yellow);
+  padding-bottom: 1rem;
 }
 
 .logo {
@@ -147,23 +222,23 @@
   background-clip: text;
   font-size: 1.4rem;
   margin-bottom: 0.8rem;
-  
 }
 
 .coverYear {
   color: var(--primary-purple);
   font-size: 1rem;
-  
   letter-spacing: 1px;
 }
 
 /* Hero gallery for fee-structure cover */
-.heroGalleryGrid{
-  grid-template-rows: 140px 100px;
+.heroGalleryGrid {
+  position: relative;
+  grid-template-rows: 280px;
   gap: 0.6rem;
-  margin: 0.8rem 0;
+  margin: 0;
   border-radius: 10px;
   overflow: hidden;
+  display: grid;
 }
 
 .heroLarge img{

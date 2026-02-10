@@ -4,11 +4,11 @@ import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import styles from './fee-structure.module.css'
 import generatePdf from '../../lib/generatePdf'
-import { schoolDetails } from '@/json/schooldetails'
+import { schoolDetailsEng } from '@/json/schooldetails-eng'
 
-const PROGRAMS_WITH_FEES = schoolDetails.feeStructure?.programs || []
-const PAYMENT_TERMS = schoolDetails.feeStructure?.paymentTerms || []
-const POLICIES = schoolDetails.feeStructure?.policies || []
+const PROGRAMS_WITH_FEES = schoolDetailsEng.feeStructure?.programs || []
+const PAYMENT_TERMS = schoolDetailsEng.feeStructure?.paymentTerms || []
+const POLICIES = schoolDetailsEng.feeStructure?.policies || []
 
 function FeeStructureContent() {
   const searchParams = useSearchParams()
@@ -36,72 +36,61 @@ function FeeStructureContent() {
     return date.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })
   }
 
+  const formatAddress = () => {
+    const addr = schoolDetailsEng.address
+    if (!addr) return 'N/A'
+    const parts = [addr.street, addr.city, addr.state, addr.pincode].filter(Boolean)
+    return parts.join(', ')
+  }
+
   return (
     <main className={styles.container}>
       <div id="pdf-fee-content" className={styles.pdfWrapper}>
-        {/* Student Information Header */}
-        {(studentName || parentName || enquiryNumber || admissionNumber) && (
-          <article className={styles.pdfPage}>
-            <div className={styles.studentInfoHeader}>
-              <div className={styles.studentInfoBox}>
-                <div className={styles.infoGrid}>
-                  {studentName && (
-                    <div className={styles.infoItem}>
-                      <label>Student Name</label>
-                      <p>{studentName}</p>
-                    </div>
-                  )}
-                  {parentName && (
-                    <div className={styles.infoItem}>
-                      <label>Parent Name</label>
-                      <p>{parentName}</p>
-                    </div>
-                  )}
-                  {(enquiryNumber || admissionNumber) && (
-                    <div className={styles.infoItem}>
-                      <label>{enquiryNumber ? 'Enquiry Number' : 'Admission Number'}</label>
-                      <p>{enquiryNumber || admissionNumber}</p>
-                    </div>
-                  )}
-                  {program && (
-                    <div className={styles.infoItem}>
-                      <label>Program</label>
-                      <p>{program}</p>
-                    </div>
-                  )}
-                  {createdAt && (
-                    <div className={styles.infoItem}>
-                      <label>Date</label>
-                      <p>{formatDate(createdAt)}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </article>
-        )}
-
-
         {/* Page 1: Cover & Overview */}
         <article className={styles.pdfPage}>
+          <div className={styles.coverHeader}>
+            <div className={styles.studentInfoHeaderOverlay}>
+              <img src="/assets/logo/logo.png" alt="School logo" className={styles.headerLogo} />
+              <h1 className={styles.headerTitle}>{schoolDetailsEng.name}</h1>
+            </div>
+            <p className={styles.headerSubtitle}>Fee Structure</p>
+
+            <div className={styles.enquiryInfo}>
+              <div>
+                <p>Enquiry No: <span className={styles.enquiryField}>{enquiryNumber}</span></p>
+              </div>
+              <div>
+                <p>Dated: <span className={styles.enquiryField}>{new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })}</span></p>
+              </div>
+            </div>
+          </div>
+
           <div className={styles.coverSection}>
-            <img src="/assets/logo/logo.png" alt="School logo" className={styles.logo} />
-            <h1 className={styles.coverTitle}>Ditvi Play School</h1>
-            <p className={styles.coverSubtitle}>Fee Structure & Payment Information</p>
-            <p className={styles.coverYear}>{new Date().getFullYear()}</p>
-            {/* Hero gallery to visually match site branding and provide cover imagery */}
             <div className={styles.heroGalleryGrid}>
               <div className={styles.heroLarge}>
                 <img src="/assets/hero/1.jpg" alt="hero-1" className={styles.heroImage} />
               </div>
             </div>
 
-            {/* <div className={styles.heroThumbs}>
-              <div className={styles.heroThumb}><img src="/assets/programs/toddler.jpg" alt="Toddlers" /></div>
-              <div className={styles.heroThumb}><img src="/assets/programs/nursery.jpg" alt="Nursery" /></div>
-              <div className={styles.heroThumb}><img src="/assets/gallery/independenceday.png" alt="Independence Day" /></div>
-            </div> */}
           </div>
+
+          {/* Student Information Header - Overlaid on Hero Image */}
+          {(studentName || parentName || enquiryNumber || admissionNumber) && (
+            <div className={styles.overviewCard}>
+              <div className={styles.studentInfoBox}>
+                <p className={styles.detailedMessage}>
+                  We are delighted to acknowledge your enquiry with us. The enquiry, registered under{' '}
+                  <strong>
+                    {enquiryNumber ? `Enquiry No ${enquiryNumber}` : `Admission No ${admissionNumber}`}
+                  </strong>
+                  , has been created on <strong>{formatDate(createdAt)}</strong> for the student{' '}
+                  <strong>{studentName}</strong>, child of <strong>{parentName}</strong>. The requested program is{' '}
+                  <strong>{program}</strong>, and our admissions team will be happy to assist you further with the next steps.
+                </p>
+              </div>
+            </div>
+          )}
+
 
           <div className={styles.overviewBox}>
             <h2>Program Overview</h2>
@@ -196,9 +185,9 @@ function FeeStructureContent() {
           <div className={styles.contactBox}>
             <h3>Questions?</h3>
             <p><strong>Contact Admissions:</strong></p>
-            <p>📞 Phone: (555) 123-4567</p>
-            <p>✉️ Email: admissions@ditvi.school</p>
-            <p>📍 Address: 123 Main Street, Your City</p>
+            <p>📞 Phone: {schoolDetailsEng.contact?.phone || 'N/A'}</p>
+            <p>✉️ Email: {schoolDetailsEng.contact?.email || 'N/A'}</p>
+            <p>📍 Address: {formatAddress()}</p>
           </div>
         </article>
       </div>
