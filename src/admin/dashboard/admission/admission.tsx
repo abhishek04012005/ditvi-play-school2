@@ -863,6 +863,15 @@ export default function AdminAdmission() {
         toast.success('✅ Opening WhatsApp with status message!');
     };
 
+    // ✨ SMS HANDLER ✨
+    const sendStatusBasedSMSMessage = (admission: Admission) => {
+        const phone = getParentMobile(admission).replace(/\D/g, '');
+        const message = generateAdmissionWhatsAppMessage(admission);
+
+        window.location.href = `sms:${phone}?body=${encodeURIComponent(message)}`;
+        toast.success('✅ Opening SMS with status message!');
+    };
+
     const sendBrochureMessage = (brochureType: 'brochure' | 'fees') => {
         if (!selectedBrochureAdmission || !brochureMessageType) return;
 
@@ -1045,6 +1054,13 @@ export default function AdminAdmission() {
                                                 >
                                                     <PhoneOutlined />
                                                 </a>
+                                                <button
+                                                    onClick={() => sendStatusBasedSMSMessage(admission)}
+                                                    className={styles.smsLink}
+                                                    title="SMS"
+                                                >
+                                                    <MessageOutlined />
+                                                </button>
                                                 <button
                                                     onClick={() => sendStatusBasedWhatsAppMessage(admission)}
                                                     className={styles.whatsappLink}
