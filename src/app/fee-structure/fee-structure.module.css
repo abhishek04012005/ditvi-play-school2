@@ -1000,29 +1000,6 @@
   }
 }
 
-@print {
-  .container {
-    padding: 0;
-  }
-
-  .pdfWrapper {
-    box-shadow: none;
-    background: #fff;
-  }
-
-  .pdfPage {
-    box-shadow: none;
-    margin: 0;
-    border-radius: 0;
-    width: 100%;
-    page-break-after: always;
-  }
-
-  .actionRow {
-    display: none;
-  }
-}
-
 /* Language Toggle Section */
 .languageToggleSection {
   display: flex;

@@ -6,17 +6,16 @@ export async function GET() {
     const { data, error } = await supabase
       .from('downloads')
       .select('id, details, uploaded_at, url, drive_file_id, file_size, is_public')
-      .eq('is_public', true)
       .order('uploaded_at', { ascending: false });
 
     if (error) {
-      console.error('Failed to fetch downloads:', error);
-      return NextResponse.json({ error: 'Failed to fetch downloads' }, { status: 500 });
+      console.error('Failed to fetch documents:', error);
+      return NextResponse.json({ error: 'Failed to fetch documents' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, data }, { status: 200 });
   } catch (err) {
-    console.error('Public downloads error:', err);
-    return NextResponse.json({ error: 'Failed to fetch downloads' }, { status: 500 });
+    console.error('Admin documents error:', err);
+    return NextResponse.json({ error: 'Failed to fetch documents' }, { status: 500 });
   }
 }

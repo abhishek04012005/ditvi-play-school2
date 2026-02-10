@@ -6,6 +6,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const details = (formData.get('details') as string) || '';
+    const isPublic = formData.get('is_public') === 'true' ? true : false;
     const file = formData.get('file') as File;
 
     if (!file) {
@@ -42,6 +43,7 @@ export async function POST(request: NextRequest) {
         url: uploadResult.webViewLink,
         drive_file_id: uploadResult.fileId,
         file_size: file.size,
+        is_public: isPublic,
       }])
       .select('*')
       .single();
