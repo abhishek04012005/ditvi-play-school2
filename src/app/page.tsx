@@ -7,7 +7,6 @@ import Gallery from "@/components/gallery/gallery";
 import Hero from "@/components/hero/hero";
 import Program from "@/components/program/program";
 import Testimonials from "@/components/testimonials/testimonials";
-import ARBooks from "@/components/ar/arbooks";
 
 export const metadata: Metadata = {
   title: "Home | Ank Square Play School",
