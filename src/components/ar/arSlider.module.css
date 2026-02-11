@@ -1,0 +1,276 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.instructions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  background: rgba(106, 76, 147, 0.05);
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid #6a4c93;
+}
+
+.instructionItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.instructionIcon {
+  font-size: 1.2rem;
+}
+
+.detailsHeader {
+  text-align: center;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(255, 191, 0, 0.08) 0%, rgba(106, 76, 147, 0.08) 100%);
+  border-radius: 8px;
+  border-top: 3px solid #ffbf00;
+}
+
+.imageName {
+  font-size: clamp(1.25rem, 4vw, 1.8rem);
+  color: #333;
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.imageDescription {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.5;
+}
+
+.counter {
+  display: inline-block;
+  background: #6a4c93;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.slider {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  touch-action: pan-y;
+}
+
+.viewport {
+  width: 100%;
+  max-width: 900px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  aspect-ratio: 4/3;
+}
+
+.track {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  width: 100%;
+  height: 100%;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.prev,
+.next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.95);
+  border: none;
+  padding: 10px 14px;
+  font-size: 28px;
+  cursor: pointer;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+  z-index: 10;
+  transition: all 0.2s ease;
+  font-weight: bold;
+  color: #333;
+}
+
+.prev:hover,
+.next:hover {
+  background: rgba(255,255,255,1);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.16);
+}
+
+.prev:active,
+.next:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.prev { left: 8px; }
+.next { right: 8px; }
+
+.dots {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 0 16px;
+}
+
+.dot,
+.dotActive {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  background: #ddd;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dot:hover {
+  background: #bbb;
+}
+
+.dotActive {
+  background: #333;
+  transform: scale(1.15);
+}
+
+@media (max-width: 768px) {
+  .container {
+    gap: 1.2rem;
+  }
+
+  .instructions {
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .detailsHeader {
+    padding: 0.75rem;
+  }
+
+  .imageName {
+    margin-bottom: 0.4rem;
+  }
+
+  .imageDescription {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .viewport {
+    aspect-ratio: 16/12;
+  }
+
+  .prev,
+  .next {
+    padding: 8px 10px;
+    font-size: 24px;
+  }
+
+  .dots {
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .dot,
+  .dotActive {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    gap: 1rem;
+    padding: 0 8px;
+  }
+
+  .instructions {
+    gap: 0.75rem;
+    padding: 0.6rem 0.8rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .instructionItem {
+    font-size: 0.85rem;
+  }
+
+  .detailsHeader {
+    padding: 0.6rem;
+  }
+
+  .imageName {
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .imageDescription {
+    font-size: 0.8rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .counter {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
+
+  .viewport {
+    aspect-ratio: 16/14;
+    border-radius: 8px;
+  }
+
+  .track {
+    padding: 4px;
+  }
+
+  .prev,
+  .next {
+    padding: 6px 8px;
+    font-size: 20px;
+    left: 4px;
+    right: auto;
+  }
+
+  .next {
+    left: auto;
+    right: 4px;
+  }
+
+  .dots {
+    gap: 5px;
+    margin-top: 10px;
+    padding: 0 8px;
+  }
+
+  .dot,
+  .dotActive {
+    width: 8px;
+    height: 8px;
+  }
+}

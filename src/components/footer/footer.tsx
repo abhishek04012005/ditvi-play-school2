@@ -63,7 +63,6 @@ const Footer = () => {
 
   const arBooks = [
     { text: t('arBooks.arAlphabates'), href: '/ar-books/book-001/user' },
-    { text: t('arBooks.arAnimals'), href: '/ar-books/book-002/user' },
   ]
 
   
