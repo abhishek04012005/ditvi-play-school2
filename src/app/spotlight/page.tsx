@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import Awards from '@/components/spotlight/spotlight';
 
 // export const metadata: Metadata = {
-//     title: 'Spotlight - Ditvi Play School',
+//     title: 'Spotlight - Ank Square Play School',
 //     description: 'Celebrating our outstanding students and their remarkable achievements',
 // };
 

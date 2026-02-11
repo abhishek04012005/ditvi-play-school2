@@ -51,7 +51,7 @@ function FeeStructureContent() {
 
   async function handleDownload() {
     try {
-      await generatePdf('pdf-fee-content', 'ditvi-fee-structure.pdf')
+      await generatePdf('pdf-fee-content', 'anksquare-fee-structure.pdf')
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('PDF generation failed', err)

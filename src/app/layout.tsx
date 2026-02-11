@@ -3,12 +3,12 @@ import './globals.css';
 import RootLayoutClient from './layout-client';
 
 export const metadata: Metadata = {
-  title: 'Ditvi Play School',
+  title: 'Ank Square Play School',
   description: 'Best Play School in Your City',
   keywords: 'play school, nursery, kindergarten, preschool',
-  authors: [{ name: 'Ditvi Play School' }],
+  authors: [{ name: 'Ank Square Play School' }],
   openGraph: {
-    title: 'Ditvi Play School',
+    title: 'Ank Square Play School',
     description: 'Best Play School in Your City',
     type: 'website',
   },

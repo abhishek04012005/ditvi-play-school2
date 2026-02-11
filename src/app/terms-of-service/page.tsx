@@ -10,7 +10,7 @@ export default function TermsOfService() {
     en: {
       title: 'Terms of Service',
       lastUpdated: 'Last Updated: January 2026',
-      intro: 'These Terms of Service constitute a legally binding agreement made between you and Ditvi Play School regarding your use of our website and services. Please read these terms carefully before accessing or using our services.',
+      intro: 'These Terms of Service constitute a legally binding agreement made between you and Ank Square Play School regarding your use of our website and services. Please read these terms carefully before accessing or using our services.',
       sections: [
         {
           heading: '1. Agreement to Terms',
@@ -24,19 +24,19 @@ You agree not to use the Site for any purpose that is unlawful or prohibited by 
         },
         {
           heading: '3. Intellectual Property Rights',
-          content: `Unless otherwise stated, Ditvi Play School owns the intellectual property rights for all material on this website. All intellectual property rights are reserved. You may access this for your personal use subject to restrictions set in these terms and conditions.
+          content: `Unless otherwise stated, Ank Square Play School owns the intellectual property rights for all material on this website. All intellectual property rights are reserved. You may access this for your personal use subject to restrictions set in these terms and conditions.
 
 You must not reproduce, publish, transmit, or distribute any content without our prior written permission.`,
         },
         {
           heading: '4. Limitations of Liability',
-          content: `In no event shall Ditvi Play School, nor any of its officers, directors, and employees be held liable for anything arising out of or in any way connected with your use of this Website whether such liability is under contract, tort or otherwise.
+          content: `In no event shall Ank Square Play School, nor any of its officers, directors, and employees be held liable for anything arising out of or in any way connected with your use of this Website whether such liability is under contract, tort or otherwise.
 
 We shall not be held liable for any indirect, consequential, or special liability arising out of or in any way related to your use of this site.`,
         },
         {
           heading: '5. Indemnification',
-          content: `Except where prohibited by law, by using this Website you indemnify and hold harmless Ditvi Play School and its officers, directors, employees, and agents from and against any and all claims, damages, liabilities, costs and expenses arising out of or connected with your use or misuse of this Website.`,
+          content: `Except where prohibited by law, by using this Website you indemnify and hold harmless Ank Square Play School and its officers, directors, employees, and agents from and against any and all claims, damages, liabilities, costs and expenses arising out of or connected with your use or misuse of this Website.`,
         },
         {
           heading: '6. Severability',
@@ -56,8 +56,8 @@ Upon termination of your access, your right to use the website will immediately 
           heading: '9. Contact Information',
           content: `If you have any questions about these Terms of Service, please contact us at:
 
-Ditvi Play School
-Email: support@ditvi.school
+Ank Square Play School
+Email: support@anksquare.school
 Phone: +91 (555) 123-4567
 Address: 123 Main Street, Your City, State, Pincode`,
         },
@@ -113,7 +113,7 @@ Address: 123 Main Street, Your City, State, Pincode`,
           content: `यदि आपके पास इन सेवा की शर्तों के बारे में कोई प्रश्न है, तो कृपया हमसे संपर्क करें:
 
 दिव्या प्ले स्कूल
-ईमेल: support@ditvi.school
+ईमेल: support@anksquare.school
 फोन: +91 (555) 123-4567
 पता: 123 मुख्य स्ट्रीट, आपका शहर, राज्य, पिनकोड`,
         },

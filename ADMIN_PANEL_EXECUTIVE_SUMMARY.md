@@ -1,4 +1,4 @@
-# Ditvi Play School Admin Panel
+# Ank Square Play School Admin Panel
 ## Executive Summary for School Management
 
 **Prepared for:** School Management & Decision Makers  

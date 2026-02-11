@@ -1,4 +1,4 @@
-# Ditvi Play School - Code Cleanup & Optimization Report
+# Ank Square Play School - Code Cleanup & Optimization Report
 
 **Date:** February 10, 2026  
 **Analysis Type:** Comprehensive Project Audit  
@@ -228,7 +228,7 @@ import { Metadata } from 'next';
 // Option A: Delete the import (if not using metadata)
 // Option B: Export metadata (if needed for SEO)
 // export const metadata: Metadata = {
-//     title: 'Spotlight - Ditvi Play School',
+//     title: 'Spotlight - Ank Square Play School',
 //     description: 'Celebrating our outstanding students...',
 // };
 ```

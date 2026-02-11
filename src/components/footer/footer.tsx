@@ -228,7 +228,7 @@ const Footer = () => {
           viewport={{ once: true }}
         >
           <p>&copy; {new Date().getFullYear()} {schoolDetails.name}. All rights reserved.</p>
-          <p>Powered by <a href="https://technologies.ditvi.org/" target='_blank'> <strong>Ditvi Technologies</strong></a></p>
+          <p>Powered by <a href="https://technologies.anksquare.org/" target='_blank'> <strong>Ank Square Technologies</strong></a></p>
           <div className={styles.bottomLinks}>
             <Link href="/privacy">{t('footer.privacyPolicy')}</Link>
             <Link href="/terms">{t('footer.termsOfService')}</Link>

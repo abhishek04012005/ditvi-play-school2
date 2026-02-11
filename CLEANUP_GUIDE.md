@@ -1,7 +1,7 @@
 # 🧹 Project Cleanup Summary & Quick Guide
 
 **Analysis Date:** February 10, 2026  
-**Project:** Ditvi Play School Admin Panel  
+**Project:** Ank Square Play School Admin Panel  
 **Overall Health:** ✅ GOOD - Minor cleanups needed
 
 ---
@@ -71,7 +71,7 @@
 
 ### Step 1: Delete Unnecessary Files (2 minutes)
 ```bash
-cd /home/abhishek/Work/ditvi-technologies/playschool/ditvi-play-school2
+cd /home/abhishek/Work/anksquare-technologies/playschool/anksquare-play-school2
 
 # Delete old documentation
 rm TOGGLE_BUTTON_FEATURE.md

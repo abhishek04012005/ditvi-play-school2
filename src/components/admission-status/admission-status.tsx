@@ -543,7 +543,7 @@ const StatusResultCard = ({
           >
             {t('admissionStatus.whatsapp')}
           </a>
-          <a href="mailto:admissions@ditvi.com" className={styles.contactLink}>
+          <a href="mailto:admissions@anksquare.com" className={styles.contactLink}>
             {t('admissionStatus.emailUs')}
           </a>
         </div>

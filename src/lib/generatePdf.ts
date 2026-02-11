@@ -1,4 +1,4 @@
-export default async function generatePdf(elementId: string, fileName = 'ditvi-brochure.pdf') {
+export default async function generatePdf(elementId: string, fileName = 'anksquare-brochure.pdf') {
   const el = document.getElementById(elementId)
   if (!el) throw new Error('Element not found: ' + elementId)
 

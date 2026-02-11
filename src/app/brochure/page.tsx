@@ -88,7 +88,7 @@ const FOUNDER_MESSAGE = {
   name: 'Ms. Priya Sharma',
   title: 'Founder & Director',
   image: '/assets/about/director.jpg',
-  message: 'With over 15 years of experience in early childhood education, I founded Ditvi with a simple belief: every child deserves a space where they can be their authentic selves, explore freely, and grow holistically. Our team is dedicated to creating that nurturing environment where learning becomes a joyful journey.',
+  message: 'With over 15 years of experience in early childhood education, I founded Ank Square with a simple belief: every child deserves a space where they can be their authentic selves, explore freely, and grow holistically. Our team is dedicated to creating that nurturing environment where learning becomes a joyful journey.',
 }
 
 export default function BrochurePage({

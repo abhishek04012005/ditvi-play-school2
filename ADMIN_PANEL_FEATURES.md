@@ -1,7 +1,7 @@
 # Admin Panel - Complete Feature Analysis
 
 **Last Updated:** February 10, 2026  
-**Application:** Ditvi Play School - Admin Management System  
+**Application:** Ank Square Play School - Admin Management System  
 **Tech Stack:** Next.js 13.5+, React, Supabase, Material-UI, Framer Motion
 
 ---

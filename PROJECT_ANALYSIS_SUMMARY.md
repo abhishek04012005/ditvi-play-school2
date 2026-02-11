@@ -1,6 +1,6 @@
 # 🔍 Project Analysis Summary - At a Glance
 
-**Project:** Ditvi Play School Admin Panel  
+**Project:** Ank Square Play School Admin Panel  
 **Analysis Date:** February 10, 2026  
 **Analyzed:** 148 TypeScript/TSX files + All root configuration files  
 **Overall Health Score:** ✅ **85/100** (HEALTHY)
@@ -320,7 +320,7 @@ After cleanup, your project will have:
 
 ## 🎉 Summary
 
-Your **Ditvi Play School Admin Panel** is a **well-built, professional codebase** with excellent architecture and features.
+Your **Ank Square Play School Admin Panel** is a **well-built, professional codebase** with excellent architecture and features.
 
 **The cleanup will:**
 - Remove ~150 KB of unused files

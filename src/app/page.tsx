@@ -10,12 +10,12 @@ import Testimonials from "@/components/testimonials/testimonials";
 import ARBooks from "@/components/ar/arbooks";
 
 export const metadata: Metadata = {
-  title: "Home | Ditvi Play School",
-  description: "Welcome to Ditvi Play School - Best Play School in Your City",
+  title: "Home | Ank Square Play School",
+  description: "Welcome to Ank Square Play School - Best Play School in Your City",
   openGraph: {
-    title: "Home | Ditvi Play School",
-    description: "Welcome to Ditvi Play School",
-    url: "https://ditvi-playschool.com",
+    title: "Home | Ank Square Play School",
+    description: "Welcome to Ank Square Play School",
+    url: "https://anksquare-playschool.com",
     type: "website",
   },
 };

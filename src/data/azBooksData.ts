@@ -13,7 +13,7 @@ export const azAlphabetBook: AZBookData = {
     title: 'ABC Learning Adventure',
     description: 'Learn the English alphabet with fun words and colorful illustrations!',
     ageGroup: '3-5 years',
-    authorName: 'Ditvi Learning Team',
+    authorName: 'Ank Square Learning Team',
     letters: [
         {
             letter: 'A',
@@ -231,7 +231,7 @@ export const azNumbersBook: AZBookData = {
     title: '123 Number Adventure',
     description: 'Learn numbers with colorful pictures and fun counting!',
     ageGroup: '2-4 years',
-    authorName: 'Ditvi Learning Team',
+    authorName: 'Ank Square Learning Team',
     letters: [
         {
             letter: '1',

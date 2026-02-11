@@ -10,7 +10,7 @@ export default function PrivacyPolicy() {
     en: {
       title: 'Privacy Policy',
       lastUpdated: 'Last Updated: January 2026',
-      intro: 'At Ditvi Play School, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services.',
+      intro: 'At Ank Square Play School, we are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services.',
       sections: [
         {
           heading: '1. Information We Collect',
@@ -61,8 +61,8 @@ We use SSL encryption to protect sensitive information online. We also protect y
           heading: '5. Contact Us Regarding Privacy',
           content: `If you have questions or comments about this Privacy Policy, please contact us at:
 
-Ditvi Play School
-Email: privacy@ditvi.school
+Ank Square Play School
+Email: privacy@anksquare.school
 Phone: +91 (555) 123-4567
 Address: 123 Main Street, Your City, State, Pincode
 
@@ -139,7 +139,7 @@ We will respond to your inquiry within 7 business days.`,
           content: `यदि आपके पास इस गोपनीयता नीति के बारे में कोई प्रश्न या टिप्पणी है, तो कृपया हमसे संपर्क करें:
 
 दिव्या प्ले स्कूल
-ईमेल: privacy@ditvi.school
+ईमेल: privacy@anksquare.school
 फोन: +91 (555) 123-4567
 पता: 123 मुख्य स्ट्रीट, आपका शहर, राज्य, पिनकोड
 
