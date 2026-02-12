@@ -84,7 +84,7 @@ const ContactDashboard = () => {
     const [savingNote, setSavingNote] = useState(false);
     const [deletingNoteId, setDeletingNoteId] = useState<string | null>(null);
 
-    // ✨ PAGINATION STATE ✨
+    // [STATE] PAGINATION STATE
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState<ItemsPerPage>(20);
 
@@ -94,7 +94,7 @@ const ContactDashboard = () => {
         fetchContacts();
     }, []);
 
-    // ✨ RESET TO PAGE 1 WHEN FILTER/SEARCH CHANGES ✨
+    // [EFFECT] RESET TO PAGE 1 WHEN FILTER/SEARCH CHANGES
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, filter]);
@@ -112,7 +112,7 @@ const ContactDashboard = () => {
                 throw error;
             }
 
-            // ✨ PROCESS NOTES FROM JSONB COLUMN ✨
+            // [DATA] PROCESS NOTES FROM JSONB COLUMN
             const processedData = (data || []).map((contact: any) => {
                 let notes: NoteEntry[] = [];
 
@@ -187,7 +187,7 @@ const ContactDashboard = () => {
                 : b[sortField].localeCompare(a[sortField]);
         });
 
-    // ✨ PAGINATION LOGIC ✨
+    // [LOGIC] PAGINATION LOGIC
     const totalPages = Math.ceil(sortedAndFilteredContacts.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -346,7 +346,7 @@ const ContactDashboard = () => {
                 throw new Error('Failed to update contact - no data returned');
             }
 
-            console.log('✅ Note saved successfully:', data[0]);
+            console.log('[SUCCESS] Note saved successfully:', data[0]);
 
             setContacts((prev) =>
                 prev.map((contact) =>
@@ -362,9 +362,9 @@ const ContactDashboard = () => {
             setNoteEntries(updatedNotes);
             setNewNoteText('');
             setIsEditingNewNote(false);
-            toast.success('✨ Note added successfully');
+            toast.success('[SUCCESS] Note added successfully');
         } catch (error) {
-            console.error('❌ Error saving note:', error);
+            console.error('[ERROR] Error saving note:', error);
             toast.error('Failed to save note');
         } finally {
             setSavingNote(false);
@@ -381,11 +381,11 @@ const ContactDashboard = () => {
         try {
             setDeletingNoteId(noteId);
 
-            console.log('🗑️ Deleting note ID:', noteId);
+            console.log('[DELETE] Deleting note ID:', noteId);
 
             const updatedNotes = noteEntries.filter((entry) => entry.id !== noteId);
 
-            console.log('🗑️ Updated notes after deletion:', updatedNotes);
+            console.log('[DELETE] Updated notes after deletion:', updatedNotes);
 
             const { data, error } = await supabase
                 .from('contacts')
@@ -404,7 +404,7 @@ const ContactDashboard = () => {
                 throw new Error('Failed to update contact - no data returned');
             }
 
-            console.log('✅ Note deleted successfully:', data[0]);
+            console.log('[SUCCESS] Note deleted successfully:', data[0]);
 
             setNoteEntries(updatedNotes);
 
@@ -421,7 +421,7 @@ const ContactDashboard = () => {
 
             toast.success('✅ Note deleted successfully');
         } catch (error) {
-            console.error('❌ Error deleting note:', error);
+            console.error('[ERROR] Error deleting note:', error);
             toast.error('Failed to delete note');
         } finally {
             setDeletingNoteId(null);
@@ -445,13 +445,13 @@ const ContactDashboard = () => {
         }
     };
 
-    // ✨ HANDLE ITEMS PER PAGE CHANGE ✨
+    // [HANDLER] HANDLE ITEMS PER PAGE CHANGE
     const handleItemsPerPageChange = (value: ItemsPerPage) => {
         setItemsPerPage(value);
         setCurrentPage(1);
     };
 
-    // ✨ HANDLE PAGE CHANGE ✨
+    // [HANDLER] HANDLE PAGE CHANGE
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
             setCurrentPage(newPage);
@@ -641,7 +641,7 @@ const ContactDashboard = () => {
                     </table>
                 </div>
 
-                {/* ✨ PAGINATION SECTION ✨ */}
+                {/* [SECTION] PAGINATION SECTION */}
                 {sortedAndFilteredContacts.length > 0 && (
                     <div className={styles.paginationSection}>
                         <div className={styles.paginationInfo}>
@@ -883,7 +883,7 @@ const NotesModal = ({
                                                                 type="button"
                                                                 className={styles.deleteNoteBtn}
                                                                 onClick={() => {
-                                                                    console.log('🗑️ Delete clicked for note:', entry.id);
+                                                                    console.log('[DELETE] Delete clicked for note:', entry.id);
                                                                     onDeleteNote(entry.id);
                                                                 }}
                                                                 whileHover={{ scale: 1.05 }}

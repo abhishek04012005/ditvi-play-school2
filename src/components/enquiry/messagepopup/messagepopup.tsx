@@ -23,26 +23,26 @@ export default function MessagePopupComponent({ messagePopupId }: { messagePopup
   const fetchInProgressRef = useRef(false);
 
   useEffect(() => {
-    console.log('🎯 MessagePopupComponent mounted/updated with ID:', messagePopupId);
+    console.log('[INFO] MessagePopupComponent mounted/updated with ID:', messagePopupId);
     
     if (messagePopupId && !popupDismissed) {
       fetchMessagePopup(messagePopupId);
     } else if (popupDismissed) {
-      console.log('⏭️ Popup was dismissed, skipping fetch');
+      console.log('[INFO] Popup was dismissed, skipping fetch');
     }
   }, [messagePopupId, popupDismissed]);
 
   const fetchMessagePopup = async (id: string) => {
     // Prevent duplicate fetches
     if (fetchInProgressRef.current) {
-      console.log('⚠️ Fetch already in progress, skipping');
+      console.log('[WARN] Fetch already in progress, skipping');
       return;
     }
 
     fetchInProgressRef.current = true;
 
     try {
-      console.log('🔍 Fetching message popup with ID:', id);
+      console.log('[FETCH] Fetching message popup with ID:', id);
       const res = await fetch(`/api/admin/message-popup?id=${id}`, {
         cache: 'no-store'
       });
@@ -53,7 +53,7 @@ export default function MessagePopupComponent({ messagePopupId }: { messagePopup
 
       const data = await res.json();
 
-      console.log('📨 Message popup response:', {
+      console.log('[MSG] Message popup response:', {
         success: data.success,
         hasData: !!data.data,
         isActive: data.data?.is_active,
@@ -65,12 +65,12 @@ export default function MessagePopupComponent({ messagePopupId }: { messagePopup
         
         // Show popup with delay
         setTimeout(() => {
-          console.log('✨ Showing popup');
+          console.log('[SHOW] Showing popup');
           setShowPopup(true);
         }, 300);
       } else {
         // If popup is not found or not active, hide it
-        console.log('⚠️ Popup not active or not found');
+        console.log('[WARN] Popup not active or not found');
         setShowPopup(false);
         setPopupData(null);
       }
@@ -84,7 +84,7 @@ export default function MessagePopupComponent({ messagePopupId }: { messagePopup
   };
 
   const handleClose = () => {
-    console.log('👋 Closing popup');
+    console.log('[CLOSE] Closing popup');
     setShowPopup(false);
     setPopupDismissed(true);
   };

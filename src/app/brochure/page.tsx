@@ -42,7 +42,7 @@ const PROGRAMS = [
     title: 'Pre-K', 
     desc: 'Ages 4–5: literacy & pre-academics', 
     img: '/assets/programs/prekg.jpg',
-    icon: '📚',
+    icon: 'BOOKS',
     focus: ['Pre-reading & writing', 'Math basics', 'Critical thinking'],
     activities: 'Phonics, projects, STEM exploration, drama',
   },
@@ -66,8 +66,8 @@ const EVENTS = [
 const HIGHLIGHTS = [
   { icon: '🏫', title: 'Safe & Secure', text: 'CCTV monitored, trained staff 24/7' },
   { icon: '👨‍🏫', title: 'Expert Teachers', text: 'Certified with 5+ years experience' },
-  { icon: '🎨', title: 'Creative Arts', text: 'Art, music, dance & storytelling' },
-  { icon: '📚', title: 'Literacy', text: 'Daily phonics & reading time' },
+  { icon: 'ARTS', title: 'Creative Arts', text: 'Art, music, dance & storytelling' },
+  { icon: 'BOOKS', title: 'Literacy', text: 'Daily phonics & reading time' },
 ]
 
 const SCHOOL_STATS = [
@@ -79,9 +79,9 @@ const SCHOOL_STATS = [
 
 const SCHOOL_VALUES = [
   { icon: '💚', value: 'Compassion', desc: 'Nurturing warm relationships' },
-  { icon: '🌟', value: 'Excellence', desc: 'Highest standards in education' },
+  { icon: 'EXCELLENCE', value: 'Excellence', desc: 'Highest standards in education' },
   { icon: '🤝', value: 'Community', desc: 'Building strong families' },
-  { icon: '🎯', value: 'Growth', desc: 'Fostering all-round development' },
+  { icon: 'TARGETS', value: 'Growth', desc: 'Fostering all-round development' },
 ]
 
 const FOUNDER_MESSAGE = {

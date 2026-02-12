@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
+import { SparkleOutlined } from '@mui/icons-material';
 import styles from './headingtitle.module.css';
 
 interface AnimatedTitleProps {
@@ -25,9 +26,9 @@ const HeadingTitle = ({ text, className = '' }: AnimatedTitleProps) => {
             viewport={{ once: true }}
         >
             <div className={styles.titleText}>
-                <span className={styles.titleAnimation}>✨</span>
+                <SparkleOutlined className={styles.titleAnimation} />
                 {text}
-                <span className={styles.titleAnimation}>✨</span>
+                <SparkleOutlined className={styles.titleAnimation} />
             </div>
         </motion.h2>
     );

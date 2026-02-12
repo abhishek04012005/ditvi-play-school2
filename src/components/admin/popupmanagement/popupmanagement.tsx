@@ -118,7 +118,7 @@ export default function PopupManagement() {
         }
 
         updateData.message_popup_id = activePopup.id;
-        console.log('📨 Auto-selected message popup:', activePopup.id, activePopup.title);
+        console.log('[MSG] Auto-selected message popup:', activePopup.id, activePopup.title);
       }
 
       const res = await fetch('/api/admin/popup-control', {

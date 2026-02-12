@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { GestureOutlined, SmartphoneOutlined } from '@mui/icons-material';
 import styles from './arSlider.module.css';
 
 interface ImageData {
@@ -29,11 +30,11 @@ export default function ArSlider({ images }: Props) {
       {/* Instructions */}
       <div className={styles.instructions}>
         <div className={styles.instructionItem}>
-          <span className={styles.instructionIcon}>👉</span>
+          <GestureOutlined className={styles.instructionIcon} />
           <span>Swipe or click arrows to browse</span>
         </div>
         <div className={styles.instructionItem}>
-          <span className={styles.instructionIcon}>📱</span>
+          <SmartphoneOutlined className={styles.instructionIcon} />
           <span>Point your device to view in AR</span>
         </div>
       </div>

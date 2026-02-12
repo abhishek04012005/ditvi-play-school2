@@ -184,7 +184,7 @@ export default function CorrectionForm({
                     uploadFormData.append('field_name', fileUpload.field);
                     uploadFormData.append('admissionNumber', admissionNumber);
 
-                    console.log(`📤 Uploading ${fileUpload.field}...`);
+                    console.log(`[UPLOAD] Uploading ${fileUpload.field}...`);
 
                     const uploadResponse = await fetch('/api/admission/upload-file', {
                         method: 'POST',
@@ -193,13 +193,13 @@ export default function CorrectionForm({
 
                     if (!uploadResponse.ok) {
                         const result = await uploadResponse.json();
-                        console.error(`❌ Upload failed for ${fileUpload.field}:`, result);
+                        console.error(`[ERROR] Upload failed for ${fileUpload.field}:`, result);
                         throw new Error(result.error || `Failed to upload ${fileUpload.field}`);
                     }
 
                     // Get the uploaded file URL from response
                     const uploadResult = await uploadResponse.json();
-                    console.log(`✅ Upload response for ${fileUpload.field}:`, uploadResult);
+                    console.log(`[SUCCESS] Upload response for ${fileUpload.field}:`, uploadResult);
 
                     const fileUrl = uploadResult?.data?.downloadUrl || uploadResult?.data?.webViewLink;
 
@@ -208,7 +208,7 @@ export default function CorrectionForm({
                         const dbField = fieldToDatabaseMap[fileUpload.field];
                         if (dbField) {
                             updatePayload[dbField] = fileUrl;
-                            console.log(`✅ Added ${dbField} = ${fileUrl}`);
+                            console.log(`[SUCCESS] Added ${dbField} = ${fileUrl}`);
                         }
                     } else {
                         console.warn(`⚠️ No URL found in upload response for ${fileUpload.field}`);
@@ -216,7 +216,7 @@ export default function CorrectionForm({
                 }
             }
 
-            console.log(`📝 Final updatePayload:`, updatePayload);
+            console.log(`[DATA] Final updatePayload:`, updatePayload);
 
             // Now update the admission with all data (form + file URLs)
             const updateResponse = await fetch(`/api/admission/${admissionId}/corrections`, {
@@ -227,11 +227,11 @@ export default function CorrectionForm({
 
             if (!updateResponse.ok) {
                 const result = await updateResponse.json();
-                console.error(`❌ Corrections API error:`, result);
+                console.error(`[ERROR] Corrections API error:`, result);
                 throw new Error(result.error || 'Failed to update admission');
             }
 
-            console.log(`✅ Admission updated successfully!`);
+            console.log(`[SUCCESS] Admission updated successfully!`);
             toast.success('Corrections submitted successfully!');
             onSuccess?.();
         } catch (err) {

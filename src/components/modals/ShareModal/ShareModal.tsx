@@ -39,9 +39,9 @@ export const ShareModal = ({
     // Generate shareable URL
     const shareUrl = `${baseUrl}/spotlight?award=${award.id}`;
     const shareTitle = `🌟 ${award.name} - Anksquare Kids Spotlight`;
-    const shareMessage = `${award.name} was recognized as our Star of the Week! 🏆\n\n"${award.message}"\n\n✨ Check out this amazing achievement!`;
+    const shareMessage = `${award.name} was recognized as our Star of the Week! [AWARD]\n\n"${award.message}"\n\n[CONGRATS] Check out this amazing achievement!`;
 
-    // ✨ COPY TO CLIPBOARD
+    // [COPY] COPY TO CLIPBOARD
     const handleCopyLink = async () => {
         try {
             await navigator.clipboard.writeText(shareUrl);
@@ -53,7 +53,7 @@ export const ShareModal = ({
         }
     };
 
-    // ✨ SHARE VIA WHATSAPP
+    // [SHARE] SHARE VIA WHATSAPP
     const handleShareWhatsApp = () => {
         setSharing(true);
         
@@ -76,7 +76,7 @@ export const ShareModal = ({
         setTimeout(() => setSharing(false), 500);
     };
 
-    // ✨ SHARE VIA FACEBOOK
+    // [SHARE] SHARE VIA FACEBOOK
     const handleShareFacebook = () => {
         setSharing(true);
         const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
@@ -86,18 +86,18 @@ export const ShareModal = ({
         setTimeout(() => setSharing(false), 500);
     };
 
-    // ✨ SHARE VIA TWITTER
+    // [SHARE] SHARE VIA TWITTER
     const handleShareTwitter = () => {
         setSharing(true);
         const text = encodeURIComponent(
-            `${award.name} was recognized as our Star of the Week! 🌟\n\n"${award.message}"\n\n✨ Check out this amazing achievement!\n\n${shareUrl}`
+            `${award.name} was recognized as our Star of the Week! [AWARD]\n\n"${award.message}"\n\n[CONGRATS] Check out this amazing achievement!\n\n${shareUrl}`
         );
         const url = `https://twitter.com/intent/tweet?text=${text}&hashtags=anksquare,StarOfTheWeek,Excellence`;
         window.open(url, '_blank', 'noopener,noreferrer,width=600,height=400');
         setTimeout(() => setSharing(false), 500);
     };
 
-    // ✨ SHARE VIA LINKEDIN
+    // [SHARE] SHARE VIA LINKEDIN
     const handleShareLinkedIn = () => {
         setSharing(true);
         const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
@@ -107,7 +107,7 @@ export const ShareModal = ({
         setTimeout(() => setSharing(false), 500);
     };
 
-    // ✨ SHARE VIA EMAIL
+    // [SHARE] SHARE VIA EMAIL
     const handleShareEmail = () => {
         setSharing(true);
         const subject = encodeURIComponent(shareTitle);
@@ -119,7 +119,7 @@ export const ShareModal = ({
         setTimeout(() => setSharing(false), 500);
     };
 
-    // ✨ SHARE VIA WEB SHARE API (for mobile)
+    // [SHARE] SHARE VIA WEB SHARE API (for mobile)
     const handleNativeShare = async () => {
         if (navigator.share) {
             try {
@@ -309,7 +309,7 @@ export const ShareModal = ({
                         {/* Footer */}
                         <div className={styles.modalFooter}>
                             <p className={styles.footerText}>
-                                ✨ Share this amazing achievement with your network!
+                                [STAR] Share this amazing achievement with your network!
                             </p>
                             <motion.button
                                 className={styles.closeMainBtn}

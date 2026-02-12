@@ -101,7 +101,7 @@ export const schoolDetailsEng: SchoolDetails = {
             {
                 name: "Pre-Kindergarten",
                 ageGroup: "Ages 4–5",
-                icon: "📚",
+                icon: "BOOKS",
                 img: "/assets/programs/prekg.jpg",
                 monthlyFee: "₹12,000",
                 annualFee: "₹1,44,000",
@@ -152,7 +152,7 @@ export const schoolDetailsEng: SchoolDetails = {
             { term: "Monthly", description: "Pay monthly fees", icon: "📅" },
             { term: "Quarterly", description: "3-month advance (5% discount)", icon: "📊" },
             { term: "Semi-Annual", description: "6-month advance (8% discount)", icon: "💰" },
-            { term: "Annual", description: "Full year upfront (12% discount)", icon: "⭐" },
+            { term: "Annual", description: "Full year upfront (12% discount)", icon: "PREMIUM" },
         ],
         policies: [
             "Registration fee is non-refundable",

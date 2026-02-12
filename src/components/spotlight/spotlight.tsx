@@ -97,18 +97,18 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
       return typeof value === 'string' ? value : key;
     };
 
-    // ✨ SCROLL POPUP STATE ✨
+    // [STATE] SCROLL POPUP STATE
     const [showScrollPopup, setShowScrollPopup] = useState(false);
     const [scrollPopupTriggered, setScrollPopupTriggered] = useState(false);
     const [homepageSpotlight, setHomepageSpotlight] = useState<Award | null>(null);
     const [scrollConfetti, setScrollConfetti] = useState(false);
     const [scrollConfettiKey, setScrollConfettiKey] = useState(0);
 
-    // ✨ LIKE CONFETTI STATE ✨
+    // [STATE] LIKE CONFETTI STATE
     const [likeConfetti, setLikeConfetti] = useState(false);
     const [likeConfettiKey, setLikeConfettiKey] = useState(0);
 
-    // ✨ SHARE MODAL STATE ✨
+    // [STATE] SHARE MODAL STATE
     const [showShareModal, setShowShareModal] = useState(false);
     const [shareAward, setShareAward] = useState<Award | null>(null);
 
@@ -121,12 +121,12 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
     const pauseRef = useRef(false);
     const confettiTimeoutRef = useRef<number | null>(null);
 
-    // ✨ SCROLL POPUP REFS ✨
+    // [REFS] SCROLL POPUP REFS
     const spotlightSectionRef = useRef<HTMLDivElement>(null);
     const observerRef = useRef<IntersectionObserver | null>(null);
     const scrollConfettiTimeoutRef = useRef<number | null>(null);
 
-    // ✨ LIKE CONFETTI TIMEOUT REF ✨
+    // [REFS] LIKE CONFETTI TIMEOUT REF
     const likeConfettiTimeoutRef = useRef<number | null>(null);
 
     // fetch awards
@@ -152,7 +152,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
             // Find homepage spotlight
             const homepageItem = processed.find((a) => a.is_show_on_home_page);
             setHomepageSpotlight(homepageItem || null);
-            console.log('✨ Homepage spotlight:', homepageItem?.name || 'None');
+            console.log('[LOG] Homepage spotlight:', homepageItem?.name || 'None');
 
             // initialize likes
             const likes: Record<string, number> = {};
@@ -189,17 +189,17 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
         fetchAwards();
     }, [fetchAwards]);
 
-    // ✨ SCROLL DETECTION FOR POPUP - Works on both homepage and grid page ✨
+    // [SCROLL] SCROLL DETECTION FOR POPUP - Works on both homepage and grid page
     useEffect(() => {
         if (!spotlightSectionRef.current || !homepageSpotlight) {
-            console.log('⚠️ Scroll popup conditions not met:', {
+            console.log('[WARN] Scroll popup conditions not met:', {
                 hasRef: !!spotlightSectionRef.current,
                 hasHomepageSpotlight: !!homepageSpotlight
             });
             return;
         }
 
-        console.log('🎯 Setting up IntersectionObserver for spotlight scroll popup');
+        console.log('[OBSERVER] Setting up IntersectionObserver for spotlight scroll popup');
 
         // Cleanup previous observer
         if (observerRef.current) {
@@ -209,7 +209,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
-                    console.log('👀 Spotlight section intersection:', {
+                    console.log('[OBSERVER] Spotlight section intersection:', {
                         isIntersecting: entry.isIntersecting,
                         ratio: entry.intersectionRatio,
                         triggered: scrollPopupTriggered
@@ -217,7 +217,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
 
                     // Show popup when section comes into view and hasn't been triggered yet
                     if (entry.isIntersecting && !scrollPopupTriggered && homepageSpotlight) {
-                        console.log('✨ SCROLL POPUP SHOULD APPEAR NOW!');
+                        console.log('[POPUP] SCROLL POPUP SHOULD APPEAR NOW!');
 
                         // Delay for better UX
                         setTimeout(() => {
@@ -261,7 +261,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
         }, 8000);
     }, []);
 
-    // ✨ TRIGGER SCROLL CONFETTI ✨
+    // [CONFETTI] TRIGGER SCROLL CONFETTI
     const triggerScrollConfetti = useCallback(() => {
         if (scrollConfettiTimeoutRef.current) {
             window.clearTimeout(scrollConfettiTimeoutRef.current);
@@ -275,7 +275,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
         }, 8000);
     }, []);
 
-    // ✨ TRIGGER LIKE CONFETTI ✨
+    // [CONFETTI] TRIGGER LIKE CONFETTI
     const triggerLikeConfetti = useCallback(() => {
         if (likeConfettiTimeoutRef.current) {
             window.clearTimeout(likeConfettiTimeoutRef.current);
@@ -305,7 +305,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
         }
     };
 
-    // ✨ CLOSE SCROLL POPUP ✨
+    // [POPUP] CLOSE SCROLL POPUP
     const closeScrollPopup = () => {
         setShowScrollPopup(false);
         setScrollConfetti(false);
@@ -325,7 +325,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                 setLikedMap((m) => ({ ...m, [award.id]: false }));
                 setLikesMap((m) => ({ ...m, [award.id]: Math.max(0, (m[award.id] || 1) - 1) }));
             } else {
-                // ✨ TRIGGER CONFETTI ON LIKE ✨
+                // [CONFETTI] TRIGGER CONFETTI ON LIKE
                 triggerLikeConfetti();
                 
                 await supabase.from('award_likes').insert([{ award_id: award.id, user_id: userId, created_at: new Date().toISOString() }]);
@@ -339,7 +339,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
         }
     };
 
-    // ✨ OPEN SHARE MODAL ✨
+    // [MODAL] OPEN SHARE MODAL
     const handleOpenShareModal = (award: Award) => {
         setShareAward(award);
         setShowShareModal(true);
@@ -436,7 +436,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
         </motion.div>
     );
 
-    // ✨ SCROLL POPUP COMPONENT - Reusable for both pages ✨
+    // [COMPONENT] SCROLL POPUP COMPONENT - Reusable for both pages
     const ScrollPopupContent = () => (
         <AnimatePresence>
             {showScrollPopup && homepageSpotlight && (
@@ -492,9 +492,9 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                             transition={{ delay: 0.2 }}
                         >
                             <div className={styles.scrollPopupBadge}>
-                                ⭐ {homepageSpotlight.award_type.charAt(0).toUpperCase() + homepageSpotlight.award_type.slice(1)}
+                                ★ {homepageSpotlight.award_type.charAt(0).toUpperCase() + homepageSpotlight.award_type.slice(1)}
                             </div>
-                            <h2 className={styles.scrollPopupTitle}>🌟 Featured Spotlight 🌟</h2>
+                            <h2 className={styles.scrollPopupTitle}>✦ Featured Spotlight ✦</h2>
                         </motion.div>
 
                         {/* Content */}
@@ -558,7 +558,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
-                                ✨ Celebrate
+                                [celebrate]
                             </motion.button>
                         </motion.div>
 
@@ -707,10 +707,10 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                     </div>
                 </section>
 
-                {/* ✨ SCROLL POPUP WITH CONFETTI ✨ */}
+                {/* [CONFETTI] SCROLL POPUP WITH CONFETTI */}
                 <ScrollPopupContent />
 
-                {/* ✨ LIKE CONFETTI - GLOBAL ✨ */}
+                {/* [CONFETTI] LIKE CONFETTI - GLOBAL */}
                 <AnimatePresence>
                     {likeConfetti && (
                         <motion.div
@@ -777,7 +777,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.2 }}
                                 >
-                                    <div className={styles.popupBadge}>⭐ {selectedAward.award_type.charAt(0).toUpperCase() + selectedAward.award_type.slice(1)}</div>
+                                    <div className={styles.popupBadge}>★ {selectedAward.award_type.charAt(0).toUpperCase() + selectedAward.award_type.slice(1)}</div>
                                     <h2 className={styles.popupTitle}>Achievement Recognized</h2>
                                 </motion.div>
 
@@ -834,14 +834,14 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                                     animate={{ opacity: 1 }}
                                     transition={{ delay: 0.4 }}
                                 >
-                                    <p>🌟 Celebrating Excellence 🌟</p>
+                                    <p>✦ Celebrating Excellence ✦</p>
                                 </motion.div>
                             </motion.div>
                         </motion.div>
                     )}
                 </AnimatePresence>
 
-                {/* ✨ SHARE MODAL - HOMEPAGE ✨ */}
+                {/* [MODAL] SHARE MODAL - HOMEPAGE */}
                 <ShareModal
                     isOpen={showShareModal}
                     onClose={() => setShowShareModal(false)}
@@ -930,7 +930,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                 </div>
             </section>
 
-            {/* ✨ SCROLL POPUP WITH CONFETTI - NOW APPEARS ON FULL PAGE GRID VIEW ✨ */}
+            {/* [CONFETTI] SCROLL POPUP WITH CONFETTI - NOW APPEARS ON FULL PAGE GRID VIEW */}
             <ScrollPopupContent />
 
             {/* ✨ LIKE CONFETTI - GLOBAL ✨ */}
@@ -1064,7 +1064,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                 )}
             </AnimatePresence>
 
-            {/* ✨ SHARE MODAL ✨ */}
+            {/* [MODAL] SHARE MODAL */}
             <ShareModal
                 isOpen={showShareModal}
                 onClose={() => setShowShareModal(false)}

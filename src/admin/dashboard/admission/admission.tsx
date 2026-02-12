@@ -461,7 +461,7 @@ export default function AdminAdmission() {
             setStatusUpdating(true);
             setUpdatingId(id);
 
-            console.log('🔄 Updating status for admission:', id, 'to:', newStatus);
+            console.log('[UPDATE] Updating status for admission:', id, 'to:', newStatus);
 
             const { data, error } = await supabase
                 .from('admission')
@@ -481,7 +481,7 @@ export default function AdminAdmission() {
                 return;
             }
 
-            console.log('✅ Status updated successfully.');
+            console.log('[SUCCESS] Status updated successfully.');
 
             setAdmissions((prev) =>
                 prev.map((adm) =>
@@ -769,7 +769,7 @@ export default function AdminAdmission() {
                 .select();
 
             if (error) {
-                console.error('❌ Update error:', error);
+                console.error('[ERROR] Update error:', error);
                 toast.error(`Failed to save: ${error.message}`);
                 return;
             }

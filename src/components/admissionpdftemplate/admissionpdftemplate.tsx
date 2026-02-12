@@ -210,10 +210,10 @@ const PhotoField: React.FC<{ photoUrl?: string | null; t: (key: string) => strin
                     alt="Student Photo"
                     className={styles.childPhoto}
                     onLoad={() => {
-                        console.log('✅ Student photo loaded successfully from:', convertedPhotoUrl);
+                        console.log('[SUCCESS] Student photo loaded successfully from:', convertedPhotoUrl);
                     }}
                     onError={(e) => {
-                        console.error('❌ Failed to load student photo');
+                        console.error('[ERROR] Failed to load student photo');
                         console.error('Converted URL:', convertedPhotoUrl);
                         console.error('Original URL:', photoUrl);
                         console.error('Error:', e);

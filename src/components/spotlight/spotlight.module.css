@@ -612,7 +612,7 @@
     letter-spacing: 0.5px;
 }
 
-/* ==================== ✨ SCROLL POPUP OVERLAY ✨ ==================== */
+/* ==================== [POPUP] SCROLL POPUP OVERLAY ==================== */
 .scrollPopupOverlay {
     position: fixed;
     inset: 0;
@@ -625,7 +625,7 @@
     padding: 1rem;
 }
 
-/* ==================== ✨ SCROLL POPUP CONTAINER ✨ ==================== */
+/* ==================== [POPUP] SCROLL POPUP CONTAINER ==================== */
 .scrollPopupContainer {
     background: linear-gradient(135deg, var(--white) 0%, #f9f7ff 100%);
     border-radius: 32px;
@@ -658,7 +658,7 @@
     }
 }
 
-/* ==================== ✨ SCROLL POPUP CLOSE BUTTON ✨ ==================== */
+/* ==================== [POPUP] SCROLL POPUP CLOSE BUTTON ==================== */
 .scrollPopupCloseBtn {
     position: absolute;
     top: 1.5rem;
@@ -687,7 +687,7 @@
     transform: scale(1.15);
 }
 
-/* ==================== ✨ SCROLL POPUP HEADER ✨ ==================== */
+/* ==================== [POPUP] SCROLL POPUP HEADER ==================== */
 .scrollPopupHeader {
     padding: 3rem 2rem 2rem 2rem;
     text-align: center;
@@ -745,7 +745,7 @@
     background-clip: text;
 }
 
-/* ==================== ✨ SCROLL POPUP CONTENT ✨ ==================== */
+/* ==================== [POPUP] SCROLL POPUP CONTENT ==================== */
 .scrollPopupContent {
     padding: 2.5rem;
     display: grid;
@@ -821,7 +821,7 @@
     letter-spacing: 0.5px;
 }
 
-/* ==================== ✨ SCROLL POPUP LIKE BUTTON ✨ ==================== */
+/* ==================== [POPUP] SCROLL POPUP LIKE BUTTON ==================== */
 .scrollPopupLikeButton {
     display: inline-flex;
     align-items: center;
@@ -854,7 +854,7 @@
     color: white;
 }
 
-/* ==================== ✨ SCROLL POPUP FOOTER ✨ ==================== */
+/* ==================== [POPUP] SCROLL POPUP FOOTER ==================== */
 .scrollPopupFooter {
     padding: 2rem;
     background: linear-gradient(135deg, rgba(106, 76, 147, 0.08), rgba(255, 209, 102, 0.05));
@@ -887,7 +887,7 @@
     transform: translateY(-2px) scale(0.98);
 }
 
-/* ==================== ✨ SCROLL POPUP CONFETTI CONTAINER ✨ ==================== */
+/* ==================== [CONFETTI] SCROLL POPUP CONFETTI CONTAINER ==================== */
 .scrollPopupConfettiContainer {
     position: absolute;
     inset: 0;

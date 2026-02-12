@@ -161,7 +161,7 @@ export const schoolDetailsHi: SchoolDetailsHi = {
             {
                 name: "प्री-किंडरगार्टन",
                 ageGroup: "आयु 4–5",
-                icon: "📚",
+                icon: "BOOKS",
                 img: "/assets/programs/prekg.jpg",
                 monthlyFee: "₹12,000",
                 annualFee: "₹1,44,000",
@@ -212,7 +212,7 @@ export const schoolDetailsHi: SchoolDetailsHi = {
             { term: "मासिक", description: "मासिक शुल्क का भुगतान करें", icon: "📅" },
             { term: "त्रैमासिक", description: "3 महीने की अग्रिम (5% छूट)", icon: "📊" },
             { term: "अर्धवार्षिक", description: "6 महीने की अग्रिम (8% छूट)", icon: "💰" },
-            { term: "वार्षिक", description: "पूरा साल अग्रिम (12% छूट)", icon: "⭐" },
+            { term: "वार्षिक", description: "पूरव साल अग्रिम (12% छूट)", icon: "PREMIUM" },
         ],
         policies: [
             "पंजीकरण शुल्क गैर-वापसी योग्य है",

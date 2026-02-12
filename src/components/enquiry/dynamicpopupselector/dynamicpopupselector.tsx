@@ -49,7 +49,7 @@ export default function DynamicPopupSelector() {
       if (data.success && data.data) {
         setPopupControl(data.data);
         setError(null);
-        console.log('✅ Popup control fetched:', {
+        console.log('[SUCCESS] Popup control fetched:', {
           type: data.data.active_popup_type,
           messagePopupId: data.data.message_popup_id,
           delay: data.data.enquiry_popup_delay_ms,
@@ -58,7 +58,7 @@ export default function DynamicPopupSelector() {
 
         // Debug message popup specific data
         if (data.data.active_popup_type === 'message') {
-          console.log('💬 Message popup is active. ID:', data.data.message_popup_id);
+          console.log('[POPUP] Message popup is active. ID:', data.data.message_popup_id);
           if (!data.data.message_popup_id) {
             console.warn('⚠️ MESSAGE POPUP TYPE IS SELECTED BUT NO message_popup_id SET!');
           }
@@ -87,7 +87,7 @@ export default function DynamicPopupSelector() {
 
   // Don't render anything while first load is happening
   if (loading && !popupControl) {
-    console.log('⏳ DynamicPopupSelector initial loading...');
+    console.log('[LOAD] DynamicPopupSelector initial loading...');
     return null;
   }
 
@@ -97,27 +97,27 @@ export default function DynamicPopupSelector() {
     return null;
   }
 
-  console.log('📍 DynamicPopupSelector rendering with type:', popupControl.active_popup_type);
+  console.log('[RENDER] DynamicPopupSelector rendering with type:', popupControl.active_popup_type);
 
   // Show appropriate popup based on active_popup_type
   if (popupControl.active_popup_type === 'enquiry') {
-    console.log('📨 Rendering EnquiryPopup with delay:', popupControl.enquiry_popup_delay_ms);
+    console.log('[POPUP] Rendering EnquiryPopup with delay:', popupControl.enquiry_popup_delay_ms);
     return <EnquiryPopup delay={popupControl.enquiry_popup_delay_ms || 1000} />;
   }
 
   if (popupControl.active_popup_type === 'message') {
-    console.log('💬 Message type detected. message_popup_id:', popupControl.message_popup_id);
+    console.log('[MSG] Message type detected. message_popup_id:', popupControl.message_popup_id);
     
     if (!popupControl.message_popup_id) {
       console.error('❌ MESSAGE POPUP IS SELECTED BUT NO message_popup_id PROVIDED!');
-      console.log('🔧 You need to set a message popup in PopupManagement dashboard');
+      console.log('[CONFIG] You need to set a message popup in PopupManagement dashboard');
       return null;
     }
     
-    console.log('💬 Rendering MessagePopupComponent with ID:', popupControl.message_popup_id);
+    console.log('[RENDER] Rendering MessagePopupComponent with ID:', popupControl.message_popup_id);
     return <MessagePopupComponent messagePopupId={popupControl.message_popup_id} />;
   }
 
-  console.log('🚫 Popup type is "none" - showing nothing');
+  console.log('[NONE] Popup type is "none" - showing nothing');
   return null;
 }

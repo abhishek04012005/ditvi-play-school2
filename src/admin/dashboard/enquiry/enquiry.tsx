@@ -106,25 +106,25 @@ const EnquiryDashboard = () => {
     const [savingNote, setSavingNote] = useState(false);
     const [deletingNoteId, setDeletingNoteId] = useState<string | null>(null);
 
-    // ✨ PAGINATION STATE ✨
+    // [STATE] PAGINATION STATE
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState<ItemsPerPage>(20);
 
     const [downloadModalOpen, setDownloadModalOpen] = useState(false);
 
-    // ✨ BROCHURE SELECTION STATE ✨
+    // [STATE] BROCHURE SELECTION STATE
     const [brochureModalOpen, setBrochureModalOpen] = useState(false);
     const [selectedBrochureEnquiry, setSelectedBrochureEnquiry] = useState<Enquiry | null>(null);
     const [brochureMessageType, setBrochureMessageType] = useState<'sms' | 'whatsapp' | null>(null);
 
-    // ✨ POPUP MANAGEMENT TOGGLE STATE ✨
+    // [STATE] POPUP MANAGEMENT TOGGLE STATE
     const [showPopupManagement, setShowPopupManagement] = useState(false);
 
     useEffect(() => {
         fetchEnquiries();
     }, []);
 
-    // ✨ RESET TO PAGE 1 WHEN FILTER/SEARCH CHANGES ✨
+    // [EFFECT] RESET TO PAGE 1 WHEN FILTER/SEARCH CHANGES
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, filter]);
@@ -142,7 +142,7 @@ const EnquiryDashboard = () => {
                 throw error;
             }
 
-            // ✨ PROCESS NOTES FROM JSONB COLUMN ✨
+            // [DATA] PROCESS NOTES FROM JSONB COLUMN
             const processedData = (data || []).map((enquiry: any) => {
                 let notes: NoteEntry[] = [];
 
@@ -195,7 +195,7 @@ const EnquiryDashboard = () => {
         return sortOrder === 'asc' ? <FaSortUp /> : <FaSortDown />;
     };
 
-    // ✨ FIXED FILTER WITH NULL CHECKING ✨
+    // [FILTER] FIXED FILTER WITH NULL CHECKING
     const sortedAndFilteredEnquiries = enquiries
         .filter((enquiry) => {
             const matchesSearch =
@@ -222,7 +222,7 @@ const EnquiryDashboard = () => {
                 : bValue.localeCompare(aValue);
         });
 
-    // ✨ PAGINATION LOGIC ✨
+    // [LOGIC] PAGINATION LOGIC
     const totalPages = Math.ceil(sortedAndFilteredEnquiries.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -335,7 +335,7 @@ const EnquiryDashboard = () => {
         setDeletingNoteId(null);
     };
 
-    // ✨ BROCHURE SELECTION HANDLERS ✨
+    // [HANDLER] BROCHURE SELECTION HANDLERS
     const openBrochureModal = (enquiry: Enquiry, messageType: 'sms' | 'whatsapp') => {
         setSelectedBrochureEnquiry(enquiry);
         setBrochureMessageType(messageType);
@@ -424,7 +424,7 @@ const EnquiryDashboard = () => {
                 throw new Error('Failed to update enquiry - no data returned');
             }
 
-            console.log('✅ Note saved successfully:', data[0]);
+            console.log('[SUCCESS] Note saved successfully:', data[0]);
 
             setEnquiries((prev) =>
                 prev.map((enquiry) =>
@@ -440,9 +440,9 @@ const EnquiryDashboard = () => {
             setNoteEntries(updatedNotes);
             setNewNoteText('');
             setIsEditingNewNote(false);
-            toast.success('✨ Note added successfully');
+            toast.success('[SUCCESS] Note added successfully');
         } catch (error) {
-            console.error('❌ Error saving note:', error);
+            console.error('[ERROR] Error saving note:', error);
             toast.error('Failed to save note');
         } finally {
             setSavingNote(false);
@@ -459,11 +459,11 @@ const EnquiryDashboard = () => {
         try {
             setDeletingNoteId(noteId);
 
-            console.log('🗑️ Deleting note ID:', noteId);
+            console.log('[DELETE] Deleting note ID:', noteId);
 
             const updatedNotes = noteEntries.filter((entry) => entry.id !== noteId);
 
-            console.log('🗑️ Updated notes after deletion:', updatedNotes);
+            console.log('[DELETE] Updated notes after deletion:', updatedNotes);
 
             const { data, error } = await supabase
                 .from('enquiries')
@@ -482,7 +482,7 @@ const EnquiryDashboard = () => {
                 throw new Error('Failed to update enquiry - no data returned');
             }
 
-            console.log('✅ Note deleted successfully:', data[0]);
+            console.log('[SUCCESS] Note deleted successfully:', data[0]);
 
             setNoteEntries(updatedNotes);
 
@@ -497,9 +497,9 @@ const EnquiryDashboard = () => {
                 )
             );
 
-            toast.success('✅ Note deleted successfully');
+            toast.success('[SUCCESS] Note deleted successfully');
         } catch (error) {
-            console.error('❌ Error deleting note:', error);
+            console.error('[ERROR] Error deleting note:', error);
             toast.error('Failed to delete note');
         } finally {
             setDeletingNoteId(null);
@@ -523,13 +523,13 @@ const EnquiryDashboard = () => {
         }
     };
 
-    // ✨ HANDLE ITEMS PER PAGE CHANGE ✨
+    // [HANDLER] HANDLE ITEMS PER PAGE CHANGE
     const handleItemsPerPageChange = (value: ItemsPerPage) => {
         setItemsPerPage(value);
         setCurrentPage(1);
     };
 
-    // ✨ HANDLE PAGE CHANGE ✨
+    // [HANDLER] HANDLE PAGE CHANGE
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
             setCurrentPage(newPage);
@@ -571,7 +571,7 @@ const EnquiryDashboard = () => {
                             whileTap={{ scale: 0.95 }}
                             title={showPopupManagement ? 'Show Enquiries' : 'Show Popup Settings'}
                         >
-                            {showPopupManagement ? '👥 View Enquiries' : '⚙️ Popup Settings'}
+                            {showPopupManagement ? '[USERS] View Enquiries' : '[SETTINGS] Popup Settings'}
                         </motion.button>
                         
                         {!showPopupManagement && (
@@ -762,7 +762,7 @@ const EnquiryDashboard = () => {
                             </table>
                         </div>
 
-                        {/* ✨ PAGINATION SECTION ✨ */}
+                        {/* [SECTION] PAGINATION SECTION */}
                         {sortedAndFilteredEnquiries.length > 0 && (
                     <div className={styles.paginationSection}>
                         <div className={styles.paginationInfo}>
@@ -1020,7 +1020,7 @@ const NotesModal = ({
                                                                 type="button"
                                                                 className={styles.deleteNoteBtn}
                                                                 onClick={() => {
-                                                                    console.log('🗑️ Delete clicked for note:', entry.id);
+                                                                    console.log('[DELETE] Delete clicked for note:', entry.id);
                                                                     onDeleteNote(entry.id);
                                                                 }}
                                                                 whileHover={{ scale: 1.05 }}

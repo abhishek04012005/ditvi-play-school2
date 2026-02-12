@@ -85,7 +85,7 @@ const DEFAULT_SPOTLIGHT_TYPES: CustomSpotlightType[] = [
     {
         id: 'monthly',
         name: 'Star of the Month',
-        emoji: '✨',
+        emoji: '[STAR]',
         color: '#f59e0b',
         description: 'Monthly achievement',
         created_date: new Date().toISOString(),
@@ -153,7 +153,7 @@ const Spotlight = () => {
     const [selectedTypeToDelete, setSelectedTypeToDelete] = useState<CustomSpotlightType | null>(null);
     const [typeDeleteLoading, setTypeDeleteLoading] = useState(false);
 
-    // ✨ PAGINATION STATE
+    // [STATE] PAGINATION STATE
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState<ItemsPerPage>(20);
 
@@ -166,7 +166,7 @@ const Spotlight = () => {
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [homepageLoading, setHomepageLoading] = useState(false);
 
-    // ✨ CONFLICT MODAL STATE
+    // [STATE] CONFLICT MODAL STATE
     const [showConflictModal, setShowConflictModal] = useState(false);
     const [conflictData, setConflictData] = useState<{
         newCard: Spotlight | null;
@@ -261,7 +261,7 @@ const Spotlight = () => {
         }
     }, [isMounted, fetchSpotlights, fetchCustomTypes]);
 
-    // ✨ RESET TO PAGE 1 WHEN FILTER/SEARCH CHANGES
+    // [EFFECT] RESET TO PAGE 1 WHEN FILTER/SEARCH CHANGES
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, filterType]);
@@ -509,7 +509,7 @@ const Spotlight = () => {
         }
     };
 
-    // ✨ HANDLE HOMEPAGE BUTTON CLICK
+    // [HANDLER] HANDLE HOMEPAGE BUTTON CLICK
     const handleHomepageClick = (spotlight: Spotlight) => {
         if (spotlight.is_show_on_home_page) {
             setSelectedForHomepage(spotlight);
@@ -520,7 +520,7 @@ const Spotlight = () => {
         const existingHomepageCard = spotlights.find((s) => s.is_show_on_home_page);
 
         if (existingHomepageCard) {
-            console.log('⚠️ CONFLICT: Another card already on homepage');
+            console.log('[CONFLICT] CONFLICT: Another card already on homepage');
             setConflictData({
                 newCard: spotlight,
                 existingCard: existingHomepageCard
@@ -532,7 +532,7 @@ const Spotlight = () => {
         }
     };
 
-    // ✨ HANDLE CONFLICT RESOLUTION
+    // [MODAL] HANDLE CONFLICT RESOLUTION
     const handleReplaceHomepageCard = async () => {
         if (!conflictData.newCard || !conflictData.existingCard) return;
 
@@ -554,7 +554,7 @@ const Spotlight = () => {
             if (addError) throw addError;
 
             toast.success(
-                `✨ Homepage badge moved! ${conflictData.newCard.name} is now featured!`
+                `[STAR] Homepage badge moved! ${conflictData.newCard.name} is now featured!`
             );
             setShowConflictModal(false);
             setConflictData({ newCard: null, existingCard: null });
@@ -602,7 +602,7 @@ const Spotlight = () => {
             }
 
             toast.success(
-                newValue ? '✨ Homepage badge added!' : '🚫 Homepage badge removed!'
+                newValue ? '[STAR] Homepage badge added!' : '[REMOVED] Homepage badge removed!'
             );
             setShowHomepageModal(false);
             setSelectedForHomepage(null);
@@ -615,7 +615,7 @@ const Spotlight = () => {
         }
     };
 
-    // ✨ SORTING LOGIC
+    // [LOGIC] SORTING LOGIC
     const handleSort = (field: SortField) => {
         if (sortField === field) {
             setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -631,7 +631,7 @@ const Spotlight = () => {
         return sortOrder === 'asc' ? <FaSortUp /> : <FaSortDown />;
     };
 
-    // ✨ FILTERED AND SORTED DATA
+    // [DATA] FILTERED AND SORTED DATA
     const sortedAndFilteredSpotlights = spotlights
         .filter(spotlight => {
             const name = spotlight.name.toLowerCase();
@@ -672,7 +672,7 @@ const Spotlight = () => {
             return sortOrder === 'asc' ? aVal - bVal : bVal - aVal;
         });
 
-    // ✨ PAGINATION LOGIC
+    // [LOGIC] PAGINATION LOGIC
     const totalPages = Math.ceil(sortedAndFilteredSpotlights.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -721,13 +721,13 @@ const Spotlight = () => {
         visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
     };
 
-    // ✨ HANDLE ITEMS PER PAGE CHANGE
+    // [HANDLER] HANDLE ITEMS PER PAGE CHANGE
     const handleItemsPerPageChange = (value: ItemsPerPage) => {
         setItemsPerPage(value);
         setCurrentPage(1);
     };
 
-    // ✨ HANDLE PAGE CHANGE
+    // [HANDLER] HANDLE PAGE CHANGE
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
             setCurrentPage(newPage);
@@ -755,7 +755,7 @@ const Spotlight = () => {
         <div className={styles.staroftheweek}>
             <HeadingTitle text='Spotlight Dashboard' />
 
-            {/* ✨ STATUS CARDS ✨ */}
+            {/* [SECTION] STATUS CARDS */}
             <motion.div
                 className={styles.statusCardsSection}
                 variants={containerVariants}
@@ -957,7 +957,7 @@ const Spotlight = () => {
                         </table>
                     </div>
 
-                    {/* ✨ PAGINATION SECTION ✨ */}
+                    {/* [SECTION] PAGINATION SECTION */}
                     {sortedAndFilteredSpotlights.length > 0 && (
                         <div className={styles.paginationSection}>
                             <div className={styles.paginationInfo}>
@@ -1056,7 +1056,7 @@ const Spotlight = () => {
                 </div>
             </div>
 
-            {/* ✨ CREATE SPOTLIGHT MODAL ✨ */}
+            {/* [MODAL] CREATE SPOTLIGHT MODAL */}
             <AnimatePresence>
                 {showCreateModal && (
                     <motion.div
@@ -1075,7 +1075,7 @@ const Spotlight = () => {
                         >
                             <div className={styles.createModalHeader}>
                                 <div>
-                                    <h2>✨ Create New Spotlight</h2>
+                                    <h2>[STAR] Create New Spotlight</h2>
                                     <p>Add a new student achievement to the spotlight</p>
                                 </div>
                                 <button
@@ -1380,7 +1380,7 @@ const Spotlight = () => {
                 )}
             </AnimatePresence>
 
-            {/* ✨ CONFLICT MODAL ✨ */}
+            {/* [MODAL] CONFLICT MODAL */}
             <AnimatePresence>
                 {showConflictModal && conflictData.newCard && conflictData.existingCard && (
                     <motion.div

@@ -41,7 +41,7 @@ export const DownloadModal = ({
     const [downloadFormat, setDownloadFormat] = useState<'csv' | 'excel'>('csv');
     const [isDownloading, setIsDownloading] = useState(false);
 
-    // ✨ Get date range based on selection
+    // [UTIL] Get date range based on selection
     const getDateRange = (): { start: Date; end: Date } => {
         const endDate = new Date();
         const startDate = new Date();
@@ -59,7 +59,7 @@ export const DownloadModal = ({
         return { start: startDate, end: endDate };
     };
 
-    // ✨ Filter data by date range
+    // [FILTER] Filter data by date range
     const filteredData = useMemo(() => {
         if (!onDateRangeChange) return data;
 
@@ -67,7 +67,7 @@ export const DownloadModal = ({
         return onDateRangeChange(start, end) || data;
     }, [dateRange, customStartDate, customEndDate, data, onDateRangeChange]);
 
-    // ✨ Format data for export
+    // [FORMAT] Format data for export
     const formatDataForExport = () => {
         return filteredData.map((item) => {
             const formattedItem: any = {};
