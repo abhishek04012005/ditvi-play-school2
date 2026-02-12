@@ -783,6 +783,7 @@ export default function AdmissionForm() {
                               name="child_dob"
                               value={formData.child_dob}
                               onChange={handleInputChange}
+                              max={new Date().toISOString().split('T')[0]}
                               required
                             />
                           </div>

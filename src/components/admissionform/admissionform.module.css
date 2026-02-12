@@ -1183,8 +1183,9 @@
   }
 
   .buttonGroup {
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: 0.65rem;
+
   }
 
   .prevBtn,
@@ -1546,7 +1547,7 @@
 
   .buttonGroup {
     gap: 0.3rem;
-    flex-direction: column;
+    flex-direction: column-reverse;
   }
 
   .prevBtn,
