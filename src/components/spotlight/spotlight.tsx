@@ -272,6 +272,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
 
         scrollConfettiTimeoutRef.current = window.setTimeout(() => {
             setScrollConfetti(false);
+            setShowScrollPopup(false);
         }, 8000);
     }, []);
 
@@ -841,7 +842,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                     )}
                 </AnimatePresence>
 
-                {/* [MODAL] SHARE MODAL - HOMEPAGE */}
+                {/* [MODAL] SHARE MODAL */}
                 <ShareModal
                     isOpen={showShareModal}
                     onClose={() => setShowShareModal(false)}
@@ -933,7 +934,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
             {/* [CONFETTI] SCROLL POPUP WITH CONFETTI - NOW APPEARS ON FULL PAGE GRID VIEW */}
             <ScrollPopupContent />
 
-            {/* ✨ LIKE CONFETTI - GLOBAL ✨ */}
+            {/* [CONFETTI] LIKE CONFETTI - GLOBAL */}
             <AnimatePresence>
                 {likeConfetti && (
                     <motion.div
@@ -1000,7 +1001,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.2 }}
                             >
-                                <div className={styles.popupBadge}>⭐ {selectedAward.award_type.charAt(0).toUpperCase() + selectedAward.award_type.slice(1)}</div>
+                                <div className={styles.popupBadge}>★ {selectedAward.award_type.charAt(0).toUpperCase() + selectedAward.award_type.slice(1)}</div>
                                 <h2 className={styles.popupTitle}>Achievement Recognized</h2>
                             </motion.div>
 
@@ -1057,7 +1058,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.4 }}
                             >
-                                <p>🌟 Celebrating Excellence 🌟</p>
+                                <p>✦ Celebrating Excellence ✦</p>
                             </motion.div>
                         </motion.div>
                     </motion.div>
