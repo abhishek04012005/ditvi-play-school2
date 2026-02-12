@@ -9,6 +9,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import TuneIcon from '@mui/icons-material/Tune';
+import TimerIcon from '@mui/icons-material/Timer';
+import ForumIcon from '@mui/icons-material/Forum';
 import styles from './popupmanagement.module.css';
 import Toast from '@/custom/toast/toast';
 
@@ -316,7 +319,7 @@ export default function PopupManagement() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h2 className={styles.sectionTitle}>🎯 Popup Type Selection</h2>
+        <h2 className={styles.sectionTitle}><TuneIcon style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} /> Popup Type Selection</h2>
         <p className={styles.sectionDescription}>
           Choose which popup should appear on the homepage
         </p>
@@ -382,7 +385,7 @@ export default function PopupManagement() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <h2 className={styles.sectionTitle}>⏱️ Enquiry Popup Settings</h2>
+        <h2 className={styles.sectionTitle}><TimerIcon style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} /> Enquiry Popup Settings</h2>
         <div className={styles.settingItem}>
           <label>Delay before showing (milliseconds):</label>
           <input
@@ -409,7 +412,7 @@ export default function PopupManagement() {
       >
         <div className={styles.sectionHeader}>
           <div>
-            <h2 className={styles.sectionTitle}>📨 Message Popups</h2>
+            <h2 className={styles.sectionTitle}><ForumIcon style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} /> Message Popups</h2>
             <p className={styles.sectionDescription}>
               Create and manage custom message popups
             </p>
