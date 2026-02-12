@@ -13,7 +13,7 @@ export const schoolDetailsEng: SchoolDetails = {
         whatsapp: "+919263767441"
     },
     address: {
-        street: "Anksquare Kids Play School, Boring Road",
+        street: "Ank Square Kids Play School, Boring Road",
         city: "Patna",
         state: "Bihar",
         pincode: "800013",
