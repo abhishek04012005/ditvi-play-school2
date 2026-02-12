@@ -34,6 +34,7 @@ export default function AdminLogin() {
       if (fetchError || !userData) {
         toast.error('Invalid credentials');
         setFormData({ username: '', password: '' });
+        setLoading(false);
         return;
       }
 
@@ -41,6 +42,7 @@ export default function AdminLogin() {
       if (!userData.is_active) {
         toast.error('User account is inactive. Please contact administrator.');
         setFormData({ username: '', password: '' });
+        setLoading(false);
         return;
       }
 
@@ -49,6 +51,7 @@ export default function AdminLogin() {
       if (!salt) {
         toast.error('Security configuration error. Please contact administrator.');
         console.error('PASSWORD_SALT not configured');
+        setLoading(false);
         return;
       }
 
@@ -57,6 +60,7 @@ export default function AdminLogin() {
       if (!isPasswordValid) {
         toast.error('Invalid credentials');
         setFormData({ username: '', password: '' });
+        setLoading(false);
         return;
       }
 
@@ -66,12 +70,16 @@ export default function AdminLogin() {
       localStorage.setItem('adminEmail', userData.email || '');
       toast.success('Login successful!');
       setFormData({ username: '', password: '' });
-      router.push('/admin/dashboard');
+      
+      // Show loader for 3 seconds then redirect to dashboard
+      // Keep loading true during this entire period
+      setTimeout(() => {
+        router.push('/admin/dashboard');
+      }, 3000);
     } catch (err) {
       toast.error('Something went wrong');
       console.error(err);
       setFormData({ username: '', password: '' });
-    } finally {
       setLoading(false);
     }
   };
