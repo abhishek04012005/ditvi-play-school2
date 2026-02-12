@@ -210,7 +210,7 @@ export default function PopupManagement() {
         setMessagePopups(messagePopups.filter((popup) => popup.id !== id));
         setToastType('success');
         setToastMessage('Message popup deleted successfully');
-        
+
         // If the deleted popup was active, reset popup type to none
         if (popupControl?.message_popup_id === id) {
           handlePopupTypeChange('none');
@@ -327,9 +327,8 @@ export default function PopupManagement() {
         <div className={styles.popupTypeGrid}>
           {/* Enquiry Popup Option */}
           <motion.button
-            className={`${styles.popupTypeCard} ${
-              popupControl?.active_popup_type === 'enquiry' ? styles.active : ''
-            }`}
+            className={`${styles.popupTypeCard} ${popupControl?.active_popup_type === 'enquiry' ? styles.active : ''
+              }`}
             onClick={() => handlePopupTypeChange('enquiry')}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -344,9 +343,8 @@ export default function PopupManagement() {
 
           {/* Message Popup Option */}
           <motion.button
-            className={`${styles.popupTypeCard} ${
-              popupControl?.active_popup_type === 'message' ? styles.active : ''
-            }`}
+            className={`${styles.popupTypeCard} ${popupControl?.active_popup_type === 'message' ? styles.active : ''
+              }`}
             onClick={() => handlePopupTypeChange('message')}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -361,9 +359,8 @@ export default function PopupManagement() {
 
           {/* No Popup Option */}
           <motion.button
-            className={`${styles.popupTypeCard} ${
-              popupControl?.active_popup_type === 'none' ? styles.active : ''
-            }`}
+            className={`${styles.popupTypeCard} ${popupControl?.active_popup_type === 'none' ? styles.active : ''
+              }`}
             onClick={() => handlePopupTypeChange('none')}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -549,18 +546,6 @@ export default function PopupManagement() {
                     </div>
                   </div>
 
-                  <div className={styles.formGroup}>
-                    <label>Image URL</label>
-                    <input
-                      type="text"
-                      placeholder="Optional image URL"
-                      value={formData.image_url}
-                      onChange={(e) =>
-                        setFormData({ ...formData, image_url: e.target.value })
-                      }
-                      className={styles.input}
-                    />
-                  </div>
                 </div>
 
                 <div className={styles.formFooter}>
