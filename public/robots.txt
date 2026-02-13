@@ -1,0 +1,72 @@
+# Robots.txt for Ank Square Play School
+# Last Updated: February 2026
+
+# Allow all bots by default
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api
+Disallow: /private
+Disallow: /*.json$
+Allow: /api/public
+
+# Google Bot specific rules
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /private
+Crawl-delay: 0
+
+# Bing Bot specific rules
+User-agent: Bingbot
+Allow: /
+Disallow: /admin
+Disallow: /private
+Crawl-delay: 1
+
+# Block ChatGPT and Claude crawlers for content protection
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+# Block other aggressive crawlers
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# Allow specific crawlers
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+# Sitemap locations
+Sitemap: https://anksquare-playschool.com/sitemap.xml
+Sitemap: https://anksquare-playschool.com/sitemap-hi.xml
+
+# Crawl delay settings (in seconds)
+# General crawl delay
+Request-rate: 1/1s
+
+# Specify cache time (in days) - helps search engines schedule visits
+# Cache: 1
