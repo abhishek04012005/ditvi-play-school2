@@ -151,7 +151,7 @@ const AdmissionSlip: React.FC<AdmissionSlipProps> = ({ data, formData, documentS
                             {schoolDetails.address.city}, {schoolDetails.address.state} - {schoolDetails.address.pincode}
                         </p>
                         <p className={slipStyles.contact}>
-                            Phone: {schoolDetails.contact.phone} | Email: {schoolDetails.contact.email}
+                            Phone: {schoolDetails.contact.phone} | Email: {schoolDetails.contact.email} | Website: {schoolDetails.contact.website}
                         </p>
                     </div>
                     {/* {logoSrc && (

@@ -4,10 +4,6 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import styles from './program.module.css';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import ToddlerProgramImage from '../../../public/assets/programs/toddler.jpg'
-import NurseryProgramImage from '../../../public/assets/programs/nursery.jpg'
-import PreKGProgramImage from '../../../public/assets/programs/prekg.jpg'
-import KGProgramImage from '../../../public/assets/programs/kg.jpg'
 import HeadingTitle from '../heading/headingtitle';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import LineArt from '@/custom/lineart/lineart';

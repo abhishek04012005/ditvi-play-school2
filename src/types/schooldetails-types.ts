@@ -8,6 +8,7 @@ export interface SchoolDetails {
         phone: string;
         email: string;
         whatsapp: string;
+        website: string;
     };
     address: {
         street: string;

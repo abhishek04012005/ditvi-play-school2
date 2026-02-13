@@ -10,7 +10,8 @@ export const schoolDetailsEng: SchoolDetails = {
     contact: {
         phone: "+91 9263767441",
         email: "admission@anksquare.com",
-        whatsapp: "+919263767441"
+        whatsapp: "+919263767441",
+        website: "www.anksquarekidsschool.com"
     },
     address: {
         street: "Ank Square Kids Play School, Boring Road",
