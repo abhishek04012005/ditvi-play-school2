@@ -1,5 +1,5 @@
 export interface ProgramItem {
-  title: string;
+  title?: string;
   ageGroup: string;
   description: string;
   features: string[];

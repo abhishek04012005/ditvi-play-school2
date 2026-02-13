@@ -3,10 +3,11 @@ import ToddlerProgramImage from '../../public/assets/programs/toddler.jpg'
 import NurseryProgramImage from '../../public/assets/programs/nursery.jpg'
 import PreKGProgramImage from '../../public/assets/programs/prekg.jpg'
 import KGProgramImage from '../../public/assets/programs/kg.jpg'
+import schoolDetailsEng from '@/json/schooldetails-eng';
 
 export const programsEng: ProgramItem[] = [
     {
-        title: "Play Group",
+        title: schoolDetailsEng.programs[0].name,
         ageGroup: "1.5 - 2.5 Years",
         description: "Exploratory play-based learning environment for toddlers to develop motor skills, social interaction, and early language development through age-appropriate activities.",
         features: [
@@ -20,7 +21,7 @@ export const programsEng: ProgramItem[] = [
         color: "var(--primary-yellow)"
     },
     {
-        title: "Nursery",
+        title: schoolDetailsEng.programs[1].name,
         ageGroup: "2.5 - 3.5 Years",
         description: "Structured yet flexible curriculum focusing on cognitive development, language skills, and independence. Includes art, music, and outdoor play.",
         features: [
@@ -34,7 +35,7 @@ export const programsEng: ProgramItem[] = [
         color: "var(--primary-yellow)"
     },
     {
-        title: "Junior Kindergarten",
+        title: schoolDetailsEng.programs[2].name,
         ageGroup: "3.5 - 4.5 Years",
         description: "Pre-academic foundation program that builds focus, collaboration, and early academic skills through interactive learning and play-based activities.",
         features: [
@@ -48,7 +49,7 @@ export const programsEng: ProgramItem[] = [
         color: "var(--primary-yellow)"
     },
     {
-        title: "Senior Kindergarten",
+        title: schoolDetailsEng.programs[3].name,
         ageGroup: "4.5 - 5.5 Years",
         description: "Focused readiness curriculum that builds confidence, independence, and foundational academic skills for a smooth transition to kindergarten.",
         features: [

@@ -93,20 +93,20 @@ export const schoolDetailsHi: SchoolDetailsHi = {
     },
     programs: [
         {
-            name: "प्ले ग्रुप",
-            description: "आयु: 1.5 - 2.5 वर्ष"
+            name: "Play Group",
+            description: "Age: 1.5 - 2.5 years"
         },
         {
-            name: "नर्सरी",
-            description: "आयु: 2.5 - 3.5 वर्ष"
+            name: "Nursery",
+            description: "Age: 2.5 - 3.5 years"
         },
         {
-            name: "जूनियर केजी",
-            description: "आयु: 3.5 - 4.5 वर्ष"
+            name: "Junior KG",
+            description: "Age: 3.5 - 4.5 years"
         },
         {
-            name: "सीनियर केजी",
-            description: "आयु: 4.5 - 5.5 वर्ष"
+            name: "Senior KG",
+            description: "Age: 4.5 - 5.5 years"
         }
     ],
     feeStructure: {
