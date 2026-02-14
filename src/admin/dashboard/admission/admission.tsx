@@ -998,7 +998,7 @@ export default function AdminAdmission() {
                                 <th onClick={() => handleSort('child_name')}>
                                     Student's Name {getSortIcon('child_name')}
                                 </th>
-                                <th>Father's Name</th>
+                                {/* <th>Father's Name</th> */}
                                 <th>Contact</th>
                                 <th onClick={() => handleSort('program_name')}>
                                     Program {getSortIcon('program_name')}
@@ -1043,7 +1043,7 @@ export default function AdminAdmission() {
                                         </td>
                                         <td>{getChildName(admission)}</td>
 
-                                        <td>{getFatherName(admission)}</td>
+                                        {/* <td>{getFatherName(admission)}</td> */}
                                         <td>
                                             <div className={styles.contactLinks}>
                                                 <span>{getParentMobile(admission)}</span>
