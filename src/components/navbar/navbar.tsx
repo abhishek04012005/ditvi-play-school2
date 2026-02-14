@@ -136,7 +136,7 @@ const Navbar = () => {
           className={`${styles.floatingButton} ${styles.enquiryButton}`}
         >
           <BiMessageDetail />
-          <span>{t('nav.contact')}</span>
+          <span>{t('nav.Enquiry')}</span>
         </Link>
         <Link
           href="/admission-status"
