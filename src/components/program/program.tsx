@@ -158,7 +158,7 @@ const Program = () => {
                 <div className={styles.programImageWrapper}>
                     <Image
                         src={programs[activeProgram].image}
-                        alt={programs[activeProgram].title}
+                        alt={programs[activeProgram].title || 'Program Image'}
                         fill
                         className={styles.programImage}
                     />
