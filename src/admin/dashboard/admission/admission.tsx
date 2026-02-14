@@ -2494,14 +2494,7 @@ const PDFPreviewModal = ({
                         </div>
 
                         <div className={styles.modalFooter}>
-                            <motion.button
-                                onClick={handleDownload}
-                                className={styles.downloadLink}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                            >
-                                <DownloadOutlined /> Download PDF
-                            </motion.button>
+                            
                             <motion.button
                                 className={styles.cancelBtn}
                                 onClick={onClose}

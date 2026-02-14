@@ -3052,3 +3052,240 @@
     background-color: #faf5ff;
     color: #8b5cf6;
 }
+
+/* ==================== PRINT STYLES FOR ADMISSION DASHBOARD ==================== */
+@media print {
+    /* Page Setup */
+    @page {
+        size: A4;
+        margin: 0.5cm;
+    }
+
+    /* Dashboard Wrapper */
+    .dashboardWrapper {
+        width: 100%;
+        min-height: auto;
+        background: white;
+        padding: 0.5cm;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Hide Non-Printable Elements */
+    .navbar,
+    .sidebar,
+    .footer,
+    .searchBar,
+    .filterSection,
+    .pagination,
+    .paginationControls,
+    .itemsPerPageSelector,
+    .modal,
+    .modalOverlay,
+    .actionButtons,
+    .searchContainer,
+    .sortContainer,
+    .filterContainer,
+    .downloadButton,
+    .printButton {
+        display: none !important;
+    }
+
+    /* Status Cards - Keep in Grid Layout */
+    .statusCardsSection {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        max-width: 100%;
+        page-break-inside: avoid;
+        background: white;
+    }
+
+    .statusCard {
+        position: relative;
+        overflow: hidden;
+        border-radius: 0.5rem;
+        background: white;
+        border: 1px solid #ddd;
+        padding: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        break-inside: avoid;
+    }
+
+    .statusCard::before {
+        display: none;
+    }
+
+    .statusCard:hover {
+        border-color: #ddd;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transform: none;
+    }
+
+    .statusCard.active {
+        border-color: #ddd;
+        background: white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .statusCardBg {
+        opacity: 0;
+    }
+
+    .statusCardContent {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .statusCardHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .statusCardIcon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        border-radius: 0.5rem;
+        box-shadow: none;
+    }
+
+    .statusCard:hover .statusCardIcon {
+        transform: none;
+    }
+
+    /* Table Section */
+    .tableSection {
+        margin-top: 1.5rem;
+        page-break-inside: avoid;
+    }
+
+    .sectionTitle {
+        font-size: 14pt;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 0.75cm;
+        page-break-after: avoid;
+        break-after: avoid;
+    }
+
+    /* Table Container */
+    .tableContainer {
+        width: 100%;
+        overflow: visible;
+        page-break-inside: avoid;
+        background: white;
+    }
+
+    /* Table Styling */
+    .admissionTable {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 10pt;
+        background: white;
+        margin: 0;
+        padding: 0;
+    }
+
+    .tableHead {
+        background-color: #f0f0f0;
+        color: #333;
+        font-weight: bold;
+        page-break-after: avoid;
+        break-after: avoid;
+    }
+
+    .tableRow,
+    .tableHeader {
+        page-break-inside: avoid;
+        background-color: white;
+    }
+
+    .tableRow:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .tableRow:hover {
+        background-color: #f9f9f9;
+    }
+
+    /* Content Wrapper */
+    .contentWrapper {
+        width: 100%;
+        page-break-inside: avoid;
+    }
+
+    /* Modal and Overlays - Hidden */
+    .detailsModal,
+    .notesModal,
+    .downloadModal,
+    .brochureModal,
+    .whatsappModal,
+    .previewModal,
+    .documentPreviewModal,
+    .pdfPreviewModal {
+        display: none !important;
+    }
+
+    /* Text & Color Preservation */
+    .statusCardsSection,
+    .statusCard,
+    .statusCardContent,
+    .statusCardIcon,
+    .statusCardHeader,
+    .statusCardLabel,
+    .statusCardValue,
+    .statusCardDescription {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Remove Animations & Transitions */
+    .statusCard,
+    .statusCardIcon,
+    .tableRow {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    /* Page Breaks */
+    .dashboardWrapper,
+    .statusCardsSection,
+    .tableSection,
+    .sectionTitle,
+    .tableRow {
+        page-break-inside: avoid;
+    }
+
+    /* Minimum Font Sizes */
+    .dashboardWrapper {
+        font-size: 11pt;
+        line-height: 1.4;
+    }
+
+    .sectionTitle {
+        page-break-after: avoid;
+    }
+
+    /* Mobile Print Optimization */
+    @media print and (max-width: 768px) {
+        .statusCardsSection {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+
+        .admissionTable {
+            font-size: 9pt;
+        }
+
+        .sectionTitle {
+            font-size: 12pt;
+        }
+    }
+}

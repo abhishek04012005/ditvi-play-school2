@@ -61,3 +61,243 @@ a {
     color-scheme: dark;
   }
 }
+
+/* ==================== GLOBAL PRINT STYLES ==================== */
+@media print {
+  /* Page Configuration */
+  @page {
+    size: A4;
+    margin: 0.5cm;
+  }
+
+  /* Root & Body */
+  html,
+  body {
+    width: 21cm;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    background: white !important;
+    color: black;
+    line-height: 1.4;
+    font-size: 11pt;
+  }
+
+  /* Remove unnecessary elements */
+  header,
+  footer,
+  nav,
+  .navbar,
+  .sidebar,
+  .navigation,
+  .header,
+  .footer,
+  .modal,
+  .modalOverlay,
+  .toast,
+  .notification,
+  button:not(.print-visible),
+  .btn:not(.print-visible),
+  .buttonGroup,
+  .actionBar,
+  .searchBar,
+  .filterSection,
+  .pagination,
+  .controls,
+  [role="button"],
+  .toggle,
+  .switch {
+    display: none !important;
+  }
+
+  /* Main Content */
+  main,
+  .main-content,
+  .content,
+  .container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    break-after: avoid;
+    color: black;
+    margin: 0.5cm 0 0.25cm 0;
+  }
+
+  h1 {
+    font-size: 16pt;
+    font-weight: bold;
+  }
+
+  h2 {
+    font-size: 14pt;
+    font-weight: bold;
+  }
+
+  h3 {
+    font-size: 12pt;
+    font-weight: bold;
+  }
+
+  p {
+    page-break-inside: avoid;
+    margin: 0.25cm 0;
+  }
+
+  /* Links */
+  a {
+    color: #0066cc;
+    text-decoration: underline;
+  }
+
+  /* Tables */
+  table,
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    page-break-inside: auto;
+    margin: 0.5cm 0;
+    font-size: 10pt;
+  }
+
+  table thead,
+  .thead {
+    display: table-header-group;
+    page-break-inside: avoid;
+    background-color: #f0f0f0 !important;
+  }
+
+  table tbody,
+  .tbody {
+    display: table-row-group;
+  }
+
+  table tr,
+  .tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  table th,
+  table td,
+  .th,
+  .td {
+    border: 1px solid #333;
+    padding: 0.3cm;
+    text-align: left;
+    page-break-inside: avoid;
+  }
+
+  table th,
+  .th {
+    background-color: #e8e8e8 !important;
+    font-weight: bold;
+    color: black;
+  }
+
+  table tbody tr:nth-child(even),
+  .tr:nth-child(even) {
+    background-color: #f9f9f9 !important;
+  }
+
+  /* Images */
+  img {
+    max-width: 100%;
+    page-break-inside: avoid;
+  }
+
+  /* Lists */
+  ul, ol {
+    margin: 0.5cm 0;
+    padding-left: 1cm;
+  }
+
+  li {
+    margin: 0.25cm 0;
+    page-break-inside: avoid;
+  }
+
+  /* Forms */
+  form,
+  .form {
+    page-break-inside: avoid;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="date"],
+  input[type="number"],
+  textarea,
+  select {
+    border: 1px solid #333;
+    padding: 0.25cm;
+    font-size: 10pt;
+  }
+
+  /* Color Preservation */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Remove Visual Effects */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    background-image: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Page Break Controls */
+  .page-break-before {
+    page-break-before: always;
+  }
+
+  .page-break-after {
+    page-break-after: always;
+  }
+
+  .page-break-inside-avoid {
+    page-break-inside: avoid;
+  }
+
+  /* Mobile Print Optimization */
+  @media print and (max-width: 768px) {
+    html,
+    body {
+      font-size: 10pt;
+      line-height: 1.3;
+    }
+
+    h1 {
+      font-size: 14pt;
+    }
+
+    h2 {
+      font-size: 12pt;
+    }
+
+    h3 {
+      font-size: 11pt;
+    }
+
+    table,
+    .table {
+      font-size: 9pt;
+    }
+
+    table th,
+    table td,
+    .th,
+    .td {
+      padding: 0.2cm;
+    }
+  }
+}

@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styles from './admissionpdftemplate.module.css';
 import { schoolDetails } from '@/json/schooldetails';
 import enTranslations from '@/translations/en.json';
 import hiTranslations from '@/translations/hi.json';
+import { DownloadOutlined } from '@mui/icons-material';
 
 export interface Admission {
     admission_number: any;
@@ -231,6 +232,7 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
     const [photoUrl, setPhotoUrl] = useState<string | null>(null);
     const [language, setLanguage] = useState<'en' | 'hi'>('en');
+    const pdfRef = useRef<HTMLDivElement>(null);
 
     // Get translations based on language
     const allTranslations = language === 'hi' ? hiTranslations : enTranslations;
@@ -282,8 +284,117 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
 
     const todayDate = formatDate(new Date().toISOString());
 
+    // Download PDF using html2canvas and jsPDF
+    const downloadPDF = async () => {
+        if (!pdfRef.current) return;
+
+        try {
+            // Dynamically import html2canvas and jsPDF to avoid SSR issues
+            const html2canvas = (await import('html2canvas')).default;
+            const jsPDF = (await import('jspdf')).jsPDF;
+
+            // Add PDF export class for styling
+            pdfRef.current.classList.add('pdfExport');
+
+            // Wait for class to be applied
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            const canvas = await html2canvas(pdfRef.current, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: "#ffffff",
+                width: 794,  // A4 width in pixels (210mm at 96dpi)
+                height: 1123, // A4 height in pixels (297mm at 96dpi)
+                windowHeight: 1123,
+                windowWidth: 794,
+                allowTaint: true,
+            });
+
+            // Remove PDF export class
+            pdfRef.current.classList.remove('pdfExport');
+
+            // Create PDF with exact A4 dimensions
+            const pdf = new jsPDF("p", "mm", "a4");
+            const imgData = canvas.toDataURL("image/png");
+
+            // Add image to fill entire A4 page
+            pdf.addImage(imgData, "PNG", 0, 0, 210, 297);
+            pdf.save(`Admission_${admission.admission_number}.pdf`);
+
+            alert("PDF downloaded successfully!");
+        } catch (error) {
+            console.error("PDF generation error:", error);
+            pdfRef.current?.classList.remove('pdfExport');
+            alert("Failed to generate PDF");
+        }
+    };
+
+    // Print using window.print()
+    const handlePrint = () => {
+        if (!pdfRef.current) return;
+        
+        const printWindow = window.open("", "", "height=600,width=800");
+        if (printWindow) {
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Admission Form - ${admission.admission_number}</title>
+                    <style>
+                        body { 
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            padding: 0;
+                            margin: 0;
+                            background: white;
+                        }
+                        * { 
+                            margin: 0; 
+                            padding: 0; 
+                            box-sizing: border-box; 
+                        }
+                        @media print {
+                            @page {
+                                size: A4;
+                                margin: 0.5cm;
+                            }
+                            body {
+                                margin: 0;
+                                padding: 0;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${pdfRef.current.innerHTML}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.focus();
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 250);
+        }
+    };
+
     return (
-        <div className={styles.pdfContainer}>
+        <div>
+            {/* Action Buttons */}
+            <div className={styles.actionButtonsContainer}>
+                
+                <button 
+                    onClick={downloadPDF}
+                    className={styles.downloadButton}
+                    title="Download as PDF"
+                >
+                    <DownloadOutlined />  Download PDF
+                </button>
+            </div>
+
+            {/* PDF Container */}
+            <div ref={pdfRef} className={styles.pdfContainer}>
             {/* Header with Logo */}
             <PDFHeader logoUrl={logoUrl} t={t} />
 
@@ -397,6 +508,7 @@ const AdmissionPDFTemplate: React.FC<AdmissionPDFTemplateProps> = ({ admission, 
                     <span className={styles.footerItem}>•</span>
                     <span className={styles.footerItem}>{t('admissionPDF.generatedAt')} {todayDateTime}</span>
                 </div>
+            </div>
             </div>
         </div>
     );

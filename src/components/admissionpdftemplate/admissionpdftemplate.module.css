@@ -1,3 +1,64 @@
+/* ===== ACTION BUTTONS ===== */
+.actionButtonsContainer {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.printButton,
+.downloadButton {
+    padding: 0.75rem 1.5rem;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.printButton {
+    background-color: #6a4c93;
+    color: white;
+}
+
+.printButton:hover {
+    background-color: #5a3c83;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.3);
+}
+
+.printButton:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(106, 76, 147, 0.2);
+}
+
+.downloadButton {
+    background-color: #10b981;
+    color: white;
+}
+
+.downloadButton:hover {
+    background-color: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.downloadButton:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+/* Hide action buttons when printing */
+@media print {
+    .actionButtonsContainer {
+        display: none !important;
+    }
+}
+
 /* ===== ROOT COLOR VARIABLES ===== */
 :root {
     --color-text-dark: #333333;
