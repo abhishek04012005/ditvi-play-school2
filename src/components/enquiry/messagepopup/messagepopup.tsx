@@ -25,12 +25,22 @@ export default function MessagePopupComponent({ messagePopupId }: { messagePopup
   useEffect(() => {
     console.log('[INFO] MessagePopupComponent mounted/updated with ID:', messagePopupId);
     
-    if (messagePopupId && !popupDismissed) {
-      fetchMessagePopup(messagePopupId);
-    } else if (popupDismissed) {
-      console.log('[INFO] Popup was dismissed, skipping fetch');
+    // Reset all state when messagePopupId changes (new popup selected)
+    if (messagePopupId) {
+      setShowPopup(false); // Hide popup first
+      setPopupData(null); // Clear old popup data
+      setPopupDismissed(false); // Allow showing new popup
+      
+      // Small delay to ensure state is reset before fetching
+      const timer = setTimeout(() => {
+        fetchMessagePopup(messagePopupId);
+      }, 50);
+      
+      return () => clearTimeout(timer);
+    } else {
+      console.log('[INFO] No messagePopupId provided');
     }
-  }, [messagePopupId, popupDismissed]);
+  }, [messagePopupId]);
 
   const fetchMessagePopup = async (id: string) => {
     // Prevent duplicate fetches
@@ -177,16 +187,7 @@ export default function MessagePopupComponent({ messagePopupId }: { messagePopup
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              <button
-                onClick={handleClose}
-                className={styles.dismissBtn}
-                style={{
-                  color: popupData.text_color,
-                  borderColor: popupData.text_color,
-                }}
-              >
-                Dismiss
-              </button>
+             
               {popupData.button_text && (
                 <button
                   onClick={handleButtonClick}

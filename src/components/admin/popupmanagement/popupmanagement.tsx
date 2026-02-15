@@ -202,11 +202,14 @@ export default function PopupManagement() {
 
   const handleMessagePopupToggle = async (id: string, isActive: boolean) => {
     try {
+      console.log('[TOGGLE START] Toggling popup:', id, 'isActive:', isActive);
+      
       // If activating this popup, deactivate all others
       if (!isActive) {
         // Deactivate all other popups
         for (const popup of messagePopups) {
           if (popup.id !== id && popup.is_active) {
+            console.log('[DEACTIVATE] Deactivating other popup:', popup.id);
             await fetch(`/api/admin/message-popup/${popup.id}`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
@@ -217,6 +220,7 @@ export default function PopupManagement() {
       }
 
       // Update the selected popup
+      console.log('[UPDATE POPUP] Setting is_active to:', !isActive);
       const res = await fetch(`/api/admin/message-popup/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -225,20 +229,69 @@ export default function PopupManagement() {
 
       const data = await res.json();
       if (data.success) {
+        console.log('[POPUP UPDATED] Popup update successful');
+        
         // Update local state: deactivate all, then activate the selected one
-        setMessagePopups(
-          messagePopups.map((popup) => ({
-            ...popup,
-            is_active: popup.id === id ? !isActive : false,
-          }))
-        );
-        setToastType('success');
-        setToastMessage(
-          !isActive ? 'Message popup activated' : 'Message popup deactivated'
-        );
+        const updatedPopups = messagePopups.map((popup) => ({
+          ...popup,
+          is_active: popup.id === id ? !isActive : false,
+        }));
+        setMessagePopups(updatedPopups);
+
+        // If activating a popup, also update popup_control to point to this popup
+        if (!isActive) {
+          console.log('[ACTIVATE POPUP] Activating popup, updating popup_control');
+          
+          if (!popupControl) {
+            console.error('ERROR: No popup control data available');
+            throw new Error('Popup control not initialized');
+          }
+
+          const updatedControl = {
+            ...popupControl,
+            active_popup_type: 'message',
+            message_popup_id: id,
+          };
+
+          console.log('[CONTROL UPDATE] Sending to popup_control:', updatedControl);
+
+          try {
+            const controlRes = await fetch('/api/admin/popup-control', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(updatedControl),
+            });
+
+            const controlData = await controlRes.json();
+            console.log('[CONTROL RESPONSE] Response:', controlData);
+            
+            if (controlData.success) {
+              setPopupControl(controlData.data);
+              console.log('[TOGGLE SUCCESS] Updated popup_control to use message popup:', id);
+              console.log('[CONTROL DATA] New control state:', controlData.data);
+              
+              setToastType('success');
+              setToastMessage('Message popup activated - will appear on next page load');
+            } else {
+              console.error('[CONTROL ERROR] API error:', controlData.error);
+              throw new Error(controlData.error || 'Failed to update popup control');
+            }
+          } catch (controlError) {
+            console.error('[TOGGLE FAILED] Error updating popup control:', controlError);
+            setToastType('error');
+            setToastMessage('Failed to activate popup on frontend');
+          }
+        } else {
+          console.log('[DEACTIVATE COMPLETE] Popup deactivated');
+          setToastType('success');
+          setToastMessage('Message popup deactivated');
+        }
+      } else {
+        console.error('[POPUP UPDATE FAILED] Error:', data.error);
+        throw new Error(data.error || 'Failed to update message popup');
       }
     } catch (error) {
-      console.error('Error updating message popup:', error);
+      console.error('[TOGGLE EXCEPTION] Error updating message popup:', error);
       setToastType('error');
       setToastMessage('Failed to update message popup');
     }
@@ -315,23 +368,47 @@ export default function PopupManagement() {
 
       const data = await res.json();
       if (data.success) {
+        let updatedPopups;
+        
         if (editingPopup) {
-          setMessagePopups(
-            messagePopups.map((popup) =>
-              popup.id === editingPopup.id
-                ? { ...data.data, is_active: dataToSave.is_active }
-                : { ...popup, is_active: dataToSave.is_active ? false : popup.is_active }
-            )
+          updatedPopups = messagePopups.map((popup) =>
+            popup.id === editingPopup.id
+              ? { ...data.data, is_active: dataToSave.is_active }
+              : { ...popup, is_active: dataToSave.is_active ? false : popup.is_active }
           );
         } else {
           // For new popups, deactivate all others and activate this one
-          setMessagePopups(
-            [
-              { ...data.data, is_active: true },
-              ...messagePopups.map((p) => ({ ...p, is_active: false })),
-            ]
-          );
+          updatedPopups = [
+            { ...data.data, is_active: true },
+            ...messagePopups.map((p) => ({ ...p, is_active: false })),
+          ];
         }
+
+        setMessagePopups(updatedPopups);
+
+        // Update popup_control to point to the active popup
+        if (dataToSave.is_active && popupControl) {
+          try {
+            const controlRes = await fetch('/api/admin/popup-control', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                ...popupControl,
+                active_popup_type: 'message',
+                message_popup_id: data.data.id,
+              }),
+            });
+
+            const controlData = await controlRes.json();
+            if (controlData.success) {
+              setPopupControl(controlData.data);
+              console.log('[SAVE] Updated popup_control to use message popup:', data.data.id);
+            }
+          } catch (controlError) {
+            console.error('Error updating popup control:', controlError);
+          }
+        }
+
         setToastType('success');
         setToastMessage(
           editingPopup ? 'Message popup updated' : 'Message popup created and activated'

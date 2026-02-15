@@ -13,6 +13,7 @@ export default function DynamicPopupSelector() {
   const [popupControl, setPopupControl] = useState<PopupControl | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastMessagePopupId, setLastMessagePopupId] = useState<string | null>(null);
 
   useEffect(() => {
     // Fetch immediately on mount
@@ -22,8 +23,8 @@ export default function DynamicPopupSelector() {
     
     initialFetch();
     
-    // Refresh popup control every 2 seconds to detect admin changes
-    const interval = setInterval(fetchPopupControl, 2000);
+    // Refresh popup control every 500ms to detect admin changes quickly
+    const interval = setInterval(fetchPopupControl, 500);
     return () => clearInterval(interval);
   }, []);
 
@@ -35,7 +36,6 @@ export default function DynamicPopupSelector() {
       
       if (!res.ok) {
         console.warn(`⚠️ API returned status ${res.status}`);
-        // Set default state instead of throwing
         setPopupControl({
           active_popup_type: 'none',
           enquiry_popup_delay_ms: 1000
@@ -52,7 +52,6 @@ export default function DynamicPopupSelector() {
         // Validate: if message type is selected, ensure message_popup_id exists
         if (popupControlData.active_popup_type === 'message' && !popupControlData.message_popup_id) {
           console.warn('⚠️ MESSAGE POPUP TYPE IS SELECTED BUT NO message_popup_id SET! Reverting to "none"');
-          // Auto-fix: revert to 'none' to prevent display issues
           try {
             const fixRes = await fetch('/api/admin/popup-control', {
               method: 'PUT',
@@ -73,6 +72,12 @@ export default function DynamicPopupSelector() {
           }
         }
 
+        // Track popup ID change for debugging
+        if (popupControlData.message_popup_id !== lastMessagePopupId) {
+          console.log('[CHANGE] Message popup ID changed from', lastMessagePopupId, 'to', popupControlData.message_popup_id);
+          setLastMessagePopupId(popupControlData.message_popup_id || null);
+        }
+
         setPopupControl(popupControlData);
         setError(null);
         console.log('[SUCCESS] Popup control fetched:', {
@@ -82,7 +87,6 @@ export default function DynamicPopupSelector() {
           fullData: popupControlData
         });
 
-        // Debug message popup specific data
         if (popupControlData.active_popup_type === 'message') {
           console.log('[POPUP] Message popup is active. ID:', popupControlData.message_popup_id);
           if (!popupControlData.message_popup_id) {
@@ -92,7 +96,6 @@ export default function DynamicPopupSelector() {
       } else {
         console.warn('⚠️ No popup control data:', data);
         setError(data.error || 'No popup control data');
-        // Set default state
         setPopupControl({
           active_popup_type: 'none',
           enquiry_popup_delay_ms: 1000
@@ -101,7 +104,6 @@ export default function DynamicPopupSelector() {
     } catch (error) {
       console.error('❌ Error fetching popup control:', error);
       setError(error instanceof Error ? error.message : 'Unknown error');
-      // Set default state on error
       setPopupControl({
         active_popup_type: 'none',
         enquiry_popup_delay_ms: 1000
@@ -143,7 +145,8 @@ export default function DynamicPopupSelector() {
     }
     
     console.log('[RENDER] Rendering MessagePopupComponent with ID:', popupControl.message_popup_id);
-    return <MessagePopupComponent messagePopupId={popupControl.message_popup_id} />;
+    // Use key to force component re-mount when message_popup_id changes
+    return <MessagePopupComponent key={popupControl.message_popup_id} messagePopupId={popupControl.message_popup_id} />;
   }
 
   console.log('[NONE] Popup type is "none" - showing nothing');
