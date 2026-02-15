@@ -59,6 +59,14 @@ export default function PopupManagement() {
     image_url: '',
   });
 
+  // Color scheme presets
+  const colors = {
+    primary: '#6a4c93',
+    secondary: '#ffbf00',
+    white: '#ffffff',
+    black: '#000000',
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -507,42 +515,90 @@ export default function PopupManagement() {
                     </div>
                   </div>
 
-                  <div className={styles.formRow}>
-                    <div className={styles.formGroup}>
+                  <div className={styles.colorSchemeSection}>
+                    <div className={styles.colorSchemeGroup}>
                       <label>Background Color</label>
-                      <input
-                        type="color"
-                        value={formData.background_color}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            background_color: e.target.value,
-                          })
-                        }
-                        className={styles.colorInput}
-                      />
+                      <div className={styles.colorOptions}>
+                        <button
+                          className={`${styles.colorOption} ${formData.background_color === colors.white ? styles.selected : ''}`}
+                          style={{ backgroundColor: colors.white, borderColor: '#ddd' }}
+                          onClick={() => setFormData({ ...formData, background_color: colors.white })}
+                          title="White"
+                        />
+                        <button
+                          className={`${styles.colorOption} ${formData.background_color === colors.primary ? styles.selected : ''}`}
+                          style={{ backgroundColor: colors.primary }}
+                          onClick={() => setFormData({ ...formData, background_color: colors.primary })}
+                          title="Primary (Purple)"
+                        />
+                        <button
+                          className={`${styles.colorOption} ${formData.background_color === colors.secondary ? styles.selected : ''}`}
+                          style={{ backgroundColor: colors.secondary }}
+                          onClick={() => setFormData({ ...formData, background_color: colors.secondary })}
+                          title="Secondary (Yellow)"
+                        />
+                      </div>
                     </div>
-                    <div className={styles.formGroup}>
+
+                    <div className={styles.colorSchemeGroup}>
                       <label>Text Color</label>
-                      <input
-                        type="color"
-                        value={formData.text_color}
-                        onChange={(e) =>
-                          setFormData({ ...formData, text_color: e.target.value })
-                        }
-                        className={styles.colorInput}
-                      />
+                      <div className={styles.colorOptions}>
+                        <button
+                          className={`${styles.colorOption} ${formData.text_color === colors.white ? styles.selected : ''}`}
+                          style={{ backgroundColor: colors.white, borderColor: '#ddd' }}
+                          onClick={() => setFormData({ ...formData, text_color: colors.white })}
+                          title="White"
+                        />
+                        <button
+                          className={`${styles.colorOption} ${formData.text_color === colors.primary ? styles.selected : ''}`}
+                          style={{ backgroundColor: colors.primary }}
+                          onClick={() => setFormData({ ...formData, text_color: colors.primary })}
+                          title="Primary (Purple)"
+                        />
+                        <button
+                          className={`${styles.colorOption} ${formData.text_color === colors.black ? styles.selected : ''}`}
+                          style={{ backgroundColor: colors.black }}
+                          onClick={() => setFormData({ ...formData, text_color: colors.black })}
+                          title="Black"
+                        />
+                      </div>
                     </div>
-                    <div className={styles.formGroup}>
+
+                    <div className={styles.colorSchemeGroup}>
                       <label>Button Color</label>
-                      <input
-                        type="color"
-                        value={formData.button_color}
-                        onChange={(e) =>
-                          setFormData({ ...formData, button_color: e.target.value })
-                        }
-                        className={styles.colorInput}
-                      />
+                      <div className={styles.colorOptions}>
+                        <button
+                          className={`${styles.colorOption} ${formData.button_color === colors.primary ? styles.selected : ''}`}
+                          style={{ backgroundColor: colors.primary }}
+                          onClick={() => setFormData({ ...formData, button_color: colors.primary })}
+                          title="Primary (Purple)"
+                        />
+                        <button
+                          className={`${styles.colorOption} ${formData.button_color === colors.secondary ? styles.selected : ''}`}
+                          style={{ backgroundColor: colors.secondary }}
+                          onClick={() => setFormData({ ...formData, button_color: colors.secondary })}
+                          title="Secondary (Yellow)"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={styles.colorPreviewBox}>
+                    <label>Live Preview</label>
+                    <div
+                      className={styles.previewContent}
+                      style={{
+                        backgroundColor: formData.background_color,
+                        color: formData.text_color,
+                      }}
+                    >
+                      <h4>{formData.title || 'Preview Title'}</h4>
+                      <p>{formData.message || 'Preview message text will appear here'}</p>
+                      <button
+                        style={{ backgroundColor: formData.button_color, color: formData.button_color === colors.secondary ? colors.black : colors.white }}
+                      >
+                        {formData.button_text || 'Button'}
+                      </button>
                     </div>
                   </div>
 
