@@ -2,30 +2,27 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    FaSearch,
-    FaSort,
-    FaSortUp,
-    FaSortDown,
-    FaSpinner,
-    FaPrint,
-    FaDownload,
-    FaPlus,
-    FaTimes,
-    FaCalendarAlt,
-    FaUser,
-    FaMoneyBill,
-    FaCheck,
-    FaChevronLeft,
-    FaChevronRight,
-    FaArrowLeft,
-    FaPhone,
-    FaBook,
-} from 'react-icons/fa';
-import {
-    SearchOutlined,
+    Search,
+    Sort,
     ArrowUpward,
     ArrowDownward,
+    Print,
+    GetApp,
+    Add,
+    Close,
+    EventNote,
+    Person,
+    AttachMoney,
+    CheckCircle,
+    ArrowBack,
+    Phone,
+    MenuBook,
+    Edit,
+    Delete,
+    NavigateBefore,
+    NavigateNext,
 } from '@mui/icons-material';
+import { CircularProgress } from '@mui/material';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
 import styles from './receipt.module.css';
@@ -34,6 +31,7 @@ import Loader from '@/custom/loader/loader';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import schoolDetails from '@/json/schooldetails';
+import { schoolDetailsEng } from '@/json/schooldetails-eng';
 import schoolLogo from '../../../../public/assets/logo/logo.png'
 
 interface ReceiptData {
@@ -46,6 +44,8 @@ interface ReceiptData {
     month: string;
     year: number;
     fees_amount: number;
+    registration_fee?: number;
+    include_registration_fee?: boolean;
     payment_mode: string;
     payment_date: string;
     receipt_number: string;
@@ -99,12 +99,29 @@ const ReceiptDashboard = () => {
     // Modal states
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showPrintModal, setShowPrintModal] = useState(false);
+    const [showFeesModal, setShowFeesModal] = useState(false);
     const [selectedReceipt, setSelectedReceipt] = useState<ReceiptData | null>(null);
     const [printing, setPrinting] = useState(false);
+
+    // Fees management states
+    const [editingFeeId, setEditingFeeId] = useState<string | null>(null);
+    const [feeFormData, setFeeFormData] = useState({
+        program_name: '',
+        description: '',
+        monthly_fee: '',
+        annual_fee: '',
+        registration_fee: '',
+    });
+    const [feeSubmitting, setFeeSubmitting] = useState(false);
 
     // Modal form admission search
     const [modalAdmissionNumber, setModalAdmissionNumber] = useState('');
     const [modalAdmissionSearchLoading, setModalAdmissionSearchLoading] = useState(false);
+
+    // Fees related states
+    const [availableFees, setAvailableFees] = useState<{ [key: string]: number }>({});
+    const [feeType, setFeeType] = useState('monthly_fee');
+    const [programs, setPrograms] = useState<Array<{ id: string; program_name: string; description?: string; monthly_fee: number; annual_fee: number; registration_fee: number }>>([]);
 
     // Form data
     const [formData, setFormData] = useState({
@@ -116,6 +133,8 @@ const ReceiptDashboard = () => {
         month: new Date().toLocaleString('default', { month: 'long' }),
         year: new Date().getFullYear(),
         fees_amount: '',
+        registration_fee: 0,
+        include_registration_fee: false,
         payment_mode: 'cash',
         payment_date: new Date().toISOString().split('T')[0],
         notes: '',
@@ -126,6 +145,7 @@ const ReceiptDashboard = () => {
 
     useEffect(() => {
         const initializePage = async () => {
+            await fetchFees();
             await fetchReceipts();
             setPageLoading(false);
         };
@@ -136,6 +156,67 @@ const ReceiptDashboard = () => {
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, filterStatus]);
+
+    // Fetch fees from Supabase
+    const fetchFees = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('fees')
+                .select('*')
+                .eq('is_active', true);
+
+            if (error) {
+                console.error('Error fetching fees:', error);
+                toast.error('Failed to fetch fees');
+                return;
+            }
+
+            setPrograms(data || []);
+        } catch (err) {
+            console.error('Error fetching fees:', err);
+            toast.error('Error fetching fees');
+        }
+    };
+
+    // Handle program change and update available fees
+    const handleProgramChange = (programName: string) => {
+        setFormData(prev => ({ ...prev, program: programName }));
+        setFeeType('monthly_fee');
+
+        // Find the program in fees array from Supabase
+        const selectedProgram = programs.find(
+            (prog) => prog.program_name === programName
+        );
+
+        if (selectedProgram) {
+            const fees: { [key: string]: number } = {
+                monthly_fee: selectedProgram.monthly_fee,
+                annual_fee: selectedProgram.annual_fee,
+                registration_fee: selectedProgram.registration_fee,
+            };
+
+            setAvailableFees(fees);
+
+            // Auto-populate fees amount with monthly fee and registration fee
+            setFormData((prev) => ({
+                ...prev,
+                program: programName,
+                fees_amount: fees.monthly_fee.toString(),
+                registration_fee: fees.registration_fee,
+            }));
+        }
+    };
+
+    // Handle fee type change and update amount
+    const handleFeeTypeChange = (type: string) => {
+        setFeeType(type);
+        if (availableFees[type]) {
+            setFormData((prev) => ({
+                ...prev,
+                fees_amount: availableFees[type].toString(),
+            }));
+        }
+    };
 
     // Fetch receipts
     const fetchReceipts = async () => {
@@ -254,16 +335,41 @@ const ReceiptDashboard = () => {
             }
 
             // Auto-fill form with admission details
+            const programName = admissionData.program_name || admissionData.program || '';
             setFormData(prev => ({
                 ...prev,
                 student_name: admissionData.child_first_name || admissionData.child_name || admissionData.childFirstName || '',
                 admission_number: admissionData.admission_number || '',
                 parent_name: admissionData.father_name || admissionData.parentFirstName || '',
                 parent_phone: admissionData.parent_mobile_number || admissionData.parentMobile || '',
-                program: admissionData.program_name || admissionData.program || '',
+                program: programName,
             }));
 
-            toast.success('✅ Admission details loaded!');
+            // Call handleProgramChange to populate fees
+            if (programName) {
+                const selectedProgram = programs.find(
+                    (prog) => prog.program_name === programName
+                );
+
+                if (selectedProgram) {
+                    const fees: { [key: string]: number } = {
+                        monthly_fee: selectedProgram.monthly_fee,
+                        annual_fee: selectedProgram.annual_fee,
+                        registration_fee: selectedProgram.registration_fee,
+                    };
+
+                    setAvailableFees(fees);
+                    setFeeType('monthly_fee');
+
+                    setFormData(prev => ({
+                        ...prev,
+                        fees_amount: fees.monthly_fee.toString(),
+                        registration_fee: fees.registration_fee,
+                    }));
+                }
+            }
+
+            toast.success('✅ Admission details & fees loaded!');
         } catch (err) {
             console.error('Error searching admission:', err);
             toast.error('Error searching admission');
@@ -299,6 +405,8 @@ const ReceiptDashboard = () => {
                     month: formData.month,
                     year: formData.year,
                     fees_amount: parseFloat(formData.fees_amount),
+                    registration_fee: formData.include_registration_fee ? formData.registration_fee : 0,
+                    include_registration_fee: formData.include_registration_fee,
                     payment_mode: formData.payment_mode,
                     payment_date: formData.payment_date,
                     receipt_number: receiptNumber,
@@ -338,6 +446,8 @@ const ReceiptDashboard = () => {
                 month: new Date().toLocaleString('default', { month: 'long' }),
                 year: new Date().getFullYear(),
                 fees_amount: '',
+                registration_fee: 0,
+                include_registration_fee: false,
                 payment_mode: 'cash',
                 payment_date: new Date().toISOString().split('T')[0],
                 notes: '',
@@ -357,6 +467,131 @@ const ReceiptDashboard = () => {
     const handlePrintReceipt = async (receipt: ReceiptData) => {
         setSelectedReceipt(receipt);
         setShowPrintModal(true);
+    };
+
+    // Fee management functions
+    const handleOpenFeeModal = (program?: typeof programs[0]) => {
+        if (program) {
+            setEditingFeeId(program.id);
+            setFeeFormData({
+                program_name: program.program_name,
+                description: program.description || '',
+                monthly_fee: program.monthly_fee.toString(),
+                annual_fee: program.annual_fee.toString(),
+                registration_fee: program.registration_fee.toString(),
+            });
+        } else {
+            setEditingFeeId(null);
+            setFeeFormData({
+                program_name: '',
+                description: '',
+                monthly_fee: '',
+                annual_fee: '',
+                registration_fee: '',
+            });
+        }
+    };
+
+    const handleProgramChangeForFees = (programName: string) => {
+        const selectedProgram = schoolDetailsEng.programs.find(
+            (p) => p.name === programName
+        );
+        if (selectedProgram) {
+            setFeeFormData({
+                program_name: selectedProgram.name,
+                description: selectedProgram.description || '',
+                monthly_fee: feeFormData.monthly_fee,
+                annual_fee: feeFormData.annual_fee,
+                registration_fee: feeFormData.registration_fee,
+            });
+        }
+    };
+
+    const handleSaveFee = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!feeFormData.program_name.trim()) {
+            toast.error('Program name is required');
+            return;
+        }
+
+        try {
+            setFeeSubmitting(true);
+
+            const feeData = {
+                program_name: feeFormData.program_name.trim(),
+                description: feeFormData.description.trim(),
+                monthly_fee: parseFloat(feeFormData.monthly_fee),
+                annual_fee: parseFloat(feeFormData.annual_fee),
+                registration_fee: parseFloat(feeFormData.registration_fee),
+            };
+
+            if (editingFeeId) {
+                // Update existing fee
+                const { error } = await supabase
+                    .from('fees')
+                    .update(feeData)
+                    .eq('id', editingFeeId);
+
+                if (error) {
+                    toast.error('Failed to update fee');
+                    return;
+                }
+                toast.success('Fee updated successfully!');
+            } else {
+                // Create new fee
+                const { error } = await supabase
+                    .from('fees')
+                    .insert([feeData]);
+
+                if (error) {
+                    if (error.code === '23505') {
+                        toast.error('This program name already exists');
+                    } else {
+                        toast.error('Failed to create fee');
+                    }
+                    return;
+                }
+                toast.success('Fee created successfully!');
+            }
+
+            await fetchFees();
+            setFeeFormData({
+                program_name: '',
+                description: '',
+                monthly_fee: '',
+                annual_fee: '',
+                registration_fee: '',
+            });
+            setEditingFeeId(null);
+        } catch (err) {
+            console.error('Error:', err);
+            toast.error('Error saving fee');
+        } finally {
+            setFeeSubmitting(false);
+        }
+    };
+
+    const handleDeleteFee = async (id: string) => {
+        if (!confirm('Delete this fee?')) return;
+
+        try {
+            setFeeSubmitting(true);
+            const { error } = await supabase.from('fees').delete().eq('id', id);
+
+            if (error) {
+                toast.error('Failed to delete fee');
+                return;
+            }
+
+            toast.success('Fee deleted successfully!');
+            await fetchFees();
+        } catch (err) {
+            console.error('Error:', err);
+            toast.error('Error deleting fee');
+        } finally {
+            setFeeSubmitting(false);
+        }
     };
 
     // Download PDF
@@ -436,8 +671,8 @@ const ReceiptDashboard = () => {
         {
             label: 'Total Receipts',
             count: receipts.length,
-            icon: <FaMoneyBill />,
-            color: '#6a4c93',
+            icon: <AttachMoney sx={{ fontSize: '2rem' }} />,
+            color: 'var(--primary-purple)',
             bgColor: '#f3e8ff',
             status: 'all',
             id: 'total',
@@ -445,17 +680,17 @@ const ReceiptDashboard = () => {
         {
             label: 'Paid',
             count: receipts.filter(r => r.status === 'paid').length,
-            icon: <FaCheck />,
-            color: '#10b981',
-            bgColor: '#ecfdf5',
+            icon: <CheckCircle sx={{ fontSize: '2rem' }} />,
+            color: 'var(--primary-purple)',
+            bgColor: '#f3e8ff',
             status: 'paid',
             id: 'paid',
         },
         {
             label: 'Pending',
             count: receipts.filter(r => r.status === 'pending').length,
-            icon: <FaCalendarAlt />,
-            color: '#f59e0b',
+            icon: <EventNote sx={{ fontSize: '2rem' }} />,
+            color: 'var(--secondary-gold)',
             bgColor: '#fffbeb',
             status: 'pending',
             id: 'pending',
@@ -463,9 +698,9 @@ const ReceiptDashboard = () => {
         {
             label: 'Partial',
             count: receipts.filter(r => r.status === 'partial').length,
-            icon: <FaMoneyBill />,
-            color: '#3b82f6',
-            bgColor: '#eff6ff',
+            icon: <AttachMoney sx={{ fontSize: '2rem' }} />,
+            color: 'var(--primary-purple)',
+            bgColor: '#f3e8ff',
             status: 'partial',
             id: 'partial',
         },
@@ -531,7 +766,7 @@ const ReceiptDashboard = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                 >
-                    <FaArrowLeft /> Back to List
+                    <ArrowBack sx={{ fontSize: '1.2rem' }} /> Back to List
                 </motion.button>
 
                 {/* Student Details Card */}
@@ -547,21 +782,21 @@ const ReceiptDashboard = () => {
 
                     <div className={styles.studentInfoGrid}>
                         <div className={styles.infoItem}>
-                            <FaUser className={styles.infoIcon} />
+                            <Person className={styles.infoIcon} />
                             <div>
                                 <p className={styles.infoLabel}>Parent Name</p>
                                 <p className={styles.infoValue}>{selectedAdmission.parent_name}</p>
                             </div>
                         </div>
                         <div className={styles.infoItem}>
-                            <FaPhone className={styles.infoIcon} />
+                            <Phone className={styles.infoIcon} />
                             <div>
                                 <p className={styles.infoLabel}>Phone</p>
                                 <p className={styles.infoValue}>{selectedAdmission.parent_phone}</p>
                             </div>
                         </div>
                         <div className={styles.infoItem}>
-                            <FaBook className={styles.infoIcon} />
+                            <MenuBook className={styles.infoIcon} />
                             <div>
                                 <p className={styles.infoLabel}>Program</p>
                                 <p className={styles.infoValue}>{selectedAdmission.program}</p>
@@ -582,6 +817,8 @@ const ReceiptDashboard = () => {
                                 month: new Date().toLocaleString('default', { month: 'long' }),
                                 year: new Date().getFullYear(),
                                 fees_amount: '',
+                                registration_fee: 0,
+                                include_registration_fee: false,
                                 payment_mode: 'cash',
                                 payment_date: new Date().toISOString().split('T')[0],
                                 notes: '',
@@ -591,7 +828,7 @@ const ReceiptDashboard = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        <FaPlus /> Add Receipt
+                        <Add sx={{ fontSize: '1.3rem' }} /> Add Receipt
                     </motion.button>
                 </motion.div>
 
@@ -650,7 +887,7 @@ const ReceiptDashboard = () => {
                                                     whileHover={{ scale: 1.1 }}
                                                     whileTap={{ scale: 0.95 }}
                                                 >
-                                                    <FaPrint />
+                                                    <Print sx={{ fontSize: '1.1rem' }} />
                                                 </motion.button>
                                             </td>
                                         </motion.tr>
@@ -685,7 +922,7 @@ const ReceiptDashboard = () => {
                                         onClick={() => setShowCreateModal(false)}
                                         disabled={createLoading}
                                     >
-                                        <FaTimes />
+                                        <Close sx={{ fontSize: '1.3rem' }} />
                                     </button>
                                 </div>
 
@@ -799,11 +1036,11 @@ const ReceiptDashboard = () => {
                                         >
                                             {createLoading ? (
                                                 <>
-                                                    <FaSpinner className={styles.spinner} /> Creating...
+                                                    <CircularProgress size={18} sx={{ mr: 1 }} /> Creating...
                                                 </>
                                             ) : (
                                                 <>
-                                                    <FaCheck /> Create Receipt
+                                                    <CheckCircle sx={{ fontSize: '1.2rem' }} /> Create Receipt
                                                 </>
                                             )}
                                         </motion.button>
@@ -838,7 +1075,7 @@ const ReceiptDashboard = () => {
                                         onClick={() => setShowPrintModal(false)}
                                         disabled={printing}
                                     >
-                                        <FaTimes />
+                                        <Close sx={{ fontSize: '1.3rem' }} />
                                     </button>
                                 </div>
 
@@ -911,7 +1148,7 @@ const ReceiptDashboard = () => {
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
                                     >
-                                        <FaPrint /> Print
+                                        <Print sx={{ fontSize: '1.1rem' }} /> Print
                                     </motion.button>
                                     <motion.button
                                         className={styles.downloadBtn}
@@ -922,11 +1159,11 @@ const ReceiptDashboard = () => {
                                     >
                                         {printing ? (
                                             <>
-                                                <FaSpinner className={styles.spinner} /> Downloading...
+                                                <CircularProgress size={18} sx={{ mr: 1 }} /> Downloading...
                                             </>
                                         ) : (
                                             <>
-                                                <FaDownload /> Download PDF
+                                                <GetApp sx={{ fontSize: '1.1rem' }} /> Download PDF
                                             </>
                                         )}
                                     </motion.button>
@@ -937,7 +1174,7 @@ const ReceiptDashboard = () => {
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
                                     >
-                                        <FaTimes /> Close
+                                        <Close sx={{ fontSize: '1.1rem' }} /> Close
                                     </motion.button>
                                 </div>
                             </motion.div>
@@ -981,11 +1218,11 @@ const ReceiptDashboard = () => {
                         >
                             {admissionSearchLoading ? (
                                 <>
-                                    <FaSpinner className={styles.spinner} /> Searching...
+                                    <CircularProgress size={18} sx={{ mr: 1 }} /> Searching...
                                 </>
                             ) : (
                                 <>
-                                    <FaSearch /> Search
+                                    <Search sx={{ fontSize: '1.1rem' }} /> Search
                                 </>
                             )}
                         </motion.button>
@@ -1025,20 +1262,61 @@ const ReceiptDashboard = () => {
             {/* Header */}
             <div className={styles.header}>
                 <h2>💰 Manage Fee Receipts</h2>
-                <motion.button
-                    className={styles.createBtn}
-                    onClick={() => setShowCreateModal(true)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                >
-                    <FaPlus /> Create Receipt
-                </motion.button>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                    <motion.button
+                        className={styles.createBtn}
+                        onClick={() => setShowCreateModal(true)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                    >
+                        <Add sx={{ fontSize: '1.3rem' }} /> Create Receipt
+                    </motion.button>
+                    <motion.button
+                        className={styles.createBtn}
+                        onClick={() => setShowFeesModal(true)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        style={{ background: '#8B5CF6' }}
+                    >
+                        ⚙️ Manage Fees
+                    </motion.button>
+                </div>
             </div>
+
+            {/* Fee Structure Reference */}
+            <motion.div
+                className={styles.feeStructureSection}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+            >
+                <h3>📋 Program Fee Information</h3>
+                <div className={styles.feeStructureGrid}>
+                    {programs.map((program) => (
+                        <div key={program.id} className={styles.feeCard}>
+                            <h4>{program.program_name}</h4>
+                            <div className={styles.feeDetails}>
+                                <div className={styles.feeLine}>
+                                    <span>Monthly:</span>
+                                    <strong>₹ {program.monthly_fee.toLocaleString()}</strong>
+                                </div>
+                                <div className={styles.feeLine}>
+                                    <span>Annual:</span>
+                                    <strong>₹ {program.annual_fee.toLocaleString()}</strong>
+                                </div>
+                                <div className={styles.feeLine}>
+                                    <span>Registration:</span>
+                                    <strong>₹ {program.registration_fee.toLocaleString()}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </motion.div>
 
             {/* Search and Filter */}
             <div className={styles.controls}>
                 <div className={styles.searchBar}>
-                    <FaSearch />
+                    <Search sx={{ color: '#9ca3af' }} />
                     <input
                         type="text"
                         placeholder="Search by name, receipt number, admission number..."
@@ -1104,7 +1382,7 @@ const ReceiptDashboard = () => {
                                 <td><strong>{receipt.admission_number}</strong></td>
                                 <td>
                                     <div className={styles.studentInfo}>
-                                        <FaUser className={styles.icon} />
+                                        <Person className={styles.icon} />
                                         <div>
                                             <p className={styles.name}>{receipt.student_name}</p>
                                         </div>
@@ -1113,7 +1391,7 @@ const ReceiptDashboard = () => {
                                 <td>{receipt.program}</td>
                                 <td>{receipt.month} {receipt.year}</td>
                                 <td className={styles.amount}>
-                                    <FaMoneyBill /> {receipt.fees_amount.toFixed(2)}
+                                    <AttachMoney /> {receipt.fees_amount.toFixed(2)}
                                 </td>
                                 <td>{new Date(receipt.payment_date).toLocaleDateString()}</td>
                                 <td>
@@ -1136,7 +1414,7 @@ const ReceiptDashboard = () => {
                                             whileHover={{ scale: 1.1 }}
                                             whileTap={{ scale: 0.95 }}
                                         >
-                                            <FaPrint />
+                                            <Print sx={{ fontSize: '1.1rem' }} />
                                         </motion.button>
                                     </div>
                                 </td>
@@ -1177,7 +1455,7 @@ const ReceiptDashboard = () => {
                                 whileHover={{ scale: currentPage === 1 ? 1 : 1.05 }}
                                 whileTap={{ scale: currentPage === 1 ? 1 : 0.95 }}
                             >
-                                <FaChevronLeft /> Previous
+                                <NavigateBefore sx={{ fontSize: '1.2rem' }} /> Previous
                             </motion.button>
                             <span className={styles.pageInfo}>
                                 Page {currentPage} of {totalPages}
@@ -1189,7 +1467,7 @@ const ReceiptDashboard = () => {
                                 whileHover={{ scale: currentPage === totalPages ? 1 : 1.05 }}
                                 whileTap={{ scale: currentPage === totalPages ? 1 : 0.95 }}
                             >
-                                Next <FaChevronRight />
+                                Next <NavigateNext sx={{ fontSize: '1.2rem' }} />
                             </motion.button>
                         </div>
                     </div>
@@ -1220,7 +1498,7 @@ const ReceiptDashboard = () => {
                                     onClick={() => setShowCreateModal(false)}
                                     disabled={createLoading}
                                 >
-                                    <FaTimes />
+                                    <Close sx={{ fontSize: '1.3rem' }} />
                                 </button>
                             </div>
 
@@ -1249,11 +1527,11 @@ const ReceiptDashboard = () => {
                                         >
                                             {modalAdmissionSearchLoading ? (
                                                 <>
-                                                    <FaSpinner className={styles.spinner} /> Loading...
+                                                    <CircularProgress size={18} sx={{ mr: 1 }} /> Loading...
                                                 </>
                                             ) : (
                                                 <>
-                                                    <FaSearch /> Load
+                                                    <Search sx={{ fontSize: '1.1rem' }} /> Load
                                                 </>
                                             )}
                                         </motion.button>
@@ -1264,7 +1542,7 @@ const ReceiptDashboard = () => {
 
                                 <div className={styles.formGrid}>
                                     <div className={styles.formGroup}>
-                                        <label>Student Name *</label>
+                                        <label>Student Name * <span className={styles.required}>(Auto-filled)</span></label>
                                         <input
                                             type="text"
                                             value={formData.student_name}
@@ -1272,55 +1550,97 @@ const ReceiptDashboard = () => {
                                                 setFormData({ ...formData, student_name: e.target.value })
                                             }
                                             disabled={createLoading}
-                                            className={formData.student_name && modalAdmissionNumber ? styles.filledField : ''}
+                                            placeholder="Auto-filled when you load admission"
                                         />
                                     </div>
+
                                     <div className={styles.formGroup}>
-                                        <label>Parent Name *</label>
+                                        <label>Admission Number</label>
                                         <input
                                             type="text"
-                                            value={formData.parent_name}
+                                            value={formData.admission_number}
                                             onChange={(e) =>
-                                                setFormData({ ...formData, parent_name: e.target.value })
+                                                setFormData({ ...formData, admission_number: e.target.value })
                                             }
                                             disabled={createLoading}
-                                            className={formData.parent_name && modalAdmissionNumber ? styles.filledField : ''}
+                                            placeholder="e.g., ADM-2024-001"
                                         />
                                     </div>
+
                                     <div className={styles.formGroup}>
-                                        <label>Program</label>
+                                        <label>Program *</label>
                                         <select
                                             value={formData.program}
-                                            onChange={(e) =>
-                                                setFormData({ ...formData, program: e.target.value })
-                                            }
+                                            onChange={(e) => handleProgramChange(e.target.value)}
                                             disabled={createLoading}
-                                            className={formData.program && modalAdmissionNumber ? styles.filledField : ''}
+                                            className={formData.program ? styles.filledField : ''}
                                         >
                                             <option value="">Select a program</option>
-                                            {schoolDetails?.programs?.map((prog) => (
-                                                <option key={prog.name} value={prog.name}>
-                                                    {prog.name} ({prog.description})
+                                            {programs.map((prog) => (
+                                                <option key={prog.id} value={prog.program_name}>
+                                                    {prog.program_name}
                                                 </option>
                                             ))}
                                         </select>
                                     </div>
+
+                                    {/* Fee Summary Card - Shows when program is selected */}
+                                    {formData.program && (
+                                        <div className={styles.feeSummaryCard}>
+                                            <h4>📋 Program Fees</h4>
+                                            <div className={styles.feeSummaryContent}>
+                                                <div className={styles.feeSummaryItem}>
+                                                    <span>Monthly:</span>
+                                                    <strong>₹ {availableFees.monthly_fee?.toLocaleString() || 0}</strong>
+                                                </div>
+                                                <div className={styles.feeSummaryItem}>
+                                                    <span>Annual:</span>
+                                                    <strong>₹ {availableFees.annual_fee?.toLocaleString() || 0}</strong>
+                                                </div>
+                                                <div className={styles.feeSummaryItem}>
+                                                    <span>Registration:</span>
+                                                    <strong>₹ {availableFees.registration_fee?.toLocaleString() || 0}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     <div className={styles.formGroup}>
-                                        <label>Fees Amount * <span className={styles.required}>(Required)</span></label>
-                                        <input
-                                            type="number"
-                                            step="0.01"
-                                            value={formData.fees_amount}
-                                            onChange={(e) =>
-                                                setFormData({ ...formData, fees_amount: e.target.value })
-                                            }
-                                            disabled={createLoading}
-                                            placeholder="0.00"
-                                            autoFocus
-                                        />
+                                        <label>Fee Type *</label>
+                                        <select
+                                            value={feeType}
+                                            onChange={(e) => handleFeeTypeChange(e.target.value)}
+                                            disabled={createLoading || !formData.program}
+                                        >
+                                            <option value="monthly_fee">Monthly Fee (₹ {availableFees.monthly_fee?.toLocaleString() || 0})</option>
+                                            <option value="annual_fee">Annual Fee (₹ {availableFees.annual_fee?.toLocaleString() || 0})</option>
+                                            <option value="registration_fee">Registration Fee (₹ {availableFees.registration_fee?.toLocaleString() || 0})</option>
+                                        </select>
                                     </div>
+
                                     <div className={styles.formGroup}>
-                                        <label>Month * <span className={styles.required}>(Required)</span></label>
+                                        <label>Fees Amount * <span className={styles.required}>(Auto-filled)</span></label>
+                                        <div className={styles.feeAmountDisplay}>
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                value={formData.fees_amount}
+                                                onChange={(e) =>
+                                                    setFormData({ ...formData, fees_amount: e.target.value })
+                                                }
+                                                disabled={createLoading}
+                                                placeholder="0.00"
+                                            />
+                                            {formData.fees_amount && (
+                                                <div className={styles.amountHighlight}>
+                                                    ₹ {parseFloat(formData.fees_amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label>Month *</label>
                                         <select
                                             value={formData.month}
                                             onChange={(e) =>
@@ -1333,19 +1653,21 @@ const ReceiptDashboard = () => {
                                             ))}
                                         </select>
                                     </div>
+
                                     <div className={styles.formGroup}>
-                                        <label>Year</label>
+                                        <label>Payment Date *</label>
                                         <input
-                                            type="number"
-                                            value={formData.year}
+                                            type="date"
+                                            value={formData.payment_date}
                                             onChange={(e) =>
-                                                setFormData({ ...formData, year: parseInt(e.target.value) })
+                                                setFormData({ ...formData, payment_date: e.target.value })
                                             }
                                             disabled={createLoading}
                                         />
                                     </div>
+
                                     <div className={styles.formGroup}>
-                                        <label>Payment Mode * <span className={styles.required}>(Required)</span></label>
+                                        <label>Payment Mode *</label>
                                         <select
                                             value={formData.payment_mode}
                                             onChange={(e) =>
@@ -1359,29 +1681,24 @@ const ReceiptDashboard = () => {
                                             <option value="other">Other</option>
                                         </select>
                                     </div>
-                                    <div className={styles.formGroup}>
-                                        <label>Payment Date * <span className={styles.required}>(Required)</span></label>
-                                        <input
-                                            type="date"
-                                            value={formData.payment_date}
-                                            onChange={(e) =>
-                                                setFormData({ ...formData, payment_date: e.target.value })
-                                            }
-                                            disabled={createLoading}
-                                        />
-                                    </div>
                                 </div>
 
-                                <div className={styles.formGroup}>
-                                    <label>Notes</label>
-                                    <textarea
-                                        value={formData.notes}
-                                        onChange={(e) =>
-                                            setFormData({ ...formData, notes: e.target.value })
-                                        }
-                                        disabled={createLoading}
-                                        rows={3}
-                                    />
+                                {/* Registration Fee Checkbox */}
+                                <div className={styles.registrationFeeSection}>
+                                    <div className={styles.checkboxGroup}>
+                                        <input
+                                            type="checkbox"
+                                            id="include_registration_fee"
+                                            checked={formData.include_registration_fee}
+                                            onChange={(e) =>
+                                                setFormData({ ...formData, include_registration_fee: e.target.checked })
+                                            }
+                                            disabled={createLoading || !formData.program}
+                                        />
+                                        <label htmlFor="include_registration_fee">
+                                            Add Registration Fee: <strong>₹ {formData.include_registration_fee ? formData.registration_fee.toLocaleString() : '0'}</strong>
+                                        </label>
+                                    </div>
                                 </div>
 
                                 <div className={styles.modalActions}>
@@ -1403,11 +1720,11 @@ const ReceiptDashboard = () => {
                                     >
                                         {createLoading ? (
                                             <>
-                                                <FaSpinner className={styles.spinner} /> Creating...
+                                                <CircularProgress size={18} sx={{ mr: 1 }} /> Creating...
                                             </>
                                         ) : (
                                             <>
-                                                <FaCheck /> Create Receipt
+                                                <CheckCircle sx={{ fontSize: '1.2rem' }} /> Create Receipt
                                             </>
                                         )}
                                     </motion.button>
@@ -1442,7 +1759,7 @@ const ReceiptDashboard = () => {
                                     onClick={() => setShowPrintModal(false)}
                                     disabled={printing}
                                 >
-                                    <FaTimes />
+                                    <Close sx={{ fontSize: '1.3rem' }} />
                                 </button>
                             </div>
 
@@ -1482,7 +1799,7 @@ const ReceiptDashboard = () => {
                                     <thead>
                                         <tr>
                                             <th>Description</th>
-                                            <th>Month</th>
+                                            <th>Month/Period</th>
                                             <th>Amount</th>
                                         </tr>
                                     </thead>
@@ -1492,11 +1809,25 @@ const ReceiptDashboard = () => {
                                             <td>{selectedReceipt.month} {selectedReceipt.year}</td>
                                             <td className={styles.amount}>₹ {selectedReceipt.fees_amount.toFixed(2)}</td>
                                         </tr>
+                                        {selectedReceipt.include_registration_fee && selectedReceipt.registration_fee ? (
+                                            <tr>
+                                                <td>Registration Fee</td>
+                                                <td>-</td>
+                                                <td className={styles.amount}>₹ {(selectedReceipt.registration_fee || 0).toFixed(2)}</td>
+                                            </tr>
+                                        ) : null}
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <th colSpan={2}>Total Amount</th>
-                                            <th className={styles.totalAmount}>₹ {selectedReceipt.fees_amount.toFixed(2)}</th>
+                                            <th className={styles.totalAmount}>
+                                                ₹ {(
+                                                    parseFloat(selectedReceipt.fees_amount.toString()) +
+                                                    (selectedReceipt.include_registration_fee && selectedReceipt.registration_fee
+                                                        ? selectedReceipt.registration_fee
+                                                        : 0)
+                                                ).toFixed(2)}
+                                            </th>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -1517,7 +1848,7 @@ const ReceiptDashboard = () => {
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                 >
-                                    <FaPrint /> Print
+                                    <Print sx={{ fontSize: '1.1rem' }} /> Print
                                 </motion.button>
                                 <motion.button
                                     className={styles.downloadBtn}
@@ -1528,11 +1859,11 @@ const ReceiptDashboard = () => {
                                 >
                                     {printing ? (
                                         <>
-                                            <FaSpinner className={styles.spinner} /> Downloading...
+                                            <CircularProgress size={18} sx={{ mr: 1 }} /> Downloading...
                                         </>
                                     ) : (
                                         <>
-                                            <FaDownload /> Download PDF
+                                            <GetApp sx={{ fontSize: '1.1rem' }} /> Download PDF
                                         </>
                                     )}
                                 </motion.button>
@@ -1543,8 +1874,224 @@ const ReceiptDashboard = () => {
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                 >
-                                    <FaTimes /> Close
+                                    <Close sx={{ fontSize: '1.1rem' }} /> Close
                                 </motion.button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Fees Management Modal */}
+            <AnimatePresence>
+                {showFeesModal && (
+                    <motion.div
+                        className={styles.modalOverlay}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setShowFeesModal(false)}
+                    >
+                        <motion.div
+                            className={styles.modal}
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            onClick={(e) => e.stopPropagation()}
+                            style={{ maxWidth: '700px', maxHeight: '90vh', overflow: 'auto' }}
+                        >
+                            <div className={styles.modalHeader}>
+                                <h2>⚙️ Manage Program Fees</h2>
+                                <button
+                                    className={styles.closeBtn}
+                                    onClick={() => setShowFeesModal(false)}
+                                    disabled={feeSubmitting}
+                                >
+                                    <Close sx={{ fontSize: '1.3rem' }} />
+                                </button>
+                            </div>
+
+                            <div className={styles.form} style={{ padding: '2rem' }}>
+                                {/* Add/Edit Form */}
+                                <form onSubmit={handleSaveFee} style={{ marginBottom: '2rem' }}>
+                                    <h4 style={{ marginBottom: '1rem' }}>
+                                        {editingFeeId ? 'Edit Fee' : 'Add New Fee'}
+                                    </h4>
+
+                                    <div className={styles.formGroup}>
+                                        <label>Program Name *</label>
+                                        <select
+                                            value={feeFormData.program_name}
+                                            onChange={(e) => handleProgramChangeForFees(e.target.value)}
+                                            disabled={feeSubmitting || !!editingFeeId}
+                                            title={editingFeeId ? 'Program name cannot be changed' : ''}
+                                        >
+                                            <option value="">Select a program</option>
+                                            {schoolDetailsEng.programs.map((program) => (
+                                                <option key={program.name} value={program.name}>
+                                                    {program.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label>Description</label>
+                                        <input
+                                            type="text"
+                                            value={feeFormData.description}
+                                            onChange={(e) =>
+                                                setFeeFormData({
+                                                    ...feeFormData,
+                                                    description: e.target.value,
+                                                })
+                                            }
+                                            placeholder="e.g., Age: 1.5 - 2.5 years"
+                                            disabled={feeSubmitting}
+                                        />
+                                    </div>
+
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+                                        <div className={styles.formGroup}>
+                                            <label>Monthly (₹) *</label>
+                                            <input
+                                                type="number"
+                                                step="100"
+                                                min="0"
+                                                value={feeFormData.monthly_fee}
+                                                onChange={(e) =>
+                                                    setFeeFormData({
+                                                        ...feeFormData,
+                                                        monthly_fee: e.target.value,
+                                                    })
+                                                }
+                                                placeholder="6000"
+                                                disabled={feeSubmitting}
+                                            />
+                                        </div>
+
+                                        <div className={styles.formGroup}>
+                                            <label>Annual (₹) *</label>
+                                            <input
+                                                type="number"
+                                                step="100"
+                                                min="0"
+                                                value={feeFormData.annual_fee}
+                                                onChange={(e) =>
+                                                    setFeeFormData({
+                                                        ...feeFormData,
+                                                        annual_fee: e.target.value,
+                                                    })
+                                                }
+                                                placeholder="72000"
+                                                disabled={feeSubmitting}
+                                            />
+                                        </div>
+
+                                        <div className={styles.formGroup}>
+                                            <label>Registration (₹) *</label>
+                                            <input
+                                                type="number"
+                                                step="100"
+                                                min="0"
+                                                value={feeFormData.registration_fee}
+                                                onChange={(e) =>
+                                                    setFeeFormData({
+                                                        ...feeFormData,
+                                                        registration_fee: e.target.value,
+                                                    })
+                                                }
+                                                placeholder="2000"
+                                                disabled={feeSubmitting}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+                                        <motion.button
+                                            type="submit"
+                                            className={styles.submitBtn}
+                                            disabled={feeSubmitting}
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                        >
+                                            <CheckCircle sx={{ fontSize: '1.2rem' }} /> {feeSubmitting ? 'Saving...' : editingFeeId ? 'Update' : 'Add Fee'}
+                                        </motion.button>
+                                        {editingFeeId && (
+                                            <motion.button
+                                                type="button"
+                                                className={styles.cancelBtn}
+                                                onClick={() => {
+                                                    setEditingFeeId(null);
+                                                    setFeeFormData({
+                                                        program_name: '',
+                                                        description: '',
+                                                        monthly_fee: '',
+                                                        annual_fee: '',
+                                                        registration_fee: '',
+                                                    });
+                                                }}
+                                                disabled={feeSubmitting}
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                            >
+                                                Cancel Edit
+                                            </motion.button>
+                                        )}
+                                    </div>
+                                </form>
+
+                                <hr style={{ margin: '2rem 0' }} />
+
+                                {/* Current Fees List */}
+                                <h4 style={{ marginBottom: '1rem' }}>Current Programs & Fees</h4>
+                                <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                                    {programs.map((program) => (
+                                        <motion.div
+                                            key={program.id}
+                                            style={{
+                                                padding: '1rem',
+                                                background: '#f9fafb',
+                                                borderRadius: '8px',
+                                                marginBottom: '0.75rem',
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
+                                            }}
+                                            whileHover={{ backgroundColor: '#f3f4f6' }}
+                                        >
+                                            <div>
+                                                <p style={{ fontWeight: 600, margin: '0 0 0.25rem 0' }}>
+                                                    {program.program_name}
+                                                </p>
+                                                <p style={{ margin: '0.25rem 0', color: '#6b7280', fontSize: '0.875rem' }}>
+                                                    ₹{program.monthly_fee.toLocaleString()} / ₹{program.annual_fee.toLocaleString()} / ₹{program.registration_fee.toLocaleString()}
+                                                </p>
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                <motion.button
+                                                    type="button"
+                                                    className={styles.editBtn}
+                                                    onClick={() => handleOpenFeeModal(program)}
+                                                    whileHover={{ scale: 1.1 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                >
+                                                    <Edit sx={{ fontSize: '1.2rem' }} />
+                                                </motion.button>
+                                                <motion.button
+                                                    type="button"
+                                                    className={styles.deleteBtn}
+                                                    onClick={() => handleDeleteFee(program.id)}
+                                                    disabled={feeSubmitting}
+                                                    whileHover={{ scale: 1.1 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                >
+                                                    <Delete sx={{ fontSize: '1.2rem' }} />
+                                                </motion.button>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
                             </div>
                         </motion.div>
                     </motion.div>

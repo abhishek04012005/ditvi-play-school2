@@ -33,6 +33,9 @@ export interface SchoolDetails {
         name: string;
         icon?: string;
         description?: string;
+        monthlyFee?: string;
+        annualFee?: string;
+        registrationFee?: string;
     }[];
     feeStructure?: {
         programs: {

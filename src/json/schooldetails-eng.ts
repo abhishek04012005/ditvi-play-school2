@@ -35,19 +35,31 @@ export const schoolDetailsEng: SchoolDetails = {
     programs: [
         {
             name: "Play Group",
-            description: "Age: 1.5 - 2.5 years"
+            description: "Age: 1.5 - 2.5 years",
+            monthlyFee: "₹ 6,000",
+            annualFee: "₹ 72,000",
+            registrationFee: "₹ 2,000"
         },
         {
             name: "Nursery",
-            description: "Age: 2.5 - 3.5 years"
+            description: "Age: 2.5 - 3.5 years",
+            monthlyFee: "₹ 7,000",
+            annualFee: "₹ 84,000",
+            registrationFee: "₹ 2,500"
         },
         {
             name: "Junior KG",
-            description: "Age: 3.5 - 4.5 years"
+            description: "Age: 3.5 - 4.5 years",
+            monthlyFee: "₹ 8,000",
+            annualFee: "₹ 96,000",
+            registrationFee: "₹ 3,000"
         },
         {
             name: "Senior KG",
-            description: "Age: 4.5 - 5.5 years"
+            description: "Age: 4.5 - 5.5 years",
+            monthlyFee: "₹ 9,000",
+            annualFee: "₹ 108,000",
+            registrationFee: "₹ 3,500"
         }
     ],
 
