@@ -57,7 +57,12 @@ export default function MessagePopupComponent({ messagePopupId }: { messagePopup
         success: data.success,
         hasData: !!data.data,
         isActive: data.data?.is_active,
-        title: data.data?.title
+        title: data.data?.title,
+        colors: {
+          background: data.data?.background_color,
+          text: data.data?.text_color,
+          button: data.data?.button_color,
+        }
       });
 
       if (data.success && data.data && data.data.is_active) {
@@ -186,7 +191,10 @@ export default function MessagePopupComponent({ messagePopupId }: { messagePopup
                 <button
                   onClick={handleButtonClick}
                   className={styles.actionBtn}
-                  style={{ backgroundColor: popupData.button_color }}
+                  style={{
+                    backgroundColor: popupData.button_color || '#6a4c93',
+                    color: (popupData.button_color === '#ffbf00' || popupData.button_color === '#ffc926') ? '#000000' : '#ffffff'
+                  }}
                 >
                   {popupData.button_text}
                 </button>

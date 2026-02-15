@@ -47,19 +47,45 @@ export default function DynamicPopupSelector() {
       const data = await res.json();
 
       if (data.success && data.data) {
-        setPopupControl(data.data);
+        let popupControlData = data.data;
+
+        // Validate: if message type is selected, ensure message_popup_id exists
+        if (popupControlData.active_popup_type === 'message' && !popupControlData.message_popup_id) {
+          console.warn('⚠️ MESSAGE POPUP TYPE IS SELECTED BUT NO message_popup_id SET! Reverting to "none"');
+          // Auto-fix: revert to 'none' to prevent display issues
+          try {
+            const fixRes = await fetch('/api/admin/popup-control', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                ...popupControlData,
+                active_popup_type: 'none',
+                message_popup_id: null,
+              }),
+            });
+            const fixData = await fixRes.json();
+            if (fixData.success) {
+              popupControlData = fixData.data;
+              console.log('✅ Auto-fixed popup type to "none"');
+            }
+          } catch (fixError) {
+            console.error('Error auto-fixing popup type:', fixError);
+          }
+        }
+
+        setPopupControl(popupControlData);
         setError(null);
         console.log('[SUCCESS] Popup control fetched:', {
-          type: data.data.active_popup_type,
-          messagePopupId: data.data.message_popup_id,
-          delay: data.data.enquiry_popup_delay_ms,
-          fullData: data.data
+          type: popupControlData.active_popup_type,
+          messagePopupId: popupControlData.message_popup_id,
+          delay: popupControlData.enquiry_popup_delay_ms,
+          fullData: popupControlData
         });
 
         // Debug message popup specific data
-        if (data.data.active_popup_type === 'message') {
-          console.log('[POPUP] Message popup is active. ID:', data.data.message_popup_id);
-          if (!data.data.message_popup_id) {
+        if (popupControlData.active_popup_type === 'message') {
+          console.log('[POPUP] Message popup is active. ID:', popupControlData.message_popup_id);
+          if (!popupControlData.message_popup_id) {
             console.warn('⚠️ MESSAGE POPUP TYPE IS SELECTED BUT NO message_popup_id SET!');
           }
         }
@@ -110,7 +136,9 @@ export default function DynamicPopupSelector() {
     
     if (!popupControl.message_popup_id) {
       console.error('❌ MESSAGE POPUP IS SELECTED BUT NO message_popup_id PROVIDED!');
-      console.log('[CONFIG] You need to set a message popup in PopupManagement dashboard');
+      console.log('[CONFIG] Please set a valid message popup in PopupManagement dashboard');
+      console.log('[AUTO-FIX] Attempting to auto-fix by setting popup type to "none"...');
+      // Return nothing - the auto-fix in fetchPopupControl will handle this
       return null;
     }
     

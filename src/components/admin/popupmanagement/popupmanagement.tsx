@@ -118,15 +118,36 @@ export default function PopupManagement() {
 
         // Find first active popup, or first popup overall
         const activePopup = messagePopups.find(p => p.is_active) || messagePopups[0];
-        if (!activePopup) {
+        if (!activePopup || !activePopup.id) {
           setToastType('error');
           setToastMessage('No message popups available');
           setShowToast(true);
           return;
         }
 
+        // Verify the popup exists in the database before setting
+        try {
+          const checkRes = await fetch(`/api/admin/message-popup?id=${activePopup.id}`);
+          const checkData = await checkRes.json();
+          if (!checkData.success || !checkData.data) {
+            setToastType('error');
+            setToastMessage('Selected message popup no longer exists');
+            setShowToast(true);
+            return;
+          }
+        } catch (checkError) {
+          console.error('Error verifying popup:', checkError);
+          setToastType('error');
+          setToastMessage('Unable to verify message popup');
+          setShowToast(true);
+          return;
+        }
+
         updateData.message_popup_id = activePopup.id;
         console.log('[MSG] Auto-selected message popup:', activePopup.id, activePopup.title);
+      } else {
+        // Clear message_popup_id when not using message type to avoid foreign key violation
+        updateData.message_popup_id = null;
       }
 
       const res = await fetch('/api/admin/popup-control', {
@@ -141,7 +162,7 @@ export default function PopupManagement() {
         setToastType('success');
         setToastMessage(`Popup type changed to ${type}`);
       } else {
-        throw new Error(data.error);
+        throw new Error(data.error || 'Failed to update popup type');
       }
     } catch (error) {
       console.error('Error updating popup type:', error);
@@ -181,6 +202,21 @@ export default function PopupManagement() {
 
   const handleMessagePopupToggle = async (id: string, isActive: boolean) => {
     try {
+      // If activating this popup, deactivate all others
+      if (!isActive) {
+        // Deactivate all other popups
+        for (const popup of messagePopups) {
+          if (popup.id !== id && popup.is_active) {
+            await fetch(`/api/admin/message-popup/${popup.id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ is_active: false }),
+            });
+          }
+        }
+      }
+
+      // Update the selected popup
       const res = await fetch(`/api/admin/message-popup/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -189,15 +225,20 @@ export default function PopupManagement() {
 
       const data = await res.json();
       if (data.success) {
+        // Update local state: deactivate all, then activate the selected one
         setMessagePopups(
-          messagePopups.map((popup) =>
-            popup.id === id ? { ...popup, is_active: !isActive } : popup
-          )
+          messagePopups.map((popup) => ({
+            ...popup,
+            is_active: popup.id === id ? !isActive : false,
+          }))
         );
         setToastType('success');
-        setToastMessage('Message popup status updated');
+        setToastMessage(
+          !isActive ? 'Message popup activated' : 'Message popup deactivated'
+        );
       }
     } catch (error) {
+      console.error('Error updating message popup:', error);
       setToastType('error');
       setToastMessage('Failed to update message popup');
     }
@@ -248,10 +289,28 @@ export default function PopupManagement() {
         : '/api/admin/message-popup';
       const method = editingPopup ? 'PUT' : 'POST';
 
+      const dataToSave = {
+        ...formData,
+        is_active: !editingPopup, // Auto-activate new popups, keep existing status
+      };
+
+      // If activating this popup, deactivate all others
+      if (dataToSave.is_active && method === 'PUT') {
+        for (const popup of messagePopups) {
+          if (popup.id !== editingPopup?.id && popup.is_active) {
+            await fetch(`/api/admin/message-popup/${popup.id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ is_active: false }),
+            });
+          }
+        }
+      }
+
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSave),
       });
 
       const data = await res.json();
@@ -259,19 +318,28 @@ export default function PopupManagement() {
         if (editingPopup) {
           setMessagePopups(
             messagePopups.map((popup) =>
-              popup.id === editingPopup.id ? data.data : popup
+              popup.id === editingPopup.id
+                ? { ...data.data, is_active: dataToSave.is_active }
+                : { ...popup, is_active: dataToSave.is_active ? false : popup.is_active }
             )
           );
         } else {
-          setMessagePopups([data.data, ...messagePopups]);
+          // For new popups, deactivate all others and activate this one
+          setMessagePopups(
+            [
+              { ...data.data, is_active: true },
+              ...messagePopups.map((p) => ({ ...p, is_active: false })),
+            ]
+          );
         }
         setToastType('success');
         setToastMessage(
-          editingPopup ? 'Message popup updated' : 'Message popup created'
+          editingPopup ? 'Message popup updated' : 'Message popup created and activated'
         );
         resetForm();
       }
     } catch (error) {
+      console.error('Error saving message popup:', error);
       setToastType('error');
       setToastMessage('Failed to save message popup');
     }
