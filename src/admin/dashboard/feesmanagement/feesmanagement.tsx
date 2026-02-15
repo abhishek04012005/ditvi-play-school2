@@ -23,6 +23,8 @@ interface Fee {
     monthly_fee: number;
     annual_fee: number;
     registration_fee: number;
+    admission_fee: number;
+    uniform_fee: number;
     is_active: boolean;
     created_at: string;
     updated_at: string;
@@ -42,6 +44,8 @@ const FeesManagement = () => {
         monthly_fee: '',
         annual_fee: '',
         registration_fee: '',
+        admission_fee: '',
+        uniform_fee: '',
     });
 
     useEffect(() => {
@@ -80,6 +84,8 @@ const FeesManagement = () => {
                 monthly_fee: fee.monthly_fee.toString(),
                 annual_fee: fee.annual_fee.toString(),
                 registration_fee: fee.registration_fee.toString(),
+                admission_fee: fee.admission_fee.toString(),
+                uniform_fee: fee.uniform_fee.toString(),
             });
         } else {
             setEditingId(null);
@@ -89,6 +95,8 @@ const FeesManagement = () => {
                 monthly_fee: '',
                 annual_fee: '',
                 registration_fee: '',
+                admission_fee: '',
+                uniform_fee: '',
             });
         }
         setShowModal(true);
@@ -105,6 +113,8 @@ const FeesManagement = () => {
                 monthly_fee: formData.monthly_fee,
                 annual_fee: formData.annual_fee,
                 registration_fee: formData.registration_fee,
+                admission_fee: formData.admission_fee,
+                uniform_fee: formData.uniform_fee,
             });
         }
     };
@@ -118,6 +128,8 @@ const FeesManagement = () => {
             monthly_fee: '',
             annual_fee: '',
             registration_fee: '',
+            admission_fee: '',
+            uniform_fee: '',
         });
     };
 
@@ -134,8 +146,16 @@ const FeesManagement = () => {
             toast.error('Annual fee must be greater than 0');
             return false;
         }
-        if (!formData.registration_fee || parseFloat(formData.registration_fee) <= 0) {
-            toast.error('Registration fee must be greater than 0');
+        if (formData.registration_fee && parseFloat(formData.registration_fee) < 0) {
+            toast.error('Registration fee must be 0 or greater');
+            return false;
+        }
+        if (formData.admission_fee && parseFloat(formData.admission_fee) < 0) {
+            toast.error('Admission fee must be 0 or greater');
+            return false;
+        }
+        if (formData.uniform_fee && parseFloat(formData.uniform_fee) < 0) {
+            toast.error('Uniform fee must be 0 or greater');
             return false;
         }
         return true;
@@ -154,7 +174,9 @@ const FeesManagement = () => {
                 description: formData.description.trim(),
                 monthly_fee: parseFloat(formData.monthly_fee),
                 annual_fee: parseFloat(formData.annual_fee),
-                registration_fee: parseFloat(formData.registration_fee),
+                registration_fee: formData.registration_fee ? parseFloat(formData.registration_fee) : 0,
+                admission_fee: formData.admission_fee ? parseFloat(formData.admission_fee) : 0,
+                uniform_fee: formData.uniform_fee ? parseFloat(formData.uniform_fee) : 0,
             };
 
             if (editingId) {
@@ -286,6 +308,8 @@ const FeesManagement = () => {
                                 <th>Monthly Fee</th>
                                 <th>Annual Fee</th>
                                 <th>Registration Fee</th>
+                                <th>Admission Fee</th>
+                                <th>Uniform Fee</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -311,6 +335,12 @@ const FeesManagement = () => {
                                     </td>
                                     <td className={styles.fee}>
                                         ₹ {fee.registration_fee.toLocaleString()}
+                                    </td>
+                                    <td className={styles.fee}>
+                                        ₹ {fee.admission_fee.toLocaleString()}
+                                    </td>
+                                    <td className={styles.fee}>
+                                        ₹ {fee.uniform_fee.toLocaleString()}
                                     </td>
                                     <td className={styles.actions}>
                                         <motion.button
@@ -440,7 +470,7 @@ const FeesManagement = () => {
                                     </div>
 
                                     <div className={styles.formGroup}>
-                                        <label>Registration Fee * (₹)</label>
+                                        <label>Registration Fee (₹)</label>
                                         <input
                                             type="number"
                                             step="100"
@@ -453,6 +483,42 @@ const FeesManagement = () => {
                                                 })
                                             }
                                             placeholder="2000"
+                                            disabled={submitting}
+                                        />
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label>Admission Fee (₹)</label>
+                                        <input
+                                            type="number"
+                                            step="100"
+                                            min="0"
+                                            value={formData.admission_fee}
+                                            onChange={(e) =>
+                                                setFormData({
+                                                    ...formData,
+                                                    admission_fee: e.target.value,
+                                                })
+                                            }
+                                            placeholder="1000"
+                                            disabled={submitting}
+                                        />
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label>Uniform Fee (₹)</label>
+                                        <input
+                                            type="number"
+                                            step="100"
+                                            min="0"
+                                            value={formData.uniform_fee}
+                                            onChange={(e) =>
+                                                setFormData({
+                                                    ...formData,
+                                                    uniform_fee: e.target.value,
+                                                })
+                                            }
+                                            placeholder="1500"
                                             disabled={submitting}
                                         />
                                     </div>

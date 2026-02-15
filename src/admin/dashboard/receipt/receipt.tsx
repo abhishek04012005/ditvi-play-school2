@@ -46,6 +46,10 @@ interface ReceiptData {
     fees_amount: number;
     registration_fee?: number;
     include_registration_fee?: boolean;
+    admission_fee?: number;
+    include_admission_fee?: boolean;
+    uniform_fee?: number;
+    include_uniform_fee?: boolean;
     payment_mode: string;
     payment_date: string;
     receipt_number: string;
@@ -111,6 +115,8 @@ const ReceiptDashboard = () => {
         monthly_fee: '',
         annual_fee: '',
         registration_fee: '',
+        admission_fee: '',
+        uniform_fee: '',
     });
     const [feeSubmitting, setFeeSubmitting] = useState(false);
 
@@ -121,7 +127,7 @@ const ReceiptDashboard = () => {
     // Fees related states
     const [availableFees, setAvailableFees] = useState<{ [key: string]: number }>({});
     const [feeType, setFeeType] = useState('monthly_fee');
-    const [programs, setPrograms] = useState<Array<{ id: string; program_name: string; description?: string; monthly_fee: number; annual_fee: number; registration_fee: number }>>([]);
+    const [programs, setPrograms] = useState<Array<{ id: string; program_name: string; description?: string; monthly_fee: number; annual_fee: number; registration_fee: number; admission_fee: number; uniform_fee: number }>>([]);
 
     // Form data
     const [formData, setFormData] = useState({
@@ -135,6 +141,10 @@ const ReceiptDashboard = () => {
         fees_amount: '',
         registration_fee: 0,
         include_registration_fee: false,
+        admission_fee: 0,
+        include_admission_fee: false,
+        uniform_fee: 0,
+        include_uniform_fee: false,
         payment_mode: 'cash',
         payment_date: new Date().toISOString().split('T')[0],
         notes: '',
@@ -163,7 +173,7 @@ const ReceiptDashboard = () => {
             const { data, error } = await supabase
                 .from('fees')
                 .select('*')
-                .eq('is_active', true);
+                .order('program_name', { ascending: true });
 
             if (error) {
                 console.error('Error fetching fees:', error);
@@ -193,6 +203,8 @@ const ReceiptDashboard = () => {
                 monthly_fee: selectedProgram.monthly_fee,
                 annual_fee: selectedProgram.annual_fee,
                 registration_fee: selectedProgram.registration_fee,
+                admission_fee: selectedProgram.admission_fee || 0,
+                uniform_fee: selectedProgram.uniform_fee || 0,
             };
 
             setAvailableFees(fees);
@@ -203,6 +215,8 @@ const ReceiptDashboard = () => {
                 program: programName,
                 fees_amount: fees.monthly_fee.toString(),
                 registration_fee: fees.registration_fee,
+                admission_fee: fees.admission_fee,
+                uniform_fee: fees.uniform_fee,
             }));
         }
     };
@@ -223,7 +237,7 @@ const ReceiptDashboard = () => {
         try {
             setLoading(true);
             const { data, error } = await supabase
-                .from('fee_receipts')
+                .from('receipts')
                 .select('*')
                 .order('payment_date', { ascending: false });
 
@@ -283,7 +297,7 @@ const ReceiptDashboard = () => {
 
             // Fetch payment history for this admission
             const { data: paymentsData, error: paymentsError } = await supabase
-                .from('fee_receipts')
+                .from('receipts')
                 .select('*')
                 .eq('admission_number', admissionNumber.trim())
                 .order('payment_date', { ascending: false });
@@ -356,6 +370,8 @@ const ReceiptDashboard = () => {
                         monthly_fee: selectedProgram.monthly_fee,
                         annual_fee: selectedProgram.annual_fee,
                         registration_fee: selectedProgram.registration_fee,
+                        admission_fee: selectedProgram.admission_fee || 0,
+                        uniform_fee: selectedProgram.uniform_fee || 0,
                     };
 
                     setAvailableFees(fees);
@@ -407,6 +423,10 @@ const ReceiptDashboard = () => {
                     fees_amount: parseFloat(formData.fees_amount),
                     registration_fee: formData.include_registration_fee ? formData.registration_fee : 0,
                     include_registration_fee: formData.include_registration_fee,
+                    admission_fee: formData.include_admission_fee ? formData.admission_fee : 0,
+                    include_admission_fee: formData.include_admission_fee,
+                    uniform_fee: formData.include_uniform_fee ? formData.uniform_fee : 0,
+                    include_uniform_fee: formData.include_uniform_fee,
                     payment_mode: formData.payment_mode,
                     payment_date: formData.payment_date,
                     receipt_number: receiptNumber,
@@ -428,7 +448,7 @@ const ReceiptDashboard = () => {
             // Refresh payment history if we're in details view
             if (selectedAdmission) {
                 const { data: paymentsData } = await supabase
-                    .from('fee_receipts')
+                    .from('receipts')
                     .select('*')
                     .eq('admission_number', selectedAdmission.admission_number)
                     .order('payment_date', { ascending: false });
@@ -448,6 +468,10 @@ const ReceiptDashboard = () => {
                 fees_amount: '',
                 registration_fee: 0,
                 include_registration_fee: false,
+                admission_fee: 0,
+                include_admission_fee: false,
+                uniform_fee: 0,
+                include_uniform_fee: false,
                 payment_mode: 'cash',
                 payment_date: new Date().toISOString().split('T')[0],
                 notes: '',
@@ -479,6 +503,8 @@ const ReceiptDashboard = () => {
                 monthly_fee: program.monthly_fee.toString(),
                 annual_fee: program.annual_fee.toString(),
                 registration_fee: program.registration_fee.toString(),
+                admission_fee: (program.admission_fee || 0).toString(),
+                uniform_fee: (program.uniform_fee || 0).toString(),
             });
         } else {
             setEditingFeeId(null);
@@ -488,6 +514,8 @@ const ReceiptDashboard = () => {
                 monthly_fee: '',
                 annual_fee: '',
                 registration_fee: '',
+                admission_fee: '',
+                uniform_fee: '',
             });
         }
     };
@@ -503,6 +531,8 @@ const ReceiptDashboard = () => {
                 monthly_fee: feeFormData.monthly_fee,
                 annual_fee: feeFormData.annual_fee,
                 registration_fee: feeFormData.registration_fee,
+                admission_fee: feeFormData.admission_fee,
+                uniform_fee: feeFormData.uniform_fee,
             });
         }
     };
@@ -523,7 +553,9 @@ const ReceiptDashboard = () => {
                 description: feeFormData.description.trim(),
                 monthly_fee: parseFloat(feeFormData.monthly_fee),
                 annual_fee: parseFloat(feeFormData.annual_fee),
-                registration_fee: parseFloat(feeFormData.registration_fee),
+                registration_fee: parseFloat(feeFormData.registration_fee || '0'),
+                admission_fee: parseFloat(feeFormData.admission_fee || '0'),
+                uniform_fee: parseFloat(feeFormData.uniform_fee || '0'),
             };
 
             if (editingFeeId) {
@@ -562,6 +594,8 @@ const ReceiptDashboard = () => {
                 monthly_fee: '',
                 annual_fee: '',
                 registration_fee: '',
+                admission_fee: '',
+                uniform_fee: '',
             });
             setEditingFeeId(null);
         } catch (err) {
@@ -819,6 +853,10 @@ const ReceiptDashboard = () => {
                                 fees_amount: '',
                                 registration_fee: 0,
                                 include_registration_fee: false,
+                                admission_fee: 0,
+                                include_admission_fee: false,
+                                uniform_fee: 0,
+                                include_uniform_fee: false,
                                 payment_mode: 'cash',
                                 payment_date: new Date().toISOString().split('T')[0],
                                 notes: '',
@@ -1601,6 +1639,14 @@ const ReceiptDashboard = () => {
                                                     <span>Registration:</span>
                                                     <strong>₹ {availableFees.registration_fee?.toLocaleString() || 0}</strong>
                                                 </div>
+                                                <div className={styles.feeSummaryItem}>
+                                                    <span>Admission:</span>
+                                                    <strong>₹ {availableFees.admission_fee?.toLocaleString() || 0}</strong>
+                                                </div>
+                                                <div className={styles.feeSummaryItem}>
+                                                    <span>Uniform:</span>
+                                                    <strong>₹ {availableFees.uniform_fee?.toLocaleString() || 0}</strong>
+                                                </div>
                                             </div>
                                         </div>
                                     )}
@@ -1615,6 +1661,8 @@ const ReceiptDashboard = () => {
                                             <option value="monthly_fee">Monthly Fee (₹ {availableFees.monthly_fee?.toLocaleString() || 0})</option>
                                             <option value="annual_fee">Annual Fee (₹ {availableFees.annual_fee?.toLocaleString() || 0})</option>
                                             <option value="registration_fee">Registration Fee (₹ {availableFees.registration_fee?.toLocaleString() || 0})</option>
+                                            <option value="admission_fee">Admission Fee (₹ {availableFees.admission_fee?.toLocaleString() || 0})</option>
+                                            <option value="uniform_fee">Uniform Fee (₹ {availableFees.uniform_fee?.toLocaleString() || 0})</option>
                                         </select>
                                     </div>
 
@@ -1700,6 +1748,46 @@ const ReceiptDashboard = () => {
                                         </label>
                                     </div>
                                 </div>
+
+                                {/* Admission Fee Checkbox */}
+                                {availableFees.admission_fee > 0 && (
+                                    <div className={styles.registrationFeeSection}>
+                                        <div className={styles.checkboxGroup}>
+                                            <input
+                                                type="checkbox"
+                                                id="include_admission_fee"
+                                                checked={formData.include_admission_fee}
+                                                onChange={(e) =>
+                                                    setFormData({ ...formData, include_admission_fee: e.target.checked })
+                                                }
+                                                disabled={createLoading || !formData.program}
+                                            />
+                                            <label htmlFor="include_admission_fee">
+                                                Add Admission Fee: <strong>₹ {formData.include_admission_fee ? formData.admission_fee.toLocaleString() : '0'}</strong>
+                                            </label>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Uniform Fee Checkbox */}
+                                {availableFees.uniform_fee > 0 && (
+                                    <div className={styles.registrationFeeSection}>
+                                        <div className={styles.checkboxGroup}>
+                                            <input
+                                                type="checkbox"
+                                                id="include_uniform_fee"
+                                                checked={formData.include_uniform_fee}
+                                                onChange={(e) =>
+                                                    setFormData({ ...formData, include_uniform_fee: e.target.checked })
+                                                }
+                                                disabled={createLoading || !formData.program}
+                                            />
+                                            <label htmlFor="include_uniform_fee">
+                                                Add Uniform Fee: <strong>₹ {formData.include_uniform_fee ? formData.uniform_fee.toLocaleString() : '0'}</strong>
+                                            </label>
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div className={styles.modalActions}>
                                     <motion.button
@@ -1816,6 +1904,20 @@ const ReceiptDashboard = () => {
                                                 <td className={styles.amount}>₹ {(selectedReceipt.registration_fee || 0).toFixed(2)}</td>
                                             </tr>
                                         ) : null}
+                                        {selectedReceipt.include_admission_fee && selectedReceipt.admission_fee ? (
+                                            <tr>
+                                                <td>Admission Fee</td>
+                                                <td>-</td>
+                                                <td className={styles.amount}>₹ {(selectedReceipt.admission_fee || 0).toFixed(2)}</td>
+                                            </tr>
+                                        ) : null}
+                                        {selectedReceipt.include_uniform_fee && selectedReceipt.uniform_fee ? (
+                                            <tr>
+                                                <td>Uniform Fee</td>
+                                                <td>-</td>
+                                                <td className={styles.amount}>₹ {(selectedReceipt.uniform_fee || 0).toFixed(2)}</td>
+                                            </tr>
+                                        ) : null}
                                     </tbody>
                                     <tfoot>
                                         <tr>
@@ -1825,6 +1927,12 @@ const ReceiptDashboard = () => {
                                                     parseFloat(selectedReceipt.fees_amount.toString()) +
                                                     (selectedReceipt.include_registration_fee && selectedReceipt.registration_fee
                                                         ? selectedReceipt.registration_fee
+                                                        : 0) +
+                                                    (selectedReceipt.include_admission_fee && selectedReceipt.admission_fee
+                                                        ? selectedReceipt.admission_fee
+                                                        : 0) +
+                                                    (selectedReceipt.include_uniform_fee && selectedReceipt.uniform_fee
+                                                        ? selectedReceipt.uniform_fee
                                                         : 0)
                                                 ).toFixed(2)}
                                             </th>
@@ -1898,10 +2006,10 @@ const ReceiptDashboard = () => {
                             animate={{ scale: 1, y: 0 }}
                             exit={{ scale: 0.9, y: 20 }}
                             onClick={(e) => e.stopPropagation()}
-                            style={{ maxWidth: '700px', maxHeight: '90vh', overflow: 'auto' }}
+                            style={{ maxWidth: '600px' }}
                         >
                             <div className={styles.modalHeader}>
-                                <h2>⚙️ Manage Program Fees</h2>
+                                <h2>Manage Program Fees</h2>
                                 <button
                                     className={styles.closeBtn}
                                     onClick={() => setShowFeesModal(false)}
@@ -1911,10 +2019,10 @@ const ReceiptDashboard = () => {
                                 </button>
                             </div>
 
-                            <div className={styles.form} style={{ padding: '2rem' }}>
+                            <div className={styles.form}>
                                 {/* Add/Edit Form */}
-                                <form onSubmit={handleSaveFee} style={{ marginBottom: '2rem' }}>
-                                    <h4 style={{ marginBottom: '1rem' }}>
+                                <form onSubmit={handleSaveFee} style={{ marginBottom: '1.5rem' }}>
+                                    <h4 style={{ margin: '0 0 1rem 0', color: 'var(--black)', fontSize: '0.95rem', fontWeight: 600 }}>
                                         {editingFeeId ? 'Edit Fee' : 'Add New Fee'}
                                     </h4>
 
@@ -1951,7 +2059,7 @@ const ReceiptDashboard = () => {
                                         />
                                     </div>
 
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                                         <div className={styles.formGroup}>
                                             <label>Monthly (₹) *</label>
                                             <input
@@ -1989,7 +2097,7 @@ const ReceiptDashboard = () => {
                                         </div>
 
                                         <div className={styles.formGroup}>
-                                            <label>Registration (₹) *</label>
+                                            <label>Registration (₹)</label>
                                             <input
                                                 type="number"
                                                 step="100"
@@ -2005,9 +2113,45 @@ const ReceiptDashboard = () => {
                                                 disabled={feeSubmitting}
                                             />
                                         </div>
+
+                                        <div className={styles.formGroup}>
+                                            <label>Admission (₹)</label>
+                                            <input
+                                                type="number"
+                                                step="100"
+                                                min="0"
+                                                value={feeFormData.admission_fee}
+                                                onChange={(e) =>
+                                                    setFeeFormData({
+                                                        ...feeFormData,
+                                                        admission_fee: e.target.value,
+                                                    })
+                                                }
+                                                placeholder="1000"
+                                                disabled={feeSubmitting}
+                                            />
+                                        </div>
+
+                                        <div className={styles.formGroup}>
+                                            <label>Uniform (₹)</label>
+                                            <input
+                                                type="number"
+                                                step="100"
+                                                min="0"
+                                                value={feeFormData.uniform_fee}
+                                                onChange={(e) =>
+                                                    setFeeFormData({
+                                                        ...feeFormData,
+                                                        uniform_fee: e.target.value,
+                                                    })
+                                                }
+                                                placeholder="1500"
+                                                disabled={feeSubmitting}
+                                            />
+                                        </div>
                                     </div>
 
-                                    <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+                                    <div className={styles.modalActions}>
                                         <motion.button
                                             type="submit"
                                             className={styles.submitBtn}
@@ -2015,7 +2159,7 @@ const ReceiptDashboard = () => {
                                             whileHover={{ scale: 1.05 }}
                                             whileTap={{ scale: 0.95 }}
                                         >
-                                            <CheckCircle sx={{ fontSize: '1.2rem' }} /> {feeSubmitting ? 'Saving...' : editingFeeId ? 'Update' : 'Add Fee'}
+                                            <CheckCircle sx={{ fontSize: '1.1rem' }} /> {feeSubmitting ? 'Saving...' : editingFeeId ? 'Update' : 'Add Fee'}
                                         </motion.button>
                                         {editingFeeId && (
                                             <motion.button
@@ -2029,68 +2173,83 @@ const ReceiptDashboard = () => {
                                                         monthly_fee: '',
                                                         annual_fee: '',
                                                         registration_fee: '',
+                                                        admission_fee: '',
+                                                        uniform_fee: '',
                                                     });
                                                 }}
                                                 disabled={feeSubmitting}
                                                 whileHover={{ scale: 1.05 }}
                                                 whileTap={{ scale: 0.95 }}
                                             >
-                                                Cancel Edit
+                                                Cancel
                                             </motion.button>
                                         )}
                                     </div>
                                 </form>
 
-                                <hr style={{ margin: '2rem 0' }} />
-
-                                {/* Current Fees List */}
-                                <h4 style={{ marginBottom: '1rem' }}>Current Programs & Fees</h4>
-                                <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                                    {programs.map((program) => (
-                                        <motion.div
-                                            key={program.id}
-                                            style={{
-                                                padding: '1rem',
-                                                background: '#f9fafb',
-                                                borderRadius: '8px',
-                                                marginBottom: '0.75rem',
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center',
-                                            }}
-                                            whileHover={{ backgroundColor: '#f3f4f6' }}
-                                        >
-                                            <div>
-                                                <p style={{ fontWeight: 600, margin: '0 0 0.25rem 0' }}>
-                                                    {program.program_name}
-                                                </p>
-                                                <p style={{ margin: '0.25rem 0', color: '#6b7280', fontSize: '0.875rem' }}>
-                                                    ₹{program.monthly_fee.toLocaleString()} / ₹{program.annual_fee.toLocaleString()} / ₹{program.registration_fee.toLocaleString()}
-                                                </p>
-                                            </div>
-                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                <motion.button
-                                                    type="button"
-                                                    className={styles.editBtn}
-                                                    onClick={() => handleOpenFeeModal(program)}
-                                                    whileHover={{ scale: 1.1 }}
-                                                    whileTap={{ scale: 0.95 }}
-                                                >
-                                                    <Edit sx={{ fontSize: '1.2rem' }} />
-                                                </motion.button>
-                                                <motion.button
-                                                    type="button"
-                                                    className={styles.deleteBtn}
-                                                    onClick={() => handleDeleteFee(program.id)}
-                                                    disabled={feeSubmitting}
-                                                    whileHover={{ scale: 1.1 }}
-                                                    whileTap={{ scale: 0.95 }}
-                                                >
-                                                    <Delete sx={{ fontSize: '1.2rem' }} />
-                                                </motion.button>
-                                            </div>
-                                        </motion.div>
-                                    ))}
+                                <div style={{ borderTop: '2px solid #e5e7eb', paddingTop: '1.5rem' }}>
+                                    <h4 style={{ margin: '0 0 1rem 0', color: 'var(--black)', fontSize: '0.95rem', fontWeight: 600 }}>
+                                        Programs & Fees
+                                    </h4>
+                                    <div style={{ maxHeight: '250px', overflowY: 'auto' }}>
+                                        {programs.map((program) => (
+                                            <motion.div
+                                                key={program.id}
+                                                style={{
+                                                    padding: '0.75rem',
+                                                    background: '#f9fafb',
+                                                    borderRadius: '6px',
+                                                    marginBottom: '0.5rem',
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center',
+                                                    border: '1px solid #e5e7eb',
+                                                }}
+                                                whileHover={{ backgroundColor: '#f3f4f6' }}
+                                            >
+                                                <div>
+                                                    <p style={{ fontWeight: 600, margin: '0 0 0.25rem 0', color: 'var(--black)', fontSize: '0.9rem' }}>
+                                                        {program.program_name}
+                                                    </p>
+                                                    <p style={{ margin: 0, color: 'var(--text-gray)', fontSize: '0.75rem', lineHeight: '1.4' }}>
+                                                        Monthly: ₹{program.monthly_fee.toLocaleString()} | Annual: ₹{program.annual_fee.toLocaleString()} | Reg: ₹{program.registration_fee.toLocaleString()}
+                                                        {(program.admission_fee > 0 || program.uniform_fee > 0) && (
+                                                            <>
+                                                                <br />
+                                                                {program.admission_fee > 0 && `Admission: ₹${program.admission_fee.toLocaleString()}`}
+                                                                {program.admission_fee > 0 && program.uniform_fee > 0 && ' | '}
+                                                                {program.uniform_fee > 0 && `Uniform: ₹${program.uniform_fee.toLocaleString()}`}
+                                                            </>
+                                                        )}
+                                                    </p>
+                                                </div>
+                                                <div style={{ display: 'flex', gap: '0.4rem' }}>
+                                                    <motion.button
+                                                        type="button"
+                                                        className={styles.actionBtn}
+                                                        onClick={() => handleOpenFeeModal(program)}
+                                                        whileHover={{ scale: 1.1 }}
+                                                        whileTap={{ scale: 0.95 }}
+                                                        title="Edit"
+                                                    >
+                                                        <Edit sx={{ fontSize: '1rem' }} />
+                                                    </motion.button>
+                                                    <motion.button
+                                                        type="button"
+                                                        className={styles.actionBtn}
+                                                        onClick={() => handleDeleteFee(program.id)}
+                                                        disabled={feeSubmitting}
+                                                        whileHover={{ scale: 1.1 }}
+                                                        whileTap={{ scale: 0.95 }}
+                                                        title="Delete"
+                                                        style={{ background: '#dc2626' }}
+                                                    >
+                                                        <Delete sx={{ fontSize: '1rem' }} />
+                                                    </motion.button>
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>

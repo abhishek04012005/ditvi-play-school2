@@ -1,1978 +1,1412 @@
-/* ==================== CSS Variables ==================== */
-:root {
-    --white: #ffffff;
-    --black: #333333;
-    --text-gray: #666666;
-    --text-light: #999999;
-    --bg-light: #f9f9f9;
-    --border-color: #e5e5e5;
-    --primary-purple: #6a4c93;
-    --secondary-purple: #8662b0;
-    --primary-yellow: #ffbf00;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-
+/* ==================== DASHBOARD WRAPPER ==================== */
 .dashboardWrapper {
-    margin: 2rem;
+  margin: 2rem;
 }
 
 /* ==================== ADMISSION SEARCH SECTION ==================== */
 .searchAdmissionSection {
-    margin: 2rem 0;
+  margin-bottom: 2rem;
 }
 
 .searchAdmissionCard {
-    background: var(--white);
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    border: 2px solid #e8dff5;
-    transition: var(--transition);
-}
-
-.searchAdmissionCard:hover {
-    box-shadow: 0 8px 24px rgba(106, 76, 147, 0.15);
-    border-color: #d4c5f9;
+  background: var(--white);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
 }
 
 .searchAdmissionCard h3 {
-    margin: 0 0 1.5rem;
-    color: var(--primary-purple);
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: -0.3px;
+  margin: 0 0 1rem;
+  color: var(--black);
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .searchAdmissionForm {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-end;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
 }
 
 .searchAdmissionForm .formGroup {
-    flex: 1;
-    min-width: 200px;
-    margin-bottom: 0;
+  flex: 1;
+  min-width: 200px;
+  margin-bottom: 0;
 }
 
 .searchAdmissionForm .formGroup label {
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    display: block;
-    color: var(--text-gray);
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--black);
+  display: block;
+  margin-bottom: 0.4rem;
 }
 
 .searchAdmissionForm .formGroup input {
-    width: 100%;
-    padding: 0.85rem 1rem;
-    border: 2px solid var(--border-color);
-    border-radius: 10px;
-    font-size: 0.95rem;
-    font-family: 'Verdana', sans-serif;
-    transition: var(--transition);
-    color: var(--black);
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: var(--black);
+  background: var(--white);
+  transition: all 0.2s ease;
 }
 
 .searchAdmissionForm .formGroup input::placeholder {
-    color: var(--text-light);
+  color: var(--text-gray);
 }
 
 .searchAdmissionForm .formGroup input:focus {
-    outline: none;
-    border-color: var(--primary-purple);
-    box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
+  outline: none;
+  border-color: var(--primary-purple);
+  box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
 }
 
 .searchBtn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-purple-light) 100%);
-    color: white;
-    border: none;
-    padding: 0.85rem 1.75rem;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: var(--transition);
-    white-space: nowrap;
-    font-family: 'Verdana', sans-serif;
-    font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--primary-purple);
+  color: var(--white);
+  border: none;
+  padding: 0.65rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  font-size: 0.95rem;
 }
 
 .searchBtn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(106, 76, 147, 0.3);
+  background: #553a7a;
 }
 
 .searchBtn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* ==================== BACK BUTTON ==================== */
 .backBtn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--bg-light);
-    color: var(--text-gray);
-    border: 2px solid var(--border-color);
-    padding: 0.75rem 1.25rem;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    transition: var(--transition);
-    font-family: 'Verdana', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f3f4f6;
+  color: var(--black);
+  border: 1px solid #e5e7eb;
+  padding: 0.65rem 1.25rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
 }
 
 .backBtn:hover {
-    background: white;
-    border-color: var(--primary-purple);
-    color: var(--primary-purple);
-    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.1);
+  background: var(--white);
+  border-color: var(--primary-purple);
+  color: var(--primary-purple);
 }
 
 /* ==================== STUDENT DETAILS CARD ==================== */
 .studentDetailsCard {
-    background: var(--white);
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    margin-bottom: 2rem;
-    border: 2px solid #e8dff5;
-    transition: var(--transition);
-}
-
-.studentDetailsCard:hover {
-    box-shadow: 0 8px 24px rgba(106, 76, 147, 0.15);
-    border-color: #d4c5f9;
+  background: var(--white);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid #e5e7eb;
 }
 
 .studentHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 2px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 1.5rem;
 }
 
 .studentHeader h2 {
-    margin: 0;
-    color: var(--primary-purple);
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: -0.3px;
+  margin: 0;
+  color: var(--black);
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .admissionBadge {
-    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-purple-light) 100%);
-    color: white;
-    padding: 0.6rem 1.2rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.2);
+  background: #f3f4f6;
+  color: var(--black);
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
 .studentInfoGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
 }
 
 .infoItem {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
-    padding: 1.25rem;
-    background: linear-gradient(135deg, rgba(243, 232, 255, 0.3), rgba(255, 251, 240, 0.3));
-    border-radius: 12px;
-    border: 1px solid #e8dff5;
-    transition: var(--transition);
-}
-
-.infoItem:hover {
-    background: linear-gradient(135deg, rgba(243, 232, 255, 0.6), rgba(255, 251, 240, 0.6));
-    border-color: #d4c5f9;
+  display: flex;
+  gap: 0.75rem;
 }
 
 .infoIcon {
-    color: var(--primary-purple);
-    font-size: 1.35rem;
-    margin-top: 0.25rem;
-    flex-shrink: 0;
+  color: var(--primary-purple);
+  font-size: 1.2rem;
+  flex-shrink: 0;
 }
 
 .infoLabel {
-    margin: 0;
-    font-size: 0.8rem;
-    color: var(--text-light);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--text-gray);
+  font-weight: 600;
 }
 
 .infoValue {
-    margin: 0.5rem 0 0;
-    font-size: 1rem;
-    color: var(--black);
-    font-weight: 600;
+  color: var(--black);
+  font-weight: 600;
+  font-size: 0.95rem;
 }
 
 /* ==================== PAYMENT HISTORY SECTION ==================== */
 .paymentHistorySection {
-    background: var(--white);
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    margin-bottom: 2rem;
-    border: 2px solid #e8dff5;
+  background: var(--white);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
 }
 
 .paymentHistorySection h3 {
-    margin: 0 0 1.5rem;
-    color: var(--primary-purple);
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: -0.3px;
+  margin: 0 0 1.5rem;
+  color: var(--black);
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .noData {
-    text-align: center;
-    padding: 3rem 1rem;
-    color: var(--text-light);
-    background: var(--bg-light);
-    border-radius: 12px;
-    border: 2px dashed var(--border-color);
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-gray);
 }
 
 .noData p {
-    margin: 0;
-    font-size: 1rem;
-    font-family: 'Verdana', sans-serif;
+  font-size: 0.95rem;
 }
 
 /* ==================== STATUS CARDS ==================== */
 .statusCardsSection {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
-    margin: 2rem 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .statusCard {
-    position: relative;
-    overflow: hidden;
-    border-radius: 16px;
-    background: var(--white);
-    border: 2px solid var(--border-color);
-    padding: 1.75rem;
-    transition: var(--transition);
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.statusCard::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.5));
-    opacity: 0;
-    transition: var(--transition);
+  background: var(--white);
+  border-radius: 8px;
+  padding: 1.25rem;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .statusCard:hover {
-    border-color: var(--primary-purple);
-    box-shadow: 0 8px 24px rgba(106, 76, 147, 0.15);
-    transform: translateY(-4px);
+  border-color: var(--primary-purple);
+  box-shadow: 0 4px 12px rgba(106, 76, 147, 0.1);
 }
 
 .statusCard.active {
-    border-color: var(--primary-purple);
-    background: linear-gradient(135deg, rgba(243, 232, 255, 0.5), rgba(255, 251, 240, 0.5));
-    box-shadow: 0 8px 24px rgba(106, 76, 147, 0.2);
+  border-color: var(--primary-purple);
+  background: #f3e8ff;
 }
 
 .statusCardIcon {
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.6rem;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-    transition: var(--transition);
-}
-
-.statusCard:hover .statusCardIcon {
-    transform: scale(1.1) rotate(5deg);
+  font-size: 1.75rem;
+  color: var(--primary-purple);
+  margin-bottom: 0.75rem;
 }
 
 .statusCardLabel {
-    margin: 0;
-    font-size: 0.85rem;
-    color: var(--text-gray);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 600;
-    font-family: 'Verdana', sans-serif;
+  font-size: 0.8rem;
+  color: var(--text-gray);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
 }
 
 .statusCardCount {
-    margin: 0.75rem 0 0;
-    font-size: 2.25rem;
-    font-weight: 900;
-    color: var(--primary-purple);
-    line-height: 1;
-    letter-spacing: -0.5px;
+  font-size: 1.75rem;
+  color: var(--black);
+  font-weight: 700;
 }
 
 /* ==================== HEADER ==================== */
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 2rem 0 1.5rem;
-    padding: 1.75rem;
-    background: var(--white);
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    border: 2px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
 }
 
 .header h2 {
-    margin: 0;
-    color: var(--primary-purple);
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: -0.3px;
+  margin: 0;
+  color: var(--black);
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .createBtn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
-    color: white;
-    border: none;
-    padding: 0.85rem 1.5rem;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: var(--transition);
-    font-family: 'Verdana', sans-serif;
-    font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--primary-purple);
+  color: var(--white);
+  border: none;
+  padding: 0.65rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  font-size: 0.95rem;
 }
 
 .createBtn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(106, 76, 147, 0.4);
+  background: #553a7a;
 }
 
 .createBtn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* ==================== CONTROLS ==================== */
 .controls {
-    display: flex;
-    gap: 1rem;
-    margin: 1.5rem 0;
-    background: var(--white);
-    padding: 1.5rem;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    border: 2px solid var(--border-color);
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .searchBar {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    background: var(--bg-light);
-    border: 2px solid var(--border-color);
-    border-radius: 10px;
-    padding: 0.5rem 1rem;
-    transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--white);
+  border: 2px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.65rem 1rem;
+  flex: 1;
+  min-width: 250px;
+  transition: all 0.2s ease;
 }
 
 .searchBar:focus-within {
-    border-color: var(--primary-purple);
-    background: var(--white);
-    box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
+  border-color: var(--primary-purple);
+  box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
 }
 
 .searchBar svg {
-    color: var(--primary-purple);
-    opacity: 0.6;
-    font-size: 1rem;
+  color: var(--text-gray);
 }
 
 .searchBar input {
-    flex: 1;
-    border: none;
-    background: transparent;
-    outline: none;
-    font-size: 0.95rem;
-    color: var(--black);
-    font-family: 'Verdana', sans-serif;
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 0.95rem;
+  background: transparent;
+  color: var(--black);
 }
 
 .searchBar input::placeholder {
-    color: var(--text-light);
+  color: var(--text-gray);
 }
 
 .filterSelect {
-    padding: 0.75rem 1rem;
-    border: 2px solid var(--border-color);
-    border-radius: 10px;
-    background: var(--white);
-    color: var(--text-gray);
-    cursor: pointer;
-    font-weight: 600;
-    transition: var(--transition);
-    font-family: 'Verdana', sans-serif;
-    font-size: 0.95rem;
+  padding: 0.65rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: var(--black);
+  background: var(--white);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
 }
 
 .filterSelect:hover,
 .filterSelect:focus {
-    border-color: var(--primary-purple);
-    box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
-    outline: none;
+  border-color: var(--primary-purple);
+  outline: none;
 }
 
 /* ==================== TABLE ==================== */
 .tableWrapper {
-    overflow-x: auto;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
+  background: var(--white);
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
 }
 
 .tableWrapper::-webkit-scrollbar {
-    height: 8px;
+  height: 8px;
 }
 
 .tableWrapper::-webkit-scrollbar-track {
-    background: var(--bg-light);
-    border-radius: 10px;
+  background: #f1f1f1;
 }
 
 .tableWrapper::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 10px;
-    transition: var(--transition);
+  background: #c1c1c1;
+  border-radius: 4px;
 }
 
 .tableWrapper::-webkit-scrollbar-thumb:hover {
-    background: var(--text-light);
+  background: #a8a8a8;
 }
 
 .table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .table thead {
-    background: var(--bg-light);
-    border-bottom: 2px solid var(--border-color);
+  background: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
 }
 
 .table th {
-    padding: 1.25rem 1.5rem;
-    text-align: left;
-    color: var(--primary-purple);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    user-select: none;
-    transition: var(--transition);
-    white-space: nowrap;
+  padding: 0.9rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--black);
+  font-size: 0.85rem;
 }
 
 .table th:hover {
-    background: rgba(106, 76, 147, 0.05);
+  background: #f3f4f6;
 }
 
 .table th svg {
-    margin-left: 0.5rem;
-    font-size: 0.8rem;
-    opacity: 0.6;
+  margin-left: 0.4rem;
+  font-size: 0.8rem;
 }
 
 .table tbody tr {
-    border-bottom: 1px solid var(--border-color);
-    transition: var(--transition);
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s ease;
 }
 
 .table tbody tr:hover {
-    background: var(--bg-light);
+  background-color: #f9fafb;
 }
 
 .table tbody tr:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .table td {
-    padding: 1.2rem 1.5rem;
-    color: var(--text-gray);
-    font-weight: 500;
+  padding: 1rem 0.9rem;
+  color: var(--black);
+  font-size: 0.95rem;
 }
 
 .receiptNumber {
-    font-weight: 600;
-    color: var(--primary-purple);
+  font-weight: 600;
+  color: var(--primary-purple);
 }
 
 .studentInfo {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .studentInfo .icon {
-    color: var(--primary-purple);
-    font-size: 1.2rem;
+  font-size: 1.2rem;
+  color: var(--primary-purple);
 }
 
 .studentInfo div p {
-    margin: 0;
-    line-height: 1.2;
+  margin: 0;
 }
 
 .name {
-    font-weight: 600;
-    color: var(--black);
+  font-weight: 600;
+  color: var(--black);
 }
 
 .program {
-    font-size: 0.85rem;
-    color: var(--text-light);
+  font-size: 0.8rem;
+  color: var(--text-gray);
 }
 
 .amount {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-weight: 600;
-    color: var(--success);
+  font-weight: 700;
+  color: #10b981;
+  font-size: 1rem;
 }
 
 .statusBadge {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: capitalize;
-    text-align: center;
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 .actions {
-    display: flex;
-    gap: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
 }
 
 .actionBtn {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    border: none;
-    background: var(--bg-light);
-    color: var(--primary-purple);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition);
-    font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  background: var(--primary-purple);
+  color: var(--white);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
 }
 
 .actionBtn:hover {
-    background: var(--primary-purple);
-    color: white;
-    transform: scale(1.05);
+  background: #553a7a;
+  transform: scale(1.05);
 }
 
 /* ==================== PAGINATION ==================== */
 .paginationSection {
-    background: var(--white);
-    border-radius: 16px;
-    padding: 1.75rem;
-    margin: 1.5rem 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    border: 2px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: var(--white);
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
 }
 
 .paginationInfo p {
-    margin: 0;
-    color: var(--text-gray);
-    font-size: 0.95rem;
-    font-family: 'Verdana', sans-serif;
+  margin: 0;
+  color: var(--black);
+  font-size: 0.95rem;
 }
 
 .paginationInfo strong {
-    color: var(--black);
-    font-weight: 700;
+  font-weight: 700;
+  color: var(--primary-purple);
 }
 
 .paginationControls {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 
 .itemsPerPageSelect {
-    padding: 0.65rem 1rem;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    background: var(--white);
-    cursor: pointer;
-    transition: var(--transition);
-    font-family: 'Verdana', sans-serif;
-    color: var(--text-gray);
-    font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--black);
+  background: var(--white);
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .itemsPerPageSelect:hover,
 .itemsPerPageSelect:focus {
-    border-color: var(--primary-purple);
-    box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
-    outline: none;
+  border-color: var(--primary-purple);
+  outline: none;
 }
 
 .paginationButtons {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .paginationBtn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.25rem;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    background: var(--white);
-    color: var(--primary-purple);
-    cursor: pointer;
-    font-weight: 600;
-    transition: var(--transition);
-    font-family: 'Verdana', sans-serif;
-    font-size: 0.9rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e5e7eb;
+  background: var(--white);
+  color: var(--black);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
 .paginationBtn:hover:not(:disabled) {
-    background: var(--primary-purple);
-    color: white;
-    border-color: var(--primary-purple);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.2);
+  border-color: var(--primary-purple);
+  color: var(--primary-purple);
+  background: #f9fafb;
 }
 
 .paginationBtn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .pageInfo {
-    font-weight: 600;
-    color: var(--primary-purple);
-    min-width: 120px;
-    text-align: center;
-    font-family: 'Verdana', sans-serif;
+  color: var(--text-gray);
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
 /* ==================== MODALS ==================== */
 .modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 1rem;
-    backdrop-filter: blur(2px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
 }
 
 .modal {
-    background: var(--white);
-    border-radius: 16px;
-    max-width: 600px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(106, 76, 147, 0.3);
-    border: 2px solid #e8dff5;
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modalHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2rem;
-    border-bottom: 2px solid var(--border-color);
-    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-purple-light) 100%);
-    color: white;
-    border-radius: 14px 14px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 2px solid #e5e7eb;
 }
 
 .modalHeader h2 {
-    margin: 0;
-    font-size: 1.35rem;
-    font-weight: 700;
-    letter-spacing: -0.3px;
+  margin: 0;
+  color: var(--black);
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .closeBtn {
-    width: 36px;
-    height: 36px;
-    border: none;
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  background: #f3f4f6;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: var(--text-gray);
+  transition: all 0.2s ease;
 }
 
 .closeBtn:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.3);
-    transform: rotate(90deg);
+  background: #e5e7eb;
+  color: var(--black);
 }
 
 .closeBtn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* ==================== FORM ==================== */
 .form {
-    padding: 2rem;
+  padding: 1.5rem;
 }
 
 .admissionSearchInModal {
-    background: linear-gradient(135deg, rgba(243, 232, 255, 0.5), rgba(255, 251, 240, 0.5));
-    padding: 1.5rem;
-    border-radius: 12px;
-    margin-bottom: 1.5rem;
-    border: 2px solid #e8dff5;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #e5e7eb;
 }
 
 .admissionSearchInModal h4 {
-    margin: 0 0 1rem;
-    color: var(--primary-purple);
-    font-size: 1rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
+  margin: 0 0 1rem;
+  color: var(--black);
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .admissionSearchForm {
-    display: flex;
-    gap: 1rem;
-    align-items: flex-end;
+  display: flex;
+  gap: 0.75rem;
 }
 
 .admissionSearchForm .formGroup {
-    flex: 1;
-    min-width: 200px;
-    margin-bottom: 0;
+  flex: 1;
+  margin-bottom: 0;
 }
 
 .admissionSearchForm .formGroup label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    display: block;
-    color: var(--text-gray);
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
+  display: none;
 }
 
 .admissionSearchForm .formGroup input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    font-family: 'Verdana', sans-serif;
-    font-size: 0.9rem;
+  padding: 0.65rem 0.9rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--black);
 }
 
 .searchAdmissionBtn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: linear-gradient(135deg, var(--info) 0%, #1d4ed8 100%);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.25rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.9rem;
-    white-space: nowrap;
-    transition: var(--transition);
-    font-family: 'Verdana', sans-serif;
+  padding: 0.65rem 1.25rem;
+  background: var(--primary-purple);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  font-size: 0.9rem;
 }
 
 .searchAdmissionBtn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  background: #553a7a;
 }
 
 .searchAdmissionBtn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .formDivider {
-    border: none;
-    border-top: 2px solid var(--border-color);
-    margin: 1.5rem 0;
+  height: 2px;
+  background: #e5e7eb;
+  margin: 1.5rem 0;
 }
 
 .filledField {
-    background-color: rgba(16, 185, 129, 0.1) !important;
-    border-color: var(--success) !important;
+  background: #f9fafb;
+  border-radius: 6px;
+  padding: 0.1rem;
 }
 
 .required {
-    color: var(--error);
-    font-size: 0.85rem;
+  color: #dc2626;
+  font-weight: 700;
 }
 
 .formGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
 }
 
 .formGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .formGroup label {
-    font-weight: 600;
-    color: var(--text-gray);
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: var(--black);
+  font-size: 0.85rem;
 }
 
 .formGroup input,
 .formGroup select,
 .formGroup textarea {
-    padding: 0.85rem 1rem;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-family: 'Verdana', sans-serif;
-    color: var(--black);
-    transition: var(--transition);
-    background: var(--white);
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: var(--black);
+  background: var(--white);
+  font-family: inherit;
+  transition: all 0.2s ease;
 }
 
 .formGroup input:focus,
 .formGroup select:focus,
 .formGroup textarea:focus {
-    outline: none;
-    border-color: var(--primary-purple);
-    box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
+  outline: none;
+  border-color: var(--primary-purple);
+  box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
 }
 
 .formGroup input:disabled,
 .formGroup select:disabled,
 .formGroup textarea:disabled {
-    background: var(--bg-light);
-    cursor: not-allowed;
-    color: var(--text-light);
+  background: #f3f4f6;
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .modalActions {
-    display: flex;
-    gap: 1rem;
-    padding-top: 1.5rem;
-    border-top: 2px solid var(--border-color);
-    margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
 }
 
 .cancelBtn,
 .submitBtn {
-    flex: 1;
-    padding: 0.85rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    transition: var(--transition);
-    font-family: 'Verdana', sans-serif;
-    font-size: 0.95rem;
+  flex: 1;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .cancelBtn {
-    background: var(--bg-light);
-    color: var(--text-gray);
-    border: 2px solid var(--border-color);
+  background: #e5e7eb;
+  color: var(--black);
 }
 
 .cancelBtn:hover:not(:disabled) {
-    background: white;
-    border-color: var(--text-gray);
-    color: var(--black);
+  background: #d1d5db;
 }
 
 .submitBtn {
-    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
-    color: white;
-    border: none;
+  background: var(--primary-purple);
+  color: var(--white);
 }
 
 .submitBtn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(106, 76, 147, 0.4);
+  background: #553a7a;
 }
 
 .submitBtn:disabled,
 .cancelBtn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .spinner {
-    animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* ==================== PRINT MODAL ==================== */
 .printModalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1001;
-    padding: 1rem;
-    backdrop-filter: blur(2px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  padding: 1rem;
 }
 
 .printModal {
-    background: var(--white);
-    border-radius: 16px;
-    max-width: 900px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(106, 76, 147, 0.3);
-    border: 2px solid #e8dff5;
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  max-width: 700px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .printModalHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.75rem 2rem;
-    border-bottom: 2px solid var(--border-color);
-    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-purple-light) 100%);
-    color: white;
-    border-radius: 14px 14px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 2px solid #e5e7eb;
 }
 
 .printModalHeader h2 {
-    margin: 0;
-    font-size: 1.35rem;
-    font-weight: 700;
-    letter-spacing: -0.3px;
+  margin: 0;
+  color: var(--black);
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .printContent {
-    padding: 2rem;
-    background: var(--white);
-    font-family: 'Verdana', sans-serif;
+  padding: 2rem;
+  background: var(--white);
 }
 
 .receiptHeader {
-    text-align: center;
-    margin-bottom: 2rem;
-    border-bottom: 3px solid var(--primary-purple);
-    padding-bottom: 1.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #e5e7eb;
 }
 
 .schoolLogo {
-    max-width: 100px;
-    height: auto;
-    margin-bottom: 1rem;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
 }
 
 .receiptHeader h3 {
-    margin: 0 0 0.5rem;
-    font-size: 1.5rem;
-    color: var(--black);
-    font-weight: 700;
+  margin: 0.5rem 0 0.25rem;
+  color: var(--black);
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 .receiptHeader p {
-    margin: 0.25rem 0;
-    color: var(--text-gray);
-    font-size: 0.9rem;
+  margin: 0.25rem 0;
+  color: var(--text-gray);
+  font-size: 0.8rem;
 }
 
 .receiptTitle {
-    text-align: center;
-    margin: 2rem 0;
+  text-align: center;
+  margin: 1.5rem 0;
 }
 
 .receiptTitle h2 {
-    margin: 0;
-    color: var(--primary-purple);
-    font-size: 1.8rem;
-    letter-spacing: 2px;
-    font-weight: 700;
+  margin: 0;
+  color: var(--black);
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 
 .receiptNumber {
-    display: flex;
-    justify-content: space-between;
-    margin: 1.5rem 0;
-    padding: 1rem;
-    background: linear-gradient(135deg, rgba(243, 232, 255, 0.3), rgba(255, 251, 240, 0.3));
-    border-radius: 8px;
-    border: 2px solid #e8dff5;
+  text-align: right;
+  margin-bottom: 1.5rem;
 }
 
 .receiptNumber p {
-    margin: 0;
-    color: var(--black);
-    font-weight: 600;
+  margin: 0.25rem 0;
+  color: var(--text-gray);
+  font-size: 0.85rem;
 }
 
 .receiptDetails {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin: 2rem 0;
-    padding: 1.5rem;
-    background: linear-gradient(135deg, rgba(243, 232, 255, 0.3), rgba(255, 251, 240, 0.3));
-    border-radius: 8px;
-    border: 2px solid #e8dff5;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .detailsColumn h4 {
-    margin: 0 0 1rem;
-    color: var(--primary-purple);
-    font-size: 0.95rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 700;
+  margin: 0 0 0.75rem;
+  color: var(--black);
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.5rem;
 }
 
 .detailsColumn p {
-    margin: 0.5rem 0;
-    color: var(--text-gray);
-    font-size: 0.95rem;
+  margin: 0.5rem 0;
+  color: var(--black);
+  font-size: 0.85rem;
 }
 
 .receiptTable {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 2rem 0;
-    font-family: 'Verdana', sans-serif;
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
 }
 
 .receiptTable thead {
-    background: linear-gradient(135deg, rgba(106, 76, 147, 0.1), rgba(126, 95, 161, 0.1));
-    border-bottom: 2px solid var(--primary-purple);
+  background: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
 }
 
 .receiptTable th,
 .receiptTable td {
-    padding: 1rem;
-    border-bottom: 1px solid var(--border-color);
-    text-align: left;
+  padding: 0.75rem;
+  text-align: left;
+  font-size: 0.85rem;
 }
 
 .receiptTable th {
-    font-weight: 700;
-    color: var(--primary-purple);
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 0.3px;
+  font-weight: 700;
+  color: var(--black);
 }
 
 .receiptTable tbody td {
-    color: var(--text-gray);
-    font-weight: 500;
+  color: var(--black);
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .receiptTable tfoot tr {
-    background: linear-gradient(135deg, rgba(243, 232, 255, 0.3), rgba(255, 251, 240, 0.3));
-    border: 2px solid #e8dff5;
+  background: #f9fafb;
+  border-top: 2px solid #e5e7eb;
+  border-bottom: 2px solid #e5e7eb;
 }
 
 .receiptTable tfoot th {
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: var(--black);
+  padding: 0.75rem;
+  font-weight: 700;
+  color: var(--black);
 }
 
 .totalAmount {
-    color: var(--success) !important;
-    font-size: 1.1rem !important;
-    font-weight: 700 !important;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #10b981;
 }
 
 .receiptFooter {
-    margin: 2rem 0 0;
-    padding: 1.5rem;
-    border-top: 3px solid var(--primary-purple);
-    text-align: center;
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 2px solid #e5e7eb;
+  margin-top: 1.5rem;
 }
 
 .receiptFooter p {
-    margin: 0.5rem 0;
-    color: var(--text-gray);
-    font-size: 0.95rem;
+  margin: 0.5rem 0;
+  color: var(--text-gray);
+  font-size: 0.8rem;
 }
 
 .thankYou {
-    margin-top: 1rem !important;
-    color: var(--success) !important;
-    font-weight: 700 !important;
-    font-size: 1rem !important;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--black);
+  margin-top: 1rem;
 }
 
 .printModalActions {
-    display: flex;
-    gap: 1rem;
-    padding: 1.75rem 2rem;
-    border-top: 2px solid var(--border-color);
-    background: var(--bg-light);
-    border-radius: 0 0 14px 14px;
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 2px solid #e5e7eb;
+  background: #f9fafb;
 }
 
 .printBtn,
 .downloadBtn,
 .closeModalBtn {
-    flex: 1;
-    padding: 0.85rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    transition: var(--transition);
-    font-family: 'Verdana', sans-serif;
-    font-size: 0.95rem;
+  flex: 1;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .printBtn {
-    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
-    color: white;
+  background: var(--primary-purple);
+  color: var(--white);
 }
 
 .printBtn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(106, 76, 147, 0.4);
+  background: #553a7a;
 }
 
 .downloadBtn {
-    background: linear-gradient(135deg, var(--primary-yellow) 0%, #e6a800 100%);
-    color: var(--black);
+  background: #10b981;
+  color: var(--white);
 }
 
 .downloadBtn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(255, 191, 0, 0.4);
+  background: #059669;
 }
 
 .closeModalBtn {
-    background: var(--bg-light);
-    color: var(--text-gray);
-    border: 2px solid var(--border-color);
+  background: #e5e7eb;
+  color: var(--black);
 }
 
 .closeModalBtn:hover:not(:disabled) {
-    background: white;
-    border-color: var(--text-gray);
+  background: #d1d5db;
 }
 
 .printBtn:disabled,
 .downloadBtn:disabled,
 .closeModalBtn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 1200px) {
-    .container {
-        padding: 1.5rem;
-    }
+  .dashboardWrapper {
+    margin: 1.5rem;
+  }
 
-    .statusCardsSection {
-        grid-template-columns: repeat(2, 1fr);
-    }
+  .statusCardsSection {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
 
-    .header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
+  .paginationSection {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-    .searchAdmissionForm {
-        flex-direction: column;
-    }
-
-    .searchAdmissionForm .formGroup {
-        min-width: 100%;
-    }
-
-    .searchBtn {
-        width: 100%;
-    }
+  .receiptDetails {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
-    .container {
-        padding: 1rem;
-    }
+  .dashboardWrapper {
+    margin: 1rem;
+  }
 
-    .statusCardsSection {
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-    }
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-    .statusCard {
-        padding: 1.25rem;
-    }
+  .createBtn {
+    width: 100%;
+    justify-content: center;
+  }
 
-    .header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
-        padding: 1.25rem;
-    }
+  .controls {
+    flex-direction: column;
+  }
 
-    .header h2 {
-        font-size: 1.25rem;
-    }
+  .searchBar {
+    min-width: unset;
+  }
 
-    .createBtn {
-        width: 100%;
-    }
+  .filterSelect {
+    width: 100%;
+  }
 
-    .controls {
-        flex-direction: column;
-        gap: 0.75rem;
-        padding: 1.25rem;
-    }
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
 
-    .searchBar {
-        width: 100%;
-    }
+  .searchAdmissionForm {
+    flex-direction: column;
+  }
 
-    .filterSelect {
-        width: 100%;
-    }
+  .searchAdmissionForm .formGroup {
+    min-width: unset;
+  }
 
-    .studentInfoGrid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
+  .searchBtn {
+    width: 100%;
+    justify-content: center;
+  }
 
-    .infoItem {
-        padding: 1rem;
-    }
+  .modal {
+    max-width: 95vw;
+  }
 
-    .paginationSection {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
-        padding: 1.25rem;
-    }
+  .studentInfoGrid {
+    grid-template-columns: 1fr;
+  }
 
-    .paginationControls {
-        width: 100%;
-        flex-direction: column;
-        gap: 1rem;
-    }
+  .table {
+    font-size: 0.85rem;
+  }
 
-    .paginationButtons {
-        width: 100%;
-        flex-wrap: wrap;
-    }
+  .table th,
+  .table td {
+    padding: 0.75rem 0.5rem;
+  }
 
-    .paginationBtn {
-        flex: 1;
-        min-width: calc(50% - 0.5rem);
-    }
+  .statusCardsSection {
+    grid-template-columns: 1fr;
+  }
 
-    .formGrid {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-    }
+  .receiptDetails {
+    grid-template-columns: 1fr;
+  }
 
-    .table {
-        font-size: 0.85rem;
-    }
-
-    .table th,
-    .table td {
-        padding: 0.75rem;
-    }
-
-    .receiptDetails {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-        padding: 1rem;
-    }
-
-    .printModalActions {
-        flex-direction: column;
-        gap: 0.75rem;
-        padding: 1.25rem;
-    }
-
-    .printBtn,
-    .downloadBtn,
-    .closeModalBtn {
-        width: 100%;
-        padding: 0.75rem;
-    }
-
-    .modal,
-    .printModal {
-        max-width: 95vw;
-        border-radius: 12px;
-    }
-
-    .modalHeader,
-    .printModalHeader {
-        padding: 1.5rem;
-        font-size: 1rem;
-    }
-
-    .form {
-        padding: 1.5rem;
-    }
-
-    .printContent {
-        padding: 1.5rem;
-    }
-
-    .receiptHeader {
-        margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-    }
-
-    .receiptTable {
-        margin: 1.5rem 0;
-    }
+  .printModalActions {
+    flex-direction: column;
+  }
 }
 
 @media (max-width: 480px) {
-    .container {
-        padding: 0.75rem;
-    }
+  .dashboardWrapper {
+    margin: 0.5rem;
+  }
 
-    .statusCardsSection {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-    }
+  .header h2 {
+    font-size: 1rem;
+  }
 
-    .statusCard {
-        padding: 1rem;
-    }
+  .createBtn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
 
-    .statusCardCount {
-        font-size: 1.75rem;
-    }
+  .searchBar {
+    flex-direction: column;
+  }
 
-    .header {
-        padding: 1rem;
-        margin: 1.5rem 0 1rem;
-    }
+  .searchBar input {
+    width: 100%;
+  }
 
-    .header h2 {
-        font-size: 1.1rem;
-    }
+  .form {
+    padding: 1rem;
+  }
 
-    .controls {
-        padding: 1rem;
-        gap: 0.5rem;
-    }
+  .modalActions,
+  .printModalActions {
+    gap: 0.5rem;
+  }
 
-    .searchAdmissionCard {
-        padding: 1.25rem;
-    }
+  .cancelBtn,
+  .submitBtn,
+  .printBtn,
+  .downloadBtn,
+  .closeModalBtn {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+  }
 
-    .searchAdmissionCard h3 {
-        font-size: 1.1rem;
-    }
-
-    .searchAdmissionForm {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
-    .searchBtn {
-        width: 100%;
-        padding: 0.75rem;
-    }
-
-    .studentDetailsCard {
-        padding: 1.25rem;
-    }
-
-    .studentHeader {
-        flex-direction: column;
-        gap: 0.75rem;
-        margin-bottom: 1rem;
-        padding-bottom: 1rem;
-    }
-
-    .studentHeader h2 {
-        font-size: 1.2rem;
-    }
-
-    .admissionBadge {
-        padding: 0.5rem 1rem;
-        font-size: 0.75rem;
-        width: 100%;
-        text-align: center;
-    }
-
-    .studentInfoGrid {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-    }
-
-    .infoItem {
-        padding: 0.75rem;
-        gap: 0.75rem;
-    }
-
-    .infoIcon {
-        font-size: 1rem;
-    }
-
-    .infoLabel {
-        font-size: 0.75rem;
-    }
-
-    .infoValue {
-        font-size: 0.9rem;
-        margin-top: 0.25rem;
-    }
-
-    .createBtn {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        font-size: 0.9rem;
-    }
-
-    .modalActions {
-        flex-direction: column;
-        gap: 0.5rem;
-        padding-top: 1rem;
-        margin-top: 1rem;
-    }
-
-    .cancelBtn,
-    .submitBtn {
-        padding: 0.75rem 1rem;
-        font-size: 0.9rem;
-        width: 100%;
-    }
-
-    .form {
-        padding: 1rem;
-    }
-
-    .formGrid {
-        gap: 0.5rem;
-    }
-
-    .formGroup input,
-    .formGroup select,
-    .formGroup textarea {
-        padding: 0.7rem 0.75rem;
-        font-size: 0.9rem;
-    }
-
-    .admissionSearchInModal {
-        padding: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .admissionSearchForm {
-        gap: 0.5rem;
-    }
-
-    .searchAdmissionBtn {
-        padding: 0.65rem 1rem;
-        font-size: 0.85rem;
-    }
-
-    .paginationSection {
-        padding: 1rem;
-        gap: 1rem;
-    }
-
-    .paginationInfo p {
-        font-size: 0.85rem;
-    }
-
-    .itemsPerPageSelect {
-        width: 100%;
-        padding: 0.6rem;
-        font-size: 0.9rem;
-    }
-
-    .paginationButtons {
-        width: 100%;
-        gap: 0.5rem;
-    }
-
-    .paginationBtn {
-        padding: 0.6rem;
-        font-size: 0.8rem;
-        min-width: calc(50% - 0.25rem);
-    }
-
-    .pageInfo {
-        font-size: 0.85rem;
-        min-width: 100%;
-        text-align: center;
-    }
-
-    .table th,
-    .table td {
-        padding: 0.5rem;
-        font-size: 0.75rem;
-    }
-
-    .table th {
-        font-size: 0.7rem;
-    }
-
-    .printModal {
-        border-radius: 12px;
-    }
-
-    .printModalHeader {
-        padding: 1.25rem;
-    }
-
-    .printModalHeader h2 {
-        font-size: 1.1rem;
-    }
-
-    .printContent {
-        padding: 1rem;
-    }
-
-    .receiptHeader {
-        margin-bottom: 1rem;
-        padding-bottom: 0.75rem;
-    }
-
-    .receiptHeader h3 {
-        font-size: 1.2rem;
-    }
-
-    .receiptHeader p {
-        font-size: 0.85rem;
-    }
-
-    .receiptTitle h2 {
-        font-size: 1.4rem;
-    }
-
-    .receiptNumber {
-        flex-direction: column;
-        gap: 0.5rem;
-        padding: 0.75rem;
-        margin: 1rem 0;
-    }
-
-    .receiptNumber p {
-        font-size: 0.9rem;
-    }
-
-    .receiptDetails {
-        gap: 1rem;
-        padding: 1rem;
-        margin: 1rem 0;
-    }
-
-    .detailsColumn h4 {
-        font-size: 0.85rem;
-        margin: 0 0 0.75rem;
-    }
-
-    .detailsColumn p {
-        font-size: 0.85rem;
-        margin: 0.35rem 0;
-    }
-
-    .receiptTable {
-        margin: 1rem 0;
-    }
-
-    .receiptTable th,
-    .receiptTable td {
-        padding: 0.6rem;
-        font-size: 0.8rem;
-    }
-
-    .receiptTable th {
-        font-size: 0.75rem;
-    }
-
-    .receiptFooter {
-        margin-top: 1rem;
-        padding: 1rem;
-    }
-
-    .receiptFooter p {
-        font-size: 0.85rem;
-        margin: 0.35rem 0;
-    }
-
-    .printModalActions {
-        gap: 0.5rem;
-        padding: 1rem;
-    }
-
-    .printBtn,
-    .downloadBtn,
-    .closeModalBtn {
-        padding: 0.65rem;
-        font-size: 0.85rem;
-    }
-}
-
-@media print {
-    .container {
-        background: white;
-        padding: 0;
-    }
-
-    .printModal,
-    .printModalHeader,
-    .printModalActions,
-    .header,
-    .controls,
-    .searchAdmissionSection,
-    .statusCardsSection,
-    .paginationSection,
-    .feeStructureSection {
-        display: none;
-    }
-
-    .printContent {
-        padding: 0;
-        margin: 0;
-        box-shadow: none;
-        background: white;
-    }
-
-    body {
-        background: white;
-    }
+  .table th,
+  .table td {
+    padding: 0.5rem 0.3rem;
+    font-size: 0.75rem;
+  }
 }
 
 /* ==================== FEE STRUCTURE SECTION ==================== */
 .feeStructureSection {
-    margin: 2rem 0;
-    padding: 2rem;
-    background: linear-gradient(135deg, #f3e8ff 0%, #fef3c7 100%);
-    border-radius: 16px;
-    border: 2px solid #e8dff5;
+  background: var(--white);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid #e5e7eb;
 }
 
 .feeStructureSection h3 {
-    margin: 0 0 1.5rem;
-    color: var(--primary-purple);
-    font-size: 1.3rem;
-    font-weight: 700;
+  margin: 0 0 1rem;
+  color: var(--black);
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .feeStructureGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
 }
 
 .feeCard {
-    background: var(--white);
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.1);
-    border-left: 4px solid var(--primary-purple);
-    transition: var(--transition);
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
 }
 
 .feeCard:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px rgba(106, 76, 147, 0.2);
+  border-color: var(--primary-purple);
+  box-shadow: 0 4px 12px rgba(106, 76, 147, 0.1);
 }
 
 .feeCard h4 {
-    margin: 0 0 0.5rem;
-    color: var(--primary-purple);
-    font-size: 1.1rem;
-    font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: var(--black);
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .feeCard .ageGroup {
-    margin: 0 0 1rem;
-    color: var(--text-light);
-    font-size: 0.9rem;
-    font-style: italic;
+  color: var(--text-gray);
+  font-size: 0.8rem;
+  margin-bottom: 0.75rem;
 }
 
 .feeDetails {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .feeLine {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.6rem 0;
-    border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
 }
 
 .feeLine span {
-    color: var(--text-gray);
-    font-size: 0.95rem;
+  color: var(--text-gray);
 }
 
 .feeLine strong {
-    color: var(--primary-purple);
-    font-weight: 700;
-    font-size: 1rem;
+  color: var(--black);
+  font-weight: 600;
 }
 
 /* ==================== FEE SUMMARY CARD ==================== */
 .feeSummaryCard {
-    background: linear-gradient(135deg, #f3e8ff 0%, #fef9f3 100%);
-    border: 2px solid var(--primary-yellow);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin: 1rem 0;
-    animation: slideIn 0.3s ease-out;
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 1.5rem;
 }
 
 .feeSummaryCard h4 {
-    margin: 0 0 1rem;
-    color: var(--primary-purple);
-    font-size: 1rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  margin: 0 0 1rem;
+  color: var(--black);
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .feeSummaryContent {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.75rem;
 }
 
 .feeSummaryItem {
-    background: var(--white);
-    border-radius: 8px;
-    padding: 1rem;
-    border-left: 4px solid var(--primary-purple);
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+  text-align: center;
+  padding: 0.75rem;
+  background: var(--white);
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
 }
 
 .feeSummaryItem span {
-    font-size: 0.85rem;
-    color: var(--text-gray);
-    font-weight: 500;
+  display: block;
+  color: var(--text-gray);
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
 }
 
 .feeSummaryItem strong {
-    font-size: 1.2rem;
-    color: var(--primary-purple);
-    font-weight: 700;
+  display: block;
+  color: var(--black);
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
 @keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ==================== FEE AMOUNT DISPLAY ==================== */
 .feeAmountDisplay {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+  position: relative;
+  margin-bottom: 1rem;
 }
 
 .feeAmountDisplay input {
-    flex: 1;
-    padding: 0.75rem 1rem;
-    border: 2px solid #e5e5e5;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: var(--transition);
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: var(--black);
 }
 
 .feeAmountDisplay input:focus {
-    outline: none;
-    border-color: var(--primary-purple);
-    box-shadow: 0 0 0 3px rgba(106, 76, 147, 0.1);
+  outline: none;
+  border-color: var(--primary-purple);
 }
 
 .amountHighlight {
-    background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
-    color: var(--white);
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    white-space: nowrap;
-    box-shadow: 0 4px 12px rgba(106, 76, 147, 0.3);
-    animation: slideIn 0.3s ease-out;
+  position: absolute;
+  top: -2.5rem;
+  right: 0;
+  background: var(--primary-purple);
+  color: var(--white);
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 /* ==================== REGISTRATION FEE SECTION ==================== */
 .registrationFeeSection {
-    background: linear-gradient(135deg, #fef9f3 0%, #fff5e6 100%);
-    border: 2px solid var(--primary-yellow);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin: 2rem 0 0 0;
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 1.5rem;
 }
 
 .checkboxGroup {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .checkboxGroup input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    accent-color: var(--primary-purple);
+  width: 1.2rem;
+  height: 1.2rem;
+  cursor: pointer;
+  accent-color: var(--primary-purple);
 }
 
 .checkboxGroup label {
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  margin: 0;
+  font-weight: 600;
+  color: var(--black);
 }
 
 .checkboxGroup strong {
-    color: var(--primary-purple);
-    font-size: 1.1rem;
+  color: var(--primary-purple);
 }
 
 @media (max-width: 768px) {
-    .feeStructureGrid {
-        grid-template-columns: 1fr;
-    }
+  .feeStructureGrid {
+    grid-template-columns: 1fr;
+  }
 
-    .feeStructureSection {
-        padding: 1.5rem;
-    }
+  .feeSummaryContent {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
 
-    .feeCard {
-        padding: 1.2rem;
-    }
-
-    .feeSummaryContent {
-        grid-template-columns: 1fr;
-        gap: 0.8rem;
-    }
-
-    .feeSummaryCard {
-        padding: 1.2rem;
-    }
-
-    .feeAmountDisplay {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .feeAmountDisplay input {
-        width: 100%;
-    }
-
-    .amountHighlight {
-        width: 100%;
-        text-align: center;
-    }
+  .feeSummaryItem {
+    padding: 0.5rem;
+  }
 }
