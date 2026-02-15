@@ -1289,15 +1289,21 @@ const ReceiptDashboard = () => {
                                     </div>
                                     <div className={styles.formGroup}>
                                         <label>Program</label>
-                                        <input
-                                            type="text"
+                                        <select
                                             value={formData.program}
                                             onChange={(e) =>
                                                 setFormData({ ...formData, program: e.target.value })
                                             }
                                             disabled={createLoading}
                                             className={formData.program && modalAdmissionNumber ? styles.filledField : ''}
-                                        />
+                                        >
+                                            <option value="">Select a program</option>
+                                            {schoolDetails?.programs?.map((prog) => (
+                                                <option key={prog.name} value={prog.name}>
+                                                    {prog.name} ({prog.description})
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
                                     <div className={styles.formGroup}>
                                         <label>Fees Amount * <span className={styles.required}>(Required)</span></label>
