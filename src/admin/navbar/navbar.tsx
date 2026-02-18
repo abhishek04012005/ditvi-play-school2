@@ -64,10 +64,10 @@ const AdminNavbar = () => {
             label: 'Spotlight Dashboard',
             href: '/admin/dashboard/spotlight',
         },
-        // {
-        //     label: 'Receipt Dashboard',
-        //     href: '/admin/dashboard/receipt',
-        // }
+        {
+            label: 'Receipt Dashboard',
+            href: '/admin/dashboard/receipt',
+        }
     ];
 
     const isActive = (href?: string) => href && pathname === href;

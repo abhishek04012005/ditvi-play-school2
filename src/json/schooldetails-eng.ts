@@ -2,7 +2,7 @@ import { SchoolDetails } from '@/types/schooldetails-types';
 import LogoImage from '../../public/assets/logo/logo.png'
 
 export const schoolDetailsEng: SchoolDetails = {
-    name: "Ank Square Kids",
+    name: "Moon's World Play School",
     logo: LogoImage,
     session: "2026-27",
     admissionAuthority: "Shashi Sharma",
@@ -14,7 +14,7 @@ export const schoolDetailsEng: SchoolDetails = {
         website: "www.anksquarekidsschool.com"
     },
     address: {
-        street: "Ank Square Kids Play School, Boring Road",
+        street: "Moon's World Play School, Boring Road",
         city: "Patna",
         state: "Bihar",
         pincode: "800013",
