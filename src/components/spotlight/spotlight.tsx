@@ -547,7 +547,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                         </motion.div>
 
                         {/* Footer */}
-                        <motion.div
+                        {/* <motion.div
                             className={styles.scrollPopupFooter}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -561,7 +561,7 @@ const Awards = ({ isHomePage = false }: AwardsProps) => {
                             >
                                 [celebrate]
                             </motion.button>
-                        </motion.div>
+                        </motion.div> */}
 
                         {/* Confetti Container */}
                         <div className={styles.scrollPopupConfettiContainer} />
