@@ -4,7 +4,8 @@ import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
 import styles from './fee-management.module.css';
 import HeadingTitle from '@/components/heading/headingtitle';
-import { FaEdit, FaSave, FaTimes, FaPlus, FaTrash } from 'react-icons/fa';
+import { Edit, Save, Close, Add, Delete, Settings, TrendingUp, AttachMoney } from '@mui/icons-material';
+import { motion, AnimatePresence } from 'framer-motion';
 import schoolDetailsEng from '@/json/schooldetails-eng';
 
 interface FeeStructure {
@@ -50,6 +51,44 @@ const FeeManagement = () => {
         description: '',
         is_active: true,
     });
+
+    // Calculate stats
+    const totalPrograms = feeStructures.length;
+    const activePrograms = feeStructures.filter(f => f.is_active).length;
+    const totalMonthlyRevenue = feeStructures.filter(f => f.is_active).reduce((sum, f) => sum + f.monthly_fee, 0);
+    const averageMonthlyFee = activePrograms > 0 ? totalMonthlyRevenue / activePrograms : 0;
+
+    // Stats cards
+    const statsCards = [
+        {
+            label: 'Total Programs',
+            value: totalPrograms,
+            icon: <Settings />,
+            color: '#6a4c93',
+            bgColor: '#f3e8ff',
+        },
+        {
+            label: 'Active Programs',
+            value: activePrograms,
+            icon: <TrendingUp />,
+            color: '#10b981',
+            bgColor: '#ecfdf5',
+        },
+        {
+            label: 'Avg Monthly Fee',
+            value: `₹${averageMonthlyFee.toFixed(0)}`,
+            icon: <AttachMoney />,
+            color: '#f59e0b',
+            bgColor: '#fffbeb',
+        },
+        {
+            label: 'Total Monthly Revenue',
+            value: `₹${totalMonthlyRevenue.toFixed(0)}`,
+            icon: <AttachMoney />,
+            color: '#3b82f6',
+            bgColor: '#eff6ff',
+        },
+    ];
 
     useEffect(() => {
         fetchFeeStructures();
@@ -229,26 +268,92 @@ const FeeManagement = () => {
         return (
             <div className={styles.container}>
                 <HeadingTitle text="Fee Structure Management" />
-                <div className={styles.loading}>Loading...</div>
+                <motion.div
+                    className={styles.loading}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <motion.div
+                        className={styles.spinner}
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    />
+                    Loading fee structures...
+                </motion.div>
             </div>
         );
     }
 
     return (
-        <div className={styles.container}>
+        <motion.div
+            className={styles.container}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
             <HeadingTitle text="Fee Structure Management" />
 
-            <div className={styles.header}>
-                <h2>Manage Program Fees</h2>
-                <button
+            {/* Stats Cards */}
+            <motion.div
+                className={styles.statsSection}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+            >
+                {statsCards.map((card, index) => (
+                    <motion.div
+                        key={card.label}
+                        className={styles.statCard}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                        whileHover={{ scale: 1.05 }}
+                    >
+                        <div
+                            className={styles.statIcon}
+                            style={{ color: card.color, backgroundColor: card.bgColor }}
+                        >
+                            {card.icon}
+                        </div>
+                        <div className={styles.statContent}>
+                            <p className={styles.statLabel}>{card.label}</p>
+                            <p className={styles.statValue} style={{ color: card.color }}>
+                                {card.value}
+                            </p>
+                        </div>
+                    </motion.div>
+                ))}
+            </motion.div>
+
+            {/* Header */}
+            <motion.div
+                className={styles.header}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+            >
+                <div>
+                    <h2><Settings /> Manage Program Fees</h2>
+                    <p className={styles.subtitle}>Configure fee structures for all programs</p>
+                </div>
+                <motion.button
                     className={styles.addBtn}
                     onClick={() => setShowAddModal(true)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                 >
-                    <FaPlus /> Add Fee Structure
-                </button>
-            </div>
+                    <Add /> Add Fee Structure
+                </motion.button>
+            </motion.div>
 
-            <div className={styles.tableContainer}>
+            {/* Table */}
+            <motion.div
+                className={styles.tableContainer}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+            >
                 <table className={styles.table}>
                     <thead>
                         <tr>
@@ -262,196 +367,274 @@ const FeeManagement = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {feeStructures.map((fee) => (
-                            <tr key={fee.id}>
-                                <td>
-                                    {editingId === fee.id ? (
-                                        <select
-                                            value={editForm.program_name}
-                                            onChange={(e) => setEditForm(prev => ({ ...prev, program_name: e.target.value }))}
-                                            className={styles.input}
-                                        >
-                                            <option value="">Select Program</option>
-                                            {schoolDetailsEng.programs.map((program) => (
-                                                <option key={program.name} value={program.name}>{program.name}</option>
-                                            ))}
-                                        </select>
-                                    ) : (
-                                        fee.program_name
-                                    )}
-                                </td>
-                                <td>
-                                    {editingId === fee.id ? (
-                                        <input
-                                            type="number"
-                                            value={editForm.monthly_fee}
-                                            onChange={(e) => setEditForm(prev => ({ ...prev, monthly_fee: e.target.value }))}
-                                            className={styles.input}
-                                        />
-                                    ) : (
-                                        `₹${fee.monthly_fee}`
-                                    )}
-                                </td>
-                                <td>
-                                    {editingId === fee.id ? (
-                                        <input
-                                            type="number"
-                                            value={editForm.annual_fee}
-                                            onChange={(e) => setEditForm(prev => ({ ...prev, annual_fee: e.target.value }))}
-                                            className={styles.input}
-                                        />
-                                    ) : (
-                                        fee.annual_fee ? `₹${fee.annual_fee}` : '-'
-                                    )}
-                                </td>
-                                <td>
-                                    {editingId === fee.id ? (
-                                        <input
-                                            type="number"
-                                            value={editForm.registration_fee}
-                                            onChange={(e) => setEditForm(prev => ({ ...prev, registration_fee: e.target.value }))}
-                                            className={styles.input}
-                                        />
-                                    ) : (
-                                        fee.registration_fee ? `₹${fee.registration_fee}` : '-'
-                                    )}
-                                </td>
-                                <td>
-                                    {editingId === fee.id ? (
-                                        <input
-                                            type="number"
-                                            value={editForm.admission_fee}
-                                            onChange={(e) => setEditForm(prev => ({ ...prev, admission_fee: e.target.value }))}
-                                            className={styles.input}
-                                        />
-                                    ) : (
-                                        fee.admission_fee ? `₹${fee.admission_fee}` : '-'
-                                    )}
-                                </td>
-                                <td>
-                                    <button
-                                        className={`${styles.statusBtn} ${fee.is_active ? styles.active : styles.inactive}`}
-                                        onClick={() => handleToggleActive(fee.id, fee.is_active)}
-                                    >
-                                        {fee.is_active ? 'Active' : 'Inactive'}
-                                    </button>
-                                </td>
-                                <td>
-                                    <div className={styles.actions}>
+                        <AnimatePresence>
+                            {feeStructures.map((fee, index) => (
+                                <motion.tr
+                                    key={fee.id}
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: 20 }}
+                                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                                >
+                                    <td>
                                         {editingId === fee.id ? (
-                                            <>
-                                                <button
-                                                    className={styles.saveBtn}
-                                                    onClick={handleSave}
-                                                >
-                                                    <FaSave />
-                                                </button>
-                                                <button
-                                                    className={styles.cancelBtn}
-                                                    onClick={handleCancel}
-                                                >
-                                                    <FaTimes />
-                                                </button>
-                                            </>
+                                            <motion.select
+                                                value={editForm.program_name}
+                                                onChange={(e) => setEditForm(prev => ({ ...prev, program_name: e.target.value }))}
+                                                className={styles.input}
+                                                initial={{ scale: 0.95 }}
+                                                animate={{ scale: 1 }}
+                                            >
+                                                <option value="">Select Program</option>
+                                                {schoolDetailsEng.programs.map((program) => (
+                                                    <option key={program.name} value={program.name}>{program.name}</option>
+                                                ))}
+                                            </motion.select>
                                         ) : (
-                                            <>
-                                                <button
-                                                    className={styles.editBtn}
-                                                    onClick={() => handleEdit(fee)}
-                                                >
-                                                    <FaEdit />
-                                                </button>
-                                                <button
-                                                    className={styles.deleteBtn}
-                                                    onClick={() => handleDelete(fee.id)}
-                                                >
-                                                    <FaTrash />
-                                                </button>
-                                            </>
+                                            <div className={styles.programCell}>
+                                                <strong>{fee.program_name}</strong>
+                                            </div>
                                         )}
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
+                                    </td>
+                                    <td>
+                                        {editingId === fee.id ? (
+                                            <motion.input
+                                                type="number"
+                                                value={editForm.monthly_fee}
+                                                onChange={(e) => setEditForm(prev => ({ ...prev, monthly_fee: e.target.value }))}
+                                                className={styles.input}
+                                                initial={{ scale: 0.95 }}
+                                                animate={{ scale: 1 }}
+                                            />
+                                        ) : (
+                                            <span className={styles.amount}>₹{fee.monthly_fee.toLocaleString()}</span>
+                                        )}
+                                    </td>
+                                    <td>
+                                        {editingId === fee.id ? (
+                                            <motion.input
+                                                type="number"
+                                                value={editForm.annual_fee}
+                                                onChange={(e) => setEditForm(prev => ({ ...prev, annual_fee: e.target.value }))}
+                                                className={styles.input}
+                                                initial={{ scale: 0.95 }}
+                                                animate={{ scale: 1 }}
+                                            />
+                                        ) : (
+                                            fee.annual_fee ? <span className={styles.amount}>₹{fee.annual_fee.toLocaleString()}</span> : <span className={styles.na}>-</span>
+                                        )}
+                                    </td>
+                                    <td>
+                                        {editingId === fee.id ? (
+                                            <motion.input
+                                                type="number"
+                                                value={editForm.registration_fee}
+                                                onChange={(e) => setEditForm(prev => ({ ...prev, registration_fee: e.target.value }))}
+                                                className={styles.input}
+                                                initial={{ scale: 0.95 }}
+                                                animate={{ scale: 1 }}
+                                            />
+                                        ) : (
+                                            fee.registration_fee ? <span className={styles.amount}>₹{fee.registration_fee.toLocaleString()}</span> : <span className={styles.na}>-</span>
+                                        )}
+                                    </td>
+                                    <td>
+                                        {editingId === fee.id ? (
+                                            <motion.input
+                                                type="number"
+                                                value={editForm.admission_fee}
+                                                onChange={(e) => setEditForm(prev => ({ ...prev, admission_fee: e.target.value }))}
+                                                className={styles.input}
+                                                initial={{ scale: 0.95 }}
+                                                animate={{ scale: 1 }}
+                                            />
+                                        ) : (
+                                            fee.admission_fee ? <span className={styles.amount}>₹{fee.admission_fee.toLocaleString()}</span> : <span className={styles.na}>-</span>
+                                        )}
+                                    </td>
+                                    <td>
+                                        <motion.button
+                                            className={`${styles.statusBtn} ${fee.is_active ? styles.active : styles.inactive}`}
+                                            onClick={() => handleToggleActive(fee.id, fee.is_active)}
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                        >
+                                            {fee.is_active ? 'Active' : 'Inactive'}
+                                        </motion.button>
+                                    </td>
+                                    <td>
+                                        <div className={styles.actions}>
+                                            <AnimatePresence mode="wait">
+                                                {editingId === fee.id ? (
+                                                    <motion.div
+                                                        key="editing"
+                                                        className={styles.editActions}
+                                                        initial={{ opacity: 0, scale: 0.8 }}
+                                                        animate={{ opacity: 1, scale: 1 }}
+                                                        exit={{ opacity: 0, scale: 0.8 }}
+                                                    >
+                                                        <motion.button
+                                                            className={styles.saveBtn}
+                                                            onClick={handleSave}
+                                                            whileHover={{ scale: 1.1 }}
+                                                            whileTap={{ scale: 0.95 }}
+                                                        >
+                                                            <Save />
+                                                        </motion.button>
+                                                        <motion.button
+                                                            className={styles.cancelBtn}
+                                                            onClick={handleCancel}
+                                                            whileHover={{ scale: 1.1 }}
+                                                            whileTap={{ scale: 0.95 }}
+                                                        >
+                                                            <Close />
+                                                        </motion.button>
+                                                    </motion.div>
+                                                ) : (
+                                                    <motion.div
+                                                        key="actions"
+                                                        className={styles.viewActions}
+                                                        initial={{ opacity: 0, scale: 0.8 }}
+                                                        animate={{ opacity: 1, scale: 1 }}
+                                                        exit={{ opacity: 0, scale: 0.8 }}
+                                                    >
+                                                        <motion.button
+                                                            className={styles.editBtn}
+                                                            onClick={() => handleEdit(fee)}
+                                                            whileHover={{ scale: 1.1 }}
+                                                            whileTap={{ scale: 0.95 }}
+                                                        >
+                                                            <Edit />
+                                                        </motion.button>
+                                                        <motion.button
+                                                            className={styles.deleteBtn}
+                                                            onClick={() => handleDelete(fee.id)}
+                                                            whileHover={{ scale: 1.1 }}
+                                                            whileTap={{ scale: 0.95 }}
+                                                        >
+                                                            <Delete />
+                                                        </motion.button>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+                                    </td>
+                                </motion.tr>
+                            ))}
+                        </AnimatePresence>
                     </tbody>
                 </table>
-            </div>
+            </motion.div>
 
             {/* Add Modal */}
-            {showAddModal && (
-                <div className={styles.modal}>
-                    <div className={styles.modalContent}>
-                        <h3>Add Fee Structure</h3>
-                        <div className={styles.form}>
-                            <div className={styles.formGroup}>
-                                <label>Program Name *</label>
-                                <select
-                                    value={addForm.program_name}
-                                    onChange={(e) => setAddForm(prev => ({ ...prev, program_name: e.target.value }))}
+            <AnimatePresence>
+                {showAddModal && (
+                    <motion.div
+                        className={styles.modal}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setShowAddModal(false)}
+                    >
+                        <motion.div
+                            className={styles.modalContent}
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className={styles.modalHeader}>
+                                <h3><Add /> Add Fee Structure</h3>
+                                <motion.button
+                                    className={styles.closeModalBtn}
+                                    onClick={() => setShowAddModal(false)}
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.95 }}
                                 >
-                                    <option value="">Select Program</option>
-                                    {schoolDetailsEng.programs.map((program) => (
-                                        <option key={program.name} value={program.name}>{program.name}</option>
-                                    ))}
-                                </select>
+                                    <Close />
+                                </motion.button>
                             </div>
-                            <div className={styles.formGroup}>
-                                <label>Monthly Fee *</label>
-                                <input
-                                    type="number"
-                                    value={addForm.monthly_fee}
-                                    onChange={(e) => setAddForm(prev => ({ ...prev, monthly_fee: e.target.value }))}
-                                    placeholder="e.g., 8500"
-                                />
+                            <div className={styles.form}>
+                                <div className={styles.formGroup}>
+                                    <label>Program Name *</label>
+                                    <select
+                                        value={addForm.program_name}
+                                        onChange={(e) => setAddForm(prev => ({ ...prev, program_name: e.target.value }))}
+                                    >
+                                        <option value="">Select Program</option>
+                                        {schoolDetailsEng.programs.map((program) => (
+                                            <option key={program.name} value={program.name}>{program.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label>Monthly Fee *</label>
+                                    <input
+                                        type="number"
+                                        value={addForm.monthly_fee}
+                                        onChange={(e) => setAddForm(prev => ({ ...prev, monthly_fee: e.target.value }))}
+                                        placeholder="e.g., 8500"
+                                    />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label>Annual Fee</label>
+                                    <input
+                                        type="number"
+                                        value={addForm.annual_fee}
+                                        onChange={(e) => setAddForm(prev => ({ ...prev, annual_fee: e.target.value }))}
+                                        placeholder="e.g., 102000"
+                                    />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label>Registration Fee</label>
+                                    <input
+                                        type="number"
+                                        value={addForm.registration_fee}
+                                        onChange={(e) => setAddForm(prev => ({ ...prev, registration_fee: e.target.value }))}
+                                        placeholder="e.g., 2000"
+                                    />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label>Admission Fee</label>
+                                    <input
+                                        type="number"
+                                        value={addForm.admission_fee}
+                                        onChange={(e) => setAddForm(prev => ({ ...prev, admission_fee: e.target.value }))}
+                                        placeholder="e.g., 5000"
+                                    />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label>Description</label>
+                                    <textarea
+                                        value={addForm.description}
+                                        onChange={(e) => setAddForm(prev => ({ ...prev, description: e.target.value }))}
+                                        placeholder="Program description"
+                                    />
+                                </div>
                             </div>
-                            <div className={styles.formGroup}>
-                                <label>Annual Fee</label>
-                                <input
-                                    type="number"
-                                    value={addForm.annual_fee}
-                                    onChange={(e) => setAddForm(prev => ({ ...prev, annual_fee: e.target.value }))}
-                                    placeholder="e.g., 102000"
-                                />
+                            <div className={styles.modalActions}>
+                                <motion.button
+                                    className={styles.cancelBtn}
+                                    onClick={() => setShowAddModal(false)}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    Cancel
+                                </motion.button>
+                                <motion.button
+                                    className={styles.saveBtn}
+                                    onClick={handleAdd}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    <Add /> Add Structure
+                                </motion.button>
                             </div>
-                            <div className={styles.formGroup}>
-                                <label>Registration Fee</label>
-                                <input
-                                    type="number"
-                                    value={addForm.registration_fee}
-                                    onChange={(e) => setAddForm(prev => ({ ...prev, registration_fee: e.target.value }))}
-                                    placeholder="e.g., 2000"
-                                />
-                            </div>
-                            <div className={styles.formGroup}>
-                                <label>Admission Fee</label>
-                                <input
-                                    type="number"
-                                    value={addForm.admission_fee}
-                                    onChange={(e) => setAddForm(prev => ({ ...prev, admission_fee: e.target.value }))}
-                                    placeholder="e.g., 5000"
-                                />
-                            </div>
-                            <div className={styles.formGroup}>
-                                <label>Description</label>
-                                <textarea
-                                    value={addForm.description}
-                                    onChange={(e) => setAddForm(prev => ({ ...prev, description: e.target.value }))}
-                                    placeholder="Program description"
-                                />
-                            </div>
-                        </div>
-                        <div className={styles.modalActions}>
-                            <button className={styles.cancelBtn} onClick={() => setShowAddModal(false)}>
-                                Cancel
-                            </button>
-                            <button className={styles.saveBtn} onClick={handleAdd}>
-                                Add
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.div>
     );
 };
 

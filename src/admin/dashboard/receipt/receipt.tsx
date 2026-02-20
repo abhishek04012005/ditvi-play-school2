@@ -393,29 +393,45 @@ const ReceiptDashboard = () => {
 
         try {
             setPrinting(true);
+
+            // Dynamically import html2canvas and jsPDF to avoid SSR issues
+            const html2canvas = (await import('html2canvas')).default;
+            const jsPDF = (await import('jspdf')).jsPDF;
+
+            // Add PDF export class for styling
+            printRef.current.classList.add('pdfExport');
+
+            // Wait for class to be applied
+            await new Promise(resolve => setTimeout(resolve, 100));
+
             const canvas = await html2canvas(printRef.current, {
                 scale: 2,
                 useCORS: true,
-                backgroundColor: '#ffffff',
+                logging: false,
+                backgroundColor: "#ffffff",
+                width: 794,  // A4 width in pixels (210mm at 96dpi)
+                height: 1123, // A4 height in pixels (297mm at 96dpi)
+                windowHeight: 1123,
+                windowWidth: 794,
+                allowTaint: true,
             });
 
-            const pdf = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4',
-            });
+            // Remove PDF export class
+            printRef.current.classList.remove('pdfExport');
 
-            const imgWidth = 210;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            const pdf_x = 0;
-            const pdf_y = 0;
+            // Create PDF with exact A4 dimensions
+            const pdf = new jsPDF("p", "mm", "a4");
+            const imgData = canvas.toDataURL("image/png");
 
-            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', pdf_x, pdf_y, imgWidth, imgHeight);
-            pdf.save(`Receipt-${selectedReceipt.receipt_number}.pdf`);
-            toast.success('Receipt downloaded successfully!');
-        } catch (err) {
-            console.error('Error downloading PDF:', err);
-            toast.error('Error downloading receipt');
+            // Add image to fill entire A4 page
+            pdf.addImage(imgData, "PNG", 0, 0, 210, 297);
+            pdf.save(`Receipt_${selectedReceipt.receipt_number}.pdf`);
+
+            alert("PDF downloaded successfully!");
+        } catch (error) {
+            console.error("PDF generation error:", error);
+            printRef.current?.classList.remove('pdfExport');
+            alert("Failed to generate PDF");
         } finally {
             setPrinting(false);
         }

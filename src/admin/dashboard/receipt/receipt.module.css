@@ -1758,3 +1758,185 @@
         background: white;
     }
 }
+
+/* ===== PDF EXPORT MODE - FORCE A4 SIZE ===== */
+.printContent.pdfExport {
+    width: 210mm !important;
+    height: 297mm !important;
+    max-width: 210mm !important;
+    max-height: 297mm !important;
+    padding: 1cm !important;
+    margin: 0 auto !important;
+    transform: none !important;
+    zoom: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    gap: 0.5cm !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: white !important;
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    box-sizing: border-box !important;
+}
+
+/* PDF Export specific styles for proper A4 alignment */
+.printContent.pdfExport .receiptHeader {
+    margin-bottom: 1cm !important;
+    padding-bottom: 0.5cm !important;
+    border-bottom: 2px solid var(--primary-purple) !important;
+    text-align: center !important;
+}
+
+.printContent.pdfExport .receiptHeader .schoolLogo {
+    max-width: 80px !important;
+    height: auto !important;
+    margin-bottom: 0.5cm !important;
+}
+
+.printContent.pdfExport .receiptHeader h3 {
+    font-size: 16px !important;
+    margin: 0 0 0.25cm !important;
+}
+
+.printContent.pdfExport .receiptHeader p {
+    font-size: 10px !important;
+    margin: 0.15cm 0 !important;
+}
+
+.printContent.pdfExport .receiptTitle {
+    margin: 0.5cm 0 !important;
+    text-align: center !important;
+}
+
+.printContent.pdfExport .receiptTitle h2 {
+    font-size: 18px !important;
+    margin: 0 !important;
+    letter-spacing: 1px !important;
+}
+
+.printContent.pdfExport .receiptNumber {
+    display: flex !important;
+    justify-content: space-between !important;
+    margin: 0.5cm 0 !important;
+    padding: 0.5cm !important;
+    background: rgba(243, 232, 255, 0.3) !important;
+    border-radius: 4px !important;
+    border: 1px solid #e8dff5 !important;
+}
+
+.printContent.pdfExport .receiptNumber p {
+    font-size: 11px !important;
+    margin: 0 !important;
+    font-weight: 600 !important;
+}
+
+.printContent.pdfExport .receiptDetails {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1cm !important;
+    margin: 0.5cm 0 !important;
+    padding: 0.5cm !important;
+    background: rgba(243, 232, 255, 0.3) !important;
+    border-radius: 4px !important;
+    border: 1px solid #e8dff5 !important;
+}
+
+.printContent.pdfExport .detailsColumn h4 {
+    font-size: 11px !important;
+    margin: 0 0 0.5cm !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    font-weight: 700 !important;
+}
+
+.printContent.pdfExport .detailsColumn p {
+    font-size: 10px !important;
+    margin: 0.25cm 0 !important;
+}
+
+.printContent.pdfExport .receiptTable {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 0.5cm 0 !important;
+    font-size: 10px !important;
+}
+
+.printContent.pdfExport .receiptTable th,
+.printContent.pdfExport .receiptTable td {
+    padding: 0.4cm 0.3cm !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    text-align: left !important;
+}
+
+.printContent.pdfExport .receiptTable th {
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.3px !important;
+}
+
+.printContent.pdfExport .receiptTable tbody td {
+    font-size: 10px !important;
+}
+
+.printContent.pdfExport .receiptTable tfoot th {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+}
+
+.printContent.pdfExport .totalAmount {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+}
+
+.printContent.pdfExport .receiptFooter {
+    margin-top: auto !important;
+    padding: 0.5cm !important;
+    border-top: 1px solid var(--border-color) !important;
+    text-align: center !important;
+}
+
+.printContent.pdfExport .receiptFooter p {
+    font-size: 10px !important;
+    margin: 0.25cm 0 !important;
+}
+
+.printContent.pdfExport .thankYou {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: var(--primary-purple) !important;
+    margin-top: 0.5cm !important;
+}
+
+@media screen and (max-width: 1024px) {
+    .printContent.pdfExport {
+        width: 210mm !important;
+        height: 297mm !important;
+        max-width: 210mm !important;
+        padding: 1cm !important;
+        gap: 0.5cm !important;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .printContent.pdfExport {
+        width: 210mm !important;
+        height: 297mm !important;
+        max-width: 210mm !important;
+        padding: 1cm !important;
+        gap: 0.5cm !important;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .printContent.pdfExport {
+        width: 210mm !important;
+        height: 297mm !important;
+        max-width: 210mm !important;
+        padding: 1cm !important;
+        gap: 0.5cm !important;
+    }
+}
