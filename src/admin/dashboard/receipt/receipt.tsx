@@ -1615,15 +1615,6 @@ const ReceiptDashboard = () => {
 
                             <div className={styles.printModalActions}>
                                 <motion.button
-                                    className={styles.printBtn}
-                                    onClick={() => window.print()}
-                                    disabled={printing}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                >
-                                    <Print /> Print
-                                </motion.button>
-                                <motion.button
                                     className={styles.downloadBtn}
                                     onClick={handleDownloadPDF}
                                     disabled={printing}

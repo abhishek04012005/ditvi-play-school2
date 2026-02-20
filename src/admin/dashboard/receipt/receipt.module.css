@@ -1253,7 +1253,7 @@
 }
 
 .downloadBtn {
-    background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+    background: var(--primary-purple);
     color: white;
 }
 
