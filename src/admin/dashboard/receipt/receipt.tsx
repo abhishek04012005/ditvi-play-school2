@@ -1,28 +1,24 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    FaSearch,
-    FaSort,
-    FaSortUp,
-    FaSortDown,
-    FaSpinner,
-    FaPrint,
-    FaDownload,
-    FaPlus,
-    FaTimes,
-    FaCalendarAlt,
-    FaUser,
-    FaMoneyBill,
-    FaCheck,
-    FaChevronLeft,
-    FaChevronRight,
-    FaArrowLeft,
-    FaPhone,
-    FaBook,
-} from 'react-icons/fa';
-import {
-    SearchOutlined,
+    Search,
+    Refresh,
+    Print,
+    Download,
+    Add,
+    Close,
+    CalendarToday,
+    Person,
+    Payment,
+    Check,
+    ChevronLeft,
+    ChevronRight,
+    Settings,
+    ArrowBack,
+    Phone,
+    MenuBook,
     ArrowUpward,
     ArrowDownward,
 } from '@mui/icons-material';
@@ -72,6 +68,7 @@ interface StatusCard {
     bgColor: string;
     status?: 'all' | 'pending' | 'paid' | 'partial';
     id: string;
+    isAmount?: boolean;
 }
 
 type SortField = 'receipt_number' | 'student_name' | 'month' | 'fees_amount' | 'payment_date' | 'status';
@@ -124,9 +121,13 @@ const ReceiptDashboard = () => {
     const [createLoading, setCreateLoading] = useState(false);
     const printRef = useRef<HTMLDivElement>(null);
 
+    // Fee structures
+    const [feeStructures, setFeeStructures] = useState<any[]>([]);
+
     useEffect(() => {
         const initializePage = async () => {
             await fetchReceipts();
+            await fetchFeeStructures();
             setPageLoading(false);
         };
         initializePage();
@@ -159,6 +160,26 @@ const ReceiptDashboard = () => {
             toast.error('Error fetching receipts');
         } finally {
             setLoading(false);
+        }
+    };
+
+    // Fetch fee structures
+    const fetchFeeStructures = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('fee_structure')
+                .select('*')
+                .eq('is_active', true)
+                .order('program_name');
+
+            if (error) {
+                console.error('Error fetching fee structures:', error);
+                return;
+            }
+
+            setFeeStructures(data || []);
+        } catch (err) {
+            console.error('Error fetching fee structures:', err);
         }
     };
 
@@ -254,16 +275,20 @@ const ReceiptDashboard = () => {
             }
 
             // Auto-fill form with admission details
+            const programName = admissionData.program_name || admissionData.program || '';
+            const feeStructure = feeStructures.find(f => f.program_name === programName);
+
             setFormData(prev => ({
                 ...prev,
                 student_name: admissionData.child_first_name || admissionData.child_name || admissionData.childFirstName || '',
                 admission_number: admissionData.admission_number || '',
                 parent_name: admissionData.father_name || admissionData.parentFirstName || '',
                 parent_phone: admissionData.parent_mobile_number || admissionData.parentMobile || '',
-                program: admissionData.program_name || admissionData.program || '',
+                program: programName,
+                fees_amount: feeStructure ? feeStructure.monthly_fee.toString() : prev.fees_amount,
             }));
 
-            toast.success('✅ Admission details loaded!');
+            toast.success('Admission details loaded!');
         } catch (err) {
             console.error('Error searching admission:', err);
             toast.error('Error searching admission');
@@ -329,15 +354,18 @@ const ReceiptDashboard = () => {
             }
 
             // Reset form
+            const programName = selectedAdmission?.program || '';
+            const feeStructure = feeStructures.find(f => f.program_name === programName);
+
             setFormData({
                 student_name: selectedAdmission?.student_name || '',
                 admission_number: selectedAdmission?.admission_number || '',
                 parent_name: selectedAdmission?.parent_name || '',
                 parent_phone: selectedAdmission?.parent_phone || '',
-                program: selectedAdmission?.program || '',
+                program: programName,
                 month: new Date().toLocaleString('default', { month: 'long' }),
                 year: new Date().getFullYear(),
-                fees_amount: '',
+                fees_amount: feeStructure ? feeStructure.monthly_fee.toString() : '',
                 payment_mode: 'cash',
                 payment_date: new Date().toISOString().split('T')[0],
                 notes: '',
@@ -431,12 +459,21 @@ const ReceiptDashboard = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedReceipts = sortedReceipts.slice(startIndex, startIndex + itemsPerPage);
 
+    // Calculate total collected amount
+    const totalCollected = receipts.filter(r => r.status === 'paid').reduce((sum, r) => sum + r.fees_amount, 0);
+
+    // Payment mode stats
+    const cashCount = receipts.filter(r => r.payment_mode === 'cash').length;
+    const chequeCount = receipts.filter(r => r.payment_mode === 'cheque').length;
+    const onlineCount = receipts.filter(r => r.payment_mode === 'online').length;
+    const otherCount = receipts.filter(r => r.payment_mode === 'other').length;
+
     // Status cards
     const statusCards: StatusCard[] = [
         {
             label: 'Total Receipts',
             count: receipts.length,
-            icon: <FaMoneyBill />,
+            icon: <Payment />,
             color: '#6a4c93',
             bgColor: '#f3e8ff',
             status: 'all',
@@ -445,7 +482,7 @@ const ReceiptDashboard = () => {
         {
             label: 'Paid',
             count: receipts.filter(r => r.status === 'paid').length,
-            icon: <FaCheck />,
+            icon: <Check />,
             color: '#10b981',
             bgColor: '#ecfdf5',
             status: 'paid',
@@ -454,7 +491,7 @@ const ReceiptDashboard = () => {
         {
             label: 'Pending',
             count: receipts.filter(r => r.status === 'pending').length,
-            icon: <FaCalendarAlt />,
+            icon: <CalendarToday />,
             color: '#f59e0b',
             bgColor: '#fffbeb',
             status: 'pending',
@@ -463,11 +500,44 @@ const ReceiptDashboard = () => {
         {
             label: 'Partial',
             count: receipts.filter(r => r.status === 'partial').length,
-            icon: <FaMoneyBill />,
+            icon: <Payment />,
             color: '#3b82f6',
             bgColor: '#eff6ff',
             status: 'partial',
             id: 'partial',
+        },
+        {
+            label: 'Total Collected',
+            count: totalCollected,
+            icon: <Payment />,
+            color: '#059669',
+            bgColor: '#d1fae5',
+            id: 'collected',
+            isAmount: true,
+        },
+        {
+            label: 'Cash Payments',
+            count: cashCount,
+            icon: <Payment />,
+            color: '#dc2626',
+            bgColor: '#fef2f2',
+            id: 'cash',
+        },
+        {
+            label: 'Cheque Payments',
+            count: chequeCount,
+            icon: <Payment />,
+            color: '#7c3aed',
+            bgColor: '#f3e8ff',
+            id: 'cheque',
+        },
+        {
+            label: 'Online Payments',
+            count: onlineCount,
+            icon: <Payment />,
+            color: '#0891b2',
+            bgColor: '#ecfeff',
+            id: 'online',
         },
     ];
 
@@ -531,7 +601,7 @@ const ReceiptDashboard = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                 >
-                    <FaArrowLeft /> Back to List
+                    <ArrowBack /> Back to List
                 </motion.button>
 
                 {/* Student Details Card */}
@@ -547,21 +617,21 @@ const ReceiptDashboard = () => {
 
                     <div className={styles.studentInfoGrid}>
                         <div className={styles.infoItem}>
-                            <FaUser className={styles.infoIcon} />
+                            <Person className={styles.infoIcon} />
                             <div>
                                 <p className={styles.infoLabel}>Parent Name</p>
                                 <p className={styles.infoValue}>{selectedAdmission.parent_name}</p>
                             </div>
                         </div>
                         <div className={styles.infoItem}>
-                            <FaPhone className={styles.infoIcon} />
+                            <Phone className={styles.infoIcon} />
                             <div>
                                 <p className={styles.infoLabel}>Phone</p>
                                 <p className={styles.infoValue}>{selectedAdmission.parent_phone}</p>
                             </div>
                         </div>
                         <div className={styles.infoItem}>
-                            <FaBook className={styles.infoIcon} />
+                            <MenuBook className={styles.infoIcon} />
                             <div>
                                 <p className={styles.infoLabel}>Program</p>
                                 <p className={styles.infoValue}>{selectedAdmission.program}</p>
@@ -591,7 +661,7 @@ const ReceiptDashboard = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        <FaPlus /> Add Receipt
+                        <Add /> Add Receipt
                     </motion.button>
                 </motion.div>
 
@@ -650,7 +720,7 @@ const ReceiptDashboard = () => {
                                                     whileHover={{ scale: 1.1 }}
                                                     whileTap={{ scale: 0.95 }}
                                                 >
-                                                    <FaPrint />
+                                                    <Print />
                                                 </motion.button>
                                             </td>
                                         </motion.tr>
@@ -685,7 +755,7 @@ const ReceiptDashboard = () => {
                                         onClick={() => setShowCreateModal(false)}
                                         disabled={createLoading}
                                     >
-                                        <FaTimes />
+                                        <Close />
                                     </button>
                                 </div>
 
@@ -799,11 +869,11 @@ const ReceiptDashboard = () => {
                                         >
                                             {createLoading ? (
                                                 <>
-                                                    <FaSpinner className={styles.spinner} /> Creating...
+                                                    <Refresh className={styles.spinner} /> Creating...
                                                 </>
                                             ) : (
                                                 <>
-                                                    <FaCheck /> Create Receipt
+                                                    <Check /> Create Receipt
                                                 </>
                                             )}
                                         </motion.button>
@@ -838,7 +908,7 @@ const ReceiptDashboard = () => {
                                         onClick={() => setShowPrintModal(false)}
                                         disabled={printing}
                                     >
-                                        <FaTimes />
+                                        <Close />
                                     </button>
                                 </div>
 
@@ -911,7 +981,7 @@ const ReceiptDashboard = () => {
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
                                     >
-                                        <FaPrint /> Print
+                                        <Print /> Print
                                     </motion.button>
                                     <motion.button
                                         className={styles.downloadBtn}
@@ -922,11 +992,11 @@ const ReceiptDashboard = () => {
                                     >
                                         {printing ? (
                                             <>
-                                                <FaSpinner className={styles.spinner} /> Downloading...
+                                                <Refresh className={styles.spinner} /> Downloading...
                                             </>
                                         ) : (
                                             <>
-                                                <FaDownload /> Download PDF
+                                                <Download /> Download PDF
                                             </>
                                         )}
                                     </motion.button>
@@ -937,7 +1007,7 @@ const ReceiptDashboard = () => {
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
                                     >
-                                        <FaTimes /> Close
+                                        <Close /> Close
                                     </motion.button>
                                 </div>
                             </motion.div>
@@ -960,7 +1030,7 @@ const ReceiptDashboard = () => {
                 animate={{ opacity: 1, y: 0 }}
             >
                 <div className={styles.searchAdmissionCard}>
-                    <h3>🔍 Search Student Receipt by Admission Number</h3>
+                    <h3><Search /> Search Student Receipt by Admission Number</h3>
                     <form onSubmit={handleSearchAdmission} className={styles.searchAdmissionForm}>
                         <div className={styles.formGroup}>
                             <label>Admission Number</label>
@@ -981,11 +1051,11 @@ const ReceiptDashboard = () => {
                         >
                             {admissionSearchLoading ? (
                                 <>
-                                    <FaSpinner className={styles.spinner} /> Searching...
+                                    <Refresh className={styles.spinner} /> Searching...
                                 </>
                             ) : (
                                 <>
-                                    <FaSearch /> Search
+                                    <Search /> Search
                                 </>
                             )}
                         </motion.button>
@@ -1015,7 +1085,7 @@ const ReceiptDashboard = () => {
                         <div className={styles.statusCardContent}>
                             <p className={styles.statusCardLabel}>{card.label}</p>
                             <p className={styles.statusCardCount} style={{ color: card.color }}>
-                                {card.count}
+                                {card.isAmount ? `₹${card.count.toFixed(2)}` : card.count}
                             </p>
                         </div>
                     </motion.div>
@@ -1024,21 +1094,32 @@ const ReceiptDashboard = () => {
 
             {/* Header */}
             <div className={styles.header}>
-                <h2>💰 Manage Fee Receipts</h2>
-                <motion.button
-                    className={styles.createBtn}
-                    onClick={() => setShowCreateModal(true)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                >
-                    <FaPlus /> Create Receipt
-                </motion.button>
+                <h2><Payment /> Manage Fee Receipts</h2>
+                <div className={styles.headerButtons}>
+                    <Link href="/admin/dashboard/fee-structure">
+                        <motion.button
+                            className={styles.manageFeesBtn}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <Settings /> Manage Fees
+                        </motion.button>
+                    </Link>
+                    <motion.button
+                        className={styles.createBtn}
+                        onClick={() => setShowCreateModal(true)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                    >
+                        <Add /> Create Receipt
+                    </motion.button>
+                </div>
             </div>
 
             {/* Search and Filter */}
             <div className={styles.controls}>
                 <div className={styles.searchBar}>
-                    <FaSearch />
+                    <Search />
                     <input
                         type="text"
                         placeholder="Search by name, receipt number, admission number..."
@@ -1104,7 +1185,7 @@ const ReceiptDashboard = () => {
                                 <td><strong>{receipt.admission_number}</strong></td>
                                 <td>
                                     <div className={styles.studentInfo}>
-                                        <FaUser className={styles.icon} />
+                                        <Person className={styles.icon} />
                                         <div>
                                             <p className={styles.name}>{receipt.student_name}</p>
                                         </div>
@@ -1113,7 +1194,7 @@ const ReceiptDashboard = () => {
                                 <td>{receipt.program}</td>
                                 <td>{receipt.month} {receipt.year}</td>
                                 <td className={styles.amount}>
-                                    <FaMoneyBill /> {receipt.fees_amount.toFixed(2)}
+                                    <Payment /> {receipt.fees_amount.toFixed(2)}
                                 </td>
                                 <td>{new Date(receipt.payment_date).toLocaleDateString()}</td>
                                 <td>
@@ -1136,7 +1217,7 @@ const ReceiptDashboard = () => {
                                             whileHover={{ scale: 1.1 }}
                                             whileTap={{ scale: 0.95 }}
                                         >
-                                            <FaPrint />
+                                            <Print />
                                         </motion.button>
                                     </div>
                                 </td>
@@ -1177,7 +1258,7 @@ const ReceiptDashboard = () => {
                                 whileHover={{ scale: currentPage === 1 ? 1 : 1.05 }}
                                 whileTap={{ scale: currentPage === 1 ? 1 : 0.95 }}
                             >
-                                <FaChevronLeft /> Previous
+                                <ChevronLeft /> Previous
                             </motion.button>
                             <span className={styles.pageInfo}>
                                 Page {currentPage} of {totalPages}
@@ -1189,7 +1270,7 @@ const ReceiptDashboard = () => {
                                 whileHover={{ scale: currentPage === totalPages ? 1 : 1.05 }}
                                 whileTap={{ scale: currentPage === totalPages ? 1 : 0.95 }}
                             >
-                                Next <FaChevronRight />
+                                Next <ChevronRight />
                             </motion.button>
                         </div>
                     </div>
@@ -1220,7 +1301,7 @@ const ReceiptDashboard = () => {
                                     onClick={() => setShowCreateModal(false)}
                                     disabled={createLoading}
                                 >
-                                    <FaTimes />
+                                    <Close />
                                 </button>
                             </div>
 
@@ -1249,11 +1330,11 @@ const ReceiptDashboard = () => {
                                         >
                                             {modalAdmissionSearchLoading ? (
                                                 <>
-                                                    <FaSpinner className={styles.spinner} /> Loading...
+                                                    <Refresh className={styles.spinner} /> Loading...
                                                 </>
                                             ) : (
                                                 <>
-                                                    <FaSearch /> Load
+                                                    <Search /> Load
                                                 </>
                                             )}
                                         </motion.button>
@@ -1289,15 +1370,28 @@ const ReceiptDashboard = () => {
                                     </div>
                                     <div className={styles.formGroup}>
                                         <label>Program</label>
-                                        <input
-                                            type="text"
+                                        <select
                                             value={formData.program}
-                                            onChange={(e) =>
-                                                setFormData({ ...formData, program: e.target.value })
-                                            }
+                                            onChange={(e) => {
+                                                const selectedProgram = e.target.value;
+                                                // Auto-fill fees amount if program is selected
+                                                const feeStructure = feeStructures.find(f => f.program_name === selectedProgram);
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    program: selectedProgram,
+                                                    fees_amount: feeStructure ? feeStructure.monthly_fee.toString() : prev.fees_amount
+                                                }));
+                                            }}
                                             disabled={createLoading}
                                             className={formData.program && modalAdmissionNumber ? styles.filledField : ''}
-                                        />
+                                        >
+                                            <option value="">Select Program</option>
+                                            {feeStructures.map(fee => (
+                                                <option key={fee.id} value={fee.program_name}>
+                                                    {fee.program_name} (₹{fee.monthly_fee}/month)
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
                                     <div className={styles.formGroup}>
                                         <label>Fees Amount * <span className={styles.required}>(Required)</span></label>
@@ -1397,11 +1491,11 @@ const ReceiptDashboard = () => {
                                     >
                                         {createLoading ? (
                                             <>
-                                                <FaSpinner className={styles.spinner} /> Creating...
+                                                <Refresh className={styles.spinner} /> Creating...
                                             </>
                                         ) : (
                                             <>
-                                                <FaCheck /> Create Receipt
+                                                <Check /> Create Receipt
                                             </>
                                         )}
                                     </motion.button>
@@ -1436,7 +1530,7 @@ const ReceiptDashboard = () => {
                                     onClick={() => setShowPrintModal(false)}
                                     disabled={printing}
                                 >
-                                    <FaTimes />
+                                    <Close />
                                 </button>
                             </div>
 
@@ -1511,7 +1605,7 @@ const ReceiptDashboard = () => {
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                 >
-                                    <FaPrint /> Print
+                                    <Print /> Print
                                 </motion.button>
                                 <motion.button
                                     className={styles.downloadBtn}
@@ -1522,11 +1616,11 @@ const ReceiptDashboard = () => {
                                 >
                                     {printing ? (
                                         <>
-                                            <FaSpinner className={styles.spinner} /> Downloading...
+                                            <Refresh className={styles.spinner} /> Downloading...
                                         </>
                                     ) : (
                                         <>
-                                            <FaDownload /> Download PDF
+                                            <Download /> Download PDF
                                         </>
                                     )}
                                 </motion.button>
@@ -1537,7 +1631,7 @@ const ReceiptDashboard = () => {
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                 >
-                                    <FaTimes /> Close
+                                    <Close /> Close
                                 </motion.button>
                             </div>
                         </motion.div>

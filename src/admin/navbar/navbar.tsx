@@ -67,6 +67,10 @@ const AdminNavbar = () => {
         {
             label: 'Receipt Dashboard',
             href: '/admin/dashboard/receipt',
+        },
+        {
+            label: 'Fee Structure',
+            href: '/admin/dashboard/fee-structure',
         }
     ];
 

@@ -1,0 +1,220 @@
+.container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header h2 {
+    margin: 0;
+    color: var(--black);
+}
+
+.addBtn {
+    background: var(--primary-purple);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.addBtn:hover {
+    background: var(--secondary-purple);
+}
+
+.tableContainer {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--text-gray);
+    color: var(--black);
+}
+
+.table th {
+    background: var(--primary-yellow-rgba);
+    font-weight: 600;
+    color: var(--black);
+}
+
+.input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--text-gray);
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: white;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.editBtn,
+.saveBtn,
+.cancelBtn,
+.deleteBtn {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+}
+
+.editBtn {
+    background: var(--primary-purple);
+    color: var(--white);
+}
+
+.editBtn:hover {
+    background: var(--secondary-purple);
+}
+
+.saveBtn {
+    background: var(--primary-purple);
+    color: var(--white);
+}
+
+.saveBtn:hover {
+    background: var(--secondary-purple);
+}
+
+.cancelBtn {
+    background: var(--text-gray);
+    color: var(--white);
+}
+
+.cancelBtn:hover {
+    background: var(--black);
+}
+
+.deleteBtn {
+    background: var(--primary-yellow);
+    color: var(--white);
+}
+
+.deleteBtn:hover {
+    background: var(--primary-yellow);
+    opacity: 0.8;
+}
+
+.statusBtn {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.statusBtn.active {
+    background: var(--primary-yellow-rgba);
+    color: var(--primary-purple);
+}
+
+.statusBtn.inactive {
+    background: var(--primary-yellow-rgba);
+    color: var(--primary-yellow);
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    font-size: 16px;
+    color: var(--text-gray);
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    background: var(--white);
+    padding: 24px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modalContent h3 {
+    margin: 0 0 20px 0;
+    color: var(--black);
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.formGroup label {
+    font-weight: 500;
+    color: var(--black);
+}
+
+.formGroup input,
+.formGroup textarea,
+.formGroup select {
+    padding: 8px 12px;
+    border: 1px solid var(--text-gray);
+    border-radius: 4px;
+    font-size: 14px;
+    color: black;
+    background-color: white;
+}
+
+.formGroup textarea {
+    resize: vertical;
+    min-height: 60px;
+    background-color: white;
+}
+
+.modalActions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
