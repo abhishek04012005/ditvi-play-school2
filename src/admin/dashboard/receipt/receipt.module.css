@@ -1771,7 +1771,8 @@
     zoom: 1 !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: flex-start !important;
+    justify-content: center !important;
+    align-items: center !important;
     gap: 0.5cm !important;
     border: none !important;
     border-radius: 0 !important;
@@ -1780,6 +1781,7 @@
     font-size: 12px !important;
     line-height: 1.4 !important;
     box-sizing: border-box !important;
+    text-align: center !important;
 }
 
 /* PDF Export specific styles for proper A4 alignment */
@@ -1788,6 +1790,7 @@
     padding-bottom: 0.5cm !important;
     border-bottom: 2px solid var(--primary-purple) !important;
     text-align: center !important;
+    width: 100% !important;
 }
 
 .printContent.pdfExport .receiptHeader .schoolLogo {
@@ -1825,6 +1828,8 @@
     background: rgba(243, 232, 255, 0.3) !important;
     border-radius: 4px !important;
     border: 1px solid #e8dff5 !important;
+    width: 100% !important;
+    max-width: 180mm !important;
 }
 
 .printContent.pdfExport .receiptNumber p {
@@ -1842,6 +1847,8 @@
     background: rgba(243, 232, 255, 0.3) !important;
     border-radius: 4px !important;
     border: 1px solid #e8dff5 !important;
+    width: 100% !important;
+    max-width: 180mm !important;
 }
 
 .printContent.pdfExport .detailsColumn h4 {
@@ -1862,6 +1869,7 @@
     border-collapse: collapse !important;
     margin: 0.5cm 0 !important;
     font-size: 10px !important;
+    max-width: 180mm !important;
 }
 
 .printContent.pdfExport .receiptTable th,
@@ -1897,6 +1905,8 @@
     padding: 0.5cm !important;
     border-top: 1px solid var(--border-color) !important;
     text-align: center !important;
+    width: 100% !important;
+    max-width: 180mm !important;
 }
 
 .printContent.pdfExport .receiptFooter p {
